@@ -12,10 +12,13 @@ export class BootScene extends Scene {
   }
 
   preload(): void {
+    this.load.image('logo', 'assets/logo.png');
     this.load.pack('sprites', 'assets/pack.json');
   }
 
   create(): void {
+    this.add.image(400, 100, 'logo');
+
     Object.values(PokemonName).forEach(name => {
       console.log(`creating animations for ${name}`);
       this.anims.create({
