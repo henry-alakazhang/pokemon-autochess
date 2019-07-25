@@ -1,11 +1,19 @@
-import * as Phaser from "phaser";
+import { Game } from 'phaser';
+import { BootScene } from './scenes/boot.scene';
 
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  parent: "canvas",
-  width: 960,
-  height: 540,
-  scene: []
+export class PokemonAutochessGame extends Game {
+  constructor(config: Phaser.Types.Core.GameConfig) {
+    super(config);
+  }
+}
+
+window.onload = () => {
+  const game = new PokemonAutochessGame({
+    type: Phaser.AUTO,
+    parent: 'canvas',
+    width: 800,
+    height: 600,
+    backgroundColor: '#004400',
+    scene: [BootScene],
+  });
 };
-
-const game = new Phaser.Game(config);

@@ -1,0 +1,15 @@
+{
+  "sprites": {
+    "files": [
+      {
+        "type": "spritesheet",
+        "key": "talonflame",
+        "url": "assets/pokemon/talonflame.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      }
+    ]
+  }
+}

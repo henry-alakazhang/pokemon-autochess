@@ -5,7 +5,8 @@
     "module": "CommonJS",
     "strict": true,
     "sourceMap": true,
-    "typeRoots": ["node_modules/@types", "node_modules/phaser/types"]
+    "typeRoots": ["node_modules/@types", "node_modules/phaser/types"],
+    "strictPropertyInitialization": false
   },
   "include": ["./src/**/*"]
 }
