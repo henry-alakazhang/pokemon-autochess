@@ -15,7 +15,7 @@ window.onload = () => {
     parent: 'canvas',
     width: 800,
     height: 600,
-    backgroundColor: '#004400',
+    backgroundColor: '#3A4DB5',
     scene: [PreloadScene, BootScene, MenuScene],
   });
 };
