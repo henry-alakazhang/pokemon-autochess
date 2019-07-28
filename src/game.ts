@@ -1,5 +1,7 @@
 import { Game } from 'phaser';
 import { BootScene } from './scenes/boot.scene';
+import { MenuScene } from './scenes/menu.scene';
+import { PreloadScene } from './scenes/preload.scene';
 
 export class PokemonAutochessGame extends Game {
   constructor(config: Phaser.Types.Core.GameConfig) {
@@ -14,6 +16,6 @@ window.onload = () => {
     width: 800,
     height: 600,
     backgroundColor: '#004400',
-    scene: [BootScene],
+    scene: [PreloadScene, BootScene, MenuScene],
   });
 };
