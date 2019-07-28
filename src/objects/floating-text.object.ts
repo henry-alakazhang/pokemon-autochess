@@ -14,19 +14,19 @@ export class FloatingText extends Phaser.GameObjects.Text {
     this.textObject = this.scene.add.text(startX, startY, text, {
       fontSize: '18px',
     });
-
     this.textObject.setOrigin(0, 1);
+
+    // add disappearing animation
     this.scene.add.tween({
       targets: this.textObject,
-      duration: 750,
+      duration: 600,
       ease: 'Exponential.In',
       x: startX + 5,
       y: startY - 10,
       alpha: 0.2,
       onComplete: () => {
-        this.emit(FloatingText.COMPLETE);
         this.textObject.destroy();
-        this.destroy();
+        super.destroy();
       },
       callbackScope: this,
     });

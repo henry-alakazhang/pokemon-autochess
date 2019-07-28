@@ -74,15 +74,18 @@ export class Pokemon extends Phaser.GameObjects.Sprite {
     this.currentHP -= actualDamage;
     this.redrawHPBar();
 
+    // display damage text
     const floatingText = new FloatingText(
       this.scene,
       this.x,
       this.y,
       `${actualDamage}`
     );
+
+    // TODO: move this somewhere more appropriate?
     if (this.currentHP === 0) {
       floatingText.on(
-        FloatingText.COMPLETE,
+        Phaser.GameObjects.Events.DESTROY,
         () => {
           this.destroy();
         },
