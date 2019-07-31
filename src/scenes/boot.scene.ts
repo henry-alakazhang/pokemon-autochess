@@ -18,28 +18,30 @@ export class BootScene extends Scene {
 
   preload(): void {
     this.add.image(400, 100, 'logo');
-    this.loadingBar = this.add.graphics();
-    this.loadingBar.fillStyle(0xffffff, 1);
-    this.loadingBar.fillRect(
-      this.cameras.main.width / 4 - 2,
-      this.cameras.main.height / 2 - 18,
-      this.cameras.main.width / 2 + 4,
-      20
-    );
+    this.loadingBar = this.add
+      .graphics()
+      .fillStyle(0xffffff, 1)
+      .fillRect(
+        this.cameras.main.width / 4 - 2,
+        this.cameras.main.height / 2 - 18,
+        this.cameras.main.width / 2 + 4,
+        20
+      );
     this.progressBar = this.add.graphics();
 
     // pass value to change the loading bar fill
     this.load.on(
       'progress',
       (progress: number) => {
-        this.progressBar.clear();
-        this.progressBar.fillStyle(0x88e453, 1);
-        this.progressBar.fillRect(
-          this.cameras.main.width / 4,
-          this.cameras.main.height / 2 - 16,
-          (this.cameras.main.width / 2) * progress,
-          16
-        );
+        this.progressBar
+          .clear()
+          .fillStyle(0x88e453, 1)
+          .fillRect(
+            this.cameras.main.width / 4,
+            this.cameras.main.height / 2 - 16,
+            (this.cameras.main.width / 2) * progress,
+            16
+          );
       },
       this
     );

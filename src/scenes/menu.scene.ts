@@ -29,26 +29,25 @@ export class MenuScene extends Scene {
         key: randomPokemon,
       },
       randomPokemon
-    );
-    this.titlePokemon.playAnimation('down');
+    ).setInteractive();
 
-    this.titlePokemon.setInteractive();
-    this.titlePokemon.on(
-      Input.Events.GAMEOBJECT_POINTER_DOWN,
-      () => {
-        console.log('clicky');
-        this.titlePokemon.dealDamage(Math.ceil(Math.random() * 3));
-      },
-      this
-    );
-    this.titlePokemon.on(
-      Phaser.GameObjects.Events.DESTROY,
-      () => {
-        window.setTimeout(() => {
-          this.addTitlePokemon();
-        }, 1000);
-      },
-      this
-    );
+    this.titlePokemon
+      .on(
+        Input.Events.GAMEOBJECT_POINTER_DOWN,
+        () => {
+          console.log('clicky');
+          this.titlePokemon.dealDamage(Math.ceil(Math.random() * 3));
+        },
+        this
+      )
+      .on(
+        Phaser.GameObjects.Events.DESTROY,
+        () => {
+          window.setTimeout(() => {
+            this.addTitlePokemon();
+          }, 1000);
+        },
+        this
+      );
   }
 }

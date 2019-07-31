@@ -25,7 +25,10 @@ export class Pokemon extends Phaser.GameObjects.Sprite {
     // load data from Pokemon data
     this.currentHP = this.maxHP = PokemonData[key].maxHP;
 
-    this.sprite = this.scene.add.sprite(this.x, this.y, name);
+    this.sprite = this.scene.add.sprite(this.x, this.y, key);
+    // default state is facing the player
+    this.playAnimation('down');
+
     this.hpBar = this.scene.add.graphics();
     this.redrawHPBar();
   }
