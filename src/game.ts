@@ -1,5 +1,6 @@
 import { Game } from 'phaser';
 import { BootScene } from './scenes/boot.scene';
+import { GameScene } from './scenes/game.scene';
 import { MenuScene } from './scenes/menu.scene';
 import { PreloadScene } from './scenes/preload.scene';
 
@@ -16,6 +17,6 @@ window.onload = () => {
     width: 800,
     height: 600,
     backgroundColor: '#3A4DB5',
-    scene: [PreloadScene, BootScene, MenuScene],
+    scene: [PreloadScene, BootScene, MenuScene, GameScene],
   });
 };

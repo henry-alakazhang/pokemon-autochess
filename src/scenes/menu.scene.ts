@@ -1,10 +1,12 @@
 import { Input, Scene } from 'phaser';
 import { PokemonName } from '../core/pokemon.data';
 import { Pokemon } from '../objects/pokemon.object';
+import { GameScene } from './game.scene';
 
 export class MenuScene extends Scene {
   static readonly KEY = 'MenuScene';
   private titlePokemon: Pokemon;
+  private startButton: Phaser.GameObjects.Text;
 
   constructor() {
     super({
@@ -15,6 +17,27 @@ export class MenuScene extends Scene {
   create() {
     this.add.image(400, 100, 'logo');
     this.addTitlePokemon();
+
+    this.startButton = this.add
+      .text(400, 400, 'Single Player', { fill: '#FFAA00', fontSize: '22px' })
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true });
+    this.startButton
+      .on(
+        Phaser.Input.Events.POINTER_OVER,
+        () => this.startButton.setStyle({ fontStyle: 'bold' }),
+        this
+      )
+      .on(
+        Phaser.Input.Events.POINTER_OUT,
+        () => this.startButton.setStyle({ fontStyle: 'normal' }),
+        this
+      )
+      .on(
+        Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN,
+        () => this.scene.start(GameScene.KEY),
+        this
+      );
   }
 
   addTitlePokemon() {

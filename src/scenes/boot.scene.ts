@@ -73,7 +73,7 @@ export class BootScene extends Scene {
           start: 0,
           end: 3,
         }),
-        frameRate: 8,
+        frameRate: 6,
         repeat: -1,
       });
       this.anims.create({
@@ -82,7 +82,7 @@ export class BootScene extends Scene {
           start: 4,
           end: 7,
         }),
-        frameRate: 8,
+        frameRate: 6,
         repeat: -1,
       });
       this.anims.create({
@@ -91,7 +91,7 @@ export class BootScene extends Scene {
           start: 8,
           end: 11,
         }),
-        frameRate: 8,
+        frameRate: 6,
         repeat: -1,
       });
       this.anims.create({
@@ -100,7 +100,7 @@ export class BootScene extends Scene {
           start: 12,
           end: 15,
         }),
-        frameRate: 8,
+        frameRate: 6,
         repeat: -1,
       });
     });
