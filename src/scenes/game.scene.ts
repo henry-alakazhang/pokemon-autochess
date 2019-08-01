@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { PokemonName } from '../core/pokemon.data';
+import { PokemonName } from '../core/pokemon.model';
 import { Pokemon, PokemonAnimationType } from '../objects/pokemon.object';
 
 const CELL_WIDTH = 70;
@@ -30,8 +30,8 @@ export class GameScene extends Scene {
       1
     );
 
-    this.addPokemon(2, 0, PokemonName.TALONFLAME, 'down');
-    this.addPokemon(2, 4, PokemonName.TALONFLAME, 'up');
+    this.addPokemon(2, 0, 'talonflame', 'down');
+    this.addPokemon(2, 4, 'talonflame', 'up');
   }
 
   addPokemon(

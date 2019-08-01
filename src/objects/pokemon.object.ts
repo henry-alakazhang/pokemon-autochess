@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { PokemonData, PokemonName } from '../core/pokemon.data';
+import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { FloatingText } from './floating-text.object';
 
 interface SpriteParams {
@@ -23,7 +23,7 @@ export class Pokemon extends Phaser.GameObjects.Sprite {
     super(params.scene, params.x, params.y, params.key, params.frame);
 
     // load data from Pokemon data
-    this.currentHP = this.maxHP = PokemonData[key].maxHP;
+    this.currentHP = this.maxHP = pokemonData[key].maxHP;
 
     this.sprite = this.scene.add.sprite(this.x, this.y, key);
     // default state is facing the player

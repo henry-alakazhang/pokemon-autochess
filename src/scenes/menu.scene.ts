@@ -1,5 +1,5 @@
 import { Input, Scene } from 'phaser';
-import { PokemonName } from '../core/pokemon.data';
+import { allPokemonNames } from '../core/pokemon.model';
 import { Pokemon } from '../objects/pokemon.object';
 import { GameScene } from './game.scene';
 
@@ -42,9 +42,8 @@ export class MenuScene extends Scene {
   }
 
   addTitlePokemon() {
-    const randomPokemon = Object.values(PokemonName)[
-      Math.floor(Math.random() * Object.values(PokemonName).length)
-    ];
+    const randomPokemon =
+      allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)];
     this.titlePokemon = new Pokemon(
       {
         scene: this,

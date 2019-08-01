@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { PokemonName } from '../core/pokemon.data';
+import { allPokemonNames } from '../core/pokemon.model';
 import { MenuScene } from './menu.scene';
 
 export class BootScene extends Scene {
@@ -65,7 +65,7 @@ export class BootScene extends Scene {
   }
 
   setupAnimations() {
-    Object.values(PokemonName).forEach(name => {
+    allPokemonNames.forEach(name => {
       console.log(`creating animations for ${name}`);
       this.anims.create({
         key: `${name}--down`,
