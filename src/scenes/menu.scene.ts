@@ -20,6 +20,7 @@ export class MenuScene extends Scene {
 
     this.startButton = this.add
       .text(400, 400, 'Single Player', { fill: '#FFAA00', fontSize: '22px' })
+      // center the button so it's inline with the logo
       .setOrigin(0.5, 0.5)
       .setInteractive({ useHandCursor: true });
     this.startButton
