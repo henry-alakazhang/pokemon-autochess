@@ -1,11 +1,11 @@
 import { Input, Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
-import { Pokemon } from '../objects/pokemon.object';
-import { GameScene } from './game.scene';
+import { PokemonObject } from '../objects/pokemon.object';
+import { GameScene } from './game/game.scene';
 
 export class MenuScene extends Scene {
   static readonly KEY = 'MenuScene';
-  private titlePokemon: Pokemon;
+  private titlePokemon: PokemonObject;
   private startButton: Phaser.GameObjects.Text;
 
   constructor() {
@@ -44,15 +44,14 @@ export class MenuScene extends Scene {
   addTitlePokemon() {
     const randomPokemon =
       allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)];
-    this.titlePokemon = new Pokemon(
-      {
-        scene: this,
-        x: 400,
-        y: 300,
-        key: randomPokemon,
-      },
-      randomPokemon
-    ).setInteractive();
+    this.titlePokemon = new PokemonObject({
+      scene: this,
+      x: 400,
+      y: 300,
+      id: randomPokemon,
+      name: randomPokemon,
+      side: 'player',
+    }).setInteractive();
 
     this.titlePokemon
       .on(

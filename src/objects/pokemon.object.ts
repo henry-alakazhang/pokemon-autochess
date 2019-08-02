@@ -1,31 +1,44 @@
 import { Scene } from 'phaser';
-import { pokemonData, PokemonName } from '../core/pokemon.model';
+import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { FloatingText } from './floating-text.object';
 
 interface SpriteParams {
   readonly scene: Scene;
   readonly x: number;
   readonly y: number;
-  readonly key: string;
+  readonly id: string;
+  readonly name: PokemonName;
   readonly frame?: string | number;
+  readonly side: 'player' | 'enemy';
 }
 
 export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
-export class Pokemon extends Phaser.GameObjects.Sprite {
+export class PokemonObject extends Phaser.GameObjects.Sprite {
   private sprite: Phaser.GameObjects.Sprite;
   private hpBar: Phaser.GameObjects.Graphics;
 
   private currentHP: number;
   private maxHP: number;
 
-  constructor(params: SpriteParams, private key: PokemonName) {
-    super(params.scene, params.x, params.y, params.key, params.frame);
+  public id: string;
+  public name: PokemonName;
+  public side: 'player' | 'enemy';
+  public basePokemon: Pokemon;
+
+  // TODO: clean up messiness in model
+  constructor(params: SpriteParams) {
+    super(params.scene, params.x, params.y, params.name, params.frame);
+
+    this.id = params.id;
+    this.name = params.name;
 
     // load data from Pokemon data
-    this.currentHP = this.maxHP = pokemonData[key].maxHP;
+    this.currentHP = this.maxHP = pokemonData[params.name].maxHP;
+    this.basePokemon = pokemonData[params.name];
+    this.side = params.side;
 
-    this.sprite = this.scene.add.sprite(this.x, this.y, key);
+    this.sprite = this.scene.add.sprite(this.x, this.y, params.name);
     // default state is facing the player
     this.playAnimation('down');
 
@@ -66,7 +79,7 @@ export class Pokemon extends Phaser.GameObjects.Sprite {
   }
 
   playAnimation(type: PokemonAnimationType) {
-    this.sprite.play(`${this.key}--${type}`);
+    this.sprite.play(`${this.name}--${type}`);
   }
 
   public dealDamage(amount: number) {

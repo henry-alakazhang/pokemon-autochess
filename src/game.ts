@@ -1,6 +1,6 @@
 import { Game } from 'phaser';
 import { BootScene } from './scenes/boot.scene';
-import { GameScene } from './scenes/game.scene';
+import { GameScene } from './scenes/game/game.scene';
 import { MenuScene } from './scenes/menu.scene';
 import { PreloadScene } from './scenes/preload.scene';
 
