@@ -7,7 +7,8 @@ export interface Coords {
 
 /**
  * Gets the nearest enemy for the Pokemon at the target coordinates
- * Checks first by squares 1 away, then 2, then 3 etc, going around clockwise starting at the top.
+ * Uses a breadth-first search, checking squares 1 away, then 2, then 3 etc
+ * going around clockwise starting at the right
  *
  * ie.
  *     5
@@ -18,7 +19,11 @@ export interface Coords {
  */
 export function getNearestTarget(
   board: GameScene['board'],
-  { x, y }: Coords
+  { x, y }: Coords,
+  /** width of the board */
+  width: number,
+  /** height of the board */
+  height: number
 ): Coords | undefined {
   const self = board[x][y];
   if (!self) {
@@ -31,7 +36,7 @@ export function getNearestTarget(
   // don't question it or look too closely
 
   // outer loop: distance
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= width + height - 2; i++) {
     // returned coordinates
     let x2 = x + i;
     let y2 = y;
@@ -46,7 +51,7 @@ export function getNearestTarget(
     for (let step of [[-1, 1], [-1, -1], [1, -1], [1, 1]]) {
       for (let k = 0; k < i; k++) {
         // if still on board
-        if (x2 < 5 && y2 < 5) {
+        if (0 <= x2 && x2 < width && 0 <= y2 && y2 < height) {
           const target = board[x2][y2];
           // opposite side matched: target this one
           if (target && target.side !== side) {

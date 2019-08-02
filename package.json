@@ -5,13 +5,19 @@
     "build:dev": "webpack --env dev",
     "build:prod": "webpack --env prod",
     "start": "webpack-dev-server -d --env dev",
-    "watch": "webpack --env dev --watch"
+    "watch": "webpack --env dev --watch",
+    "test": "ts-mocha src/**/*.spec.ts"
   },
   "devDependencies": {
+    "@types/expect": "^1.20.4",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^10.12.2",
     "@types/webpack": "^4.4.17",
+    "expect": "^24.8.0",
+    "mocha": "^6.2.0",
     "raw-loader": "^0.5.1",
     "ts-loader": "^5.3.0",
+    "ts-mocha": "^6.0.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.5.3",
     "webpack": "^4.24.0",

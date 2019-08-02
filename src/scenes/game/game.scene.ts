@@ -92,7 +92,12 @@ export class GameScene extends Scene {
     const attack = pokemon.basePokemon.basicAttack;
     const myCoords = { x, y };
 
-    const targetCoords = getNearestTarget(this.board, myCoords);
+    const targetCoords = getNearestTarget(
+      this.board,
+      myCoords,
+      BOARD_WIDTH,
+      BOARD_WIDTH
+    );
     if (!targetCoords) {
       // do nothing and never do anything agian
       return;
