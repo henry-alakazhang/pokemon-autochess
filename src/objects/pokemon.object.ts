@@ -109,6 +109,14 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
 
     // display damage text
     new FloatingText(this.scene, this.x, this.y, `${actualDamage}`);
+    // play flash effect
+    this.scene.add.tween({
+      targets: this.sprite,
+      duration: 66,
+      alpha: 0.9,
+      onStart: () => this.sprite.setTint(0xdddddd), // slight darken
+      onComplete: () => this.sprite.clearTint(),
+    });
 
     // TODO: move this somewhere more appropriate?
     if (this.currentHP === 0) {
