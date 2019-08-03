@@ -1,3 +1,4 @@
+import { Pokemon } from '../../core/pokemon.model';
 import { GameScene } from './game.scene';
 
 export interface Coords {
@@ -73,4 +74,12 @@ export function getNearestTarget(
  */
 export function getGridDistance(first: Coords, second: Coords) {
   return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
+}
+
+/**
+ * Returns the turn delay in milliseconds for a pokemon.
+ * The delay is (100 / speed) seconds
+ */
+export function getTurnDelay(pokemon: Pokemon) {
+  return 100_000 / pokemon.speed;
 }

@@ -4,7 +4,12 @@ import {
   PokemonAnimationType,
   PokemonObject,
 } from '../../objects/pokemon.object';
-import { Coords, getGridDistance, getNearestTarget } from './game.helpers';
+import {
+  Coords,
+  getGridDistance,
+  getNearestTarget,
+  getTurnDelay,
+} from './game.helpers';
 
 const CELL_WIDTH = 70;
 const BOARD_WIDTH = 5;
@@ -44,12 +49,18 @@ export class GameScene extends Scene {
       1 // line alpha: solid
     );
 
-    this.addPokemon('player', { x: 2, y: 2 }, 'talonflame', 'down');
-    this.addPokemon('enemy', { x: 2, y: 3 }, 'talonflame', 'up');
+    this.addPokemon('player', { x: 2, y: 2 }, 'talonflame', 'right');
+    this.addPokemon('enemy', { x: 3, y: 2 }, 'rotomw', 'left');
 
     this.board.forEach((col, x) => {
       col.forEach((_, y) => {
-        setTimeout(() => this.takeTurn({ x, y }), 0);
+        const pokemon = this.board[x][y];
+        if (pokemon) {
+          setTimeout(
+            () => this.takeTurn({ x, y }),
+            getTurnDelay(pokemon.basePokemon)
+          );
+        }
       });
     });
   }
@@ -130,7 +141,9 @@ export class GameScene extends Scene {
 
     // turn over, wait until next one
     // delay is 100/speed seconds
-    const delay = 100_000 / pokemon.basePokemon.speed;
-    setTimeout(() => this.takeTurn(myCoords), delay);
+    setTimeout(
+      () => this.takeTurn(myCoords),
+      getTurnDelay(pokemon.basePokemon)
+    );
   }
 }

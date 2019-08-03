@@ -9,6 +9,15 @@
           "frameWidth": 64,
           "frameHeight": 64
         }
+      },
+      {
+        "type": "spritesheet",
+        "key": "rotomw",
+        "url": "assets/pokemon/rotomw.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
       }
     ]
   }

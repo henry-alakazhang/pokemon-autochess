@@ -68,6 +68,20 @@ export const pokemonData = {
       stat: 'attack',
     },
   },
+  rotomw: {
+    name: 'Rotom-W',
+    categories: ['water', 'electric'],
+    maxHP: 50,
+    attack: 65,
+    defense: 107,
+    specAttack: 105,
+    specDefense: 107,
+    speed: 86,
+    basicAttack: {
+      range: 1,
+      stat: 'specAttack',
+    },
+  },
 } as const;
 
 export type PokemonName = keyof typeof pokemonData;
