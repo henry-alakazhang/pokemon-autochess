@@ -80,7 +80,7 @@ export class GameScene extends Scene {
       ...coords,
     });
     pokemon.on(
-      Phaser.GameObjects.Events.DESTROY,
+      PokemonObject.Events.Dead,
       () => {
         // rip dead pokemon out of the map
         // TODO find a cleaner way of doing this

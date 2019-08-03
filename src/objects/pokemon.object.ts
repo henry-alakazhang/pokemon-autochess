@@ -15,6 +15,10 @@ interface SpriteParams {
 export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
 export class PokemonObject extends Phaser.GameObjects.Sprite {
+  public static readonly Events = {
+    Dead: 'dead',
+  } as const;
+
   private sprite: Phaser.GameObjects.Sprite;
   private hpBar: Phaser.GameObjects.Graphics;
   private currentHP: number;
@@ -104,22 +108,22 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.redrawHPBar();
 
     // display damage text
-    const floatingText = new FloatingText(
-      this.scene,
-      this.x,
-      this.y,
-      `${actualDamage}`
-    );
+    new FloatingText(this.scene, this.x, this.y, `${actualDamage}`);
 
     // TODO: move this somewhere more appropriate?
     if (this.currentHP === 0) {
-      floatingText.on(
-        Phaser.GameObjects.Events.DESTROY,
-        () => {
+      this.emit(PokemonObject.Events.Dead);
+      // add fade-out animation
+      this.scene.add.tween({
+        targets: this.sprite,
+        duration: 600,
+        ease: 'Exponential.Out',
+        alpha: 0,
+        onComplete: () => {
           this.destroy();
         },
-        this
-      );
+        callbackScope: this,
+      });
     }
   }
 }
