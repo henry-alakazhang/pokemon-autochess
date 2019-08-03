@@ -16,19 +16,13 @@ export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
 export class PokemonObject extends Phaser.GameObjects.Sprite {
   private sprite: Phaser.GameObjects.Sprite;
-
   private hpBar: Phaser.GameObjects.Graphics;
-
   private currentHP: number;
-
   private maxHP: number;
 
   public id: string;
-
   public name: PokemonName;
-
   public side: 'player' | 'enemy';
-
   public basePokemon: Pokemon;
 
   // TODO: clean up messiness in model

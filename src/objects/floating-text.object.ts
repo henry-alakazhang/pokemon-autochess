@@ -1,9 +1,6 @@
 import * as Phaser from 'phaser';
 
 export class FloatingText extends Phaser.GameObjects.Text {
-  // Might as well make this a enum
-  public static readonly COMPLETE = 'complete';
-
   private textObject: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, x: number, y: number, text: string) {

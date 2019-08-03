@@ -7,7 +7,6 @@ export class BootScene extends Scene {
 
   /** Background bar for loading bar */
   private loadingBar: Phaser.GameObjects.Graphics;
-
   /** Coloured overlay representing loading progress */
   private progressBar: Phaser.GameObjects.Graphics;
 

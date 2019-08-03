@@ -77,4 +77,4 @@ export const allPokemonNames = Object.keys(pokemonData) as Array<PokemonName>;
  * this is just to typecheck the PokemonData to make sure each object
  * conforms to the PokemonBaseStats model
  */
-// const typedPokemonData: { [k in PokemonName]: Pokemon } = pokemonData;
+const typedPokemonData: { [k in PokemonName]: Pokemon } = pokemonData;

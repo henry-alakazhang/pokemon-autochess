@@ -22,7 +22,6 @@ export class GameScene extends Scene {
   static readonly KEY = 'GameScene';
 
   private board: Array<Array<PokemonObject | undefined>> = [[], [], [], [], []];
-
   private grid: Phaser.GameObjects.Grid;
 
   constructor() {
