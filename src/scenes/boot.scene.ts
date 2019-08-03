@@ -57,7 +57,7 @@ export class BootScene extends Scene {
       this
     );
 
-    this.load.pack('sprites', 'assets/pack.json');
+    this.load.pack('sprites', 'assets/sprite-pack.json');
   }
 
   update(): void {
