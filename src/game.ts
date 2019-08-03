@@ -4,11 +4,7 @@ import { GameScene } from './scenes/game/game.scene';
 import { MenuScene } from './scenes/menu.scene';
 import { PreloadScene } from './scenes/preload.scene';
 
-export class PokemonAutochessGame extends Game {
-  constructor(config: Phaser.Types.Core.GameConfig) {
-    super(config);
-  }
-}
+export class PokemonAutochessGame extends Game {}
 
 window.onload = () => {
   const game = new PokemonAutochessGame({

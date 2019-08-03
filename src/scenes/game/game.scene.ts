@@ -9,10 +9,19 @@ import { Coords, getGridDistance, getNearestTarget } from './game.helpers';
 const CELL_WIDTH = 70;
 const BOARD_WIDTH = 5;
 
+/**
+ * Returns the graphical x and y coordinates for a spot in the battle grid.
+ * @param x
+ * @param y
+ */
+function getCoordinatesForGrid({ x, y }: Coords): Coords {
+  return { x: 400 + (x - 2) * CELL_WIDTH, y: 300 + (y - 2) * CELL_WIDTH };
+}
+
 export class GameScene extends Scene {
   static readonly KEY = 'GameScene';
 
-  private board: (PokemonObject | undefined)[][] = [[], [], [], [], []];
+  private board: Array<Array<PokemonObject | undefined>> = [[], [], [], [], []];
   private grid: Phaser.GameObjects.Grid;
 
   constructor() {
@@ -124,13 +133,4 @@ export class GameScene extends Scene {
     const delay = 100_000 / pokemon.basePokemon.speed;
     setTimeout(() => this.takeTurn(myCoords), delay);
   }
-}
-
-/**
- * Returns the graphical x and y coordinates for a spot in the battle grid.
- * @param x
- * @param y
- */
-function getCoordinatesForGrid({ x, y }: Coords): Coords {
-  return { x: 400 + (x - 2) * CELL_WIDTH, y: 300 + (y - 2) * CELL_WIDTH };
 }

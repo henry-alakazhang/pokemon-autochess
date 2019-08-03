@@ -3,6 +3,7 @@ import { PokemonObject } from '../../objects/pokemon.object';
 import { getNearestTarget } from './game.helpers';
 
 describe('getNearestTarget', () => {
+  // TODO: Probably want to fix this, @typescript-eslint/no-object-literal-type-assertion
   const playerMock = { side: 'player' } as PokemonObject;
   const enemyMock = { side: 'enemy' } as PokemonObject;
 

@@ -71,7 +71,7 @@ export const pokemonData = {
 } as const;
 
 export type PokemonName = keyof typeof pokemonData;
-export const allPokemonNames = Object.keys(pokemonData) as PokemonName[];
+export const allPokemonNames = Object.keys(pokemonData) as Array<PokemonName>;
 
 /**
  * this is just to typecheck the PokemonData to make sure each object

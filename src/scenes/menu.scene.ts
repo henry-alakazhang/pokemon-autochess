@@ -5,6 +5,7 @@ import { GameScene } from './game/game.scene';
 
 export class MenuScene extends Scene {
   static readonly KEY = 'MenuScene';
+
   private titlePokemon: PokemonObject;
   private startButton: Phaser.GameObjects.Text;
 

@@ -30,7 +30,7 @@ export function getNearestTarget(
     return undefined;
   }
 
-  const side = self.side;
+  const { side } = self;
 
   // the following code is some pathfinding magic
   // don't question it or look too closely
@@ -41,6 +41,7 @@ export function getNearestTarget(
     let x2 = x + i;
     let y2 = y;
 
+    // TODO: Fix this loop, no-restricted-syntax
     // at each loop, there are 4 * dist possible places to go
     // and we will go in clockwise order
     // eg. (1,0) (0,1) (-1,0) (0,-1)
@@ -48,10 +49,10 @@ export function getNearestTarget(
     // if you observe, we can do (x-=1, y+=1) to iterate around the bottom-right
     // then do (x-=1, y-=1) to iterate around the bottom-left
     // and so on
-    for (let step of [[-1, 1], [-1, -1], [1, -1], [1, 1]]) {
+    for (const step of [[-1, 1], [-1, -1], [1, -1], [1, 1]]) {
       for (let k = 0; k < i; k++) {
         // if still on board
-        if (0 <= x2 && x2 < width && 0 <= y2 && y2 < height) {
+        if (x2 >= 0 && x2 < width && y2 >= 0 && y2 < height) {
           const target = board[x2][y2];
           // opposite side matched: target this one
           if (target && target.side !== side) {
