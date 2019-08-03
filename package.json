@@ -4,9 +4,12 @@
   "scripts": {
     "build:dev": "webpack --env dev",
     "build:prod": "webpack --env prod",
+    "fix": "eslint --cache --ext ts . --fix",
+    "lint": "eslint --cache --ext ts .",
+    "prettier": "prettier --write . **/src/**/*.ts",
     "start": "webpack-dev-server -d --env dev",
-    "watch": "webpack --env dev --watch",
-    "test": "ts-mocha src/**/*.spec.ts"
+    "test": "ts-mocha src/**/*.spec.ts",
+    "watch": "webpack --env dev --watch"
   },
   "devDependencies": {
     "@types/expect": "^1.20.4",
