@@ -1,4 +1,4 @@
-import { GameScene } from "./game.scene";
+import { GameScene } from './game.scene';
 
 export interface Coords {
   x: number;
@@ -18,7 +18,7 @@ export interface Coords {
  *     9
  */
 export function getNearestTarget(
-  board: GameScene["board"],
+  board: GameScene['board'],
   { x, y }: Coords,
   /** width of the board */
   width: number,

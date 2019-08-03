@@ -1,9 +1,9 @@
-import { Scene } from "phaser";
-import { allPokemonNames } from "../core/pokemon.model";
-import { MenuScene } from "./menu.scene";
+import { Scene } from 'phaser';
+import { allPokemonNames } from '../core/pokemon.model';
+import { MenuScene } from './menu.scene';
 
 export class BootScene extends Scene {
-  static readonly KEY = "BootScene";
+  static readonly KEY = 'BootScene';
 
   /** Background bar for loading bar */
   private loadingBar: Phaser.GameObjects.Graphics;
@@ -13,12 +13,12 @@ export class BootScene extends Scene {
 
   constructor() {
     super({
-      key: BootScene.KEY
+      key: BootScene.KEY,
     });
   }
 
   preload(): void {
-    this.add.image(400, 100, "logo");
+    this.add.image(400, 100, 'logo');
     this.loadingBar = this.add
       .graphics()
       .fillStyle(0xffffff, 1)
@@ -32,7 +32,7 @@ export class BootScene extends Scene {
 
     // pass value to change the loading bar fill
     this.load.on(
-      "progress",
+      'progress',
       (progress: number) => {
         this.progressBar
           .clear()
@@ -49,7 +49,7 @@ export class BootScene extends Scene {
 
     // delete bar graphics, when loading complete
     this.load.on(
-      "complete",
+      'complete',
       () => {
         this.setupAnimations();
         this.progressBar.destroy();
@@ -58,7 +58,7 @@ export class BootScene extends Scene {
       this
     );
 
-    this.load.pack("sprites", "assets/pack.json");
+    this.load.pack('sprites', 'assets/pack.json');
   }
 
   update(): void {
@@ -72,37 +72,37 @@ export class BootScene extends Scene {
         key: `${name}--down`,
         frames: this.anims.generateFrameNumbers(name, {
           start: 0,
-          end: 3
+          end: 3,
         }),
         frameRate: 6,
-        repeat: -1
+        repeat: -1,
       });
       this.anims.create({
         key: `${name}--left`,
         frames: this.anims.generateFrameNumbers(name, {
           start: 4,
-          end: 7
+          end: 7,
         }),
         frameRate: 6,
-        repeat: -1
+        repeat: -1,
       });
       this.anims.create({
         key: `${name}--right`,
         frames: this.anims.generateFrameNumbers(name, {
           start: 8,
-          end: 11
+          end: 11,
         }),
         frameRate: 6,
-        repeat: -1
+        repeat: -1,
       });
       this.anims.create({
         key: `${name}--up`,
         frames: this.anims.generateFrameNumbers(name, {
           start: 12,
-          end: 15
+          end: 15,
         }),
         frameRate: 6,
-        repeat: -1
+        repeat: -1,
       });
     });
   }

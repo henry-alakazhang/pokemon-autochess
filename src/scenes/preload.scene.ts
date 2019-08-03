@@ -1,17 +1,17 @@
-import { Scene } from "phaser";
-import { BootScene } from "./boot.scene";
+import { Scene } from 'phaser';
+import { BootScene } from './boot.scene';
 
 export class PreloadScene extends Scene {
-  static readonly KEY = "PreloadScene";
+  static readonly KEY = 'PreloadScene';
 
   constructor() {
     super({
-      key: PreloadScene.KEY
+      key: PreloadScene.KEY,
     });
   }
 
   preload(): void {
-    this.load.image("logo", "assets/logo.png");
+    this.load.image('logo', 'assets/logo.png');
   }
 
   update(): void {

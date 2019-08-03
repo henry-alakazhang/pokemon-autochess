@@ -1,10 +1,10 @@
-import { Scene } from "phaser";
-import { PokemonName } from "../../core/pokemon.model";
+import { Scene } from 'phaser';
+import { PokemonName } from '../../core/pokemon.model';
 import {
   PokemonAnimationType,
-  PokemonObject
-} from "../../objects/pokemon.object";
-import { Coords, getGridDistance, getNearestTarget } from "./game.helpers";
+  PokemonObject,
+} from '../../objects/pokemon.object';
+import { Coords, getGridDistance, getNearestTarget } from './game.helpers';
 
 const CELL_WIDTH = 70;
 const BOARD_WIDTH = 5;
@@ -19,7 +19,7 @@ function getCoordinatesForGrid({ x, y }: Coords): Coords {
 }
 
 export class GameScene extends Scene {
-  static readonly KEY = "GameScene";
+  static readonly KEY = 'GameScene';
 
   private board: Array<Array<PokemonObject | undefined>> = [[], [], [], [], []];
 
@@ -27,7 +27,7 @@ export class GameScene extends Scene {
 
   constructor() {
     super({
-      key: GameScene.KEY
+      key: GameScene.KEY,
     });
   }
 
@@ -45,8 +45,8 @@ export class GameScene extends Scene {
       1 // line alpha: solid
     );
 
-    this.addPokemon("player", { x: 2, y: 2 }, "talonflame", "down");
-    this.addPokemon("enemy", { x: 2, y: 3 }, "talonflame", "up");
+    this.addPokemon('player', { x: 2, y: 2 }, 'talonflame', 'down');
+    this.addPokemon('enemy', { x: 2, y: 3 }, 'talonflame', 'up');
 
     this.board.forEach((col, x) => {
       col.forEach((_, y) => {
@@ -56,7 +56,7 @@ export class GameScene extends Scene {
   }
 
   addPokemon(
-    side: "player" | "enemy",
+    side: 'player' | 'enemy',
     { x, y }: Coords,
     name: PokemonName,
     startingAnimation?: PokemonAnimationType
@@ -67,7 +67,7 @@ export class GameScene extends Scene {
       id: `${name}${x}${y}`,
       name,
       side,
-      ...coords
+      ...coords,
     });
     pokemon.on(
       Phaser.GameObjects.Events.DESTROY,

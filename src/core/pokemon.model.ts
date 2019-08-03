@@ -1,33 +1,33 @@
 export type Type =
-  | "normal"
-  | "fire"
-  | "fighting"
-  | "water"
-  | "flying"
-  | "grass"
-  | "poison"
-  | "electric"
-  | "ground"
-  | "psychic"
-  | "rock"
-  | "ice"
-  | "bug"
-  | "dragon"
-  | "ghost"
-  | "dark"
-  | "steel"
-  | "fairy";
+  | 'normal'
+  | 'fire'
+  | 'fighting'
+  | 'water'
+  | 'flying'
+  | 'grass'
+  | 'poison'
+  | 'electric'
+  | 'ground'
+  | 'psychic'
+  | 'rock'
+  | 'ice'
+  | 'bug'
+  | 'dragon'
+  | 'ghost'
+  | 'dark'
+  | 'steel'
+  | 'fairy';
 
 export type Role =
-  | "setup sweeper"
-  | "physical attacker"
-  | "special attacker"
-  | "bulky attacker"
-  | "hazard setter"
-  | "status support"
-  | "revenge killer"
-  | "wall breaker"
-  | "wall";
+  | 'setup sweeper'
+  | 'physical attacker'
+  | 'special attacker'
+  | 'bulky attacker'
+  | 'hazard setter'
+  | 'status support'
+  | 'revenge killer'
+  | 'wall breaker'
+  | 'wall';
 
 export type Category = Type | Role;
 
@@ -35,7 +35,7 @@ export interface Attack {
   /* number of squares away the move can reach */
   readonly range: number;
   /* the pokemon stat used for calculating damage */
-  readonly stat: "attack" | "specAttack";
+  readonly stat: 'attack' | 'specAttack';
 }
 
 export interface Pokemon {
@@ -55,8 +55,8 @@ export interface Pokemon {
  */
 export const pokemonData = {
   talonflame: {
-    name: "Talonflame",
-    categories: ["fire", "flying", "physical attacker"],
+    name: 'Talonflame',
+    categories: ['fire', 'flying', 'physical attacker'],
     maxHP: 78,
     attack: 81,
     defense: 71,
@@ -65,9 +65,9 @@ export const pokemonData = {
     speed: 126,
     basicAttack: {
       range: 1,
-      stat: "attack"
-    }
-  }
+      stat: 'attack',
+    },
+  },
 } as const;
 
 export type PokemonName = keyof typeof pokemonData;

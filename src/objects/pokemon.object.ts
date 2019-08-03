@@ -1,6 +1,6 @@
-import * as Phaser from "phaser";
-import { Pokemon, pokemonData, PokemonName } from "../core/pokemon.model";
-import { FloatingText } from "./floating-text.object";
+import * as Phaser from 'phaser';
+import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
+import { FloatingText } from './floating-text.object';
 
 interface SpriteParams {
   readonly scene: Phaser.Scene;
@@ -9,10 +9,10 @@ interface SpriteParams {
   readonly id: string;
   readonly name: PokemonName;
   readonly frame?: string | number;
-  readonly side: "player" | "enemy";
+  readonly side: 'player' | 'enemy';
 }
 
-export type PokemonAnimationType = "left" | "right" | "up" | "down";
+export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
 export class PokemonObject extends Phaser.GameObjects.Sprite {
   private sprite: Phaser.GameObjects.Sprite;
@@ -27,7 +27,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
 
   public name: PokemonName;
 
-  public side: "player" | "enemy";
+  public side: 'player' | 'enemy';
 
   public basePokemon: Pokemon;
 
@@ -46,7 +46,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
 
     this.sprite = this.scene.add.sprite(this.x, this.y, this.name);
     // default state is facing the player
-    this.playAnimation("down");
+    this.playAnimation('down');
 
     this.hpBar = this.scene.add.graphics();
     this.redrawHPBar();
