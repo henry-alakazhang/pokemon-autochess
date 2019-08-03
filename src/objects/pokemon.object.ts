@@ -108,7 +108,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.redrawHPBar();
 
     // display damage text
-    new FloatingText(this.scene, this.x, this.y, `${actualDamage}`);
+    new FloatingText(this.scene, this.x, this.y, `${amount}`);
     // play flash effect
     this.scene.add.tween({
       targets: this.sprite,
