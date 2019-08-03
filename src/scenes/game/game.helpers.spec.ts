@@ -1,10 +1,11 @@
-import * as expect from 'expect';
-import { PokemonObject } from '../../objects/pokemon.object';
-import { getNearestTarget } from './game.helpers';
+import * as expect from "expect";
+import { PokemonObject } from "../../objects/pokemon.object";
+import { getNearestTarget } from "./game.helpers";
 
-describe('getNearestTarget', () => {
-  const playerMock = { side: 'player' } as PokemonObject;
-  const enemyMock = { side: 'enemy' } as PokemonObject;
+describe("getNearestTarget", () => {
+  // TODO: Probably want to fix this, @typescript-eslint/no-object-literal-type-assertion
+  const playerMock = { side: "player" } as PokemonObject;
+  const enemyMock = { side: "enemy" } as PokemonObject;
 
   it(`should find an enemy if they're right next to the player
       ...

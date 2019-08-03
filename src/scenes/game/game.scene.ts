@@ -1,23 +1,33 @@
-import { Scene } from 'phaser';
-import { PokemonName } from '../../core/pokemon.model';
+import { Scene } from "phaser";
+import { PokemonName } from "../../core/pokemon.model";
 import {
   PokemonAnimationType,
-  PokemonObject,
-} from '../../objects/pokemon.object';
-import { Coords, getGridDistance, getNearestTarget } from './game.helpers';
+  PokemonObject
+} from "../../objects/pokemon.object";
+import { Coords, getGridDistance, getNearestTarget } from "./game.helpers";
 
 const CELL_WIDTH = 70;
 const BOARD_WIDTH = 5;
 
-export class GameScene extends Scene {
-  static readonly KEY = 'GameScene';
+/**
+ * Returns the graphical x and y coordinates for a spot in the battle grid.
+ * @param x
+ * @param y
+ */
+function getCoordinatesForGrid({ x, y }: Coords): Coords {
+  return { x: 400 + (x - 2) * CELL_WIDTH, y: 300 + (y - 2) * CELL_WIDTH };
+}
 
-  private board: (PokemonObject | undefined)[][] = [[], [], [], [], []];
+export class GameScene extends Scene {
+  static readonly KEY = "GameScene";
+
+  private board: Array<Array<PokemonObject | undefined>> = [[], [], [], [], []];
+
   private grid: Phaser.GameObjects.Grid;
 
   constructor() {
     super({
-      key: GameScene.KEY,
+      key: GameScene.KEY
     });
   }
 
@@ -35,8 +45,8 @@ export class GameScene extends Scene {
       1 // line alpha: solid
     );
 
-    this.addPokemon('player', { x: 2, y: 2 }, 'talonflame', 'down');
-    this.addPokemon('enemy', { x: 2, y: 3 }, 'talonflame', 'up');
+    this.addPokemon("player", { x: 2, y: 2 }, "talonflame", "down");
+    this.addPokemon("enemy", { x: 2, y: 3 }, "talonflame", "up");
 
     this.board.forEach((col, x) => {
       col.forEach((_, y) => {
@@ -46,7 +56,7 @@ export class GameScene extends Scene {
   }
 
   addPokemon(
-    side: 'player' | 'enemy',
+    side: "player" | "enemy",
     { x, y }: Coords,
     name: PokemonName,
     startingAnimation?: PokemonAnimationType
@@ -57,7 +67,7 @@ export class GameScene extends Scene {
       id: `${name}${x}${y}`,
       name,
       side,
-      ...coords,
+      ...coords
     });
     pokemon.on(
       Phaser.GameObjects.Events.DESTROY,
@@ -124,13 +134,4 @@ export class GameScene extends Scene {
     const delay = 100_000 / pokemon.basePokemon.speed;
     setTimeout(() => this.takeTurn(myCoords), delay);
   }
-}
-
-/**
- * Returns the graphical x and y coordinates for a spot in the battle grid.
- * @param x
- * @param y
- */
-function getCoordinatesForGrid({ x, y }: Coords): Coords {
-  return { x: 400 + (x - 2) * CELL_WIDTH, y: 300 + (y - 2) * CELL_WIDTH };
 }

@@ -1,29 +1,34 @@
-import { Scene } from 'phaser';
-import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
-import { FloatingText } from './floating-text.object';
+import * as Phaser from "phaser";
+import { Pokemon, pokemonData, PokemonName } from "../core/pokemon.model";
+import { FloatingText } from "./floating-text.object";
 
 interface SpriteParams {
-  readonly scene: Scene;
+  readonly scene: Phaser.Scene;
   readonly x: number;
   readonly y: number;
   readonly id: string;
   readonly name: PokemonName;
   readonly frame?: string | number;
-  readonly side: 'player' | 'enemy';
+  readonly side: "player" | "enemy";
 }
 
-export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
+export type PokemonAnimationType = "left" | "right" | "up" | "down";
 
 export class PokemonObject extends Phaser.GameObjects.Sprite {
   private sprite: Phaser.GameObjects.Sprite;
+
   private hpBar: Phaser.GameObjects.Graphics;
 
   private currentHP: number;
+
   private maxHP: number;
 
   public id: string;
+
   public name: PokemonName;
-  public side: 'player' | 'enemy';
+
+  public side: "player" | "enemy";
+
   public basePokemon: Pokemon;
 
   // TODO: clean up messiness in model
@@ -34,13 +39,14 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.name = params.name;
 
     // load data from Pokemon data
-    this.currentHP = this.maxHP = pokemonData[params.name].maxHP;
-    this.basePokemon = pokemonData[params.name];
+    this.maxHP = pokemonData[this.name].maxHP;
+    this.currentHP = this.maxHP;
+    this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
-    this.sprite = this.scene.add.sprite(this.x, this.y, params.name);
+    this.sprite = this.scene.add.sprite(this.x, this.y, this.name);
     // default state is facing the player
-    this.playAnimation('down');
+    this.playAnimation("down");
 
     this.hpBar = this.scene.add.graphics();
     this.redrawHPBar();
@@ -57,15 +63,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.hpBar.y = this.y;
     this.hpBar.clear();
 
-    const hpBarColor =
-      this.currentHP >= this.maxHP / 2
-        ? // high HP: green
-          0x32cd32
-        : this.currentHP >= this.maxHP / 5
-        ? // low HP: orange
-          0xffa500
-        : // critical: red
-          0xdc143c;
+    const hpBarColor = this.getHPBarColor();
     this.hpBar.fillStyle(hpBarColor, 1);
     this.hpBar.fillRect(
       -this.width / 2,
@@ -76,6 +74,27 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.hpBar.lineStyle(1, 0x000000);
     this.hpBar.strokeRect(-this.width / 2, -this.height / 2, this.width, 8);
     this.hpBar.setDepth(1);
+  }
+
+  getHPBarColor() {
+    const fiftyPercentHP = this.maxHP / 2;
+    const twentyPercentHP = this.maxHP / 5;
+
+    // 50% or Higher
+    if (this.currentHP >= fiftyPercentHP) {
+      // High HP: Green
+      return 0x32cd32;
+    }
+
+    // Between 20% and 50%
+    if (this.currentHP >= twentyPercentHP) {
+      // Low HP: Orange
+      return 0xffa500;
+    }
+
+    // Between 0% and 20%
+    // Critical: Red
+    return 0xdc143c;
   }
 
   playAnimation(type: PokemonAnimationType) {
