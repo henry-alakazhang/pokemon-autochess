@@ -36,6 +36,9 @@ export interface Attack {
   readonly range: number;
   /* the pokemon stat used for calculating damage */
   readonly stat: 'attack' | 'specAttack';
+  /* the pokemon stat used for calculating resistance
+   * defaults to the opposite of the attack stat */
+  readonly defenseStat?: 'defense' | 'specDefense';
 }
 
 export interface Pokemon {

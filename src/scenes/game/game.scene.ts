@@ -133,9 +133,15 @@ export class GameScene extends Scene {
       return;
     }
 
+    // use specified defenseStat, or the one that correlates to the attack stat
+    const defenseStat =
+      attack.defenseStat || attack.stat === 'attack'
+        ? 'defense'
+        : 'specDefense';
+
     const damage = Math.floor(
       (pokemon.basePokemon[attack.stat] * 10) /
-        targetPokemon.basePokemon.defense
+        targetPokemon.basePokemon[defenseStat]
     );
     targetPokemon.dealDamage(damage);
 
