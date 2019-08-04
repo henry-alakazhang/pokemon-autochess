@@ -11,12 +11,12 @@ Gen 6 sprites credit to [princess-phoenix](https://www.deviantart.com/princess-p
 
 Clone the repo
 
-Install Node -> https://nodejs.org/en/
-Install Yarn -> https://yarnpkg.com/en/docs/install
+Install Node -> https://nodejs.org/en/    
+Install Yarn -> https://yarnpkg.com/en/docs/install    
 
-`yarn` to install dependencies
-`yarn start` to start the local dev server
-Visit `localhost:8080` to access the game
+`yarn` to install dependencies    
+`yarn start` to start the local dev server    
+Visit `localhost:8080` to access the game    
 
 ## Game Design Resources
 https://drive.google.com/open?id=136L8KTz_NVKMUWZYl-B14twMeDyIot6p
