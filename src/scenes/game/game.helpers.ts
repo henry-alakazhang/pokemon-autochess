@@ -7,10 +7,28 @@ export interface Coords {
   y: number;
 }
 
+/*
+  This file has a `getNearestTarget` and a `pathfind` function,
+  which are both implementations of breadth-first search.
+
+  The key difference is that `getNearestTarget` ignores collision,
+  looking for just the nearest Pokemon that can be targetted. 
+  `pathfind` is, as its name suggests, a proper pathfinding algorithm.
+
+  Both of these are needed, because certain attacks have range.
+  Some Pokemon can attack targets that they can't reach via movement.
+  As such, the targetting algorithm needs to ignore collisions.
+
+  If anyone can think of a cleaner way to do this, feel free to make a PR.
+
+  TODO: I can probably shrink these down to one function, or at least
+  share the BFS logic instead of doing some messy super-optimised code
+  in one function, and human-readable logic in the other.
+ */
+
 /**
  * Gets the nearest enemy for the Pokemon at the target coordinates
- * Uses a breadth-first search, checking squares 1 away, then 2, then 3 etc
- * going around clockwise starting at the right
+ * Uses a collisionless breadth-first search
  *
  * ie.
  *     5
@@ -91,10 +109,10 @@ export function pathfind(
     return undefined;
   }
 
+  // FIXME: Don't hardcode this length
   /** stores the fastest way to reach this step */
   let prev: Coords[][] = [[], [], [], [], []];
   let seen: boolean[][] = [[], [], [], [], []];
-  seen[start.x][start.y] = true;
 
   let queue = [start];
   while (queue.length > 0) {
@@ -116,10 +134,12 @@ export function pathfind(
     ].forEach(newCoord => {
       if (
         newCoord.x >= 0 &&
-        newCoord.x < prev.length &&
+        // FIXME: don't hardcode this length
+        newCoord.x < board.length &&
         newCoord.y >= 0 &&
         newCoord.y < board.length &&
-        !seen[newCoord.x][newCoord.y]
+        !seen[newCoord.x][newCoord.y] &&
+        !board[newCoord.x][newCoord.y]
       ) {
         queue.push(newCoord);
         seen[newCoord.x][newCoord.y] = true;
