@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
+import { Coords } from '../scenes/game/game.helpers';
 import { FloatingText } from './floating-text.object';
 
 interface SpriteParams {
@@ -95,8 +96,15 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     return 0xdc143c;
   }
 
-  playAnimation(type: PokemonAnimationType) {
+  public playAnimation(type: PokemonAnimationType) {
     this.sprite.play(`${this.name}--${type}`);
+  }
+
+  public move({ x, y }: Coords) {
+    // TODO: play some animation / smooth movement
+    super.setPosition(x, y);
+    this.sprite.setPosition(x, y);
+    this.hpBar.setPosition(x, y);
   }
 
   public dealDamage(amount: number) {

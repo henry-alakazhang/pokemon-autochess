@@ -1,4 +1,5 @@
 import { Pokemon } from '../../core/pokemon.model';
+import { PokemonAnimationType } from '../../objects/pokemon.object';
 import { GameScene } from './game.scene';
 
 export interface Coords {
@@ -70,6 +71,78 @@ export function getNearestTarget(
 }
 
 /**
+ * Builds a path from start to somewhere in range of the target
+ * Returns the first step in the path.
+ */
+export function pathfind(
+  board: GameScene['board'],
+  /** Self X and Y coordinates */
+  start: Coords,
+  /** Target's X and Y coordinates */
+  target: Coords,
+  /** Attack range to count as "reached" */
+  range: number
+): Coords | undefined {
+  // uses BFS
+  // TODO: if the AI ends up being super stupid, use an optimal-path algorithm instead
+
+  const self = board[start.x][start.y];
+  if (!self) {
+    return undefined;
+  }
+
+  /** stores the fastest way to reach this step */
+  let prev: Coords[][] = [[], [], [], [], []];
+  let seen: boolean[][] = [[], [], [], [], []];
+  seen[start.x][start.y] = true;
+
+  let queue = [start];
+  while (queue.length > 0) {
+    // lazy cast because the loop condition already checks there'll be an element
+    const check = queue.shift() as Coords;
+
+    // reached a goal state, end
+    if (getGridDistance(check, target) <= range) {
+      prev[target.x][target.y] = check;
+      break;
+    }
+
+    // else enqueue more items
+    [
+      { x: check.x + 1, y: check.y },
+      { x: check.x - 1, y: check.y },
+      { x: check.x, y: check.y + 1 },
+      { x: check.x, y: check.y - 1 },
+    ].forEach(newCoord => {
+      if (
+        newCoord.x >= 0 &&
+        newCoord.x < prev.length &&
+        newCoord.y >= 0 &&
+        newCoord.y < board.length &&
+        !seen[newCoord.x][newCoord.y]
+      ) {
+        queue.push(newCoord);
+        seen[newCoord.x][newCoord.y] = true;
+        prev[newCoord.x][newCoord.y] = check;
+      }
+    });
+  }
+
+  // trace back along the `prev` map to find the first step
+  let curr = target;
+  while (prev[curr.x][curr.y]) {
+    if (coordsEqual(prev[curr.x][curr.y], start)) {
+      return curr;
+    }
+    curr = prev[curr.x][curr.y];
+  }
+}
+
+export function coordsEqual(first: Coords, second: Coords) {
+  return first.x === second.x && first.y === second.y;
+}
+
+/**
  * Returns the Manhattan distance between two coordinates
  */
 export function getGridDistance(first: Coords, second: Coords) {
@@ -82,4 +155,17 @@ export function getGridDistance(first: Coords, second: Coords) {
  */
 export function getTurnDelay(pokemon: Pokemon) {
   return 100_000 / pokemon.speed;
+}
+
+export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
+  const horizontal = second.x - first.x;
+  const vertical = second.y - first.y;
+
+  if (Math.abs(horizontal) > Math.abs(vertical)) {
+    // left or right
+    return horizontal < 0 ? 'left' : 'right';
+  } else {
+    // up or down
+    return vertical < 0 ? 'up' : 'down';
+  }
 }

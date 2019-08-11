@@ -1,12 +1,12 @@
 import * as expect from 'expect';
 import { PokemonObject } from '../../objects/pokemon.object';
-import { getNearestTarget } from './game.helpers';
+import { getNearestTarget, pathfind } from './game.helpers';
+
+// TODO: Probably want to fix this, @typescript-eslint/no-object-literal-type-assertion
+const playerMock = { side: 'player' } as PokemonObject;
+const enemyMock = { side: 'enemy' } as PokemonObject;
 
 describe('getNearestTarget', () => {
-  // TODO: Probably want to fix this, @typescript-eslint/no-object-literal-type-assertion
-  const playerMock = { side: 'player' } as PokemonObject;
-  const enemyMock = { side: 'enemy' } as PokemonObject;
-
   it(`should find an enemy if they're right next to the player
       ...
       .AB
@@ -197,5 +197,37 @@ describe('getNearestTarget', () => {
         4
       )
     ).toEqual({ x: 3, y: 2 });
+  });
+});
+
+describe.only('pathfind', () => {
+  it(`should find a path between two points
+    A>B
+    ...
+    ...
+  `, () => {
+    expect(
+      pathfind(
+        [[enemyMock], [], [playerMock]],
+        { x: 0, y: 0 },
+        { x: 2, y: 0 },
+        1
+      )
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it(`should find a path between further points
+    A>.
+    ...
+    ..B
+  `, () => {
+    expect(
+      pathfind(
+        [[enemyMock], [], [undefined, undefined, playerMock]],
+        { x: 0, y: 0 },
+        { x: 2, y: 2 },
+        1
+      )
+    ).toEqual({ x: 1, y: 0 });
   });
 });
