@@ -1,12 +1,12 @@
 import * as expect from 'expect';
 import { PokemonObject } from '../../objects/pokemon.object';
-import { getNearestTarget } from './game.helpers';
+import { getFacing, getNearestTarget, pathfind } from './game.helpers';
+
+// TODO: Probably want to fix this, @typescript-eslint/no-object-literal-type-assertion
+const playerMock = { side: 'player' } as PokemonObject;
+const enemyMock = { side: 'enemy' } as PokemonObject;
 
 describe('getNearestTarget', () => {
-  // TODO: Probably want to fix this, @typescript-eslint/no-object-literal-type-assertion
-  const playerMock = { side: 'player' } as PokemonObject;
-  const enemyMock = { side: 'enemy' } as PokemonObject;
-
   it(`should find an enemy if they're right next to the player
       ...
       .AB
@@ -197,5 +197,90 @@ describe('getNearestTarget', () => {
         4
       )
     ).toEqual({ x: 3, y: 2 });
+  });
+});
+
+describe('pathfind', () => {
+  it(`should find a path between two points
+    A>B
+    ...
+    ...`, () => {
+    expect(
+      pathfind(
+        [[enemyMock], [], [playerMock]],
+        { x: 0, y: 0 },
+        { x: 2, y: 0 },
+        1
+      )
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it(`should find a path between distant points
+    A>.
+    ...
+    ..B`, () => {
+    expect(
+      pathfind(
+        [[enemyMock], [], [undefined, undefined, playerMock]],
+        { x: 0, y: 0 },
+        { x: 2, y: 2 },
+        1
+      )
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it(`should go around obstacles
+    AX.
+    v..
+    ..B`, () => {
+    expect(
+      pathfind(
+        [[enemyMock], [playerMock], [undefined, undefined, playerMock]],
+        { x: 0, y: 0 },
+        { x: 2, y: 2 },
+        1
+      )
+    ).toEqual({ x: 0, y: 1 });
+  });
+
+  it(`should return cleanly if there's no path
+    A.X
+    .X.
+    X.B`, () => {
+    expect(
+      pathfind(
+        [
+          [enemyMock, playerMock],
+          [playerMock],
+          [playerMock, undefined, playerMock],
+        ],
+        { x: 0, y: 0 },
+        { x: 2, y: 2 },
+        1
+      )
+    ).toEqual(undefined);
+  });
+});
+
+describe('getFacing', () => {
+  it('should return facing properly in cardinal directions', () => {
+    expect(getFacing({ x: 0, y: 0 }, { x: 0, y: -3 })).toEqual('up');
+    expect(getFacing({ x: 0, y: 0 }, { x: 0, y: 3 })).toEqual('down');
+    expect(getFacing({ x: 0, y: 0 }, { x: -3, y: 0 })).toEqual('left');
+    expect(getFacing({ x: 0, y: 0 }, { x: 3, y: 0 })).toEqual('right');
+  });
+
+  it('should return facing at a semi-horizontal angle', () => {
+    expect(getFacing({ x: 0, y: 0 }, { x: 2, y: 1 })).toEqual('right');
+  });
+
+  it('should return facing at a semi-vertical angle', () => {
+    expect(getFacing({ x: 0, y: 0 }, { x: 1, y: 2 })).toEqual('down');
+  });
+
+  it('should return something valid at a full diagonal', () => {
+    expect(['up', 'down', 'left', 'right']).toContain(
+      getFacing({ x: 0, y: 0 }, { x: 1, y: 1 })
+    );
   });
 });

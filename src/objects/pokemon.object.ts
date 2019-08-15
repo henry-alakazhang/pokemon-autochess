@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
+import { Coords, getTurnDelay } from '../scenes/game/game.helpers';
 import { FloatingText } from './floating-text.object';
 
 interface SpriteParams {
@@ -50,6 +51,19 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.redrawHPBar();
   }
 
+  setPosition(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+    super.setPosition(x, y);
+    if (this.sprite) {
+      this.sprite.setPosition(x, y);
+    }
+    if (this.hpBar) {
+      this.hpBar.setPosition(x, y);
+    }
+    return this;
+  }
+
   destroy() {
     this.sprite.destroy();
     this.hpBar.destroy();
@@ -95,8 +109,21 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     return 0xdc143c;
   }
 
-  playAnimation(type: PokemonAnimationType) {
+  public playAnimation(type: PokemonAnimationType) {
     this.sprite.play(`${this.name}--${type}`);
+  }
+
+  public move({ x, y }: Coords) {
+    this.scene.add.tween({
+      targets: [this.sprite, this.hpBar],
+      duration: getTurnDelay(this.basePokemon) * 0.75,
+      x,
+      y,
+      ease: 'Quad',
+      onComplete: () => {
+        this.setPosition(x, y);
+      },
+    });
   }
 
   public dealDamage(amount: number) {

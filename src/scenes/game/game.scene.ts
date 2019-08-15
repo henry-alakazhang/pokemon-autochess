@@ -6,9 +6,11 @@ import {
 } from '../../objects/pokemon.object';
 import {
   Coords,
+  getFacing,
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
+  pathfind,
 } from './game.helpers';
 
 const CELL_WIDTH = 70;
@@ -49,19 +51,11 @@ export class GameScene extends Scene {
       1 // line alpha: solid
     );
 
-    this.addPokemon('player', { x: 2, y: 2 }, 'talonflame', 'right');
+    this.addPokemon('player', { x: 0, y: 1 }, 'talonflame', 'right');
     this.addPokemon('enemy', { x: 3, y: 2 }, 'rotomw', 'left');
 
     this.board.forEach((col, x) => {
-      col.forEach((_, y) => {
-        const pokemon = this.board[x][y];
-        if (pokemon) {
-          setTimeout(
-            () => this.takeTurn({ x, y }),
-            getTurnDelay(pokemon.basePokemon)
-          );
-        }
-      });
+      col.forEach((_, y) => this.setTurn({ x, y }));
     });
   }
 
@@ -99,6 +93,33 @@ export class GameScene extends Scene {
     this.board[x][y] = pokemon;
   }
 
+  movePokemon(start: Coords, end: Coords) {
+    const facing = getFacing(start, end);
+    const mover = this.board[start.x][start.y];
+    if (!mover) {
+      return;
+    }
+
+    mover.playAnimation(facing);
+    this.board[end.x][end.y] = mover;
+    this.board[start.x][start.y] = undefined;
+    const newPosition = getCoordinatesForGrid(end);
+    mover.move(newPosition);
+  }
+
+  /**
+   * Adds a turn for the Pokemon at a given coordinate
+   */
+  setTurn({ x, y }: Coords) {
+    const pokemon = this.board[x][y];
+    if (pokemon) {
+      setTimeout(
+        () => this.takeTurn({ x, y }),
+        getTurnDelay(pokemon.basePokemon)
+      );
+    }
+  }
+
   /**
    * Takes a turn for the Pokemon at the given coordinates
    */
@@ -124,7 +145,18 @@ export class GameScene extends Scene {
     }
 
     if (getGridDistance(myCoords, targetCoords) > attack.range) {
-      // TODO: move
+      const step = pathfind(this.board, myCoords, targetCoords, attack.range);
+      if (!step) {
+        console.log('no valid step');
+        // can't reach: just do nothing and wait for next turn
+        // FIXME: I'm pretty sure this will result in times when the Pokemon
+        // will tunnel-vision and freeze up even if there are other valid targets
+        this.setTurn(myCoords);
+        return;
+      }
+
+      this.movePokemon(myCoords, step);
+      this.setTurn(step);
       return;
     }
 
@@ -138,18 +170,15 @@ export class GameScene extends Scene {
       attack.defenseStat || attack.stat === 'attack'
         ? 'defense'
         : 'specDefense';
-
     const damage = Math.floor(
       (pokemon.basePokemon[attack.stat] * 10) /
         targetPokemon.basePokemon[defenseStat]
     );
+    pokemon.playAnimation(getFacing(myCoords, targetCoords));
     targetPokemon.dealDamage(damage);
 
     // turn over, wait until next one
     // delay is 100/speed seconds
-    setTimeout(
-      () => this.takeTurn(myCoords),
-      getTurnDelay(pokemon.basePokemon)
-    );
+    this.setTurn(myCoords);
   }
 }
