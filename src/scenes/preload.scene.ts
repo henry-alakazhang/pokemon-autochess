@@ -1,6 +1,11 @@
 import { Scene } from 'phaser';
-import { BootScene } from './boot.scene';
+import { LoadingScene } from './loading.scene';
 
+/**
+ * The scene "shown" at the very start
+ *
+ * All this scene does is load the logo so it can be used in the LoadingScene
+ */
 export class PreloadScene extends Scene {
   static readonly KEY = 'PreloadScene';
 
@@ -15,6 +20,6 @@ export class PreloadScene extends Scene {
   }
 
   update(): void {
-    this.scene.start(BootScene.KEY);
+    this.scene.start(LoadingScene.KEY);
   }
 }

@@ -18,13 +18,18 @@ const BOARD_WIDTH = 5;
 
 /**
  * Returns the graphical x and y coordinates for a spot in the battle grid.
- * @param x
- * @param y
  */
 function getCoordinatesForGrid({ x, y }: Coords): Coords {
   return { x: 400 + (x - 2) * CELL_WIDTH, y: 300 + (y - 2) * CELL_WIDTH };
 }
 
+/**
+ * The fight board scene
+ *
+ * This scene displays the battle grid and all the Pokemon while a fight is taking place.
+ * It handles all combat-related logic, including taking turns, moving/pathfinding
+ * and attacking + dealing damage
+ */
 export class GameScene extends Scene {
   static readonly KEY = 'GameScene';
 

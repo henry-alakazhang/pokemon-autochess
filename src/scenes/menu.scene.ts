@@ -3,6 +3,12 @@ import { allPokemonNames } from '../core/pokemon.model';
 import { PokemonObject } from '../objects/pokemon.object';
 import { GameScene } from './game/game.scene';
 
+/**
+ * The main menu scene
+ *
+ * Displays the logo and allows players to start the game
+ * Also has a little minigame with a clickable Pokemon
+ */
 export class MenuScene extends Scene {
   static readonly KEY = 'MenuScene';
 

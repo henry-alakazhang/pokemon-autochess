@@ -2,8 +2,13 @@ import { Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
 import { MenuScene } from './menu.scene';
 
-export class BootScene extends Scene {
-  static readonly KEY = 'BootScene';
+/**
+ * The loading scene
+ *
+ * Pulls in all the assets and displays a loading bar to show the download progress.
+ */
+export class LoadingScene extends Scene {
+  static readonly KEY = 'LoadingScene';
 
   /** Background bar for loading bar */
   private loadingBar: Phaser.GameObjects.Graphics;
@@ -12,7 +17,7 @@ export class BootScene extends Scene {
 
   constructor() {
     super({
-      key: BootScene.KEY,
+      key: LoadingScene.KEY,
     });
   }
 
