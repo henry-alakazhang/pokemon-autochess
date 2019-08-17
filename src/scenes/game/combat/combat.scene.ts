@@ -13,6 +13,10 @@ import {
   pathfind,
 } from './combat.helpers';
 
+/** X-coordinate of the center of the grid */
+const GRID_X = 400;
+/** Y-coordinate of the center of the grid */
+const GRID_Y = 250;
 const CELL_WIDTH = 70;
 const BOARD_WIDTH = 5;
 
@@ -20,7 +24,7 @@ const BOARD_WIDTH = 5;
  * Returns the graphical x and y coordinates for a spot in the battle grid.
  */
 function getCoordinatesForGrid({ x, y }: Coords): Coords {
-  return { x: 400 + (x - 2) * CELL_WIDTH, y: 300 + (y - 2) * CELL_WIDTH };
+  return { x: GRID_X + (x - 2) * CELL_WIDTH, y: GRID_Y + (y - 2) * CELL_WIDTH };
 }
 
 /**
@@ -44,8 +48,8 @@ export class CombatScene extends Scene {
 
   create() {
     this.grid = this.add.grid(
-      400, // center x
-      300, // center y
+      GRID_X, // center x
+      GRID_Y, // center y
       CELL_WIDTH * 5, // total width
       CELL_WIDTH * 5, // total height
       CELL_WIDTH, // cell width

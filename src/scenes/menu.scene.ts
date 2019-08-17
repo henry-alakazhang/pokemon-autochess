@@ -1,7 +1,7 @@
 import { Input, Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
 import { PokemonObject } from '../objects/pokemon.object';
-import { CombatScene } from './game/combat/combat.scene';
+import { GameScene } from './game/game.scene';
 
 /**
  * The main menu scene
@@ -43,7 +43,7 @@ export class MenuScene extends Scene {
       )
       .on(
         Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN,
-        () => this.scene.start(CombatScene.KEY),
+        () => this.scene.start(GameScene.KEY),
         this
       );
   }
