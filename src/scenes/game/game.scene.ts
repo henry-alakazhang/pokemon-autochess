@@ -75,13 +75,15 @@ export class GameScene extends Phaser.Scene {
     // should never be -1 because we just checked
     const empty = this.sideboard.findIndex(v => !v);
     // insert new Pokemon
-    this.sideboard[empty] = new PokemonObject({
+    const newPokemon = new PokemonObject({
       scene: this,
       ...getCoordinatesForSideboardIndex(empty),
       name: pokemon,
       id: Math.random().toFixed(10),
       side: 'player',
     });
+    this.add.existing(newPokemon);
+    this.sideboard[empty] = newPokemon;
   }
 
   update() {

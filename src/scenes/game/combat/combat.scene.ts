@@ -82,6 +82,7 @@ export class CombatScene extends Scene {
       side,
       ...coords,
     });
+    this.add.existing(pokemon);
     pokemon.on(
       PokemonObject.Events.Dead,
       () => {

@@ -20,7 +20,6 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     Dead: 'dead',
   } as const;
 
-  private sprite: Phaser.GameObjects.Sprite;
   private hpBar: Phaser.GameObjects.Graphics;
   private currentHP: number;
   private maxHP: number;
@@ -43,7 +42,6 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
-    this.sprite = this.scene.add.sprite(this.x, this.y, this.name);
     // default state is facing the player
     this.playAnimation('down');
 
@@ -52,12 +50,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
   }
 
   setPosition(x: number, y: number) {
-    this.x = x;
-    this.y = y;
     super.setPosition(x, y);
-    if (this.sprite) {
-      this.sprite.setPosition(x, y);
-    }
     if (this.hpBar) {
       this.hpBar.setPosition(x, y);
     }
@@ -65,7 +58,6 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
   }
 
   destroy() {
-    this.sprite.destroy();
     this.hpBar.destroy();
     super.destroy();
   }
@@ -110,12 +102,12 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
   }
 
   public playAnimation(type: PokemonAnimationType) {
-    this.sprite.play(`${this.name}--${type}`);
+    this.play(`${this.name}--${type}`);
   }
 
   public move({ x, y }: Coords) {
     this.scene.add.tween({
-      targets: [this.sprite, this.hpBar],
+      targets: [this, this.hpBar],
       duration: getTurnDelay(this.basePokemon) * 0.75,
       x,
       y,
@@ -135,14 +127,16 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.redrawHPBar();
 
     // display damage text
-    new FloatingText(this.scene, this.x, this.y, `${amount}`);
+    this.scene.add.existing(
+      new FloatingText(this.scene, this.x, this.y, `${amount}`)
+    );
     // play flash effect
     this.scene.add.tween({
-      targets: this.sprite,
+      targets: this,
       duration: 66,
       alpha: 0.9,
-      onStart: () => this.sprite.setTint(0xdddddd), // slight darken
-      onComplete: () => this.sprite.clearTint(),
+      onStart: () => this.setTint(0xdddddd), // slight darken
+      onComplete: () => this.clearTint(),
     });
 
     // TODO: move this somewhere more appropriate?
@@ -150,7 +144,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
       this.scene.add.tween({
-        targets: this.sprite,
+        targets: this,
         duration: 600,
         ease: 'Exponential.Out',
         alpha: 0,
