@@ -1,6 +1,6 @@
-import { Pokemon } from '../../core/pokemon.model';
-import { PokemonAnimationType } from '../../objects/pokemon.object';
-import { GameScene } from './game.scene';
+import { Pokemon } from '../../../core/pokemon.model';
+import { PokemonAnimationType } from '../../../objects/pokemon.object';
+import { CombatScene } from './combat.scene';
 
 export interface Coords {
   x: number;
@@ -38,7 +38,7 @@ export interface Coords {
  *     9
  */
 export function getNearestTarget(
-  board: GameScene['board'],
+  board: CombatScene['board'],
   { x, y }: Coords,
   /** width of the board */
   width: number,
@@ -93,7 +93,7 @@ export function getNearestTarget(
  * Returns the first step in the path.
  */
 export function pathfind(
-  board: GameScene['board'],
+  board: CombatScene['board'],
   /** Self X and Y coordinates */
   start: Coords,
   /** Target's X and Y coordinates */

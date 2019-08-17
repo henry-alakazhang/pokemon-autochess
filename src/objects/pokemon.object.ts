@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
-import { Coords, getTurnDelay } from '../scenes/game/game.helpers';
+import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
 
 interface SpriteParams {

@@ -1,9 +1,9 @@
 import { Scene } from 'phaser';
-import { PokemonName } from '../../core/pokemon.model';
+import { PokemonName } from '../../../core/pokemon.model';
 import {
   PokemonAnimationType,
   PokemonObject,
-} from '../../objects/pokemon.object';
+} from '../../../objects/pokemon.object';
 import {
   Coords,
   getFacing,
@@ -11,7 +11,7 @@ import {
   getNearestTarget,
   getTurnDelay,
   pathfind,
-} from './game.helpers';
+} from './combat.helpers';
 
 const CELL_WIDTH = 70;
 const BOARD_WIDTH = 5;
@@ -30,15 +30,15 @@ function getCoordinatesForGrid({ x, y }: Coords): Coords {
  * It handles all combat-related logic, including taking turns, moving/pathfinding
  * and attacking + dealing damage
  */
-export class GameScene extends Scene {
-  static readonly KEY = 'GameScene';
+export class CombatScene extends Scene {
+  static readonly KEY = 'CombatScene';
 
   private board: Array<Array<PokemonObject | undefined>> = [[], [], [], [], []];
   private grid: Phaser.GameObjects.Grid;
 
   constructor() {
     super({
-      key: GameScene.KEY,
+      key: CombatScene.KEY,
     });
   }
 
