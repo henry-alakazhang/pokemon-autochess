@@ -1,4 +1,5 @@
 import { allPokemonNames, PokemonName } from '../../core/pokemon.model';
+import { Button } from '../../objects/button.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from './combat/combat.helpers';
 import { CombatScene } from './combat/combat.scene';
@@ -27,7 +28,7 @@ function getCoordinatesForSideboardIndex(i: number): Coords {
 export class GameScene extends Phaser.Scene {
   static readonly KEY = 'GameScene';
 
-  addButton: Phaser.GameObjects.Text;
+  addButton: Phaser.GameObjects.GameObject;
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
   constructor() {
@@ -49,31 +50,15 @@ export class GameScene extends Phaser.Scene {
       0xffaa00, // lines: yellow
       1 // line alpha: solid
     );
-    // TODO: abstract button into its own Object class
-    this.addButton = this.add
-      .text(400, 580, 'Add Pokemon', { fill: '#FFAA00', fontSize: '22px' })
-      // center the button so it's inline with the logo
-      .setOrigin(0.5, 0.5)
-      .setInteractive({ useHandCursor: true });
-    this.addButton
-      .on(
-        Phaser.Input.Events.POINTER_OVER,
-        () => this.addButton.setStyle({ fontStyle: 'bold' }),
-        this
+
+    this.addButton = this.add.existing(
+      new Button(this, 400, 580, 'Add Pokemon')
+    );
+    this.addButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
+      this.addPokemon(
+        allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
       )
-      .on(
-        Phaser.Input.Events.POINTER_OUT,
-        () => this.addButton.setStyle({ fontStyle: 'normal' }),
-        this
-      )
-      .on(
-        Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN,
-        () =>
-          this.addPokemon(
-            allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
-          ),
-        this
-      );
+    );
 
     this.scene.launch(CombatScene.KEY);
   }
