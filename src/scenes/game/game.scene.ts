@@ -28,7 +28,11 @@ function getCoordinatesForSideboardIndex(i: number): Coords {
 export class GameScene extends Phaser.Scene {
   static readonly KEY = 'GameScene';
 
+  /* TEMPORARY JUNK */
+  nextRoundButton: Button;
   addButton: Phaser.GameObjects.GameObject;
+  /* END TEMPORARY JUNK */
+
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
   constructor() {
@@ -60,7 +64,30 @@ export class GameScene extends Phaser.Scene {
       )
     );
 
-    this.scene.launch(CombatScene.KEY);
+    this.startCombat();
+  }
+
+  update() {
+    if (!this.canAddPokemon()) {
+      this.addButton.destroy();
+    }
+  }
+
+  startCombat() {
+    this.scene.launch(CombatScene.KEY, {
+      callback: (winner: 'player' | 'enemy') => {
+        this.startDowntime();
+      },
+    });
+  }
+
+  startDowntime() {
+    this.nextRoundButton = new Button(this, GRID_X, 300, 'Next Round');
+    this.nextRoundButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+      this.nextRoundButton.destroy();
+      this.startCombat();
+    });
+    this.add.existing(this.nextRoundButton);
   }
 
   canAddPokemon() {
@@ -84,11 +111,5 @@ export class GameScene extends Phaser.Scene {
     });
     this.add.existing(newPokemon);
     this.sideboard[empty] = newPokemon;
-  }
-
-  update() {
-    if (!this.canAddPokemon()) {
-      this.addButton.destroy();
-    }
   }
 }
