@@ -1,4 +1,4 @@
-# Pokemon AutoChess
+![logo](assets/logo.png)
 
 An autochess game themed after Pokemon
 
