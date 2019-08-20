@@ -57,6 +57,11 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     return this;
   }
 
+  setVisible(visible: boolean) {
+    this.hpBar.setVisible(visible);
+    return super.setVisible(visible);
+  }
+
   destroy() {
     this.hpBar.destroy();
     super.destroy();

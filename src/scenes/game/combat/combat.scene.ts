@@ -15,6 +15,12 @@ import {
 } from './combat.helpers';
 
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
+export type CombatBoard = Array<Array<PokemonObject | undefined>>;
+export interface CombatSceneData {
+  readonly playerBoard: CombatBoard;
+  readonly enemyBoard: CombatBoard;
+  readonly callback: CombatEndCallback;
+}
 
 /** X-coordinate of the center of the grid */
 const GRID_X = 400;
@@ -40,7 +46,7 @@ function getCoordinatesForGrid({ x, y }: Coords): Coords {
 export class CombatScene extends Scene {
   static readonly KEY = 'CombatScene';
 
-  private board: Array<Array<PokemonObject | undefined>>;
+  private board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
 
   private combatEndCallback: CombatEndCallback;
@@ -51,16 +57,14 @@ export class CombatScene extends Scene {
     });
   }
 
-  init({ callback }: { callback: CombatEndCallback }) {
+  create(data: CombatSceneData) {
     this.board = Array(5)
       .fill(undefined)
       // fill + map rather than `fill` an array because
       // `fill` will only initialise one array and fill with shallow copies
       .map(_ => Array(5).fill(undefined));
-    this.combatEndCallback = callback;
-  }
+    this.combatEndCallback = data.callback;
 
-  create() {
     this.grid = this.add.grid(
       GRID_X, // center x
       GRID_Y, // center y
@@ -74,8 +78,27 @@ export class CombatScene extends Scene {
       1 // line alpha: solid
     );
 
-    this.addPokemon('player', { x: 0, y: 1 }, 'talonflame', 'right');
-    this.addPokemon('enemy', { x: 3, y: 2 }, 'rotomw', 'left');
+    data.playerBoard.forEach((col, x) =>
+      col.forEach(
+        (pokemon, y) =>
+          pokemon && this.addPokemon('player', { x, y }, pokemon.name)
+      )
+    );
+    data.enemyBoard.forEach((col, x) =>
+      col.forEach(
+        (pokemon, y) =>
+          pokemon &&
+          this.addPokemon(
+            'enemy',
+            {
+              x,
+              // flip Y coordinates for enemy teams
+              y: 4 - y,
+            },
+            pokemon.name
+          )
+      )
+    );
 
     this.board.forEach((col, x) => {
       col.forEach((_, y) => this.setTurn({ x, y }));
