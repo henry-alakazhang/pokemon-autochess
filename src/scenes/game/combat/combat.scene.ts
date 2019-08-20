@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { PokemonName } from '../../../core/pokemon.model';
+import { flatten, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -12,6 +13,8 @@ import {
   getTurnDelay,
   pathfind,
 } from './combat.helpers';
+
+export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
 
 /** X-coordinate of the center of the grid */
 const GRID_X = 400;
@@ -37,13 +40,24 @@ function getCoordinatesForGrid({ x, y }: Coords): Coords {
 export class CombatScene extends Scene {
   static readonly KEY = 'CombatScene';
 
-  private board: Array<Array<PokemonObject | undefined>> = [[], [], [], [], []];
+  private board: Array<Array<PokemonObject | undefined>>;
   private grid: Phaser.GameObjects.Grid;
+
+  private combatEndCallback: CombatEndCallback;
 
   constructor() {
     super({
       key: CombatScene.KEY,
     });
+  }
+
+  init({ callback }: { callback: CombatEndCallback }) {
+    this.board = Array(5)
+      .fill(undefined)
+      // fill + map rather than `fill` an array because
+      // `fill` will only initialise one array and fill with shallow copies
+      .map(_ => Array(5).fill(undefined));
+    this.combatEndCallback = callback;
   }
 
   create() {
@@ -66,6 +80,35 @@ export class CombatScene extends Scene {
     this.board.forEach((col, x) => {
       col.forEach((_, y) => this.setTurn({ x, y }));
     });
+  }
+
+  checkRoundEnd() {
+    const remainingSides = flatten(this.board)
+      .filter(isDefined)
+      .map(pokemon => pokemon.side);
+
+    const playerAlive = remainingSides.includes('player');
+    const enemyAlive = remainingSides.includes('enemy');
+
+    if (playerAlive && enemyAlive) {
+      return;
+    }
+
+    /* end the round */
+
+    console.log('round over');
+
+    const winner = playerAlive ? 'player' : 'enemy';
+    this.add
+      .text(GRID_X, GRID_Y, `ROUND OVER: ${winner.toUpperCase()} WINS!`, {
+        backgroundColor: '#000',
+        fontSize: '40px',
+      })
+      .setOrigin(0.5, 0.5);
+    setTimeout(() => {
+      this.combatEndCallback(winner);
+      this.scene.stop(CombatScene.KEY);
+    }, 2000);
   }
 
   addPokemon(
@@ -94,6 +137,7 @@ export class CombatScene extends Scene {
             return cell && cell.id === pokemon.id ? undefined : cell;
           })
         );
+        this.checkRoundEnd();
       },
       this
     );
