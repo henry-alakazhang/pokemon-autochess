@@ -45,7 +45,10 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     // default state is facing the player
     this.playAnimation('down');
 
-    this.hpBar = this.scene.add.graphics();
+    this.hpBar = this.scene.add.graphics({
+      x: this.x,
+      y: this.y,
+    });
     this.redrawHPBar();
   }
 
@@ -68,8 +71,6 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
   }
 
   redrawHPBar() {
-    this.hpBar.x = this.x;
-    this.hpBar.y = this.y;
     this.hpBar.clear();
 
     const hpBarColor =
