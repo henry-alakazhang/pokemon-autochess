@@ -7,6 +7,7 @@ import {
 } from '../../../objects/pokemon.object';
 import {
   Coords,
+  getAttackAnimation,
   getFacing,
   getGridDistance,
   getNearestTarget,
@@ -251,8 +252,20 @@ export class CombatScene extends Scene {
       (pokemon.basePokemon[attack.stat] * 10) /
         targetPokemon.basePokemon[defenseStat]
     );
-    pokemon.playAnimation(getFacing(myCoords, targetCoords));
-    targetPokemon.dealDamage(damage);
+    const facing = getFacing(myCoords, targetCoords);
+    pokemon.playAnimation(facing);
+    // attack animation is just moving to the enemy and back
+    this.add.tween({
+      targets: [pokemon],
+      duration: getTurnDelay(pokemon.basePokemon) * 0.15,
+      ...getAttackAnimation(getCoordinatesForGrid({ x, y }), facing),
+      yoyo: true,
+      ease: 'Power1',
+      onYoyo: () => {
+        // deal damage when the animation "hits"
+        targetPokemon.dealDamage(damage);
+      },
+    });
 
     // turn over, wait until next one
     // delay is 100/speed seconds

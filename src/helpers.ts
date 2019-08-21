@@ -13,3 +13,11 @@ export function flatten<T>(arr: T[][]): T[] {
 export function isDefined<T>(x: T): x is NonNullable<T> {
   return x !== undefined && x !== null;
 }
+
+/**
+ * An "uncallable" function - expects the value to never exist
+ * If a real type is passed, this should cause a compile error
+ */
+export function assertNever(x: never): never {
+  throw new Error('Unexpected object: ' + x);
+}

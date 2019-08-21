@@ -1,4 +1,5 @@
 import { Pokemon } from '../../../core/pokemon.model';
+import { assertNever } from '../../../helpers';
 import { PokemonAnimationType } from '../../../objects/pokemon.object';
 import { CombatScene } from './combat.scene';
 
@@ -188,4 +189,23 @@ export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
     // up or down
     return vertical < 0 ? 'up' : 'down';
   }
+}
+
+export function getAttackAnimation(
+  start: Coords,
+  facing: PokemonAnimationType
+): Partial<Coords> {
+  switch (facing) {
+    case 'up':
+      return { y: start.y - 15 };
+    case 'down':
+      return { y: start.y + 15 };
+    case 'left':
+      return { x: start.x - 15 };
+    case 'right':
+      return { x: start.x + 15 };
+    default:
+      assertNever(facing);
+  }
+  return start;
 }
