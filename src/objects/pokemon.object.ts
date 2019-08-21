@@ -20,6 +20,12 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     Dead: 'dead',
   } as const;
 
+  /**
+   * A hacky little way of adding an outline to a Pokemon.
+   * Draws a second, slightly larger sprite which serves as the outline.
+   */
+  private outlineSprite: Phaser.GameObjects.Sprite;
+
   private hpBar: Phaser.GameObjects.Graphics;
   private currentHP: number;
   private maxHP: number;
@@ -42,6 +48,13 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
+    this.outlineSprite = this.scene.add
+      .sprite(this.x, this.y, this.name, params.frame)
+      .setOrigin(0.5, 0.5)
+      .setDisplaySize(this.width + 8, this.height + 8)
+      .setTintFill(0xffffff)
+      .setVisible(false);
+
     // default state is facing the player
     this.playAnimation('down');
 
@@ -54,6 +67,9 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
 
   setPosition(x: number, y: number) {
     super.setPosition(x, y);
+    if (this.outlineSprite) {
+      this.outlineSprite.setPosition(x, y);
+    }
     if (this.hpBar) {
       this.hpBar.setPosition(x, y);
     }
@@ -91,6 +107,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
 
   public playAnimation(type: PokemonAnimationType) {
     this.play(`${this.name}--${type}`);
+    this.outlineSprite.play(`${this.name}--${type}`);
   }
 
   public move({ x, y }: Coords) {
@@ -142,5 +159,10 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
         callbackScope: this,
       });
     }
+  }
+
+  public toggleOutline(): this {
+    this.outlineSprite.setVisible(!this.outlineSprite.visible);
+    return this;
   }
 }
