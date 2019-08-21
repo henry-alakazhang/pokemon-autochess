@@ -72,7 +72,10 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.hpBar.y = this.y;
     this.hpBar.clear();
 
-    const hpBarColor = this.getHPBarColor();
+    const hpBarColor =
+      this.side === 'player' // player: green
+        ? 0x32cd32 // enemy: red
+        : 0xdc143c;
     this.hpBar.fillStyle(hpBarColor, 1);
     this.hpBar.fillRect(
       -this.width / 2,
@@ -83,27 +86,6 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.hpBar.lineStyle(1, 0x000000);
     this.hpBar.strokeRect(-this.width / 2, -this.height / 2, this.width, 8);
     this.hpBar.setDepth(1);
-  }
-
-  getHPBarColor() {
-    const fiftyPercentHP = this.maxHP / 2;
-    const twentyPercentHP = this.maxHP / 5;
-
-    // 50% or Higher
-    if (this.currentHP >= fiftyPercentHP) {
-      // High HP: Green
-      return 0x32cd32;
-    }
-
-    // Between 20% and 50%
-    if (this.currentHP >= twentyPercentHP) {
-      // Low HP: Orange
-      return 0xffa500;
-    }
-
-    // Between 0% and 20%
-    // Critical: Red
-    return 0xdc143c;
   }
 
   public playAnimation(type: PokemonAnimationType) {
