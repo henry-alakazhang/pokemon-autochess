@@ -116,8 +116,8 @@ export class GameScene extends Phaser.Scene {
   /** The Pokemon in the player's sideboard (spare Pokemon) */
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
-  /** A reference to the location of the currently selected Pokemon */
-  selectedPokemonLocation?: PokemonLocation;
+  /** A reference to the currently selected Pokemon */
+  selectedPokemon?: PokemonObject;
 
   /** The grid used to display team composition during the downtime phase */
   prepGrid: Phaser.GameObjects.Grid;
@@ -178,10 +178,10 @@ export class GameScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
-        if (!this.selectedPokemonLocation) {
-          this.selectPokemon(event);
+        if (!this.selectedPokemon) {
+          this.selectPokemon({ x: event.downX, y: event.downY });
         } else {
-          this.movePokemon(event);
+          this.movePokemon({ x: event.downX, y: event.downY });
         }
       }
     );
@@ -244,18 +244,17 @@ export class GameScene extends Phaser.Scene {
   /**
    * Picks the Pokemon at a given location (if it exists) and sets it as the selected Pokemon
    */
-  selectPokemon(event: Phaser.Input.Pointer) {
+  selectPokemon(clickCoords: Coords) {
     const select =
-      getMainboardLocationForCoordinates({ x: event.downX, y: event.downY }) ||
-      getSideboardLocationForCoordinates({ x: event.downX, y: event.downY });
+      getMainboardLocationForCoordinates(clickCoords) ||
+      getSideboardLocationForCoordinates(clickCoords);
 
     const pokemon = this.getPokemonAtLocation(select);
     if (!pokemon) {
       return;
     }
 
-    pokemon.toggleOutline();
-    this.selectedPokemonLocation = select;
+    this.selectedPokemon = pokemon.toggleOutline();
   }
 
   /**
@@ -303,23 +302,26 @@ export class GameScene extends Phaser.Scene {
    * Moves the currently selected Pokemon to the location determined by the `Pointer` event.
    * If not valid location is specified, the Pokemon is deselected.
    */
-  movePokemon(event: Phaser.Input.Pointer) {
-    const fromLocation = this.selectedPokemonLocation;
-    if (!fromLocation) {
+  movePokemon(clickCoords: Coords) {
+    const fromPokemon = this.selectedPokemon;
+    if (!fromPokemon) {
       return;
     }
-    const fromPokemon = this.getPokemonAtLocation(fromLocation);
-    if (!fromPokemon) {
+    // a PokemonObject has an { x, y }, so it fits the function signature
+    const fromLocation =
+      getMainboardLocationForCoordinates(fromPokemon) ||
+      getSideboardLocationForCoordinates(fromPokemon);
+    if (!fromLocation) {
       return;
     }
 
     // deselect Pokemon even if we don't move it
     fromPokemon.toggleOutline();
-    this.selectedPokemonLocation = undefined;
+    this.selectedPokemon = undefined;
 
     const toLocation =
-      getSideboardLocationForCoordinates({ x: event.downX, y: event.downY }) ||
-      getMainboardLocationForCoordinates({ x: event.downX, y: event.downY });
+      getSideboardLocationForCoordinates(clickCoords) ||
+      getMainboardLocationForCoordinates(clickCoords);
     if (!toLocation) {
       return;
     }
@@ -328,10 +330,7 @@ export class GameScene extends Phaser.Scene {
     const swapTarget = this.getPokemonAtLocation(toLocation);
 
     // don't move if there's no room in mainboard
-    const isMainboard = !!getMainboardLocationForCoordinates({
-      x: event.downX,
-      y: event.downY,
-    });
+    const isMainboard = !!getMainboardLocationForCoordinates(clickCoords);
     if (isMainboard && !this.canAddPokemonToMainboard() && !swapTarget) {
       return;
     }
