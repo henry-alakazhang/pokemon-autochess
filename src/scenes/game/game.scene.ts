@@ -215,6 +215,7 @@ export class GameScene extends Phaser.Scene {
       col.forEach(pokemon => pokemon && pokemon.setVisible(false))
     );
     this.prepGrid.setVisible(false);
+    this.input.enabled = false;
 
     const sceneData: CombatSceneData = {
       playerBoard: this.mainboard,
@@ -232,6 +233,7 @@ export class GameScene extends Phaser.Scene {
       col.forEach(pokemon => pokemon && pokemon.setVisible(true))
     );
     this.prepGrid.setVisible(true);
+    this.input.enabled = true;
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
     this.nextRoundButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {

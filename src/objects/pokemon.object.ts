@@ -25,6 +25,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
    * Draws a second, slightly larger sprite which serves as the outline.
    */
   private outlineSprite: Phaser.GameObjects.Sprite;
+  private isOutlined = false;
 
   private hpBar: Phaser.GameObjects.Graphics;
   private currentHP: number;
@@ -78,6 +79,7 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
 
   setVisible(visible: boolean) {
     this.hpBar.setVisible(visible);
+    this.outlineSprite.setVisible(visible && this.isOutlined);
     return super.setVisible(visible);
   }
 
@@ -162,7 +164,8 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
   }
 
   public toggleOutline(): this {
-    this.outlineSprite.setVisible(!this.outlineSprite.visible);
+    this.isOutlined = !this.isOutlined;
+    this.outlineSprite.setVisible(this.isOutlined);
     return this;
   }
 }
