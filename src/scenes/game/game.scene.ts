@@ -43,7 +43,7 @@ function getCoordinatesForMainboard({ x, y }: Coords): Coords {
 
 /**
  * Returns the mainboard x and y coordinates for a graphical coordinate,
- * or returns undefined if the point isn't on the grid
+ * or `undefined` if the point isn't on the grid
  */
 function getMainboardLocationForCoordinates({
   x,
@@ -74,6 +74,10 @@ function getMainboardLocationForCoordinates({
   };
 }
 
+/**
+ * Returns the sideboard index for a graphical coordinate,
+ * or `undefined` if the point isn't within the sideboard
+ */
 function getSideboardLocationForCoordinates({
   x,
   y,
@@ -184,11 +188,12 @@ export class GameScene extends Phaser.Scene {
 
     this.prepGridHighlight = this.add
       .rectangle(
-        // 1 tile from the bottom
         GRID_X,
+        // y: 1 tile from the bottom
         GRID_Y + CELL_WIDTH * 1.5,
-        // width: stretches across all bottom rows
+        // width: stretches across all columns
         CELL_WIDTH * BOARD_WIDTH,
+        // height: 2 rows
         CELL_WIDTH * 2,
         // color: ligher colour highlight
         0xffffff,
@@ -333,7 +338,7 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * Moves the currently selected Pokemon to the location determined by the `Pointer` event.
-   * If not valid location is specified, the Pokemon is deselected.
+   * If no valid location is specified, the Pokemon is deselected.
    */
   movePokemon(clickCoords: Coords) {
     const fromPokemon = this.selectedPokemon;
@@ -373,7 +378,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
-   * Assigns a Pokemon object to a given location without.
+   * Assigns a Pokemon object to a given location.
    *
    * WARNING: Doesn't do any checks or cleanup of the current Pokemon at that location.
    * Make sure that either the location is empty, or you're tracking the Pokemon there.
