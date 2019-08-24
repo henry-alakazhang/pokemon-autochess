@@ -236,6 +236,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   startCombat() {
+    // deselect any selected Pokemon
+    if (this.selectedPokemon) {
+      this.selectedPokemon.toggleOutline();
+      this.selectedPokemon = undefined;
+    }
     // hide all the prep-only stuff
     this.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon && pokemon.setVisible(false))
