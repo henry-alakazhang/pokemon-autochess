@@ -56,7 +56,12 @@ function getMainboardLocationForCoordinates({
   // ie. the distance to the left edge of the grid
   const gridy = (y - 75) / CELL_WIDTH;
 
-  if (gridx < 0 || gridx >= BOARD_WIDTH || gridy < 0 || gridy >= BOARD_WIDTH) {
+  if (
+    gridx < 0 ||
+    gridx >= BOARD_WIDTH ||
+    gridy < BOARD_WIDTH - 2 || // you can only put Pokemon in the bottom half of the grid
+    gridy >= BOARD_WIDTH
+  ) {
     return undefined;
   }
 
@@ -121,6 +126,8 @@ export class GameScene extends Phaser.Scene {
 
   /** The grid used to display team composition during the downtime phase */
   prepGrid: Phaser.GameObjects.Grid;
+  /** A background for highlighting the valid regions to put Pokemon in */
+  prepGridHighlight: Phaser.GameObjects.Shape;
 
   constructor() {
     super({
@@ -175,6 +182,22 @@ export class GameScene extends Phaser.Scene {
       1 // line alpha: solid
     );
 
+    this.prepGridHighlight = this.add
+      .rectangle(
+        // 1 tile from the bottom
+        GRID_X,
+        GRID_Y + CELL_WIDTH * 1.5,
+        // width: stretches across all bottom rows
+        CELL_WIDTH * BOARD_WIDTH,
+        CELL_WIDTH * 2,
+        // color: ligher colour highlight
+        0xffffff,
+        // alpha: mostly transparent
+        0.2
+      )
+      .setZ(-1)
+      .setVisible(false);
+
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
@@ -207,6 +230,9 @@ export class GameScene extends Phaser.Scene {
     if (!this.canAddPokemonToSideboard()) {
       this.addButton.destroy();
     }
+
+    // show the "valid range" highlight if a Pokemon is selected
+    this.prepGridHighlight.setVisible(!!this.selectedPokemon);
   }
 
   startCombat() {
