@@ -367,9 +367,14 @@ export class GameScene extends Phaser.Scene {
     // check if a Pokemon already exists here
     const swapTarget = this.getPokemonAtLocation(toLocation);
 
-    // don't move if there's no room in mainboard
-    const isMainboard = !!getMainboardLocationForCoordinates(clickCoords);
-    if (isMainboard && !this.canAddPokemonToMainboard() && !swapTarget) {
+    // don't move add to mainboard if there's no room
+    if (
+      toLocation.location === 'mainboard' &&
+      fromLocation.location === 'sideboard' &&
+      !this.canAddPokemonToMainboard() &&
+      // can still swap
+      !swapTarget
+    ) {
       return;
     }
 
