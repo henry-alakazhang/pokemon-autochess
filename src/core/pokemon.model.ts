@@ -42,7 +42,7 @@ export interface Attack {
 }
 
 export interface Pokemon {
-  readonly name: string;
+  readonly displayName: string;
   readonly categories: ReadonlyArray<Category>;
   readonly maxHP: number;
   readonly attack: number;
@@ -51,15 +51,33 @@ export interface Pokemon {
   readonly specDefense: number;
   readonly speed: number;
   readonly basicAttack: Attack;
+  readonly evolution?: PokemonName;
+  readonly catch: boolean;
 }
 
 /**
  * The base data for all Pokemon
  */
 export const pokemonData = {
+  fletchinder: {
+    displayName: 'Fletchinder',
+    categories: ['fire', 'flying'],
+    maxHP: 62,
+    attack: 73,
+    defense: 55,
+    specAttack: 56,
+    specDefense: 52,
+    speed: 84,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    evolution: 'talonflame',
+    catch: true,
+  },
   talonflame: {
-    name: 'Talonflame',
-    categories: ['fire', 'flying', 'physical attacker'],
+    displayName: 'Talonflame',
+    categories: ['fire', 'flying'],
     maxHP: 78,
     attack: 81,
     defense: 71,
@@ -70,9 +88,10 @@ export const pokemonData = {
       range: 1,
       stat: 'attack',
     },
+    catch: false,
   },
   rotomw: {
-    name: 'Rotom-W',
+    displayName: 'Rotom-W',
     categories: ['water', 'electric'],
     maxHP: 50,
     attack: 65,
@@ -84,11 +103,15 @@ export const pokemonData = {
       range: 1,
       stat: 'specAttack',
     },
+    catch: true,
   },
 } as const;
 
 export type PokemonName = keyof typeof pokemonData;
 export const allPokemonNames = Object.keys(pokemonData) as Array<PokemonName>;
+export const catchablePokemon = allPokemonNames.filter(
+  name => pokemonData[name].catch
+);
 
 /**
  * this is just to typecheck the PokemonData to make sure each object

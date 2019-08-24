@@ -1,5 +1,5 @@
-import { allPokemonNames, PokemonName } from '../../core/pokemon.model';
-import { flatten } from '../../helpers';
+import { catchablePokemon, PokemonName } from '../../core/pokemon.model';
+import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from './combat/combat.helpers';
@@ -219,7 +219,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.addButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
       this.addPokemonToSideboard(
-        allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
+        catchablePokemon[Math.floor(Math.random() * catchablePokemon.length)]
       )
     );
 
@@ -334,6 +334,11 @@ export class GameScene extends Phaser.Scene {
     });
     this.add.existing(newPokemon);
     this.sideboard[empty] = newPokemon;
+
+    /* check evolutions */
+    if (newPokemon.basePokemon.evolution) {
+      this.applyEvolutions(newPokemon);
+    }
   }
 
   /**
@@ -404,5 +409,108 @@ export class GameScene extends Phaser.Scene {
         pokemon.setPosition(x, y);
       }
     }
+  }
+
+  removePokemon(pokemon: PokemonObject) {
+    const location =
+      getMainboardLocationForCoordinates(pokemon) ||
+      getSideboardLocationForCoordinates(pokemon);
+    if (!location) {
+      // just destroy since it's not displayed anyway?
+      return pokemon.destroy();
+    }
+
+    if (location.location === 'mainboard') {
+      const existing = this.mainboard[location.coords.x][location.coords.y];
+      this.mainboard[location.coords.x][location.coords.y] = undefined;
+      if (existing) {
+        existing.destroy();
+      }
+    } else {
+      const existing = this.sideboard[location.index];
+      this.sideboard[location.index] = undefined;
+      if (existing) {
+        existing.destroy();
+      }
+    }
+  }
+
+  /**
+   * Checks for possible evolutions that can be triggered by a Pokemon.
+   *
+   * For optimisation purposes, only checks one Pokemon.
+   * This should be fine if it's called every time a new Pokemon is added.
+   */
+  applyEvolutions(newPokemon: PokemonObject) {
+    const evolutionName = newPokemon.basePokemon.evolution;
+    if (!evolutionName) {
+      return;
+    }
+
+    // TODO: make this more imperative if the performance is bad
+    // it's probably fine though
+    const samePokemon =
+      // get all the Pokemon
+      [...flatten(this.mainboard), ...this.sideboard]
+        .filter(isDefined)
+        // that are have the same Name as this one
+        .filter(pokemon => pokemon.name === newPokemon.name);
+    if (samePokemon.length < 3) {
+      return;
+    }
+    const evoLocation =
+      getMainboardLocationForCoordinates(samePokemon[0]) ||
+      getSideboardLocationForCoordinates(samePokemon[0]);
+    if (!evoLocation) {
+      // should always be defined, but sure
+      console.error('Could not find place to put evolution');
+      return;
+    }
+
+    // disable inputs to prevent things from being cooked while evolution happen
+    // FIXME: there has to be a better way to do this.
+    this.input.enabled = false;
+
+    // play a flashing animation for a bit
+    // not sure how to use tweens to get a flashing trigger of the outline
+    // so this just manually creates one using window.setTimeout
+    let timeout = 500;
+    let flashAnimation: number;
+    const toggleAnim = () => {
+      samePokemon.forEach(pokemon => pokemon.toggleOutline());
+      timeout *= 0.8;
+      flashAnimation = window.setTimeout(toggleAnim, timeout);
+    };
+    toggleAnim();
+
+    window.setTimeout(() => {
+      // end animation
+      window.clearInterval(flashAnimation);
+      // delete old Pokemon
+      samePokemon.forEach(pokemon => this.removePokemon(pokemon));
+      // add new one
+      const evo = new PokemonObject({
+        scene: this,
+        x: 0,
+        y: 0,
+        name: evolutionName,
+        id: Math.random().toFixed(10),
+        side: 'player',
+      });
+      this.add.existing(evo);
+      this.setPokemonAtLocation(evoLocation, evo);
+      // play animation to make it super clear
+      evo.setScale(1.5, 1.5);
+      this.add.tween({
+        targets: [evo],
+        scaleX: 1,
+        scaleY: 1,
+        ease: Phaser.Math.Easing.Expo.InOut,
+        duration: 500,
+        onComplete: () => {
+          this.input.enabled = true;
+        },
+      });
+    }, 2000);
   }
 }
