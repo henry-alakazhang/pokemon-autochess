@@ -82,7 +82,6 @@ function getSideboardLocationForCoordinates({
   x,
   y,
 }: Coords): PokemonLocation | undefined {
-  console.log(x, y, SIDEBOARD_Y);
   // 35 = CELL_WIDTH / 2
   // ie. the distance to the top of the sideboard
   if (y < SIDEBOARD_Y - 35 || y > SIDEBOARD_Y + 35) {
@@ -126,7 +125,7 @@ export class GameScene extends Phaser.Scene {
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
   /** A reference to the currently selected Pokemon */
-  selectedPokemon?: PokemonObject;
+  selectedPokemonLocation?: PokemonLocation;
 
   /** The grid used to display team composition during the downtime phase */
   prepGrid: Phaser.GameObjects.Grid;
@@ -204,13 +203,23 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false);
 
     this.input.on(
-      Phaser.Input.Events.POINTER_DOWN,
+      Phaser.Input.Events.DRAG_START,
       (event: Phaser.Input.Pointer) => {
-        if (!this.selectedPokemon) {
-          this.selectPokemon({ x: event.downX, y: event.downY });
-        } else {
-          this.movePokemon({ x: event.downX, y: event.downY });
-        }
+        this.selectPokemon({ x: event.downX, y: event.downY });
+      }
+    );
+
+    this.input.on(
+      Phaser.Input.Events.DRAG_END,
+      (event: Phaser.Input.Pointer) => {
+        this.movePokemon({ x: event.upX, y: event.upY });
+      }
+    );
+
+    this.input.on(
+      Phaser.Input.Events.DRAG,
+      (event: Phaser.Input.Pointer, obj: PokemonObject) => {
+        obj.setPosition(event.x, event.y);
       }
     );
 
@@ -237,14 +246,19 @@ export class GameScene extends Phaser.Scene {
     }
 
     // show the "valid range" highlight if a Pokemon is selected
-    this.prepGridHighlight.setVisible(!!this.selectedPokemon);
+    this.prepGridHighlight.setVisible(!!this.selectedPokemonLocation);
   }
 
   startCombat() {
     // deselect any selected Pokemon
-    if (this.selectedPokemon) {
-      this.selectedPokemon.toggleOutline();
-      this.selectedPokemon = undefined;
+    if (this.selectedPokemonLocation) {
+      const selectedPokemon = this.getPokemonAtLocation(
+        this.selectedPokemonLocation
+      );
+      if (selectedPokemon) {
+        selectedPokemon.toggleOutline();
+      }
+      this.selectedPokemonLocation = undefined;
     }
     // hide all the prep-only stuff
     this.mainboard.forEach(col =>
@@ -292,7 +306,8 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.selectedPokemon = pokemon.toggleOutline();
+    this.selectedPokemonLocation = select;
+    pokemon.toggleOutline();
   }
 
   /**
@@ -331,8 +346,9 @@ export class GameScene extends Phaser.Scene {
       name: pokemon,
       id: Math.random().toFixed(10),
       side: 'player',
-    });
+    }).setInteractive();
     this.add.existing(newPokemon);
+    this.input.setDraggable(newPokemon, true);
     this.sideboard[empty] = newPokemon;
   }
 
@@ -341,26 +357,26 @@ export class GameScene extends Phaser.Scene {
    * If no valid location is specified, the Pokemon is deselected.
    */
   movePokemon(clickCoords: Coords) {
-    const fromPokemon = this.selectedPokemon;
-    if (!fromPokemon) {
+    const fromLocation = this.selectedPokemonLocation;
+    if (!fromLocation) {
       return;
     }
     // a PokemonObject has an { x, y }, so it fits the function signature
-    const fromLocation =
-      getMainboardLocationForCoordinates(fromPokemon) ||
-      getSideboardLocationForCoordinates(fromPokemon);
-    if (!fromLocation) {
+    const fromPokemon = this.getPokemonAtLocation(fromLocation);
+    if (!fromPokemon) {
       return;
     }
 
     // deselect Pokemon even if we don't move it
     fromPokemon.toggleOutline();
-    this.selectedPokemon = undefined;
+    this.selectedPokemonLocation = undefined;
 
     const toLocation =
       getSideboardLocationForCoordinates(clickCoords) ||
       getMainboardLocationForCoordinates(clickCoords);
     if (!toLocation) {
+      // set Pokemon back to where it started
+      this.setPokemonAtLocation(fromLocation, fromPokemon);
       return;
     }
 
@@ -375,6 +391,8 @@ export class GameScene extends Phaser.Scene {
       // can still swap
       !swapTarget
     ) {
+      // set Pokemon back to where it started
+      this.setPokemonAtLocation(fromLocation, fromPokemon);
       return;
     }
 
