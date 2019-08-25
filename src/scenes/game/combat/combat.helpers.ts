@@ -1,4 +1,4 @@
-import { Pokemon } from '../../../core/pokemon.model';
+import { Attack, Pokemon } from '../../../core/pokemon.model';
 import { assertNever } from '../../../helpers';
 import { PokemonAnimationType } from '../../../objects/pokemon.object';
 import { CombatScene } from './combat.scene';
@@ -172,10 +172,10 @@ export function getGridDistance(first: Coords, second: Coords) {
 
 /**
  * Returns the turn delay in milliseconds for a pokemon.
- * The delay is (100 / speed) seconds
+ * The delay is the equivalent of `sqrt(spd/75)` attacks per second
  */
 export function getTurnDelay(pokemon: Pokemon) {
-  return 100_000 / pokemon.speed;
+  return 1000 / Math.sqrt(pokemon.speed / 75);
 }
 
 export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
@@ -208,4 +208,28 @@ export function getAttackAnimation(
       assertNever(facing);
   }
   return start;
+}
+
+export function calculateDamage(
+  attacker: Pokemon,
+  defender: Pokemon,
+  attack: Attack
+) {
+  // use specified defenseStat, or the one that correlates to the attack stat
+  const defenseStatName =
+    attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';
+  // use base attack/defense so the formula doesn't scale exponentially with level
+  const attackStat = attacker[attack.stat];
+  const defenseStat = defender[defenseStatName];
+
+  // Pokemon damage formula
+  //    2 x Level                    A
+  // ( ----------- + 2 )  x Power x ---
+  //        5                        D
+  // ----------------------------------- + 2
+  //           50
+  // power = 50 cancels out power and the bottom 50.
+  return Math.round(
+    (((2 * attacker.level) / 5 + 2) * attackStat) / defenseStat + 2
+  );
 }

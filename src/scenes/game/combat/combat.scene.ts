@@ -6,6 +6,7 @@ import {
   PokemonObject,
 } from '../../../objects/pokemon.object';
 import {
+  calculateDamage,
   Coords,
   getAttackAnimation,
   getFacing,
@@ -243,14 +244,10 @@ export class CombatScene extends Scene {
       return;
     }
 
-    // use specified defenseStat, or the one that correlates to the attack stat
-    const defenseStat =
-      attack.defenseStat || attack.stat === 'attack'
-        ? 'defense'
-        : 'specDefense';
-    const damage = Math.floor(
-      (pokemon.basePokemon[attack.stat] * 10) /
-        targetPokemon.basePokemon[defenseStat]
+    const damage = calculateDamage(
+      pokemon.basePokemon,
+      targetPokemon.basePokemon,
+      attack
     );
     const facing = getFacing(myCoords, targetCoords);
     pokemon.playAnimation(facing);

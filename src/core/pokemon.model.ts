@@ -51,6 +51,7 @@ export interface Pokemon {
   readonly specDefense: number;
   readonly speed: number;
   readonly basicAttack: Attack;
+  readonly level: number;
 }
 
 /**
@@ -70,6 +71,7 @@ export const pokemonData = {
       range: 1,
       stat: 'attack',
     },
+    level: 100,
   },
   rotomw: {
     name: 'Rotom-W',
@@ -84,6 +86,7 @@ export const pokemonData = {
       range: 1,
       stat: 'specAttack',
     },
+    level: 50,
   },
 } as const;
 

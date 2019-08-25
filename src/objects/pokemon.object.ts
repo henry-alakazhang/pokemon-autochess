@@ -44,9 +44,12 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
     this.name = params.name;
 
     // load data from Pokemon data
-    this.maxHP = pokemonData[this.name].maxHP;
-    this.currentHP = this.maxHP;
     this.basePokemon = pokemonData[this.name];
+    this.maxHP =
+      (this.basePokemon.maxHP * this.basePokemon.level) / 50 +
+      this.basePokemon.level +
+      10;
+    this.currentHP = this.maxHP;
     this.side = params.side;
 
     this.outlineSprite = this.scene.add
