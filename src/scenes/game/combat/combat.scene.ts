@@ -5,6 +5,7 @@ import {
   PokemonAnimationType,
   PokemonObject,
 } from '../../../objects/pokemon.object';
+import { Projectile } from '../../../objects/projectile.object';
 import {
   Coords,
   getAttackAnimation,
@@ -49,6 +50,7 @@ export class CombatScene extends Scene {
 
   private board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
+  private projectiles: { [k: string]: Projectile } = {};
 
   private combatEndCallback: CombatEndCallback;
 
@@ -104,6 +106,10 @@ export class CombatScene extends Scene {
     this.board.forEach((col, x) => {
       col.forEach((_, y) => this.setTurn({ x, y }));
     });
+  }
+
+  update(time: number, delta: number) {
+    Object.values(this.projectiles).forEach(x => x && x.update(delta));
   }
 
   checkRoundEnd() {
@@ -262,8 +268,36 @@ export class CombatScene extends Scene {
       yoyo: true,
       ease: 'Power1',
       onYoyo: () => {
-        // deal damage when the animation "hits"
-        targetPokemon.dealDamage(damage);
+        if (!attack.particleKey) {
+          // deal damage when the animation "hits"
+          targetPokemon.dealDamage(damage);
+        } else {
+          // or add particle for projectile
+          console.log(attack.particleKey);
+          const projectile = new Projectile(
+            this,
+            pokemon.x,
+            pokemon.y,
+            attack.particleKey,
+            targetPokemon,
+            getTurnDelay(pokemon.basePokemon) * 0.5
+          ).setActive(true);
+          this.add.existing(projectile);
+          this.physics.add.existing(projectile);
+          const projectileKey = Math.random().toFixed(16);
+          this.projectiles[projectileKey] = projectile;
+          projectile.on('destroy', () => {
+            targetPokemon.dealDamage(damage);
+            delete this.projectiles[projectileKey];
+          });
+          // projectile.update(0);
+          this.physics.moveToObject(
+            projectile,
+            targetPokemon,
+            0,
+            getTurnDelay(pokemon.basePokemon) * 0.5
+          );
+        }
       },
     });
 

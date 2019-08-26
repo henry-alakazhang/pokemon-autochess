@@ -32,13 +32,15 @@ export type Role =
 export type Category = Type | Role;
 
 export interface Attack {
-  /* number of squares away the move can reach */
+  /** number of squares away the move can reach */
   readonly range: number;
-  /* the pokemon stat used for calculating damage */
+  /** the pokemon stat used for calculating damage */
   readonly stat: 'attack' | 'specAttack';
-  /* the pokemon stat used for calculating resistance
+  /** the pokemon stat used for calculating resistance
    * defaults to the opposite of the attack stat */
   readonly defenseStat?: 'defense' | 'specDefense';
+  /** the graphical key for the attack's particle/fx */
+  readonly particleKey?: string;
 }
 
 export interface Pokemon {
@@ -57,6 +59,21 @@ export interface Pokemon {
  * The base data for all Pokemon
  */
 export const pokemonData = {
+  chandelure: {
+    name: 'Chandelure',
+    categories: ['fire', 'ghost'],
+    maxHP: 60,
+    attack: 55,
+    defense: 90,
+    specAttack: 145,
+    specDefense: 90,
+    speed: 80,
+    basicAttack: {
+      range: 3,
+      stat: 'specAttack',
+      particleKey: 'firedart',
+    },
+  },
   talonflame: {
     name: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],

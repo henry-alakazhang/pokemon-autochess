@@ -72,6 +72,9 @@ export class LoadingScene extends Scene {
   setupAnimations() {
     allPokemonNames.forEach(name => {
       console.log(`creating animations for ${name}`);
+      if (!this.textures.exists(name)) {
+        throw new Error(`Missing textures for ${name}!`);
+      }
       this.anims.create({
         key: `${name}--down`,
         frames: this.anims.generateFrameNumbers(name, {
