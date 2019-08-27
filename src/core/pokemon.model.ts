@@ -39,8 +39,11 @@ export interface Attack {
   /** the pokemon stat used for calculating resistance
    * defaults to the opposite of the attack stat */
   readonly defenseStat?: 'defense' | 'specDefense';
-  /** the graphical key for the attack's particle/fx */
-  readonly particleKey?: string;
+  /** details for the particle/fx for the projectile */
+  readonly projectile?: {
+    readonly key: string;
+    readonly speed: number;
+  };
 }
 
 export interface Pokemon {
@@ -71,7 +74,10 @@ export const pokemonData = {
     basicAttack: {
       range: 3,
       stat: 'specAttack',
-      particleKey: 'firedart',
+      projectile: {
+        key: 'firedart',
+        speed: 200,
+      },
     },
   },
   talonflame: {

@@ -108,8 +108,9 @@ export class CombatScene extends Scene {
     });
   }
 
-  update(time: number, delta: number) {
-    Object.values(this.projectiles).forEach(x => x && x.update(delta));
+  update() {
+    // trigger updates on each projectile
+    Object.values(this.projectiles).forEach(x => x && x.update());
   }
 
   checkRoundEnd() {
@@ -268,34 +269,31 @@ export class CombatScene extends Scene {
       yoyo: true,
       ease: 'Power1',
       onYoyo: () => {
-        if (!attack.particleKey) {
+        if (!attack.projectile) {
           // deal damage when the animation "hits"
           targetPokemon.dealDamage(damage);
         } else {
           // or add particle for projectile
-          console.log(attack.particleKey);
           const projectile = new Projectile(
             this,
             pokemon.x,
             pokemon.y,
-            attack.particleKey,
+            attack.projectile.key,
             targetPokemon,
-            getTurnDelay(pokemon.basePokemon) * 0.5
-          ).setActive(true);
-          this.add.existing(projectile);
-          this.physics.add.existing(projectile);
-          const projectileKey = Math.random().toFixed(16);
+            attack.projectile.speed
+          );
+          this.physics.add.existing(this.add.existing(projectile));
+          const projectileKey = Math.random().toFixed(20);
           this.projectiles[projectileKey] = projectile;
-          projectile.on('destroy', () => {
+          // cause event when it hits
+          projectile.on(Phaser.GameObjects.Events.DESTROY, () => {
             targetPokemon.dealDamage(damage);
             delete this.projectiles[projectileKey];
           });
-          // projectile.update(0);
           this.physics.moveToObject(
             projectile,
             targetPokemon,
-            0,
-            getTurnDelay(pokemon.basePokemon) * 0.5
+            attack.projectile.speed
           );
         }
       },

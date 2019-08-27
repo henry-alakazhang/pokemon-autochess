@@ -1,28 +1,34 @@
-export class Projectile extends Phaser.Physics.Arcade.Image {
+export class Projectile extends Phaser.Physics.Arcade.Sprite {
+  body: Phaser.Physics.Arcade.Body;
+
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
     texture: string,
     private target: Phaser.GameObjects.Sprite,
-    private duration: number
+    private speed: number
   ) {
     super(scene, x, y, texture);
   }
 
-  update(delta: number) {
-    this.duration -= delta;
-    if (this.duration <= 0) {
+  update() {
+    const remainingX = this.target.x - this.x;
+    const remainingY = this.target.y - this.y;
+
+    // reached destination: selfdestruct
+    if (Math.abs(remainingX) < 15 && Math.abs(remainingY) < 15) {
       this.destroy();
       return;
     }
 
-    const remainingX = this.target.x - this.x;
-    const remainingY = this.target.y - this.y;
-    this.setVelocityX((remainingX * 1000) / this.duration);
-    this.setVelocityY((remainingY * 1000) / this.duration);
-
-    console.log(Math.atan2(this.body.velocity.y, this.body.velocity.x));
+    const total = Math.abs(remainingX) + Math.abs(remainingY);
+    // scale the velocity based on the speed
+    this.setVelocity(
+      (this.speed * remainingX) / total,
+      (this.speed * remainingY) / total
+    );
+    // point angle
     this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
   }
 }
