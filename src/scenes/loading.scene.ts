@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { allPokemonNames } from '../core/pokemon.model';
+import { allPokemonNames, pokemonData } from '../core/pokemon.model';
 import { MenuScene } from './menu.scene';
 
 /**
@@ -63,6 +63,17 @@ export class LoadingScene extends Scene {
     );
 
     this.load.pack('sprites', 'assets/sprite-pack.json');
+
+    // load all projectiles for Pokemon attacks
+    Object.values(pokemonData).forEach(pokemon => {
+      if ('projectile' in pokemon.basicAttack) {
+        console.log(pokemon.basicAttack.projectile.key);
+        this.load.image(
+          pokemon.basicAttack.projectile.key,
+          `assets/fx/${pokemon.basicAttack.projectile.key}.png`
+        );
+      }
+    });
   }
 
   update(): void {

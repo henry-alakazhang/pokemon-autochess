@@ -17,7 +17,6 @@ export class PreloadScene extends Scene {
 
   preload(): void {
     this.load.image('logo', 'assets/logo.png');
-    this.load.image('firedart', 'assets/fx/firedart.png');
   }
 
   update(): void {
