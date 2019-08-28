@@ -1,3 +1,7 @@
+/**
+ * Projectiles fired as part of an attack.
+ * Flies towards a target and destroys itself on hit
+ */
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
   body: Phaser.Physics.Arcade.Body;
 
@@ -13,7 +17,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
-    // destroy if target goes away
+    // destroy if target goes away or if we reach it
     if (!this.target || this.scene.physics.overlap(this, this.target)) {
       this.destroy();
       return;

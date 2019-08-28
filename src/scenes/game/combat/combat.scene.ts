@@ -284,6 +284,7 @@ export class CombatScene extends Scene {
             attack.projectile.speed
           );
           this.physics.add.existing(this.add.existing(projectile));
+          // store this in the `projectiles` map under a random key
           const projectileKey = Math.random().toFixed(20);
           this.projectiles[projectileKey] = projectile;
           // cause event when it hits
