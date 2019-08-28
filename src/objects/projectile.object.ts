@@ -1,3 +1,7 @@
+/**
+ * Projectiles fired as part of an attack.
+ * Flies towards a target and destroys itself on hit.
+ */
 export class Projectile extends Phaser.GameObjects.Sprite {
   constructor(
     scene: Phaser.Scene,
@@ -12,6 +16,12 @@ export class Projectile extends Phaser.GameObjects.Sprite {
   }
 
   update(delta: number) {
+    // destroy if target goes away
+    if (!this.target) {
+      this.destroy();
+      return;
+    }
+
     // how far to move this update
     const stepDistance = (this.speed * delta) / 1000;
 
