@@ -108,9 +108,9 @@ export class CombatScene extends Scene {
     });
   }
 
-  update(time: number, delta: number) {
+  update() {
     // trigger updates on each projectile
-    Object.values(this.projectiles).forEach(x => x && x.update(delta));
+    Object.values(this.projectiles).forEach(x => x && x.update());
   }
 
   checkRoundEnd() {
@@ -274,17 +274,15 @@ export class CombatScene extends Scene {
           targetPokemon.dealDamage(damage);
         } else {
           // or add particle for projectile
-          const projectile = this.add.existing(
-            new Projectile(
-              this,
-              pokemon.x,
-              pokemon.y,
-              attack.projectile.key,
-              targetPokemon,
-              attack.projectile.speed
-            )
-          ) as Projectile;
-          // store this in the projectile map under a random key
+          const projectile = new Projectile(
+            this,
+            pokemon.x,
+            pokemon.y,
+            attack.projectile.key,
+            targetPokemon,
+            attack.projectile.speed
+          );
+          this.physics.add.existing(this.add.existing(projectile));
           const projectileKey = Math.random().toFixed(20);
           this.projectiles[projectileKey] = projectile;
           // cause event when it hits
@@ -292,6 +290,11 @@ export class CombatScene extends Scene {
             targetPokemon.dealDamage(damage);
             delete this.projectiles[projectileKey];
           });
+          this.physics.moveToObject(
+            projectile,
+            targetPokemon,
+            attack.projectile.speed
+          );
         }
       },
     });
