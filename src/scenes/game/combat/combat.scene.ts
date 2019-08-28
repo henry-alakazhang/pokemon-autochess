@@ -156,7 +156,8 @@ export class CombatScene extends Scene {
       side,
       ...coords,
     });
-    this.add.existing(pokemon);
+    this.physics.add.existing(this.add.existing(pokemon));
+    pokemon.initPhysics();
     pokemon.on(
       PokemonObject.Events.Dead,
       () => {
@@ -290,11 +291,6 @@ export class CombatScene extends Scene {
             targetPokemon.dealDamage(damage);
             delete this.projectiles[projectileKey];
           });
-          this.physics.moveToObject(
-            projectile,
-            targetPokemon,
-            attack.projectile.speed
-          );
         }
       },
     });

@@ -12,28 +12,15 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, texture);
   }
 
-  update(delta: number) {
+  update() {
     // destroy if target goes away
-    if (!this.target) {
+    if (!this.target || this.scene.physics.overlap(this, this.target)) {
       this.destroy();
       return;
     }
-    const remainingX = this.target.x - this.x;
-    const remainingY = this.target.y - this.y;
-
-    // reached destination: selfdestruct
-    if (Math.abs(remainingX) < 15 && Math.abs(remainingY) < 15) {
-      this.destroy();
-      return;
-    }
-
-    const total = Math.abs(remainingX) + Math.abs(remainingY);
-    // scale the velocity based on the speed
-    this.setVelocity(
-      (this.speed * remainingX) / total,
-      (this.speed * remainingY) / total
-    );
-    // point angle
+    // call `moveToObject` again to change direction if needed
+    this.scene.physics.moveToObject(this, this.target, this.speed);
+    // turn to face target
     this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
   }
 }
