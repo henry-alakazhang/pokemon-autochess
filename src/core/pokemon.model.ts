@@ -32,13 +32,18 @@ export type Role =
 export type Category = Type | Role;
 
 export interface Attack {
-  /* number of squares away the move can reach */
+  /** number of squares away the move can reach */
   readonly range: number;
-  /* the pokemon stat used for calculating damage */
+  /** the pokemon stat used for calculating damage */
   readonly stat: 'attack' | 'specAttack';
-  /* the pokemon stat used for calculating resistance
+  /** the pokemon stat used for calculating resistance
    * defaults to the opposite of the attack stat */
   readonly defenseStat?: 'defense' | 'specDefense';
+  /** details for the particle/fx for the projectile */
+  readonly projectile?: {
+    readonly key: string;
+    readonly speed: number;
+  };
 }
 
 export interface Pokemon {
@@ -52,13 +57,29 @@ export interface Pokemon {
   readonly speed: number;
   readonly basicAttack: Attack;
   readonly evolution?: PokemonName;
-  readonly catch: boolean;
+  readonly cost?: number;
 }
 
 /**
  * The base data for all Pokemon
  */
 export const pokemonData = {
+  fletchling: {
+    displayName: 'Fletchling',
+    categories: ['fire', 'flying'],
+    maxHP: 45,
+    attack: 50,
+    defense: 43,
+    specAttack: 40,
+    specDefense: 38,
+    speed: 62,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    evolution: 'fletchinder',
+    cost: 1,
+  },
   fletchinder: {
     displayName: 'Fletchinder',
     categories: ['fire', 'flying'],
@@ -73,7 +94,24 @@ export const pokemonData = {
       stat: 'attack',
     },
     evolution: 'talonflame',
-    catch: true,
+  },
+  chandelure: {
+    displayName: 'Chandelure',
+    categories: ['fire', 'ghost'],
+    maxHP: 60,
+    attack: 55,
+    defense: 90,
+    specAttack: 145,
+    specDefense: 90,
+    speed: 80,
+    basicAttack: {
+      range: 3,
+      stat: 'specAttack',
+      projectile: {
+        key: 'firedart',
+        speed: 200,
+      },
+    },
   },
   talonflame: {
     displayName: 'Talonflame',
@@ -88,7 +126,6 @@ export const pokemonData = {
       range: 1,
       stat: 'attack',
     },
-    catch: false,
   },
   rotomw: {
     displayName: 'Rotom-W',
@@ -103,14 +140,13 @@ export const pokemonData = {
       range: 1,
       stat: 'specAttack',
     },
-    catch: true,
   },
 } as const;
 
 export type PokemonName = keyof typeof pokemonData;
 export const allPokemonNames = Object.keys(pokemonData) as Array<PokemonName>;
 export const catchablePokemon = allPokemonNames.filter(
-  name => pokemonData[name].catch
+  name => 'cost' in pokemonData[name]
 );
 
 /**

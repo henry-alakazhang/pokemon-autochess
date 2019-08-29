@@ -154,7 +154,7 @@ export class GameScene extends Phaser.Scene {
       x: 0,
       y: 0,
       id: 'asdfgh',
-      name: 'rotomw',
+      name: 'chandelure',
       side: 'enemy',
     });
   }

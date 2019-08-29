@@ -15,5 +15,8 @@ window.onload = () => {
     height: 600,
     backgroundColor: '#3A4DB5',
     scene: [PreloadScene, LoadingScene, MenuScene, CombatScene, GameScene],
+    physics: {
+      default: 'arcade',
+    },
   });
 };

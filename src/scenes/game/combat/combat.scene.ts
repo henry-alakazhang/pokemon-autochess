@@ -5,6 +5,7 @@ import {
   PokemonAnimationType,
   PokemonObject,
 } from '../../../objects/pokemon.object';
+import { Projectile } from '../../../objects/projectile.object';
 import {
   Coords,
   getAttackAnimation,
@@ -49,6 +50,7 @@ export class CombatScene extends Scene {
 
   private board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
+  private projectiles: { [k: string]: Projectile } = {};
 
   private combatEndCallback: CombatEndCallback;
 
@@ -106,6 +108,11 @@ export class CombatScene extends Scene {
     });
   }
 
+  update() {
+    // trigger updates on each projectile
+    Object.values(this.projectiles).forEach(x => x && x.update());
+  }
+
   checkRoundEnd() {
     const remainingSides = flatten(this.board)
       .filter(isDefined)
@@ -149,7 +156,8 @@ export class CombatScene extends Scene {
       side,
       ...coords,
     });
-    this.add.existing(pokemon);
+    this.physics.add.existing(this.add.existing(pokemon));
+    pokemon.initPhysics();
     pokemon.on(
       PokemonObject.Events.Dead,
       () => {
@@ -262,8 +270,29 @@ export class CombatScene extends Scene {
       yoyo: true,
       ease: 'Power1',
       onYoyo: () => {
-        // deal damage when the animation "hits"
-        targetPokemon.dealDamage(damage);
+        if (!attack.projectile) {
+          // deal damage when the animation "hits"
+          targetPokemon.dealDamage(damage);
+        } else {
+          // or add particle for projectile
+          const projectile = new Projectile(
+            this,
+            pokemon.x,
+            pokemon.y,
+            attack.projectile.key,
+            targetPokemon,
+            attack.projectile.speed
+          );
+          this.physics.add.existing(this.add.existing(projectile));
+          // store this in the `projectiles` map under a random key
+          const projectileKey = Math.random().toFixed(20);
+          this.projectiles[projectileKey] = projectile;
+          // cause event when it hits
+          projectile.on(Phaser.GameObjects.Events.DESTROY, () => {
+            targetPokemon.dealDamage(damage);
+            delete this.projectiles[projectileKey];
+          });
+        }
       },
     });
 

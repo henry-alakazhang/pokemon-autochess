@@ -15,7 +15,7 @@ interface SpriteParams {
 
 export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
-export class PokemonObject extends Phaser.GameObjects.Sprite {
+export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public static readonly Events = {
     Dead: 'dead',
   } as const;
@@ -64,6 +64,11 @@ export class PokemonObject extends Phaser.GameObjects.Sprite {
       y: this.y,
     });
     this.redrawHPBar();
+  }
+
+  initPhysics() {
+    // set circle to be small % of the body
+    this.body.setCircle(this.height / 4);
   }
 
   setPosition(x: number, y: number) {
