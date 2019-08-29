@@ -454,7 +454,11 @@ export class GameScene extends Phaser.Scene {
       [...flatten(this.mainboard), ...this.sideboard]
         .filter(isDefined)
         // that are have the same Name as this one
-        .filter(pokemon => pokemon.name === newPokemon.name);
+        .filter(pokemon => pokemon.name === newPokemon.name)
+        // that aren't already evolving
+        .filter(pokemon => !pokemon.markedForEvolution)
+        // and pick the first three
+        .slice(0, 3);
     if (samePokemon.length < 3) {
       return;
     }
@@ -467,9 +471,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // disable inputs to prevent things from being cooked while evolution happen
-    // FIXME: there has to be a better way to do this.
-    this.input.enabled = false;
+    // mark these pokemon as evolving
+    samePokemon.forEach(pokemon => {
+      pokemon.markedForEvolution = true;
+    });
 
     // play a flashing animation for a bit
     // not sure how to use tweens to get a flashing trigger of the outline
@@ -508,7 +513,6 @@ export class GameScene extends Phaser.Scene {
         ease: Phaser.Math.Easing.Expo.InOut,
         duration: 500,
         onComplete: () => {
-          this.input.enabled = true;
           this.applyEvolutions(evo);
         },
       });

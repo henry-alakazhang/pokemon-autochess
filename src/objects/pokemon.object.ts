@@ -33,8 +33,14 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   public id: string;
   public name: PokemonName;
-  public side: 'player' | 'enemy';
   public basePokemon: Pokemon;
+
+  // these are only really used in the game scene
+  public side: 'player' | 'enemy';
+  // slightly hacky value used to store state for the GameScene
+  // if this is marked for evolution, it will be ignored when
+  // making checks for evolving Pokemon
+  public markedForEvolution = false;
 
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
