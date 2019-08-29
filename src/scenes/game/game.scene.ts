@@ -474,11 +474,11 @@ export class GameScene extends Phaser.Scene {
     // play a flashing animation for a bit
     // not sure how to use tweens to get a flashing trigger of the outline
     // so this just manually creates one using window.setTimeout
-    let timeout = 500;
+    let timeout = 350;
     let flashAnimation: number;
     const toggleAnim = () => {
       samePokemon.forEach(pokemon => pokemon.toggleOutline());
-      timeout *= 0.8;
+      timeout *= 0.75;
       flashAnimation = window.setTimeout(toggleAnim, timeout);
     };
     toggleAnim();
@@ -509,8 +509,9 @@ export class GameScene extends Phaser.Scene {
         duration: 500,
         onComplete: () => {
           this.input.enabled = true;
+          this.applyEvolutions(evo);
         },
       });
-    }, 2000);
+    }, 1000);
   }
 }
