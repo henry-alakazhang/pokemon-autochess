@@ -41,7 +41,6 @@ export class MenuScene extends Scene {
       scene: this,
       x: 400,
       y: 300,
-      id: randomPokemon,
       name: randomPokemon,
       side: 'player',
     }).setInteractive();
