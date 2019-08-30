@@ -140,6 +140,7 @@ export const pokemonData = {
       range: 1,
       stat: 'specAttack',
     },
+    cost: 4,
   },
 } as const;
 
