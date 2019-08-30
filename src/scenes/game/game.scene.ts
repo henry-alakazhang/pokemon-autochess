@@ -502,7 +502,6 @@ export class GameScene extends Phaser.Scene {
         x: 0,
         y: 0,
         name: evolutionName,
-        id: Math.random().toFixed(10),
         side: 'player',
       });
       this.add.existing(evo);
