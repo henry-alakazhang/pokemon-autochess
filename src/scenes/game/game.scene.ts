@@ -127,6 +127,8 @@ export class GameScene extends Phaser.Scene {
 
   /** A reference to the currently selected Pokemon */
   selectedPokemon?: PokemonObject;
+  /** A map storing whether a Pokemon (by id) is currently evolving. */
+  markedForEvolution: { [k: string]: boolean } = {};
 
   /** The grid used to display team composition during the downtime phase */
   prepGrid: Phaser.GameObjects.Grid;
@@ -456,7 +458,7 @@ export class GameScene extends Phaser.Scene {
         // that are have the same Name as this one
         .filter(pokemon => pokemon.name === newPokemon.name)
         // that aren't already evolving
-        .filter(pokemon => !pokemon.markedForEvolution)
+        .filter(pokemon => !this.markedForEvolution[pokemon.id])
         // and pick the first three
         .slice(0, 3);
     if (samePokemon.length < 3) {
@@ -473,7 +475,7 @@ export class GameScene extends Phaser.Scene {
 
     // mark these pokemon as evolving
     samePokemon.forEach(pokemon => {
-      pokemon.markedForEvolution = true;
+      this.markedForEvolution[pokemon.id] = true;
     });
 
     // play a flashing animation for a bit
@@ -492,7 +494,10 @@ export class GameScene extends Phaser.Scene {
       // end animation
       window.clearInterval(flashAnimation);
       // delete old Pokemon
-      samePokemon.forEach(pokemon => this.removePokemon(pokemon));
+      samePokemon.forEach(pokemon => {
+        this.markedForEvolution[pokemon.id] = false;
+        this.removePokemon(pokemon);
+      });
       // add new one
       const evo = new PokemonObject({
         scene: this,
