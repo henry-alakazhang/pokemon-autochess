@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { PokemonName } from '../../../core/pokemon.model';
-import { flatten, isDefined } from '../../../helpers';
+import { flatten, id, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -151,7 +151,6 @@ export class CombatScene extends Scene {
     const coords = getCoordinatesForGrid({ x, y });
     const pokemon = new PokemonObject({
       scene: this,
-      id: `${name}${x}${y}`,
       name,
       side,
       ...coords,
@@ -285,7 +284,7 @@ export class CombatScene extends Scene {
           );
           this.physics.add.existing(this.add.existing(projectile));
           // store this in the `projectiles` map under a random key
-          const projectileKey = Math.random().toFixed(20);
+          const projectileKey = id();
           this.projectiles[projectileKey] = projectile;
           // cause event when it hits
           projectile.on(Phaser.GameObjects.Events.DESTROY, () => {

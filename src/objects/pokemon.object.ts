@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
+import { id } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
 
@@ -7,7 +8,6 @@ interface SpriteParams {
   readonly scene: Phaser.Scene;
   readonly x: number;
   readonly y: number;
-  readonly id: string;
   readonly name: PokemonName;
   readonly frame?: string | number;
   readonly side: 'player' | 'enemy';
@@ -42,7 +42,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   constructor(params: SpriteParams) {
     super(params.scene, params.x, params.y, params.name, params.frame);
 
-    this.id = params.id;
+    // generate a random ID
+    this.id = id();
     this.name = params.name;
 
     // load data from Pokemon data

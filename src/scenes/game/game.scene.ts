@@ -155,7 +155,6 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      id: 'asdfgh',
       name: 'chandelure',
       side: 'enemy',
     });
@@ -331,7 +330,6 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       ...getCoordinatesForSideboardIndex(empty),
       name: pokemon,
-      id: Math.random().toFixed(10),
       side: 'player',
     });
     this.add.existing(newPokemon);
