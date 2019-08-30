@@ -1,6 +1,13 @@
 // general JS helpers file
 
 /**
+ * Generate a random string for use as a unique identifier
+ */
+export function id(): string {
+  return (Math.random() * 10000000 + 1).toString();
+}
+
+/**
  * Flatten a multi-dimensional array down to a single dimension
  */
 export function flatten<T>(arr: T[][]): T[] {
