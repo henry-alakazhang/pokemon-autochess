@@ -50,6 +50,7 @@ export interface Pokemon {
   readonly name: string;
   readonly categories: ReadonlyArray<Category>;
   readonly maxHP: number;
+  readonly maxPP?: number;
   readonly attack: number;
   readonly defense: number;
   readonly specAttack: number;
@@ -84,6 +85,7 @@ const rawPokemonData = {
     name: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],
     maxHP: 78,
+    maxPP: 10,
     attack: 81,
     defense: 71,
     specAttack: 74,
