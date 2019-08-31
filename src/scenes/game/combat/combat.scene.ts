@@ -271,8 +271,8 @@ export class CombatScene extends Scene {
       onYoyo: () => {
         if (!attack.projectile) {
           // deal damage when the animation "hits"
-          pokemon.onAttack(damage);
-          targetPokemon.onTakeDamage(damage);
+          pokemon.dealDamage(damage);
+          targetPokemon.takeDamage(damage);
         } else {
           // or add particle for projectile
           const projectile = new Projectile(
@@ -289,8 +289,8 @@ export class CombatScene extends Scene {
           this.projectiles[projectileKey] = projectile;
           // cause event when it hits
           projectile.on(Phaser.GameObjects.Events.DESTROY, () => {
-            pokemon.onAttack(damage);
-            targetPokemon.onTakeDamage(damage);
+            pokemon.dealDamage(damage);
+            targetPokemon.takeDamage(damage);
             delete this.projectiles[projectileKey];
           });
         }

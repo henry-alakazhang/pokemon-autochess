@@ -158,25 +158,31 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  /** Effects that trigger when this Pokemon attacks */
-  public onAttack(damage: number) {
+  /**
+   * Cause this pokemon to deal damage
+   * Triggers effects that happen on attack, such as mana generation
+   */
+  public dealDamage(amount: number) {
     // damage / 10, capped at 2
-    this.currentPP += Math.min(2, Math.round(damage / 10));
+    this.currentPP += Math.min(2, Math.round(amount / 10));
     this.redrawBars();
   }
 
-  public onTakeDamage(damage: number) {
-    if (damage < 0 || this.currentHP <= 0) {
+  /**
+   * Cause this pokemon to take damage
+   */
+  public takeDamage(amount: number) {
+    if (amount < 0 || this.currentHP <= 0) {
       return;
     }
-    this.currentPP += Math.min(2, Math.round(damage / 10));
-    const actualDamage = Math.min(this.currentHP, damage);
+    this.currentPP += Math.min(2, Math.round(amount / 10));
+    const actualDamage = Math.min(this.currentHP, amount);
     this.currentHP -= actualDamage;
     this.redrawBars();
 
     // display damage text
     this.scene.add.existing(
-      new FloatingText(this.scene, this.x, this.y, `${damage}`)
+      new FloatingText(this.scene, this.x, this.y, `${amount}`)
     );
     // play flash effect
     this.scene.add.tween({
