@@ -51,7 +51,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.maxHP = pokemonData[this.name].maxHP;
     this.currentHP = this.maxHP;
     this.maxPP = pokemonData[this.name].maxPP;
-    this.currentPP = 5;
+    this.currentPP = 0;
     this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
@@ -65,10 +65,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // default state is facing the player
     this.playAnimation('down');
 
-    this.bars = this.scene.add.graphics({
-      x: this.x,
-      y: this.y,
-    });
+    this.bars = this.scene.add
+      .graphics({
+        x: this.x,
+        y: this.y,
+      })
+      .setDepth(1);
     this.redrawBars();
   }
 
@@ -132,12 +134,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       -this.width / 2 + 1,
       -this.height / 2 + 7, // offset by 6 to put below the HP bar
       this.maxPP
-        ? this.width * (this.currentPP / this.maxPP) - 2 // use current PP if available
+        ? Math.max(0, this.width * (this.currentPP / this.maxPP) - 2) // use current PP if available
         : 0, // empty if no PP
       2
     );
-
-    this.bars.setDepth(1);
   }
 
   public playAnimation(type: PokemonAnimationType) {
@@ -158,17 +158,25 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  public dealDamage(amount: number) {
-    if (amount < 0 || this.currentHP <= 0) {
+  /** Effects that trigger when this Pokemon attacks */
+  public onAttack(damage: number) {
+    // damage / 10, capped at 2
+    this.currentPP += Math.min(2, Math.round(damage / 10));
+    this.redrawBars();
+  }
+
+  public onTakeDamage(damage: number) {
+    if (damage < 0 || this.currentHP <= 0) {
       return;
     }
-    const actualDamage = Math.min(this.currentHP, amount);
+    this.currentPP += Math.min(2, Math.round(damage / 10));
+    const actualDamage = Math.min(this.currentHP, damage);
     this.currentHP -= actualDamage;
     this.redrawBars();
 
     // display damage text
     this.scene.add.existing(
-      new FloatingText(this.scene, this.x, this.y, `${amount}`)
+      new FloatingText(this.scene, this.x, this.y, `${damage}`)
     );
     // play flash effect
     this.scene.add.tween({
