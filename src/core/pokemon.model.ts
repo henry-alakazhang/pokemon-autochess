@@ -61,7 +61,7 @@ export interface Pokemon {
 /**
  * The base data for all Pokemon
  */
-export const pokemonData = {
+const rawPokemonData = {
   chandelure: {
     name: 'Chandelure',
     categories: ['fire', 'ghost'],
@@ -110,11 +110,12 @@ export const pokemonData = {
   },
 } as const;
 
-export type PokemonName = keyof typeof pokemonData;
-export const allPokemonNames = Object.keys(pokemonData) as Array<PokemonName>;
+export type PokemonName = keyof typeof rawPokemonData;
+export const allPokemonNames = Object.keys(rawPokemonData) as Array<
+  PokemonName
+>;
 
 /**
- * this is just to typecheck the PokemonData to make sure each object
- * conforms to the PokemonBaseStats model
+ * The data for Pokemon, exported in a shape guaranteed to match the `Pokemon` type.
  */
-const typedPokemonData: { [k in PokemonName]: Pokemon } = pokemonData;
+export const pokemonData: { [k in PokemonName]: Pokemon } = rawPokemonData;
