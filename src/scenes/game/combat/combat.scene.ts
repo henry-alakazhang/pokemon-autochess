@@ -103,9 +103,9 @@ export class CombatScene extends Scene {
       )
     );
 
-    this.board.forEach((col, x) => {
-      col.forEach((_, y) => this.setTurn({ x, y }));
-    });
+    flatten(this.board)
+      .filter(isDefined)
+      .forEach(pokemon => this.setTurn(pokemon));
   }
 
   update() {
@@ -195,28 +195,36 @@ export class CombatScene extends Scene {
   /**
    * Adds a turn for the Pokemon at a given coordinate
    */
-  setTurn({ x, y }: Coords) {
-    const pokemon = this.board[x][y];
-    if (pokemon) {
-      setTimeout(
-        () => this.takeTurn({ x, y }),
-        getTurnDelay(pokemon.basePokemon)
-      );
-    }
+  setTurn(pokemon: PokemonObject) {
+    setTimeout(() => this.takeTurn(pokemon), getTurnDelay(pokemon.basePokemon));
+  }
+
+  /**
+   * Searches the board for a Pokemon and returns its grid coords
+   * This is slightly different to (and simpler than) the similar helpers in
+   * the GameScene, because we only ever need to call this on actual Pokemon,
+   * and not on clicks which may or may not be on Pokemon
+   */
+  getBoardLocationForPokemon({ id }: PokemonObject): Coords | undefined {
+    let location = undefined;
+    this.board.forEach((col, x) => {
+      col.forEach((pokemon, y) => {
+        if (pokemon && pokemon.id === id) {
+          location = { x, y };
+        }
+      });
+    });
+    return location;
   }
 
   /**
    * Takes a turn for the Pokemon at the given coordinates
    */
-  takeTurn({ x, y }: Coords) {
-    console.log(x, y);
-    const pokemon = this.board[x][y];
-    if (!pokemon) {
+  takeTurn(pokemon: PokemonObject) {
+    const myCoords = this.getBoardLocationForPokemon(pokemon);
+    if (!myCoords) {
       return;
     }
-
-    const attack = pokemon.basePokemon.basicAttack;
-    const myCoords = { x, y };
 
     const targetCoords = getNearestTarget(
       this.board,
@@ -229,6 +237,7 @@ export class CombatScene extends Scene {
       return;
     }
 
+    const attack = pokemon.basePokemon.basicAttack;
     if (getGridDistance(myCoords, targetCoords) > attack.range) {
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
@@ -236,12 +245,12 @@ export class CombatScene extends Scene {
         // can't reach: just do nothing and wait for next turn
         // FIXME: I'm pretty sure this will result in times when the Pokemon
         // will tunnel-vision and freeze up even if there are other valid targets
-        this.setTurn(myCoords);
+        this.setTurn(pokemon);
         return;
       }
 
       this.movePokemon(myCoords, step);
-      this.setTurn(step);
+      this.setTurn(pokemon);
       return;
     }
 
@@ -265,7 +274,7 @@ export class CombatScene extends Scene {
     this.add.tween({
       targets: [pokemon],
       duration: getTurnDelay(pokemon.basePokemon) * 0.15,
-      ...getAttackAnimation(getCoordinatesForGrid({ x, y }), facing),
+      ...getAttackAnimation(pokemon, facing),
       yoyo: true,
       ease: 'Power1',
       onYoyo: () => {
@@ -299,6 +308,6 @@ export class CombatScene extends Scene {
 
     // turn over, wait until next one
     // delay is 100/speed seconds
-    this.setTurn(myCoords);
+    this.setTurn(pokemon);
   }
 }
