@@ -193,17 +193,12 @@ export class CombatScene extends Scene {
   }
 
   /**
-   * Adds a turn for the Pokemon at a given coordinate
-   */
-  setTurn(pokemon: PokemonObject) {
-    setTimeout(() => this.takeTurn(pokemon), getTurnDelay(pokemon.basePokemon));
-  }
-
-  /**
    * Searches the board for a Pokemon and returns its grid coords
    * This is slightly different to (and simpler than) the similar helpers in
    * the GameScene, because we only ever need to call this on actual Pokemon,
-   * and not on clicks which may or may not be on Pokemon
+   * and not on clicks which may or may not be on Pokemon.
+   *
+   * Doing a search will also double as a check that the Pokemon is alive
    */
   getBoardLocationForPokemon({ id }: PokemonObject): Coords | undefined {
     let location = undefined;
@@ -218,7 +213,14 @@ export class CombatScene extends Scene {
   }
 
   /**
-   * Takes a turn for the Pokemon at the given coordinates
+   * Adds a turn for the given Pokemon, based on its speed
+   */
+  setTurn(pokemon: PokemonObject) {
+    setTimeout(() => this.takeTurn(pokemon), getTurnDelay(pokemon.basePokemon));
+  }
+
+  /**
+   * Takes a turn for the given Pokemon
    */
   takeTurn(pokemon: PokemonObject) {
     const myCoords = this.getBoardLocationForPokemon(pokemon);
