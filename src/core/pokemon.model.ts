@@ -50,6 +50,7 @@ export interface Pokemon {
   readonly name: string;
   readonly categories: ReadonlyArray<Category>;
   readonly maxHP: number;
+  readonly maxPP?: number;
   readonly attack: number;
   readonly defense: number;
   readonly specAttack: number;
@@ -66,6 +67,7 @@ const rawPokemonData = {
     name: 'Chandelure',
     categories: ['fire', 'ghost'],
     maxHP: 60,
+    maxPP: 15,
     attack: 55,
     defense: 90,
     specAttack: 145,
@@ -84,6 +86,7 @@ const rawPokemonData = {
     name: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],
     maxHP: 78,
+    maxPP: 10,
     attack: 81,
     defense: 71,
     specAttack: 74,
@@ -98,6 +101,7 @@ const rawPokemonData = {
     name: 'Rotom-W',
     categories: ['water', 'electric'],
     maxHP: 50,
+    maxPP: 12,
     attack: 65,
     defense: 107,
     specAttack: 105,
