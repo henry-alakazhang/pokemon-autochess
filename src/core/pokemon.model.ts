@@ -49,7 +49,7 @@ export interface Attack {
 export interface Pokemon {
   readonly displayName: string;
   readonly categories: ReadonlyArray<Category>;
-  readonly tier: number;
+  readonly tier?: number;
   readonly maxHP: number;
   readonly maxPP?: number;
   readonly attack: number;
@@ -69,7 +69,6 @@ const rawPokemonData = {
   chandelure: {
     displayName: 'Chandelure',
     categories: ['fire', 'ghost'],
-    tier: 2,
     maxHP: 60,
     maxPP: 15,
     attack: 55,
@@ -105,7 +104,6 @@ const rawPokemonData = {
   fletchinder: {
     displayName: 'Fletchinder',
     categories: ['fire', 'flying'],
-    tier: 1,
     maxHP: 62,
     attack: 73,
     defense: 55,
@@ -121,7 +119,6 @@ const rawPokemonData = {
   talonflame: {
     displayName: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],
-    tier: 1,
     maxHP: 78,
     maxPP: 10,
     attack: 81,
@@ -156,8 +153,8 @@ export type PokemonName = keyof typeof rawPokemonData;
 export const allPokemonNames = Object.keys(rawPokemonData) as Array<
   PokemonName
 >;
-export const catchablePokemon = allPokemonNames.filter(
-  name => 'tier' in pokemonData[name]
+export const buyablePokemon = allPokemonNames.filter(
+  name => 'tier' in rawPokemonData[name]
 );
 
 /**

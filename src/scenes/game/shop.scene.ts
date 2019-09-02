@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
-import { Coords } from './combat/combat.helpers';
-import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
-import { allPokemonNames, PokemonName } from '../../core/pokemon.model';
+import { buyablePokemon } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
+import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
+import { Coords } from './combat/combat.helpers';
 import { GameScene } from './game.scene';
 
 const CELL_WIDTH = 70;
@@ -105,7 +105,7 @@ export class ShopScene extends Phaser.Scene {
       this.pokemonForSale[i] = new PokemonForSaleObject(
         this,
         currCoords,
-        allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
+        buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)]
       );
     }
   }
