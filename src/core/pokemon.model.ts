@@ -59,7 +59,6 @@ export interface Pokemon {
   readonly speed: number;
   readonly basicAttack: Attack;
   readonly evolution?: PokemonName;
-  readonly cost?: number;
 }
 
 /**

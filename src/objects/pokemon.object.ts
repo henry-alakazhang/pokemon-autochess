@@ -98,10 +98,6 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     return super.setVisible(visible);
   }
 
-  setStatbarsVisible(visible: boolean) {
-    this.bars.setVisible(visible);
-  }
-
   destroy() {
     this.outlineSprite.destroy();
     this.bars.destroy();
