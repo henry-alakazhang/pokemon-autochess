@@ -49,7 +49,8 @@ export interface Attack {
 export interface Pokemon {
   readonly displayName: string;
   readonly categories: ReadonlyArray<Category>;
-  readonly tier?: number;
+  /** Pokemon tier / shop cost */
+  readonly tier: 1 | 2 | 3 | 4 | 5;
   readonly maxHP: number;
   readonly maxPP?: number;
   readonly attack: number;
@@ -59,6 +60,8 @@ export interface Pokemon {
   readonly speed: number;
   readonly basicAttack: Attack;
   readonly evolution?: PokemonName;
+  /** Evolution stage */
+  readonly stage: 1 | 2 | 3;
 }
 
 /**
@@ -68,6 +71,7 @@ const rawPokemonData = {
   chandelure: {
     displayName: 'Chandelure',
     categories: ['fire', 'ghost'],
+    tier: 2,
     maxHP: 60,
     maxPP: 15,
     attack: 55,
@@ -83,6 +87,7 @@ const rawPokemonData = {
         speed: 200,
       },
     },
+    stage: 3,
   },
   fletchling: {
     displayName: 'Fletchling',
@@ -99,10 +104,12 @@ const rawPokemonData = {
       stat: 'attack',
     },
     evolution: 'fletchinder',
+    stage: 1,
   },
   fletchinder: {
     displayName: 'Fletchinder',
     categories: ['fire', 'flying'],
+    tier: 1,
     maxHP: 62,
     attack: 73,
     defense: 55,
@@ -114,10 +121,12 @@ const rawPokemonData = {
       stat: 'attack',
     },
     evolution: 'talonflame',
+    stage: 2,
   },
   talonflame: {
     displayName: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],
+    tier: 1,
     maxHP: 78,
     maxPP: 10,
     attack: 81,
@@ -129,6 +138,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
+    stage: 3,
   },
   rotomw: {
     displayName: 'Rotom-W',
@@ -145,6 +155,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'specAttack',
     },
+    stage: 1,
   },
 } as const;
 
@@ -153,7 +164,7 @@ export const allPokemonNames = Object.keys(rawPokemonData) as Array<
   PokemonName
 >;
 export const buyablePokemon = allPokemonNames.filter(
-  name => 'tier' in rawPokemonData[name]
+  name => rawPokemonData[name].stage === 1
 );
 
 /**
