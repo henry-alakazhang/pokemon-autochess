@@ -16,11 +16,10 @@ export class PokemonForSaleObject {
   private goldCostText: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, coordinates: Coords, name: PokemonName) {
-    const cost = pokemonData[name].tier;
-    if (cost) {
-      this.cost = cost;
+    if (pokemonData[name].stage === 1) {
+      this.cost = pokemonData[name].tier;
     } else {
-      console.error('Tried to add Pokemon without cost to shop!');
+      console.error('Tried to add evolved Pokemon to shop!');
       // let's not break
       this.cost = 99;
     }
