@@ -201,7 +201,7 @@ export class CombatScene extends Scene {
    * Doing a search will also double as a check that the Pokemon is alive
    */
   getBoardLocationForPokemon({ id }: PokemonObject): Coords | undefined {
-    let location = undefined;
+    let location;
     this.board.forEach((col, x) => {
       col.forEach((pokemon, y) => {
         if (pokemon && pokemon.id === id) {

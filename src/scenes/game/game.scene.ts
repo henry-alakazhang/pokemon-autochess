@@ -1,6 +1,7 @@
-import { allPokemonNames, PokemonName } from '../../core/pokemon.model';
+import { PokemonName } from '../../core/pokemon.model';
 import { flatten } from '../../helpers';
 import { Button } from '../../objects/button.object';
+import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from './combat/combat.helpers';
 import {
@@ -8,7 +9,6 @@ import {
   CombatScene,
   CombatSceneData,
 } from './combat/combat.scene';
-import { Player } from '../../objects/player.object';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -24,9 +24,9 @@ const SIDEBOARD_Y = 500;
 const CELL_WIDTH = 70;
 const CELL_COUNT = 8;
 
-//** X-coordinate of the center of the shop */
-const SHOP_X = 400
-//** Y-coordinate of the center of the shop */
+/** X-coordinate of the center of the shop */
+const SHOP_X = 400;
+/** Y-coordinate of the center of the shop */
 const SHOP_Y = 175;
 
 const MAX_MAINBOARD_POKEMON = 6;
@@ -142,7 +142,7 @@ export class GameScene extends Phaser.Scene {
   prepGrid: Phaser.GameObjects.Grid;
   /** A background for highlighting the valid regions to put Pokemon in */
   prepGridHighlight: Phaser.GameObjects.Shape;
-  
+
   shop: ShopScene;
 
   constructor() {
@@ -214,9 +214,9 @@ export class GameScene extends Phaser.Scene {
       .setZ(-1)
       .setVisible(false);
 
-    this.player = new Player;
-    this.playerGoldText = this.add.text(50, 100, 'Gold: ' + this.player.gold);
-    this.playerHPText = this.add.text(50, 120, 'HP: ' + this.player.currentHP);
+    this.player = new Player();
+    this.playerGoldText = this.add.text(50, 100, `Gold: ${this.player.gold}`);
+    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.currentHP}`);
 
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.player = this.player; // temporary solution
@@ -234,16 +234,11 @@ export class GameScene extends Phaser.Scene {
       }
     );
 
-    this.input.keyboard.on(
-      'keydown-SPACE',
-      () => {
-        this.toggleShop();
-      }
-    );
+    this.input.keyboard.on('keydown-SPACE', () => {
+      this.toggleShop();
+    });
 
-    this.shopButton = this.add.existing(
-      new Button(this, 400, 580, 'Shop')
-    );
+    this.shopButton = this.add.existing(new Button(this, 400, 580, 'Shop'));
     this.shopButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
       this.toggleShop()
     );
@@ -257,9 +252,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    this.playerGoldText.setText("Gold: " + this.player.gold);
-    this.playerHPText.setText('HP: ' + this.player.currentHP);
-    
+    this.playerGoldText.setText(`Gold: ${this.player.gold}`);
+    this.playerHPText.setText(`HP: ${this.player.currentHP}`);
+
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
   }

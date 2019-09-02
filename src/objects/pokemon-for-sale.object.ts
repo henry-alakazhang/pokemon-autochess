@@ -26,12 +26,18 @@ export class PokemonForSaleObject {
   }
 
   drawPokemon(): void {
-    this.pokemonSprite = this.scene.add.sprite(this.centre.x, this.centre.y, this.pokemonName);
+    this.pokemonSprite = this.scene.add.sprite(
+      this.centre.x,
+      this.centre.y,
+      this.pokemonName
+    );
     this.pokemonSprite.play(`${this.pokemonName}--down`);
   }
 
   drawGoldCostText(): void {
-    this.goldCostText = this.scene.add.text(this.centre.x, this.centre.y + 50, this.cost.toString()).setOrigin(0.5);
+    this.goldCostText = this.scene.add
+      .text(this.centre.x, this.centre.y + 50, this.cost.toString())
+      .setOrigin(0.5);
   }
 
   destroy(): void {
