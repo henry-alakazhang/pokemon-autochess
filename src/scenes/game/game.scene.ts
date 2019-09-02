@@ -1,6 +1,7 @@
-import { catchablePokemon, PokemonName } from '../../core/pokemon.model';
+import { PokemonName } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
+import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from './combat/combat.helpers';
 import {
@@ -8,6 +9,7 @@ import {
   CombatScene,
   CombatSceneData,
 } from './combat/combat.scene';
+import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
 const GRID_X = 400;
@@ -21,6 +23,11 @@ const SIDEBOARD_X = 400;
 const SIDEBOARD_Y = 500;
 const CELL_WIDTH = 70;
 const CELL_COUNT = 8;
+
+//** X-coordinate of the center of the shop */
+const SHOP_X = 400;
+//** Y-coordinate of the center of the shop */
+const SHOP_Y = 175;
 
 const MAX_MAINBOARD_POKEMON = 6;
 
@@ -116,8 +123,11 @@ export class GameScene extends Phaser.Scene {
 
   /* TEMPORARY JUNK */
   nextRoundButton: Button;
-  addButton: Phaser.GameObjects.GameObject;
+  shopButton: Phaser.GameObjects.GameObject;
   enemyBoard: CombatBoard;
+  player: Player;
+  playerGoldText: Phaser.GameObjects.Text;
+  playerHPText: Phaser.GameObjects.Text;
   /* END TEMPORARY JUNK */
 
   /** The Pokemon board representing the player's team composition */
@@ -134,6 +144,8 @@ export class GameScene extends Phaser.Scene {
   prepGrid: Phaser.GameObjects.Grid;
   /** A background for highlighting the valid regions to put Pokemon in */
   prepGridHighlight: Phaser.GameObjects.Shape;
+
+  shop: ShopScene;
 
   constructor() {
     super({
@@ -204,6 +216,15 @@ export class GameScene extends Phaser.Scene {
       .setZ(-1)
       .setVisible(false);
 
+    this.player = new Player();
+    this.playerGoldText = this.add.text(50, 100, 'Gold: ' + this.player.gold);
+    this.playerHPText = this.add.text(50, 120, 'HP: ' + this.player.currentHP);
+
+    this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
+    this.shop.player = this.player; // temporary solution
+    this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
+    this.scene.launch(ShopScene.KEY);
+
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
@@ -215,13 +236,13 @@ export class GameScene extends Phaser.Scene {
       }
     );
 
-    this.addButton = this.add.existing(
-      new Button(this, 400, 580, 'Add Pokemon')
-    );
-    this.addButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
-      this.addPokemonToSideboard(
-        catchablePokemon[Math.floor(Math.random() * catchablePokemon.length)]
-      )
+    this.input.keyboard.on('keydown-SPACE', () => {
+      this.toggleShop();
+    });
+
+    this.shopButton = this.add.existing(new Button(this, 400, 580, 'Shop'));
+    this.shopButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
+      this.toggleShop()
     );
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
@@ -233,9 +254,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    if (!this.canAddPokemonToSideboard()) {
-      this.addButton.destroy();
-    }
+    this.playerGoldText.setText('Gold: ' + this.player.gold);
+    this.playerHPText.setText('HP: ' + this.player.currentHP);
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
@@ -258,6 +278,11 @@ export class GameScene extends Phaser.Scene {
       playerBoard: this.mainboard,
       enemyBoard: this.enemyBoard,
       callback: (winner: 'player' | 'enemy') => {
+        if (winner == 'player') {
+          this.player.winGold();
+        } else {
+          --this.player.currentHP; // TODO: implement properly
+        }
         this.startDowntime();
       },
     };
@@ -265,6 +290,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDowntime() {
+    this.shop.reroll();
     // show all the prep-only stuff
     this.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon && pokemon.setVisible(true))
@@ -519,5 +545,18 @@ export class GameScene extends Phaser.Scene {
         },
       });
     }, 1000);
+  }
+
+  /**
+   * Opens or closes the shop
+   */
+  toggleShop() {
+    if (!this.scene.isPaused(ShopScene.KEY)) {
+      this.scene.pause(ShopScene.KEY);
+      this.scene.setVisible(false, ShopScene.KEY);
+    } else {
+      this.scene.resume(ShopScene.KEY);
+      this.scene.setVisible(true, ShopScene.KEY);
+    }
   }
 }

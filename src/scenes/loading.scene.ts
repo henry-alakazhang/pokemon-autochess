@@ -66,7 +66,7 @@ export class LoadingScene extends Scene {
 
     // load all projectiles for Pokemon attacks
     Object.values(pokemonData).forEach(pokemon => {
-      if ('projectile' in pokemon.basicAttack) {
+      if (pokemon.basicAttack.projectile) {
         console.log(pokemon.basicAttack.projectile.key);
         this.load.image(
           pokemon.basicAttack.projectile.key,

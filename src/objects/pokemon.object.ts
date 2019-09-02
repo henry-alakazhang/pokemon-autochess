@@ -27,9 +27,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   private outlineSprite: Phaser.GameObjects.Sprite;
   private isOutlined = false;
 
-  private hpBar: Phaser.GameObjects.Graphics;
+  /** HP and PP bars above the Pokemon */
+  private bars: Phaser.GameObjects.Graphics;
   private currentHP: number;
   private maxHP: number;
+  private currentPP: number;
+  private maxPP?: number;
 
   public id: string;
   public name: PokemonName;
@@ -49,6 +52,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // load data from Pokemon data
     this.maxHP = pokemonData[this.name].maxHP;
     this.currentHP = this.maxHP;
+    this.maxPP = pokemonData[this.name].maxPP;
+    this.currentPP = 0;
     this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
@@ -62,11 +67,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // default state is facing the player
     this.playAnimation('down');
 
-    this.hpBar = this.scene.add.graphics({
-      x: this.x,
-      y: this.y,
-    });
-    this.redrawHPBar();
+    this.bars = this.scene.add
+      .graphics({
+        x: this.x,
+        y: this.y,
+      })
+      .setDepth(1);
+    this.redrawBars();
   }
 
   initPhysics() {
@@ -79,41 +86,65 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     if (this.outlineSprite) {
       this.outlineSprite.setPosition(x, y);
     }
-    if (this.hpBar) {
-      this.hpBar.setPosition(x, y);
+    if (this.bars) {
+      this.bars.setPosition(x, y);
     }
     return this;
   }
 
   setVisible(visible: boolean) {
-    this.hpBar.setVisible(visible);
+    this.bars.setVisible(visible);
     this.outlineSprite.setVisible(visible && this.isOutlined);
     return super.setVisible(visible);
   }
 
+  setStatbarsVisible(visible: boolean) {
+    this.bars.setVisible(visible);
+  }
+
   destroy() {
-    this.hpBar.destroy();
     this.outlineSprite.destroy();
+    this.bars.destroy();
     super.destroy();
   }
 
-  redrawHPBar() {
-    this.hpBar.clear();
+  redrawBars() {
+    this.bars.clear();
 
+    // The stat bars section is 10px tall
+    // 1px of top border
+    // 5px of hp bar
+    // 1px of inner border
+    // 2px of pp bar
+    // 1 px of bottom border
+
+    // bar background
+    this.bars.fillStyle(0x000000, 1);
+    this.bars.fillRect(-this.width / 2, -this.height / 2, this.width, 10);
+
+    // hp bar
     const hpBarColor =
-      this.side === 'player' // player: green
-        ? 0x32cd32 // enemy: red
-        : 0xdc143c;
-    this.hpBar.fillStyle(hpBarColor, 1);
-    this.hpBar.fillRect(
-      -this.width / 2,
-      -this.height / 2,
-      this.width * (this.currentHP / this.maxHP),
-      8
+      this.side === 'player'
+        ? 0x32cd32 // player: green
+        : 0xdc143c; // enemy: red
+    this.bars.fillStyle(hpBarColor, 1);
+    this.bars.fillRect(
+      -this.width / 2 + 1,
+      -this.height / 2 + 1,
+      this.width * (this.currentHP / this.maxHP) - 2,
+      5
     );
-    this.hpBar.lineStyle(1, 0x000000);
-    this.hpBar.strokeRect(-this.width / 2, -this.height / 2, this.width, 8);
-    this.hpBar.setDepth(1);
+
+    // pp bar
+    this.bars.fillStyle(0x67aacb, 1); // sky blue
+    this.bars.fillRect(
+      -this.width / 2 + 1,
+      -this.height / 2 + 7, // offset by 6 to put below the HP bar
+      this.maxPP
+        ? Math.max(0, this.width * (this.currentPP / this.maxPP) - 2) // use current PP if available
+        : 0, // empty if no PP
+      2
+    );
   }
 
   public playAnimation(type: PokemonAnimationType) {
@@ -123,7 +154,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   public move({ x, y }: Coords) {
     this.scene.add.tween({
-      targets: [this, this.hpBar],
+      targets: [this, this.bars],
       duration: getTurnDelay(this.basePokemon) * 0.75,
       x,
       y,
@@ -134,13 +165,27 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
+  /**
+   * Cause this pokemon to deal damage
+   * Triggers effects that happen on attack, such as mana generation
+   */
   public dealDamage(amount: number) {
+    // damage / 10, capped at 2
+    this.currentPP += Math.min(2, Math.round(amount / 10));
+    this.redrawBars();
+  }
+
+  /**
+   * Cause this pokemon to take damage
+   */
+  public takeDamage(amount: number) {
     if (amount < 0 || this.currentHP <= 0) {
       return;
     }
+    this.currentPP += Math.min(2, Math.round(amount / 10));
     const actualDamage = Math.min(this.currentHP, amount);
     this.currentHP -= actualDamage;
-    this.redrawHPBar();
+    this.redrawBars();
 
     // display damage text
     this.scene.add.existing(
@@ -157,6 +202,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     // TODO: move this somewhere more appropriate?
     if (this.currentHP === 0) {
+      // destroy UI elements first
+      this.bars.destroy();
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
       this.scene.add.tween({

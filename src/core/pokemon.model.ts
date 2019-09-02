@@ -49,7 +49,9 @@ export interface Attack {
 export interface Pokemon {
   readonly displayName: string;
   readonly categories: ReadonlyArray<Category>;
+  readonly tier: number;
   readonly maxHP: number;
+  readonly maxPP?: number;
   readonly attack: number;
   readonly defense: number;
   readonly specAttack: number;
@@ -63,42 +65,13 @@ export interface Pokemon {
 /**
  * The base data for all Pokemon
  */
-export const pokemonData = {
-  fletchling: {
-    displayName: 'Fletchling',
-    categories: ['fire', 'flying'],
-    maxHP: 45,
-    attack: 50,
-    defense: 43,
-    specAttack: 40,
-    specDefense: 38,
-    speed: 62,
-    basicAttack: {
-      range: 1,
-      stat: 'attack',
-    },
-    evolution: 'fletchinder',
-    cost: 1,
-  },
-  fletchinder: {
-    displayName: 'Fletchinder',
-    categories: ['fire', 'flying'],
-    maxHP: 62,
-    attack: 73,
-    defense: 55,
-    specAttack: 56,
-    specDefense: 52,
-    speed: 84,
-    basicAttack: {
-      range: 1,
-      stat: 'attack',
-    },
-    evolution: 'talonflame',
-  },
+const rawPokemonData = {
   chandelure: {
     displayName: 'Chandelure',
     categories: ['fire', 'ghost'],
+    tier: 2,
     maxHP: 60,
+    maxPP: 15,
     attack: 55,
     defense: 90,
     specAttack: 145,
@@ -113,10 +86,44 @@ export const pokemonData = {
       },
     },
   },
+  fletchling: {
+    displayName: 'Fletchling',
+    categories: ['fire', 'flying'],
+    tier: 1,
+    maxHP: 45,
+    attack: 50,
+    defense: 43,
+    specAttack: 40,
+    specDefense: 38,
+    speed: 62,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    evolution: 'fletchinder',
+  },
+  fletchinder: {
+    displayName: 'Fletchinder',
+    categories: ['fire', 'flying'],
+    tier: 1,
+    maxHP: 62,
+    attack: 73,
+    defense: 55,
+    specAttack: 56,
+    specDefense: 52,
+    speed: 84,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    evolution: 'talonflame',
+  },
   talonflame: {
     displayName: 'Talonflame',
-    categories: ['fire', 'flying'],
+    categories: ['fire', 'flying', 'physical attacker'],
+    tier: 1,
     maxHP: 78,
+    maxPP: 10,
     attack: 81,
     defense: 71,
     specAttack: 74,
@@ -130,7 +137,9 @@ export const pokemonData = {
   rotomw: {
     displayName: 'Rotom-W',
     categories: ['water', 'electric'],
+    tier: 4,
     maxHP: 50,
+    maxPP: 12,
     attack: 65,
     defense: 107,
     specAttack: 105,
@@ -140,18 +149,18 @@ export const pokemonData = {
       range: 1,
       stat: 'specAttack',
     },
-    cost: 4,
   },
 } as const;
 
-export type PokemonName = keyof typeof pokemonData;
-export const allPokemonNames = Object.keys(pokemonData) as Array<PokemonName>;
+export type PokemonName = keyof typeof rawPokemonData;
+export const allPokemonNames = Object.keys(rawPokemonData) as Array<
+  PokemonName
+>;
 export const catchablePokemon = allPokemonNames.filter(
-  name => 'cost' in pokemonData[name]
+  name => 'tier' in pokemonData[name]
 );
 
 /**
- * this is just to typecheck the PokemonData to make sure each object
- * conforms to the PokemonBaseStats model
+ * The data for Pokemon, exported in a shape guaranteed to match the `Pokemon` type.
  */
-const typedPokemonData: { [k in PokemonName]: Pokemon } = pokemonData;
+export const pokemonData: { [k in PokemonName]: Pokemon } = rawPokemonData;
