@@ -293,6 +293,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDowntime() {
+    this.shop.reroll();
     // show all the prep-only stuff
     this.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon && pokemon.setVisible(true))
