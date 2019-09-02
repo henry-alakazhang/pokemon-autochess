@@ -49,6 +49,7 @@ export interface Attack {
 export interface Pokemon {
   readonly name: string;
   readonly categories: ReadonlyArray<Category>;
+  readonly tier: number;
   readonly maxHP: number;
   readonly maxPP?: number;
   readonly attack: number;
@@ -66,6 +67,7 @@ const rawPokemonData = {
   chandelure: {
     name: 'Chandelure',
     categories: ['fire', 'ghost'],
+    tier: 2,
     maxHP: 60,
     maxPP: 15,
     attack: 55,
@@ -85,6 +87,7 @@ const rawPokemonData = {
   talonflame: {
     name: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],
+    tier: 1,
     maxHP: 78,
     maxPP: 10,
     attack: 81,
@@ -100,6 +103,7 @@ const rawPokemonData = {
   rotomw: {
     name: 'Rotom-W',
     categories: ['water', 'electric'],
+    tier: 1,
     maxHP: 50,
     maxPP: 12,
     attack: 65,
