@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Coords } from './combat/combat.helpers';
-import { PokemonObject } from '../../objects/pokemon.object';
+import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object'
 import { allPokemonNames, PokemonName } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
@@ -10,13 +10,12 @@ const CELL_WIDTH = 70;
 const CELL_COUNT = 6;
 const POKEMON_OFFSET = 20;
 const REROLL_COST = 2;
-
+const BORDER_SIZE = 100;
 
 export class ShopScene extends Phaser.Scene {
   static readonly KEY = 'ShopScene';
   private centre: Coords = { x: 0, y: 0 };
-  private pokemonForSale: PokemonObject[] = new Array(CELL_COUNT);
-  private goldTexts: Phaser.GameObjects.Text[] = new Array(CELL_COUNT);
+  private pokemonForSale: PokemonForSaleObject[] = new Array(CELL_COUNT);
 
   public player: Player;   // hacky temporary solution
 
@@ -25,8 +24,6 @@ export class ShopScene extends Phaser.Scene {
       key: ShopScene.KEY,
     });
   }
-
-  preload(): void {  }
 
   create(): void {
     this.drawBase();
@@ -59,8 +56,6 @@ export class ShopScene extends Phaser.Scene {
     );
   }
 
-  update(): void {  }
-
   setCentre(centre: Coords): void {
     this.centre = centre;
   }
@@ -69,8 +64,8 @@ export class ShopScene extends Phaser.Scene {
    * Draws the shop without the pokemon
    */
   drawBase(): void {
-    let width = (CELL_WIDTH * CELL_COUNT) + 100;
-    let height = CELL_WIDTH + 100;
+    let width = (CELL_WIDTH * CELL_COUNT) + BORDER_SIZE;
+    let height = CELL_WIDTH + BORDER_SIZE;
     this.add.rectangle(this.centre.x, this.centre.y, width, height, 0x2F4858);
 
     this.add.grid(
@@ -92,32 +87,21 @@ export class ShopScene extends Phaser.Scene {
    */
   reroll(): void {
     // Remove the old pokemon
-    for (let i in this.pokemonForSale) {
-      this.pokemonForSale[i].destroy();
-      this.goldTexts[i].destroy();
-      delete this.pokemonForSale[i];
-      delete this.goldTexts[i];
-    }
+    this.pokemonForSale.map(
+      (pokemon) =>  {
+        pokemon.destroy();
+      }
+    )
 
     // For now, just populate with random pokemon
     for (let i = 0; i < CELL_COUNT; ++i) {
       let currCoords = this.getCoordinatesForShopIndex(i);
-      this.pokemonForSale[i] = new PokemonObject({
-        scene: this,
-        x: currCoords.x,
-        y: currCoords.y,
-        name: allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)],
-        side: 'player',
-      });
-      this.pokemonForSale[i].setHPBarVisible(false);
-
-      this.add.existing(this.pokemonForSale[i]);
-      this.goldTexts[i] = this.add.text(currCoords.x, currCoords.y + 50, this.pokemonForSale[i].basePokemon.tier.toString()).setOrigin(0.5);
+      this.pokemonForSale[i] = new PokemonForSaleObject(this, currCoords, allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]);
     }
   }
 
   buyPokemon(index: number): boolean {
-    let price = this.pokemonForSale[index].basePokemon.tier
+    let price = this.pokemonForSale[index].cost
     if (this.player.gold < price) {
       return false;
     }
@@ -127,12 +111,10 @@ export class ShopScene extends Phaser.Scene {
       return false;
     }
 
-    gameScene.addPokemonToSideboard(this.pokemonForSale[index].name);
+    gameScene.addPokemonToSideboard(this.pokemonForSale[index].pokemonName);
+    this.player.gold -= price;
     this.pokemonForSale[index].destroy();
     delete this.pokemonForSale[index];
-    this.player.gold -= price;
-    this.goldTexts[index].destroy();
-    delete this.goldTexts[index];
     
     return true;
   }
