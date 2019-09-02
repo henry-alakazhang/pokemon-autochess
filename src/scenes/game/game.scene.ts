@@ -24,9 +24,9 @@ const SIDEBOARD_Y = 500;
 const CELL_WIDTH = 70;
 const CELL_COUNT = 8;
 
-//** X-coordinate of the center of the shop */
+/** X-coordinate of the center of the shop */
 const SHOP_X = 400;
-//** Y-coordinate of the center of the shop */
+/** Y-coordinate of the center of the shop */
 const SHOP_Y = 175;
 
 const MAX_MAINBOARD_POKEMON = 6;
@@ -217,8 +217,8 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false);
 
     this.player = new Player();
-    this.playerGoldText = this.add.text(50, 100, 'Gold: ' + this.player.gold);
-    this.playerHPText = this.add.text(50, 120, 'HP: ' + this.player.currentHP);
+    this.playerGoldText = this.add.text(50, 100, `Gold: ${this.player.gold}`);
+    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.currentHP}`);
 
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.player = this.player; // temporary solution
@@ -254,8 +254,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    this.playerGoldText.setText('Gold: ' + this.player.gold);
-    this.playerHPText.setText('HP: ' + this.player.currentHP);
+    this.playerGoldText.setText(`Gold: ${this.player.gold}`);
+    this.playerHPText.setText(`HP: ${this.player.currentHP}`);
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);

@@ -1,5 +1,5 @@
 export class Player {
-  // all public props for now 
+  // all public props for now
   // just using to store the money at the moment
   currentHP: number = 100;
   maxHP: number = 100;

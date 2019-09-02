@@ -26,5 +26,5 @@ export function isDefined<T>(x: T): x is NonNullable<T> {
  * If a real type is passed, this should cause a compile error
  */
 export function assertNever(x: never): never {
-  throw new Error('Unexpected object: ' + x);
+  throw new Error(`Unexpected object: ${x}`);
 }

@@ -15,7 +15,14 @@ window.onload = () => {
     width: 800,
     height: 600,
     backgroundColor: '#3A4DB5',
-    scene: [PreloadScene, LoadingScene, MenuScene, CombatScene, GameScene, ShopScene],
+    scene: [
+      PreloadScene,
+      LoadingScene,
+      MenuScene,
+      CombatScene,
+      GameScene,
+      ShopScene,
+    ],
     physics: {
       default: 'arcade',
     },
