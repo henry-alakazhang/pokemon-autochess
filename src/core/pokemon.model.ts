@@ -87,7 +87,7 @@ const rawPokemonData = {
         speed: 200,
       },
     },
-    stage: 3,
+    stage: 1,
   },
   fletchling: {
     displayName: 'Fletchling',
@@ -155,7 +155,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'specAttack',
     },
-    stage: 1,
+    stage: 3,
   },
 } as const;
 

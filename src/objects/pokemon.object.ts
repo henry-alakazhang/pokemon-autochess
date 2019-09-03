@@ -51,9 +51,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // load data from Pokemon data
     this.basePokemon = pokemonData[this.name];
     this.maxHP =
-      (this.basePokemon.maxHP * getLevel(this.basePokemon)) / 50 +
+      (this.basePokemon.maxHP * getLevel(this.basePokemon)) / 5 +
       getLevel(this.basePokemon) +
       10;
+    console.log(this.name, this.maxHP);
     this.currentHP = this.maxHP;
     this.maxPP = pokemonData[this.name].maxPP;
     this.currentPP = 0;

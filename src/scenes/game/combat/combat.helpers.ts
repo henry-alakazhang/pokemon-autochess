@@ -222,14 +222,10 @@ export function calculateDamage(
   const attackStat = attacker[attack.stat];
   const defenseStat = defender[defenseStatName];
 
-  // Pokemon damage formula
-  //    2 x Level                    A
-  // ( ----------- + 2 )  x Power x ---
-  //        5                        D
-  // ----------------------------------- + 2
-  //           50
-  // power = 50 cancels out power and the bottom 50.
+  // reduction is stat / 5, rounded down to the nearest 5
+  const reduction = (Math.floor(defenseStat / 25) * 5) / 100;
+
   return Math.round(
-    (((2 * getLevel(attacker)) / 5 + 2) * attackStat) / defenseStat + 2
+    (getLevel(attacker) / 100) * attackStat * (1 - reduction) + 2
   );
 }
