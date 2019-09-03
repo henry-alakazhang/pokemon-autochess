@@ -1,6 +1,7 @@
-import { allPokemonNames, PokemonName } from '../../core/pokemon.model';
-import { flatten } from '../../helpers';
+import { PokemonName } from '../../core/pokemon.model';
+import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
+import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from './combat/combat.helpers';
 import {
@@ -8,6 +9,7 @@ import {
   CombatScene,
   CombatSceneData,
 } from './combat/combat.scene';
+import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
 const GRID_X = 400;
@@ -21,6 +23,11 @@ const SIDEBOARD_X = 400;
 const SIDEBOARD_Y = 500;
 const CELL_WIDTH = 70;
 const CELL_COUNT = 8;
+
+/** X-coordinate of the center of the shop */
+const SHOP_X = 400;
+/** Y-coordinate of the center of the shop */
+const SHOP_Y = 175;
 
 const MAX_MAINBOARD_POKEMON = 6;
 
@@ -116,8 +123,11 @@ export class GameScene extends Phaser.Scene {
 
   /* TEMPORARY JUNK */
   nextRoundButton: Button;
-  addButton: Phaser.GameObjects.GameObject;
+  shopButton: Phaser.GameObjects.GameObject;
   enemyBoard: CombatBoard;
+  player: Player;
+  playerGoldText: Phaser.GameObjects.Text;
+  playerHPText: Phaser.GameObjects.Text;
   /* END TEMPORARY JUNK */
 
   /** The Pokemon board representing the player's team composition */
@@ -127,11 +137,15 @@ export class GameScene extends Phaser.Scene {
 
   /** A reference to the currently selected Pokemon */
   selectedPokemon?: PokemonObject;
+  /** A map storing whether a Pokemon (by id) is currently evolving. */
+  markedForEvolution: { [k: string]: boolean } = {};
 
   /** The grid used to display team composition during the downtime phase */
   prepGrid: Phaser.GameObjects.Grid;
   /** A background for highlighting the valid regions to put Pokemon in */
   prepGridHighlight: Phaser.GameObjects.Shape;
+
+  shop: ShopScene;
 
   constructor() {
     super({
@@ -153,8 +167,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      id: 'asdfgh',
-      name: 'rotomw',
+      name: 'chandelure',
       side: 'enemy',
     });
   }
@@ -203,6 +216,15 @@ export class GameScene extends Phaser.Scene {
       .setZ(-1)
       .setVisible(false);
 
+    this.player = new Player();
+    this.playerGoldText = this.add.text(50, 100, `Gold: ${this.player.gold}`);
+    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.currentHP}`);
+
+    this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
+    this.shop.player = this.player; // temporary solution
+    this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
+    this.scene.launch(ShopScene.KEY);
+
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
@@ -214,13 +236,13 @@ export class GameScene extends Phaser.Scene {
       }
     );
 
-    this.addButton = this.add.existing(
-      new Button(this, 400, 580, 'Add Pokemon')
-    );
-    this.addButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
-      this.addPokemonToSideboard(
-        allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
-      )
+    this.input.keyboard.on('keydown-SPACE', () => {
+      this.toggleShop();
+    });
+
+    this.shopButton = this.add.existing(new Button(this, 400, 580, 'Shop'));
+    this.shopButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
+      this.toggleShop()
     );
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
@@ -232,9 +254,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
-    if (!this.canAddPokemonToSideboard()) {
-      this.addButton.destroy();
-    }
+    this.playerGoldText.setText(`Gold: ${this.player.gold}`);
+    this.playerHPText.setText(`HP: ${this.player.currentHP}`);
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
@@ -257,6 +278,11 @@ export class GameScene extends Phaser.Scene {
       playerBoard: this.mainboard,
       enemyBoard: this.enemyBoard,
       callback: (winner: 'player' | 'enemy') => {
+        if (winner == 'player') {
+          this.player.winGold();
+        } else {
+          --this.player.currentHP; // TODO: implement properly
+        }
         this.startDowntime();
       },
     };
@@ -264,6 +290,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDowntime() {
+    this.shop.reroll();
     // show all the prep-only stuff
     this.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon && pokemon.setVisible(true))
@@ -329,11 +356,15 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       ...getCoordinatesForSideboardIndex(empty),
       name: pokemon,
-      id: Math.random().toFixed(10),
       side: 'player',
     });
     this.add.existing(newPokemon);
     this.sideboard[empty] = newPokemon;
+
+    /* check evolutions */
+    if (newPokemon.basePokemon.evolution) {
+      this.applyEvolutions(newPokemon);
+    }
   }
 
   /**
@@ -403,6 +434,129 @@ export class GameScene extends Phaser.Scene {
         const { x, y } = getCoordinatesForSideboardIndex(location.index);
         pokemon.setPosition(x, y);
       }
+    }
+  }
+
+  removePokemon(pokemon: PokemonObject) {
+    const location =
+      getMainboardLocationForCoordinates(pokemon) ||
+      getSideboardLocationForCoordinates(pokemon);
+    if (!location) {
+      // just destroy since it's not displayed anyway?
+      return pokemon.destroy();
+    }
+
+    if (location.location === 'mainboard') {
+      const existing = this.mainboard[location.coords.x][location.coords.y];
+      this.mainboard[location.coords.x][location.coords.y] = undefined;
+      if (existing) {
+        existing.destroy();
+      }
+    } else {
+      const existing = this.sideboard[location.index];
+      this.sideboard[location.index] = undefined;
+      if (existing) {
+        existing.destroy();
+      }
+    }
+  }
+
+  /**
+   * Checks for possible evolutions that can be triggered by a Pokemon.
+   *
+   * For optimisation purposes, only checks one Pokemon.
+   * This should be fine if it's called every time a new Pokemon is added.
+   */
+  applyEvolutions(newPokemon: PokemonObject) {
+    const evolutionName = newPokemon.basePokemon.evolution;
+    if (!evolutionName) {
+      return;
+    }
+
+    // TODO: make this more imperative if the performance is bad
+    // it's probably fine though
+    const samePokemon =
+      // get all the Pokemon
+      [...flatten(this.mainboard), ...this.sideboard]
+        .filter(isDefined)
+        // that are have the same Name as this one
+        .filter(pokemon => pokemon.name === newPokemon.name)
+        // that aren't already evolving
+        .filter(pokemon => !this.markedForEvolution[pokemon.id])
+        // and pick the first three
+        .slice(0, 3);
+    if (samePokemon.length < 3) {
+      return;
+    }
+    const evoLocation =
+      getMainboardLocationForCoordinates(samePokemon[0]) ||
+      getSideboardLocationForCoordinates(samePokemon[0]);
+    if (!evoLocation) {
+      // should always be defined, but sure
+      console.error('Could not find place to put evolution');
+      return;
+    }
+
+    // mark these pokemon as evolving
+    samePokemon.forEach(pokemon => {
+      this.markedForEvolution[pokemon.id] = true;
+    });
+
+    // play a flashing animation for a bit
+    // not sure how to use tweens to get a flashing trigger of the outline
+    // so this just manually creates one using window.setTimeout
+    let timeout = 350;
+    let flashAnimation: number;
+    const toggleAnim = () => {
+      samePokemon.forEach(pokemon => pokemon.toggleOutline());
+      timeout *= 0.75;
+      flashAnimation = window.setTimeout(toggleAnim, timeout);
+    };
+    toggleAnim();
+
+    window.setTimeout(() => {
+      // end animation
+      window.clearInterval(flashAnimation);
+      // delete old Pokemon
+      samePokemon.forEach(pokemon => {
+        this.markedForEvolution[pokemon.id] = false;
+        this.removePokemon(pokemon);
+      });
+      // add new one
+      const evo = new PokemonObject({
+        scene: this,
+        x: 0,
+        y: 0,
+        name: evolutionName,
+        side: 'player',
+      });
+      this.add.existing(evo);
+      this.setPokemonAtLocation(evoLocation, evo);
+      // play animation to make it super clear
+      evo.setScale(1.5, 1.5);
+      this.add.tween({
+        targets: [evo],
+        scaleX: 1,
+        scaleY: 1,
+        ease: Phaser.Math.Easing.Expo.InOut,
+        duration: 500,
+        onComplete: () => {
+          this.applyEvolutions(evo);
+        },
+      });
+    }, 1000);
+  }
+
+  /**
+   * Opens or closes the shop
+   */
+  toggleShop() {
+    if (!this.scene.isPaused(ShopScene.KEY)) {
+      this.scene.pause(ShopScene.KEY);
+      this.scene.setVisible(false, ShopScene.KEY);
+    } else {
+      this.scene.resume(ShopScene.KEY);
+      this.scene.setVisible(true, ShopScene.KEY);
     }
   }
 }

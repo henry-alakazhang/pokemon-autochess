@@ -1,36 +1,36 @@
 {
-    "parser":  "@typescript-eslint/parser",
-    "env": {
-        "browser": true,
-        "es6": true,
-    },
-    "plugins": ["prettier"],
-    "extends": [
-        "airbnb-base",
-        "plugin:prettier/recommended",
-        "plugin:@typescript-eslint/recommended",
-        "prettier",
-    ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly",
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module",
-    },
-    "rules": {
-        "consistent-return": 0,
-        "import/prefer-default-export": 0,
-        "import/no-unresolved": 0,
-        "lines-between-class-members": 0,
-        "no-plusplus": 0,
-        "no-undef": 0,
-        "prettier/prettier": 2,
-        "quotes": [2, "single"],
-        "@typescript-eslint/array-type": [2, "generic"],
-        "@typescript-eslint/indent": [2, 2],
-        "@typescript-eslint/explicit-function-return-type": 0,
-        "@typescript-eslint/explicit-member-accessibility": 0,
-    }
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "plugins": ["prettier"],
+  "extends": [
+    "airbnb-base",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "rules": {
+    "consistent-return": 0,
+    "import/prefer-default-export": 0,
+    "import/no-unresolved": 0,
+    "lines-between-class-members": 0,
+    "no-plusplus": 0,
+    "no-undef": 0,
+    "prettier/prettier": 2,
+    "quotes": [2, "single"],
+    "@typescript-eslint/array-type": 0,
+    "@typescript-eslint/indent": [2, 2],
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/explicit-member-accessibility": 0
+  }
 }

@@ -1,3 +1,4 @@
+import { getLevel } from '../../../core/pokemon.helpers';
 import { Attack, Pokemon } from '../../../core/pokemon.model';
 import { assertNever } from '../../../helpers';
 import { PokemonAnimationType } from '../../../objects/pokemon.object';
@@ -112,10 +113,10 @@ export function pathfind(
 
   // FIXME: Don't hardcode this length
   /** stores the fastest way to reach this step */
-  let prev: Coords[][] = [[], [], [], [], []];
-  let seen: boolean[][] = [[], [], [], [], []];
+  const prev: Coords[][] = [[], [], [], [], []];
+  const seen: boolean[][] = [[], [], [], [], []];
 
-  let queue = [start];
+  const queue = [start];
   while (queue.length > 0) {
     // lazy cast because the loop condition already checks there'll be an element
     const check = queue.shift() as Coords;
@@ -185,10 +186,9 @@ export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
   if (Math.abs(horizontal) > Math.abs(vertical)) {
     // left or right
     return horizontal < 0 ? 'left' : 'right';
-  } else {
-    // up or down
-    return vertical < 0 ? 'up' : 'down';
   }
+  // up or down
+  return vertical < 0 ? 'up' : 'down';
 }
 
 export function getAttackAnimation(
@@ -230,6 +230,6 @@ export function calculateDamage(
   //           50
   // power = 50 cancels out power and the bottom 50.
   return Math.round(
-    (((2 * attacker.level) / 5 + 2) * attackStat) / defenseStat + 2
+    (((2 * getLevel(attacker)) / 5 + 2) * attackStat) / defenseStat + 2
   );
 }

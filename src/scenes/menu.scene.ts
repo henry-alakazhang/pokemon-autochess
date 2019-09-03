@@ -41,7 +41,6 @@ export class MenuScene extends Scene {
       scene: this,
       x: 400,
       y: 300,
-      id: randomPokemon,
       name: randomPokemon,
       side: 'player',
     }).setInteractive();
@@ -52,7 +51,7 @@ export class MenuScene extends Scene {
         Input.Events.GAMEOBJECT_POINTER_DOWN,
         () => {
           console.log('clicky');
-          this.titlePokemon.dealDamage(Math.ceil(Math.random() * 3));
+          this.titlePokemon.takeDamage(Math.ceil(Math.random() * 3));
         },
         this
       )

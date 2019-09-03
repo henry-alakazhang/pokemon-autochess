@@ -1,5 +1,5 @@
 import { Scene } from 'phaser';
-import { allPokemonNames } from '../core/pokemon.model';
+import { allPokemonNames, pokemonData } from '../core/pokemon.model';
 import { MenuScene } from './menu.scene';
 
 /**
@@ -63,6 +63,17 @@ export class LoadingScene extends Scene {
     );
 
     this.load.pack('sprites', 'assets/sprite-pack.json');
+
+    // load all projectiles for Pokemon attacks
+    Object.values(pokemonData).forEach(pokemon => {
+      if (pokemon.basicAttack.projectile) {
+        console.log(pokemon.basicAttack.projectile.key);
+        this.load.image(
+          pokemon.basicAttack.projectile.key,
+          `assets/fx/${pokemon.basicAttack.projectile.key}.png`
+        );
+      }
+    });
   }
 
   update(): void {
@@ -72,6 +83,9 @@ export class LoadingScene extends Scene {
   setupAnimations() {
     allPokemonNames.forEach(name => {
       console.log(`creating animations for ${name}`);
+      if (!this.textures.exists(name)) {
+        throw new Error(`Missing textures for ${name}!`);
+      }
       this.anims.create({
         key: `${name}--down`,
         frames: this.anims.generateFrameNumbers(name, {
