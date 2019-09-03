@@ -97,6 +97,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   destroy() {
+    this.outlineSprite.destroy();
     this.bars.destroy();
     super.destroy();
   }

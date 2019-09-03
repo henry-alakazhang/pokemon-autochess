@@ -47,9 +47,10 @@ export interface Attack {
 }
 
 export interface Pokemon {
-  readonly name: string;
+  readonly displayName: string;
   readonly categories: ReadonlyArray<Category>;
-  readonly tier: number;
+  /** Pokemon tier / shop cost */
+  readonly tier: 1 | 2 | 3 | 4 | 5;
   readonly maxHP: number;
   readonly maxPP?: number;
   readonly attack: number;
@@ -58,6 +59,9 @@ export interface Pokemon {
   readonly specDefense: number;
   readonly speed: number;
   readonly basicAttack: Attack;
+  readonly evolution?: PokemonName;
+  /** Evolution stage */
+  readonly stage: 1 | 2 | 3;
 }
 
 /**
@@ -65,7 +69,7 @@ export interface Pokemon {
  */
 const rawPokemonData = {
   chandelure: {
-    name: 'Chandelure',
+    displayName: 'Chandelure',
     categories: ['fire', 'ghost'],
     tier: 2,
     maxHP: 60,
@@ -83,9 +87,44 @@ const rawPokemonData = {
         speed: 200,
       },
     },
+    stage: 3,
+  },
+  fletchling: {
+    displayName: 'Fletchling',
+    categories: ['fire', 'flying'],
+    tier: 1,
+    maxHP: 45,
+    attack: 50,
+    defense: 43,
+    specAttack: 40,
+    specDefense: 38,
+    speed: 62,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    evolution: 'fletchinder',
+    stage: 1,
+  },
+  fletchinder: {
+    displayName: 'Fletchinder',
+    categories: ['fire', 'flying'],
+    tier: 1,
+    maxHP: 62,
+    attack: 73,
+    defense: 55,
+    specAttack: 56,
+    specDefense: 52,
+    speed: 84,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    evolution: 'talonflame',
+    stage: 2,
   },
   talonflame: {
-    name: 'Talonflame',
+    displayName: 'Talonflame',
     categories: ['fire', 'flying', 'physical attacker'],
     tier: 1,
     maxHP: 78,
@@ -99,11 +138,12 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
+    stage: 3,
   },
   rotomw: {
-    name: 'Rotom-W',
+    displayName: 'Rotom-W',
     categories: ['water', 'electric'],
-    tier: 1,
+    tier: 4,
     maxHP: 50,
     maxPP: 12,
     attack: 65,
@@ -115,6 +155,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'specAttack',
     },
+    stage: 1,
   },
 } as const;
 
@@ -122,6 +163,9 @@ export type PokemonName = keyof typeof rawPokemonData;
 export const allPokemonNames = Object.keys(rawPokemonData) as Array<
   PokemonName
 >;
+export const buyablePokemon = allPokemonNames.filter(
+  name => rawPokemonData[name].stage === 1
+);
 
 /**
  * The data for Pokemon, exported in a shape guaranteed to match the `Pokemon` type.
