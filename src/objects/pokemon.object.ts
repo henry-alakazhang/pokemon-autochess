@@ -165,7 +165,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    */
   public dealDamage(amount: number) {
     // damage / 10, capped at 2
-    this.currentPP += Math.min(2, Math.round(amount / 10));
+    if (this.maxPP && this.currentPP < this.maxPP) {
+      this.currentPP = Math.min(
+        this.maxPP,
+        this.currentPP + Math.min(2, Math.round(amount / 10))
+      );
+    }
     this.redrawBars();
   }
 
@@ -176,7 +181,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     if (amount < 0 || this.currentHP <= 0) {
       return;
     }
-    this.currentPP += Math.min(2, Math.round(amount / 10));
+    if (this.maxPP && this.currentPP < this.maxPP) {
+      this.currentPP = Math.min(
+        this.maxPP,
+        this.currentPP + Math.min(2, Math.round(amount / 10))
+      );
+    }
     const actualDamage = Math.min(this.currentHP, amount);
     this.currentHP -= actualDamage;
     this.redrawBars();
