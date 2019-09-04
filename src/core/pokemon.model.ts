@@ -1,5 +1,5 @@
 import { Move } from './move.model';
-import { braveBird } from './moves/brave-bird';
+import { braveBird } from './moves';
 
 export type Type =
   | 'normal'
