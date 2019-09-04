@@ -13,7 +13,7 @@ export const braveBird: Move = {
   use: ({ scene, user, target, onComplete }: MoveConfig) => {
     // animation: bird overlaying on top of Pokemon that grows
     const img = scene.add
-      .image(user.x, user.y, 'braveBird')
+      .image(user.x, user.y, 'brave-bird')
       .setScale(0.6, 0.6)
       .setRotation(getAngle(user, target));
     // grow bird
