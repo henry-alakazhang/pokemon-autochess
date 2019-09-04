@@ -74,6 +74,8 @@ export class LoadingScene extends Scene {
         );
       }
     });
+
+    this.load.image('braveBird', 'assets/fx/brave-bird.png');
   }
 
   update(): void {

@@ -24,20 +24,20 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    * A hacky little way of adding an outline to a Pokemon.
    * Draws a second, slightly larger sprite which serves as the outline.
    */
-  private outlineSprite: Phaser.GameObjects.Sprite;
-  private isOutlined = false;
+  outlineSprite: Phaser.GameObjects.Sprite;
+  isOutlined = false;
 
   /** HP and PP bars above the Pokemon */
-  private bars: Phaser.GameObjects.Graphics;
-  private currentHP: number;
-  private maxHP: number;
-  private currentPP: number;
-  private maxPP?: number;
+  bars: Phaser.GameObjects.Graphics;
+  currentHP: number;
+  maxHP: number;
+  currentPP: number;
+  maxPP?: number;
 
-  public id: string;
-  public name: PokemonName;
-  public side: 'player' | 'enemy';
-  public basePokemon: Pokemon;
+  id: string;
+  name: PokemonName;
+  side: 'player' | 'enemy';
+  basePokemon: Pokemon;
 
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
@@ -51,7 +51,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.maxHP = pokemonData[this.name].maxHP;
     this.currentHP = this.maxHP;
     this.maxPP = pokemonData[this.name].maxPP;
-    this.currentPP = 0;
+    this.currentPP = this.maxPP || 0;
     this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
@@ -166,7 +166,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public dealDamage(amount: number) {
     // damage / 10, capped at 2
     if (this.maxPP && this.currentPP < this.maxPP) {
-      this.currentPP = Math.min(this.maxPP, this.currentPP + Math.min(2, Math.round(amount / 10)));
+      this.currentPP = Math.min(
+        this.maxPP,
+        this.currentPP + Math.min(2, Math.round(amount / 10))
+      );
     }
     this.redrawBars();
   }

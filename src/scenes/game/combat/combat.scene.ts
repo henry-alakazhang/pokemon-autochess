@@ -239,7 +239,14 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const attack = pokemon.basePokemon.basicAttack;
+    const attack =
+      pokemon.currentPP === pokemon.maxPP &&
+      pokemon.basePokemon.move &&
+      pokemon.basePokemon.move.type === 'active'
+        ? pokemon.basePokemon.move
+        : pokemon.basePokemon.basicAttack;
+
+    // move if out of range
     if (getGridDistance(myCoords, targetCoords) > attack.range) {
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
@@ -260,6 +267,22 @@ export class CombatScene extends Scene {
     if (!targetPokemon) {
       return;
     }
+
+    // if it's a move, use it
+    if ('use' in attack) {
+      pokemon.basePokemon.move!.use({
+        scene: this,
+        board: this.board,
+        user: pokemon,
+        target: targetPokemon,
+        onComplete: () => {
+          this.setTurn(pokemon);
+        },
+      });
+      return;
+    }
+
+    // otherwise make a basic attack
 
     // use specified defenseStat, or the one that correlates to the attack stat
     const defenseStat =
