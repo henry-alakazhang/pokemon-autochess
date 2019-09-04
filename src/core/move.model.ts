@@ -44,26 +44,37 @@ const rawMoveData = {
     type: 'active',
     range: 1,
     use: ({ scene, user, target, onComplete }: MoveConfig) => {
+      // animation: bird overlaying on top of Pokemon that grows
       const img = scene.add
         .image(user.x, user.y, 'braveBird')
-        .setScale(0.8, 0.8)
+        .setScale(0.6, 0.6)
         .setRotation(getAngle(user, target));
+      // grow bird
       scene.add.tween({
         targets: [img],
-        duration: 150,
-        scaleX: 1.1,
-        scaleY: 1.1,
+        duration: 250,
+        scaleX: 1.2,
+        scaleY: 1.2,
         onComplete: () => {
+          // do attack animation
           scene.add.tween({
             targets: [user, img],
             duration: getTurnDelay(user.basePokemon) * 0.15,
             ...getAttackAnimation(user, getFacing(user, target)),
             yoyo: true,
             ease: 'Power1',
-            onYoyo: () => {
+            onYoyo: (_, tweenTarget) => {
+              // yoyo is called twice since we're moving both user and img
+              // this makes sure the onhit effect is only run once
+              if (tweenTarget !== user) {
+                return;
+              }
+
               img.destroy();
-              target.dealDamage(target.maxHP / 2);
-              user.dealDamage(user.maxHP / 8);
+              // do tons of damage
+              target.takeDamage(target.maxHP / 2);
+              // recoil
+              user.takeDamage(user.maxHP / 8);
               onComplete();
             },
           });

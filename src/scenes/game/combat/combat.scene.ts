@@ -239,6 +239,11 @@ export class CombatScene extends Scene {
       return;
     }
 
+    // face target
+    const facing = getFacing(myCoords, targetCoords);
+    pokemon.playAnimation(facing);
+
+    // use move if available, otherwise use basic attack
     const attack =
       pokemon.currentPP === pokemon.maxPP &&
       pokemon.basePokemon.move &&
@@ -270,6 +275,7 @@ export class CombatScene extends Scene {
 
     // if it's a move, use it
     if ('use' in attack) {
+      pokemon.currentPP = 0;
       pokemon.basePokemon.move!.use({
         scene: this,
         board: this.board,
@@ -293,8 +299,6 @@ export class CombatScene extends Scene {
       (pokemon.basePokemon[attack.stat] * 10) /
         targetPokemon.basePokemon[defenseStat]
     );
-    const facing = getFacing(myCoords, targetCoords);
-    pokemon.playAnimation(facing);
     // attack animation is just moving to the enemy and back
     this.add.tween({
       targets: [pokemon],
