@@ -1,4 +1,5 @@
-import { Move, moveData } from './move.model';
+import { Move } from './move.model';
+import { braveBird } from './moves/brave-bird';
 
 export type Type =
   | 'normal'
@@ -107,7 +108,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: moveData.braveBird,
+    move: braveBird,
     evolution: 'fletchinder',
     stage: 1,
   },
@@ -126,7 +127,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: moveData.braveBird,
+    move: braveBird,
     evolution: 'talonflame',
     stage: 2,
   },
@@ -145,7 +146,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: moveData.braveBird,
+    move: braveBird,
     stage: 3,
   },
   rotomw: {

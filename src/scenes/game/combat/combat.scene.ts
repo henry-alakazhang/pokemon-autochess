@@ -282,7 +282,9 @@ export class CombatScene extends Scene {
         user: pokemon,
         target: targetPokemon,
         onComplete: () => {
-          this.setTurn(pokemon);
+          if (pokemon.currentHP > 0) {
+            this.setTurn(pokemon);
+          }
         },
       });
       return;
