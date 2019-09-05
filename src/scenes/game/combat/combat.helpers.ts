@@ -82,7 +82,8 @@ export function getNearestTarget(
     // if you observe, we can do (x-=1, y+=1) to iterate around the bottom-right
     // then do (x-=1, y-=1) to iterate around the bottom-left
     // and so on
-    steps.forEach(step => {
+    for (let j = 0; j < steps.length; j++) {
+      const step = steps[j];
       for (let k = 0; k < i; k++) {
         // if still on board
         if (x2 >= 0 && x2 < width && y2 >= 0 && y2 < height) {
@@ -97,7 +98,7 @@ export function getNearestTarget(
         x2 += step[0];
         y2 += step[1];
       }
-    });
+    }
   }
 }
 
