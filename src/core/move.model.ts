@@ -12,6 +12,7 @@ export type MoveConfig = {
 interface ActiveMove {
   displayName: string;
   type: 'active';
+  description: string;
   range: number;
   /**
    * Use the move and trigger animations, effects, damage, etc.
@@ -27,6 +28,7 @@ interface ActiveMove {
 type PassiveMove = {
   displayName: string;
   type: 'passive';
+  description: string;
   onAttack: () => void;
   onBeingHit: () => void;
   onTurn: () => void;

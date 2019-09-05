@@ -6,9 +6,17 @@ import {
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+/**
+ * Brave Bird - Talonflame line's move
+ *
+ * Deals heavy damage to a single target with some recoil to the user.
+ * 250ms cast time
+ */
 export const braveBird: Move = {
   displayName: 'Brave Bird',
   type: 'active',
+  description:
+    'Deals heavy damage to a single target, with some recoil to the user.',
   range: 1,
   use: ({ scene, user, target, onComplete }: MoveConfig) => {
     // animation: bird overlaying on top of Pokemon that grows
