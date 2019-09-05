@@ -1,13 +1,13 @@
 import { PokemonObject } from '../objects/pokemon.object';
 
 export type Move = ActiveMove | PassiveMove;
-export type MoveConfig = {
+export interface MoveConfig {
   scene: Phaser.Scene;
   board: (PokemonObject | undefined)[][];
   user: PokemonObject;
   target: PokemonObject;
   onComplete: Function;
-};
+}
 
 interface ActiveMove {
   displayName: string;
