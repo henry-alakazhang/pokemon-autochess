@@ -50,8 +50,8 @@ export class ShopScene extends Phaser.Scene {
           x: event.downX,
           y: event.downY,
         });
-        if (i != undefined) {
-          if (this.pokemonForSale[i] == undefined) {
+        if (i !== undefined) {
+          if (this.pokemonForSale[i] === undefined) {
             console.log('No pokemon here');
             return;
           }
@@ -95,7 +95,7 @@ export class ShopScene extends Phaser.Scene {
    */
   reroll(): void {
     // Remove the old pokemon
-    this.pokemonForSale.map(pokemon => {
+    this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();
     });
 
