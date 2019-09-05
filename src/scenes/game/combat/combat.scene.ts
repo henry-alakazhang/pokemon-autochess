@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { PokemonName } from '../../../core/pokemon.model';
-import { flatten, id, isDefined } from '../../../helpers';
+import { flatten, generateId, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -65,7 +65,7 @@ export class CombatScene extends Scene {
       .fill(undefined)
       // fill + map rather than `fill` an array because
       // `fill` will only initialise one array and fill with shallow copies
-      .map(_ => Array(5).fill(undefined));
+      .map(() => Array(5).fill(undefined));
     this.combatEndCallback = data.callback;
 
     this.grid = this.add.grid(
@@ -325,7 +325,7 @@ export class CombatScene extends Scene {
           );
           this.physics.add.existing(this.add.existing(projectile));
           // store this in the `projectiles` map under a random key
-          const projectileKey = id();
+          const projectileKey = generateId();
           this.projectiles[projectileKey] = projectile;
           // cause event when it hits
           projectile.on(Phaser.GameObjects.Events.DESTROY, () => {

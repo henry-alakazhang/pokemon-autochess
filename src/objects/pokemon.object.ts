@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
-import { id } from '../helpers';
+import { generateId } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
 
@@ -44,7 +44,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     super(params.scene, params.x, params.y, params.name, params.frame);
 
     // generate a random ID
-    this.id = id();
+    this.id = generateId();
     this.name = params.name;
 
     // load data from Pokemon data
