@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
-import { generateId } from '../helpers';
+import { generateId, getBaseTexture } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
 
@@ -19,6 +19,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public static readonly Events = {
     Dead: 'dead',
   } as const;
+
+  spriteKey: string;
 
   /**
    * A hacky little way of adding an outline to a Pokemon.
@@ -41,22 +43,28 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
-    super(params.scene, params.x, params.y, params.name, params.frame);
+    super(
+      params.scene,
+      params.x,
+      params.y,
+      getBaseTexture(params.name),
+      params.frame
+    );
 
     // generate a random ID
     this.id = generateId();
     this.name = params.name;
+    this.basePokemon = pokemonData[params.name];
 
     // load data from Pokemon data
-    this.maxHP = pokemonData[this.name].maxHP;
+    this.maxHP = this.basePokemon.maxHP;
     this.currentHP = this.maxHP;
-    this.maxPP = pokemonData[this.name].maxPP;
+    this.maxPP = this.basePokemon.maxPP;
     this.currentPP = 0;
-    this.basePokemon = pokemonData[this.name];
     this.side = params.side;
 
     this.outlineSprite = this.scene.add
-      .sprite(this.x, this.y, this.name, params.frame)
+      .sprite(this.x, this.y, this.texture.key, params.frame)
       .setOrigin(0.5, 0.5)
       .setDisplaySize(this.width + 8, this.height + 8)
       .setTintFill(0xffffff)
@@ -142,8 +150,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   public playAnimation(type: PokemonAnimationType) {
-    this.play(`${this.name}--${type}`);
-    this.outlineSprite.play(`${this.name}--${type}`);
+    this.play(`${this.texture.key}--${type}`);
+    this.outlineSprite.play(`${this.texture.key}--${type}`);
   }
 
   public move({ x, y }: Coords) {

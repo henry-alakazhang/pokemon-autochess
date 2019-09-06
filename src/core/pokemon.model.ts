@@ -72,6 +72,50 @@ export interface Pokemon {
  * The base data for all Pokemon
  */
 const rawPokemonData = {
+  litwick: {
+    displayName: 'Litwick',
+    categories: ['fire', 'ghost'],
+    tier: 2,
+    maxHP: 50,
+    maxPP: 15,
+    attack: 30,
+    defense: 55,
+    specAttack: 65,
+    specDefense: 55,
+    speed: 20,
+    basicAttack: {
+      range: 3,
+      stat: 'specAttack',
+      projectile: {
+        key: 'firedart',
+        speed: 200,
+      },
+    },
+    evolution: 'lampent',
+    stage: 1,
+  },
+  lampent: {
+    displayName: 'Lampent',
+    categories: ['fire', 'ghost'],
+    tier: 2,
+    maxHP: 60,
+    maxPP: 15,
+    attack: 40,
+    defense: 60,
+    specAttack: 95,
+    specDefense: 60,
+    speed: 55,
+    basicAttack: {
+      range: 3,
+      stat: 'specAttack',
+      projectile: {
+        key: 'firedart',
+        speed: 200,
+      },
+    },
+    evolution: 'chandelure',
+    stage: 2,
+  },
   chandelure: {
     displayName: 'Chandelure',
     categories: ['fire', 'ghost'],
@@ -165,6 +209,42 @@ const rawPokemonData = {
       stat: 'specAttack',
     },
     stage: 1,
+    evolution: 'rotomw-2',
+  },
+  'rotomw-2': {
+    displayName: 'Rotom-W',
+    categories: ['water', 'electric'],
+    tier: 4,
+    maxHP: 50,
+    maxPP: 12,
+    attack: 65,
+    defense: 107,
+    specAttack: 105,
+    specDefense: 107,
+    speed: 86,
+    basicAttack: {
+      range: 1,
+      stat: 'specAttack',
+    },
+    evolution: 'rotomw-3',
+    stage: 2,
+  },
+  'rotomw-3': {
+    displayName: 'Rotom-W',
+    categories: ['water', 'electric'],
+    tier: 4,
+    maxHP: 50,
+    maxPP: 12,
+    attack: 65,
+    defense: 107,
+    specAttack: 105,
+    specDefense: 107,
+    speed: 86,
+    basicAttack: {
+      range: 1,
+      stat: 'specAttack',
+    },
+    stage: 3,
   },
 } as const;
 

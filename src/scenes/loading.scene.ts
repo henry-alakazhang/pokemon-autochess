@@ -1,5 +1,6 @@
 import { Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
+import { getBaseTexture } from '../helpers';
 import { MenuScene } from './menu.scene';
 
 /**
@@ -72,13 +73,14 @@ export class LoadingScene extends Scene {
 
   setupAnimations() {
     allPokemonNames.forEach(name => {
-      console.log(`creating animations for ${name}`);
-      if (!this.textures.exists(name)) {
-        throw new Error(`Missing textures for ${name}!`);
+      const key = getBaseTexture(name);
+      console.log(`creating animations for ${key}`);
+      if (!this.textures.exists(key)) {
+        throw new Error(`Missing textures for ${key}!`);
       }
       this.anims.create({
-        key: `${name}--down`,
-        frames: this.anims.generateFrameNumbers(name, {
+        key: `${key}--down`,
+        frames: this.anims.generateFrameNumbers(key, {
           start: 0,
           end: 3,
         }),
@@ -86,8 +88,8 @@ export class LoadingScene extends Scene {
         repeat: -1,
       });
       this.anims.create({
-        key: `${name}--left`,
-        frames: this.anims.generateFrameNumbers(name, {
+        key: `${key}--left`,
+        frames: this.anims.generateFrameNumbers(key, {
           start: 4,
           end: 7,
         }),
@@ -95,8 +97,8 @@ export class LoadingScene extends Scene {
         repeat: -1,
       });
       this.anims.create({
-        key: `${name}--right`,
-        frames: this.anims.generateFrameNumbers(name, {
+        key: `${key}--right`,
+        frames: this.anims.generateFrameNumbers(key, {
           start: 8,
           end: 11,
         }),
@@ -104,8 +106,8 @@ export class LoadingScene extends Scene {
         repeat: -1,
       });
       this.anims.create({
-        key: `${name}--up`,
-        frames: this.anims.generateFrameNumbers(name, {
+        key: `${key}--up`,
+        frames: this.anims.generateFrameNumbers(key, {
           start: 12,
           end: 15,
         }),
