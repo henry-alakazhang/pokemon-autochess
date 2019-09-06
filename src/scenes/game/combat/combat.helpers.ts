@@ -192,6 +192,13 @@ export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
   return vertical < 0 ? 'up' : 'down';
 }
 
+/**
+ * Returns the angle (in radians) between two points)
+ */
+export function getAngle(first: Coords, second: Coords) {
+  return Math.atan2(second.y - first.y, second.x - first.x);
+}
+
 export function getAttackAnimation(
   start: Coords,
   facing: PokemonAnimationType

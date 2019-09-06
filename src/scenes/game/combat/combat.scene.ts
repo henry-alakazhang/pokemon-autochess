@@ -239,7 +239,19 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const attack = pokemon.basePokemon.basicAttack;
+    // face target
+    const facing = getFacing(myCoords, targetCoords);
+    pokemon.playAnimation(facing);
+
+    // use move if available, otherwise use basic attack
+    const attack =
+      pokemon.currentPP === pokemon.maxPP &&
+      pokemon.basePokemon.move &&
+      pokemon.basePokemon.move.type === 'active'
+        ? pokemon.basePokemon.move
+        : pokemon.basePokemon.basicAttack;
+
+    // move if out of range
     if (getGridDistance(myCoords, targetCoords) > attack.range) {
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
@@ -261,6 +273,27 @@ export class CombatScene extends Scene {
       return;
     }
 
+    // if it's a move, use it
+    if ('use' in attack) {
+      pokemon.currentPP = 0;
+      // attack can only have use if the move exists, so just !null assert
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      pokemon.basePokemon.move!.use({
+        scene: this,
+        board: this.board,
+        user: pokemon,
+        target: targetPokemon,
+        onComplete: () => {
+          if (pokemon.currentHP > 0) {
+            this.setTurn(pokemon);
+          }
+        },
+      });
+      return;
+    }
+
+    // otherwise make a basic attack
+
     // use specified defenseStat, or the one that correlates to the attack stat
     const defenseStat =
       attack.defenseStat || attack.stat === 'attack'
@@ -270,8 +303,6 @@ export class CombatScene extends Scene {
       (pokemon.basePokemon[attack.stat] * 10) /
         targetPokemon.basePokemon[defenseStat]
     );
-    const facing = getFacing(myCoords, targetCoords);
-    pokemon.playAnimation(facing);
     // attack animation is just moving to the enemy and back
     this.add.tween({
       targets: [pokemon],

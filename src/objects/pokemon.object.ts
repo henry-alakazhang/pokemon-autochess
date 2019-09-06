@@ -24,20 +24,20 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    * A hacky little way of adding an outline to a Pokemon.
    * Draws a second, slightly larger sprite which serves as the outline.
    */
-  private outlineSprite: Phaser.GameObjects.Sprite;
-  private isOutlined = false;
+  outlineSprite: Phaser.GameObjects.Sprite;
+  isOutlined = false;
 
   /** HP and PP bars above the Pokemon */
-  private bars: Phaser.GameObjects.Graphics;
-  private currentHP: number;
-  private maxHP: number;
-  private currentPP: number;
-  private maxPP?: number;
+  bars: Phaser.GameObjects.Graphics;
+  currentHP: number;
+  maxHP: number;
+  currentPP: number;
+  maxPP?: number;
 
-  public id: string;
-  public name: PokemonName;
-  public side: 'player' | 'enemy';
-  public basePokemon: Pokemon;
+  id: string;
+  name: PokemonName;
+  side: 'player' | 'enemy';
+  basePokemon: Pokemon;
 
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
