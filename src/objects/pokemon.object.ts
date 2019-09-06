@@ -20,8 +20,6 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     Dead: 'dead',
   } as const;
 
-  spriteKey: string;
-
   /**
    * A hacky little way of adding an outline to a Pokemon.
    * Draws a second, slightly larger sprite which serves as the outline.
