@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { PokemonName } from '../../../core/pokemon.model';
-import { flatten, id, isDefined } from '../../../helpers';
+import { flatten, generateId, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -66,7 +66,7 @@ export class CombatScene extends Scene {
       .fill(undefined)
       // fill + map rather than `fill` an array because
       // `fill` will only initialise one array and fill with shallow copies
-      .map(_ => Array(5).fill(undefined));
+      .map(() => Array(5).fill(undefined));
     this.combatEndCallback = data.callback;
 
     this.grid = this.add.grid(
@@ -240,7 +240,19 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const attack = pokemon.basePokemon.basicAttack;
+    // face target
+    const facing = getFacing(myCoords, targetCoords);
+    pokemon.playAnimation(facing);
+
+    // use move if available, otherwise use basic attack
+    const attack =
+      pokemon.currentPP === pokemon.maxPP &&
+      pokemon.basePokemon.move &&
+      pokemon.basePokemon.move.type === 'active'
+        ? pokemon.basePokemon.move
+        : pokemon.basePokemon.basicAttack;
+
+    // move if out of range
     if (getGridDistance(myCoords, targetCoords) > attack.range) {
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
@@ -262,13 +274,31 @@ export class CombatScene extends Scene {
       return;
     }
 
+    // if it's a move, use it
+    if ('use' in attack) {
+      pokemon.currentPP = 0;
+      // attack can only have use if the move exists, so just !null assert
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      pokemon.basePokemon.move!.use({
+        scene: this,
+        board: this.board,
+        user: pokemon,
+        target: targetPokemon,
+        onComplete: () => {
+          if (pokemon.currentHP > 0) {
+            this.setTurn(pokemon);
+          }
+        },
+      });
+      return;
+    }
+
+    // otherwise make a basic attack
     const damage = calculateDamage(
       pokemon.basePokemon,
       targetPokemon.basePokemon,
       attack
     );
-    const facing = getFacing(myCoords, targetCoords);
-    pokemon.playAnimation(facing);
     // attack animation is just moving to the enemy and back
     this.add.tween({
       targets: [pokemon],
@@ -293,7 +323,7 @@ export class CombatScene extends Scene {
           );
           this.physics.add.existing(this.add.existing(projectile));
           // store this in the `projectiles` map under a random key
-          const projectileKey = id();
+          const projectileKey = generateId();
           this.projectiles[projectileKey] = projectile;
           // cause event when it hits
           projectile.on(Phaser.GameObjects.Events.DESTROY, () => {

@@ -9,6 +9,17 @@ export interface Coords {
   y: number;
 }
 
+/**
+ * Returns the Manhattan distance between two coordinates
+ */
+export function getGridDistance(first: Coords, second: Coords) {
+  return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
+}
+
+export function coordsEqual(first: Coords, second: Coords) {
+  return first.x === second.x && first.y === second.y;
+}
+
 /*
   This file has a `getNearestTarget` and a `pathfind` function,
   which are both implementations of breadth-first search.
@@ -53,6 +64,7 @@ export function getNearestTarget(
   }
 
   const { side } = self;
+  const steps = [[-1, 1], [-1, -1], [1, -1], [1, 1]];
 
   // the following code is some pathfinding magic
   // don't question it or look too closely
@@ -71,7 +83,8 @@ export function getNearestTarget(
     // if you observe, we can do (x-=1, y+=1) to iterate around the bottom-right
     // then do (x-=1, y-=1) to iterate around the bottom-left
     // and so on
-    for (const step of [[-1, 1], [-1, -1], [1, -1], [1, 1]]) {
+    for (let j = 0; j < steps.length; j++) {
+      const step = steps[j];
       for (let k = 0; k < i; k++) {
         // if still on board
         if (x2 >= 0 && x2 < width && y2 >= 0 && y2 < height) {
@@ -160,17 +173,6 @@ export function pathfind(
   }
 }
 
-export function coordsEqual(first: Coords, second: Coords) {
-  return first.x === second.x && first.y === second.y;
-}
-
-/**
- * Returns the Manhattan distance between two coordinates
- */
-export function getGridDistance(first: Coords, second: Coords) {
-  return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
-}
-
 /**
  * Returns the turn delay in milliseconds for a pokemon.
  * The delay is the equivalent of `sqrt(spd/75)` attacks per second
@@ -189,6 +191,13 @@ export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
   }
   // up or down
   return vertical < 0 ? 'up' : 'down';
+}
+
+/**
+ * Returns the angle (in radians) between two points)
+ */
+export function getAngle(first: Coords, second: Coords) {
+  return Math.atan2(second.y - first.y, second.x - first.x);
 }
 
 export function getAttackAnimation(

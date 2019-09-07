@@ -1,3 +1,6 @@
+import { Move } from './move.model';
+import { braveBird } from './moves';
+
 export type Type =
   | 'normal'
   | 'fire'
@@ -59,6 +62,7 @@ export interface Pokemon {
   readonly specDefense: number;
   readonly speed: number;
   readonly basicAttack: Attack;
+  readonly move?: Move;
   readonly evolution?: PokemonName;
   /** Evolution stage */
   readonly stage: 1 | 2 | 3;
@@ -94,6 +98,7 @@ const rawPokemonData = {
     categories: ['fire', 'flying'],
     tier: 1,
     maxHP: 45,
+    maxPP: 10,
     attack: 50,
     defense: 43,
     specAttack: 40,
@@ -103,6 +108,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
+    move: braveBird,
     evolution: 'fletchinder',
     stage: 1,
   },
@@ -111,6 +117,7 @@ const rawPokemonData = {
     categories: ['fire', 'flying'],
     tier: 1,
     maxHP: 62,
+    maxPP: 10,
     attack: 73,
     defense: 55,
     specAttack: 56,
@@ -120,6 +127,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
+    move: braveBird,
     evolution: 'talonflame',
     stage: 2,
   },
@@ -138,6 +146,7 @@ const rawPokemonData = {
       range: 1,
       stat: 'attack',
     },
+    move: braveBird,
     stage: 3,
   },
   rotomw: {

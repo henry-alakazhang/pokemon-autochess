@@ -158,11 +158,11 @@ export class GameScene extends Phaser.Scene {
       .fill(undefined)
       // fill + map rather than `fill` an array because
       // `fill` will only initialise one array and fill with shallow copies
-      .map(_ => Array(5).fill(undefined));
+      .map(() => Array(5).fill(undefined));
 
     this.enemyBoard = Array(5)
       .fill(undefined)
-      .map(_ => Array(5).fill(undefined));
+      .map(() => Array(5).fill(undefined));
     this.enemyBoard[0][4] = new PokemonObject({
       scene: this,
       x: 0,
@@ -278,7 +278,7 @@ export class GameScene extends Phaser.Scene {
       playerBoard: this.mainboard,
       enemyBoard: this.enemyBoard,
       callback: (winner: 'player' | 'enemy') => {
-        if (winner == 'player') {
+        if (winner === 'player') {
           this.player.winGold();
         } else {
           --this.player.currentHP; // TODO: implement properly

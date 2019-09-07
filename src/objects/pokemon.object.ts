@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { getLevel } from '../core/pokemon.helpers';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
-import { id } from '../helpers';
+import { generateId } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
 
@@ -25,27 +25,27 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    * A hacky little way of adding an outline to a Pokemon.
    * Draws a second, slightly larger sprite which serves as the outline.
    */
-  private outlineSprite: Phaser.GameObjects.Sprite;
-  private isOutlined = false;
+  outlineSprite: Phaser.GameObjects.Sprite;
+  isOutlined = false;
 
   /** HP and PP bars above the Pokemon */
-  private bars: Phaser.GameObjects.Graphics;
-  private currentHP: number;
-  private maxHP: number;
-  private currentPP: number;
-  private maxPP?: number;
+  bars: Phaser.GameObjects.Graphics;
+  currentHP: number;
+  maxHP: number;
+  currentPP: number;
+  maxPP?: number;
 
-  public id: string;
-  public name: PokemonName;
-  public side: 'player' | 'enemy';
-  public basePokemon: Pokemon;
+  id: string;
+  name: PokemonName;
+  side: 'player' | 'enemy';
+  basePokemon: Pokemon;
 
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
     super(params.scene, params.x, params.y, params.name, params.frame);
 
     // generate a random ID
-    this.id = id();
+    this.id = generateId();
     this.name = params.name;
 
     // load data from Pokemon data
@@ -170,7 +170,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    */
   public dealDamage(amount: number) {
     // damage / 10, capped at 2
-    this.currentPP += Math.min(2, Math.round(amount / 10));
+    if (this.maxPP && this.currentPP < this.maxPP) {
+      this.currentPP = Math.min(
+        this.maxPP,
+        this.currentPP + Math.min(2, Math.round(amount / 10))
+      );
+    }
     this.redrawBars();
   }
 
@@ -181,7 +186,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     if (amount < 0 || this.currentHP <= 0) {
       return;
     }
-    this.currentPP += Math.min(2, Math.round(amount / 10));
+    if (this.maxPP && this.currentPP < this.maxPP) {
+      this.currentPP = Math.min(
+        this.maxPP,
+        this.currentPP + Math.min(2, Math.round(amount / 10))
+      );
+    }
     const actualDamage = Math.min(this.currentHP, amount);
     this.currentHP -= actualDamage;
     this.redrawBars();
