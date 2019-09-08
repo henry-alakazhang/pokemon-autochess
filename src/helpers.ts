@@ -1,3 +1,5 @@
+import { PokemonName } from './core/pokemon.model';
+
 // general JS helpers file
 
 /**
@@ -27,4 +29,14 @@ export function isDefined<T>(x: T): x is NonNullable<T> {
  */
 export function assertNever(x: never): never {
   throw new Error(`Unexpected object: ${x}`);
+}
+
+/**
+ * Returns the base texture for a Pokemon.
+ *
+ * Pokemon which don't evolve have repeat entries to represent their higher stages
+ * This function will strip extra characters from their names to get the base texture name.
+ */
+export function getBaseTexture(pokemon: PokemonName) {
+  return pokemon.split('-')[0];
 }
