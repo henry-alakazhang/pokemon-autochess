@@ -1,4 +1,3 @@
-import { getLevel } from '../../../core/pokemon.helpers';
 import { Attack, Pokemon } from '../../../core/pokemon.model';
 import { assertNever } from '../../../helpers';
 import { PokemonAnimationType } from '../../../objects/pokemon.object';
@@ -234,7 +233,5 @@ export function calculateDamage(
   // reduction is stat / 5, rounded down to the nearest 5
   const reduction = (Math.floor(defenseStat / 25) * 5) / 100;
 
-  return Math.round(
-    (getLevel(attacker) / 100) * attackStat * (1 - reduction) + 2
-  );
+  return Math.round(attackStat * (1 - reduction) + 2);
 }
