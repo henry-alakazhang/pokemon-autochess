@@ -174,10 +174,13 @@ export function pathfind(
 
 /**
  * Returns the turn delay in milliseconds for a pokemon.
- * The delay is the equivalent of `sqrt(spd/75)` attacks per second
+ *
+ * The delay scales from 0.5 APS at 50 base speed to 1.0 at 125 speed.
+ * The minimum is 0.5 APS / 2 seconds per attack (no upper cap)
  */
 export function getTurnDelay(pokemon: Pokemon) {
-  return 1000 / Math.sqrt(pokemon.speed / 75);
+  const aps = (pokemon.speed + 25) / 150;
+  return Math.min(1000 / aps, 2000);
 }
 
 export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
