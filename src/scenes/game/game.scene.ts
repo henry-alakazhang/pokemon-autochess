@@ -128,6 +128,8 @@ export class GameScene extends Phaser.Scene {
   player: Player;
   playerGoldText: Phaser.GameObjects.Text;
   playerHPText: Phaser.GameObjects.Text;
+  sellArea: Phaser.GameObjects.Shape;
+  sellText: Phaser.GameObjects.Text;
   /* END TEMPORARY JUNK */
 
   /** The Pokemon board representing the player's team composition */
@@ -245,6 +247,21 @@ export class GameScene extends Phaser.Scene {
       this.toggleShop()
     );
 
+    this.sellArea = this.add
+      .rectangle(
+        90, // centre x
+        300, // centre y
+        100, // width
+        250, // height
+        0xff0000, // color: red
+        0.2 // alpha: mostly transparent
+      )
+      .setVisible(false);
+
+    this.sellArea.setInteractive().on('pointerdown', () => {
+      this.sellPokemon(this.selectedPokemon as PokemonObject);
+    });
+
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
     this.nextRoundButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
       this.nextRoundButton.destroy();
@@ -259,6 +276,7 @@ export class GameScene extends Phaser.Scene {
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
+    this.sellArea.setVisible(!!this.selectedPokemon);
   }
 
   startCombat() {
@@ -279,8 +297,9 @@ export class GameScene extends Phaser.Scene {
       enemyBoard: this.enemyBoard,
       callback: (winner: 'player' | 'enemy') => {
         if (winner === 'player') {
-          this.player.winGold();
+          this.player.gainRoundEndGold(true); // TODO: do the actual gold gain at round start rather than immediately after combat
         } else {
+          this.player.gainRoundEndGold(false);
           --this.player.currentHP; // TODO: implement properly
         }
         this.startDowntime();
@@ -558,5 +577,19 @@ export class GameScene extends Phaser.Scene {
       this.scene.resume(ShopScene.KEY);
       this.scene.setVisible(true, ShopScene.KEY);
     }
+  }
+
+  sellPokemon(pokemon: PokemonObject) {
+    // TODO: add pokemon back into pool
+
+    if (pokemon.basePokemon.stage === 1) {
+      this.player.gold += pokemon.basePokemon.tier;
+    } else if (pokemon.basePokemon.stage === 2) {
+      this.player.gold += pokemon.basePokemon.tier + 2;
+    } else {
+      this.player.gold += pokemon.basePokemon.tier + 4;
+    }
+
+    this.removePokemon(pokemon);
   }
 }
