@@ -128,6 +128,8 @@ export class GameScene extends Phaser.Scene {
   player: Player;
   playerGoldText: Phaser.GameObjects.Text;
   playerHPText: Phaser.GameObjects.Text;
+  sellArea: Phaser.GameObjects.Shape;
+  sellText: Phaser.GameObjects.Text;
   /* END TEMPORARY JUNK */
 
   /** The Pokemon board representing the player's team composition */
@@ -245,6 +247,21 @@ export class GameScene extends Phaser.Scene {
       this.toggleShop()
     );
 
+    this.sellArea = this.add
+      .rectangle(
+        90, // centre x
+        300, // centre y
+        100, // width
+        250, // height
+        0xff0000, // color: red
+        0.2 // alpha: mostly transparent
+      )
+      .setVisible(false);
+
+    this.sellArea.setInteractive().on('pointerdown', () => {
+      this.sellPokemon(this.player, this.selectedPokemon as PokemonObject);
+    });
+
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
     this.nextRoundButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
       this.nextRoundButton.destroy();
@@ -259,6 +276,7 @@ export class GameScene extends Phaser.Scene {
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
+    this.sellArea.setVisible(!!this.selectedPokemon);
   }
 
   startCombat() {
@@ -278,11 +296,7 @@ export class GameScene extends Phaser.Scene {
       playerBoard: this.mainboard,
       enemyBoard: this.enemyBoard,
       callback: (winner: 'player' | 'enemy') => {
-        if (winner === 'player') {
-          this.player.winGold();
-        } else {
-          --this.player.currentHP; // TODO: implement properly
-        }
+        this.player.battleResult(winner === 'player');
         this.startDowntime();
       },
     };
@@ -291,6 +305,8 @@ export class GameScene extends Phaser.Scene {
 
   startDowntime() {
     this.shop.reroll();
+    this.player.gainRoundEndGold();
+
     // show all the prep-only stuff
     this.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon && pokemon.setVisible(true))
@@ -558,5 +574,18 @@ export class GameScene extends Phaser.Scene {
       this.scene.resume(ShopScene.KEY);
       this.scene.setVisible(true, ShopScene.KEY);
     }
+  }
+
+  sellPokemon(player: Player, pokemon: PokemonObject) {
+    // TODO: add pokemon back into pool
+    if (pokemon.basePokemon.stage === 1) {
+      player.gold += pokemon.basePokemon.tier;
+    } else if (pokemon.basePokemon.stage === 2) {
+      player.gold += pokemon.basePokemon.tier + 2;
+    } else {
+      player.gold += pokemon.basePokemon.tier + 4;
+    }
+
+    this.removePokemon(pokemon);
   }
 }
