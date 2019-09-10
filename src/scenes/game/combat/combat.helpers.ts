@@ -224,13 +224,13 @@ export function getAttackAnimation(
 export function calculateDamage(
   attacker: Pokemon,
   defender: Pokemon,
-  attack: Attack
+  attack: Attack | { damage: number; defenseStat: 'defense' | 'specDefense' }
 ) {
   // use specified defenseStat, or the one that correlates to the attack stat
   const defenseStatName =
     attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';
   // use base attack/defense so the formula doesn't scale exponentially with level
-  const attackStat = attacker[attack.stat];
+  const attackStat = 'damage' in attack ? attack.damage : attacker[attack.stat];
   const defenseStat = defender[defenseStatName];
 
   // reduction is stat / 5, rounded down to the nearest 5
