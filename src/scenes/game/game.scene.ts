@@ -259,7 +259,7 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false);
 
     this.sellArea.setInteractive().on('pointerdown', () => {
-      this.sellPokemon(this.selectedPokemon as PokemonObject);
+      this.sellPokemon(this.player, this.selectedPokemon as PokemonObject);
     });
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
@@ -296,12 +296,7 @@ export class GameScene extends Phaser.Scene {
       playerBoard: this.mainboard,
       enemyBoard: this.enemyBoard,
       callback: (winner: 'player' | 'enemy') => {
-        if (winner === 'player') {
-          this.player.gainRoundEndGold(true); // TODO: do the actual gold gain at round start rather than immediately after combat
-        } else {
-          this.player.gainRoundEndGold(false);
-          --this.player.currentHP; // TODO: implement properly
-        }
+        this.player.battleResult(winner === 'player');
         this.startDowntime();
       },
     };
@@ -310,6 +305,8 @@ export class GameScene extends Phaser.Scene {
 
   startDowntime() {
     this.shop.reroll();
+    this.player.gainRoundEndGold();
+
     // show all the prep-only stuff
     this.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon && pokemon.setVisible(true))
@@ -579,15 +576,14 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  sellPokemon(pokemon: PokemonObject) {
+  sellPokemon(player: Player, pokemon: PokemonObject) {
     // TODO: add pokemon back into pool
-
     if (pokemon.basePokemon.stage === 1) {
-      this.player.gold += pokemon.basePokemon.tier;
+      player.gold += pokemon.basePokemon.tier;
     } else if (pokemon.basePokemon.stage === 2) {
-      this.player.gold += pokemon.basePokemon.tier + 2;
+      player.gold += pokemon.basePokemon.tier + 2;
     } else {
-      this.player.gold += pokemon.basePokemon.tier + 4;
+      player.gold += pokemon.basePokemon.tier + 4;
     }
 
     this.removePokemon(pokemon);
