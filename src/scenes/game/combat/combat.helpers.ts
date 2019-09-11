@@ -1,4 +1,4 @@
-import { Attack, Pokemon } from '../../../core/pokemon.model';
+import { Pokemon } from '../../../core/pokemon.model';
 import { assertNever } from '../../../helpers';
 import { PokemonAnimationType } from '../../../objects/pokemon.object';
 import { CombatScene } from './combat.scene';
@@ -221,20 +221,30 @@ export function getAttackAnimation(
   return start;
 }
 
+type OffenseAction =
+  | {
+      stat: 'attack' | 'specAttack';
+      defenseStat?: 'defense' | 'specDefense';
+    }
+  | {
+      damage: number;
+      defenseStat: 'defense' | 'specDefense';
+    };
+
 export function calculateDamage(
   attacker: Pokemon,
   defender: Pokemon,
-  attack: Attack | { damage: number; defenseStat: 'defense' | 'specDefense' }
+  attack: OffenseAction
 ) {
   // use specified defenseStat, or the one that correlates to the attack stat
   const defenseStatName =
     attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';
   // use base attack/defense so the formula doesn't scale exponentially with level
-  const attackStat = 'damage' in attack ? attack.damage : attacker[attack.stat];
-  const defenseStat = defender[defenseStatName];
+  const baseDamage = 'damage' in attack ? attack.damage : attacker[attack.stat];
+  const defenseValue = defender[defenseStatName];
 
   // reduction is stat / 5, rounded down to the nearest 5
-  const reduction = (Math.floor(defenseStat / 25) * 5) / 100;
+  const reduction = (Math.floor(defenseValue / 25) * 5) / 100;
 
-  return Math.round(attackStat * (1 - reduction) + 2);
+  return Math.round(baseDamage * (1 - reduction) + 2);
 }
