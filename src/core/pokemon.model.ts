@@ -151,7 +151,7 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
 
   return {
     ...basePokemon,
-    maxHP: basePokemon.maxHP * multi,
+    maxHP: basePokemon.maxHP * 10 * multi,
     attack: basePokemon.attack * multi,
     specAttack: basePokemon.specAttack * multi,
     stage,

@@ -7,6 +7,7 @@ import {
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
 import {
+  calculateDamage,
   Coords,
   getAttackAnimation,
   getFacing,
@@ -293,15 +294,10 @@ export class CombatScene extends Scene {
     }
 
     // otherwise make a basic attack
-
-    // use specified defenseStat, or the one that correlates to the attack stat
-    const defenseStat =
-      attack.defenseStat || attack.stat === 'attack'
-        ? 'defense'
-        : 'specDefense';
-    const damage = Math.floor(
-      (pokemon.basePokemon[attack.stat] * 10) /
-        targetPokemon.basePokemon[defenseStat]
+    const damage = calculateDamage(
+      pokemon.basePokemon,
+      targetPokemon.basePokemon,
+      attack
     );
     // attack animation is just moving to the enemy and back
     this.add.tween({

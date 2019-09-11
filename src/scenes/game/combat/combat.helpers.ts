@@ -174,10 +174,13 @@ export function pathfind(
 
 /**
  * Returns the turn delay in milliseconds for a pokemon.
- * The delay is (100 / speed) seconds
+ *
+ * The delay scales from 0.5 APS at 50 base speed to 1.0 at 125 speed.
+ * The minimum is 0.5 APS / 2 seconds per attack (no upper cap)
  */
 export function getTurnDelay(pokemon: Pokemon) {
-  return 100_000 / pokemon.speed;
+  const aps = (pokemon.speed + 25) / 150;
+  return Math.min(1000 / aps, 2000);
 }
 
 export function getFacing(first: Coords, second: Coords): PokemonAnimationType {
@@ -216,4 +219,32 @@ export function getAttackAnimation(
       assertNever(facing);
   }
   return start;
+}
+
+type OffenseAction =
+  | {
+      stat: 'attack' | 'specAttack';
+      defenseStat?: 'defense' | 'specDefense';
+    }
+  | {
+      damage: number;
+      defenseStat: 'defense' | 'specDefense';
+    };
+
+export function calculateDamage(
+  attacker: Pokemon,
+  defender: Pokemon,
+  attack: OffenseAction
+) {
+  // use specified defenseStat, or the one that correlates to the attack stat
+  const defenseStatName =
+    attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';
+  // use base attack/defense so the formula doesn't scale exponentially with level
+  const baseDamage = 'damage' in attack ? attack.damage : attacker[attack.stat];
+  const defenseValue = defender[defenseStatName];
+
+  // reduction is stat / 5, rounded down to the nearest 5
+  const reduction = (Math.floor(defenseValue / 25) * 5) / 100;
+
+  return Math.round(baseDamage * (1 - reduction) + 2);
 }
