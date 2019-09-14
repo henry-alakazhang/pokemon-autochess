@@ -32,7 +32,6 @@ interface ActiveMove {
   defenseStat?: 'defense' | 'specDefense';
 }
 
-// TODO: implement this
 interface PassiveMove {
   displayName: string;
   type: 'passive';
