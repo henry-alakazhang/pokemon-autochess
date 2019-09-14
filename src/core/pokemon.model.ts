@@ -1,6 +1,5 @@
 import { Move } from './move.model';
-import { braveBird } from './moves';
-import { shadowTag } from './moves/shadow-tag';
+import { braveBird, shadowTag } from './moves';
 
 export type Type =
   | 'normal'
