@@ -277,8 +277,6 @@ export class CombatScene extends Scene {
     // if it's a move, use it
     if ('use' in attack) {
       pokemon.currentPP = 0;
-      // attack can only have use if the move exists, so just !null assert
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       attack.use({
         scene: this,
         board: this.board,
