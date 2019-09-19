@@ -1,5 +1,5 @@
 import { Move } from './move.model';
-import { braveBird } from './moves';
+import { braveBird, shadowTag } from './moves';
 
 export type Type =
   | 'normal'
@@ -84,7 +84,6 @@ const basePokemonData = {
     categories: ['fire', 'ghost'],
     tier: 2,
     maxHP: 60,
-    maxPP: 15,
     attack: 55,
     defense: 90,
     specAttack: 145,
@@ -98,6 +97,7 @@ const basePokemonData = {
         speed: 200,
       },
     },
+    move: shadowTag,
   },
   fletchling: {
     base: 'fletchling',

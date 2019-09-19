@@ -32,12 +32,14 @@ interface ActiveMove {
   defenseStat?: 'defense' | 'specDefense';
 }
 
-// TODO: implement this
-type PassiveMove = {
+interface PassiveMove {
   displayName: string;
   type: 'passive';
   description: string;
-  onAttack: () => void;
-  onBeingHit: () => void;
-  onTurn: () => void;
-} & never;
+  onAttack?: () => void;
+  onBeingHit?: () => void;
+  onTurn?: () => void;
+  flags: {
+    undodgable?: true;
+  };
+}
