@@ -39,6 +39,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   side: 'player' | 'enemy';
   basePokemon: Pokemon;
 
+  status: {
+    paralyse?: boolean;
+  } = {};
+
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
     super(
@@ -119,7 +123,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // 1 px of bottom border
 
     // bar background
-    this.bars.fillStyle(0x000000, 1);
+    const backgroundColor = this.status.paralyse ? 0x666600 : 0x000000;
+    this.bars.fillStyle(backgroundColor, 1);
     this.bars.fillRect(-this.width / 2, -this.height / 2, this.width, 10);
 
     // hp bar

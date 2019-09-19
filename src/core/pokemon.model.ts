@@ -1,5 +1,6 @@
 import { Move } from './move.model';
 import { braveBird } from './moves';
+import { thunderWave } from './moves/thunder-wave';
 
 export type Type =
   | 'normal'
@@ -121,7 +122,7 @@ const basePokemonData = {
     categories: ['water', 'electric'],
     tier: 4,
     maxHP: 50,
-    maxPP: 12,
+    maxPP: 10,
     attack: 65,
     defense: 107,
     specAttack: 105,
@@ -131,6 +132,7 @@ const basePokemonData = {
       range: 1,
       stat: 'specAttack',
     },
+    move: thunderWave,
   },
 } as const;
 

@@ -224,6 +224,12 @@ export class CombatScene extends Scene {
    * Takes a turn for the given Pokemon
    */
   takeTurn(pokemon: PokemonObject) {
+    // can't act: just wait til next turn
+    if (pokemon.status.paralyse) {
+      this.setTurn(pokemon);
+      return;
+    }
+
     const myCoords = this.getBoardLocationForPokemon(pokemon);
     if (!myCoords) {
       return;
