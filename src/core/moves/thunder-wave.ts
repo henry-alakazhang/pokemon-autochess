@@ -9,10 +9,10 @@ export const thunderWave: Move = {
     // hopping animation
     scene.add.tween({
       targets: [user],
-      duration: 150,
-      y: user.y - 10,
+      duration: 100,
+      y: user.y - 6,
       yoyo: true,
-      ease: 'Quad.InOut',
+      ease: 'Quad.easeOut',
       // todo: inverse power
       onComplete: () => {
         const img = scene.add.image(target.x, target.y, 'thunder-wave');
