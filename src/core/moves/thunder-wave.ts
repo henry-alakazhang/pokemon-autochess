@@ -13,7 +13,6 @@ export const thunderWave: Move = {
       y: user.y - 6,
       yoyo: true,
       ease: 'Quad.easeOut',
-      // todo: inverse power
       onComplete: () => {
         const img = scene.add.image(target.x, target.y, 'thunder-wave');
         const flashAnimation = window.setInterval(
