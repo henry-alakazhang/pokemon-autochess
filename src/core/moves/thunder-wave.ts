@@ -9,8 +9,8 @@ export const thunderWave: Move = {
     // hopping animation
     scene.add.tween({
       targets: [user],
-      duration: 100,
-      y: user.y - 6,
+      duration: 150,
+      y: user.y - 10,
       yoyo: true,
       ease: 'Quad.easeOut',
       onComplete: () => {
@@ -23,12 +23,8 @@ export const thunderWave: Move = {
           clearInterval(flashAnimation);
           img.destroy();
 
-          target.status.paralyse = true;
+          target.status.paralyse = 4000;
           target.redrawBars();
-          // TODO: figure out a better way to make statuses last a certain duration
-          window.setTimeout(() => {
-            target.status.paralyse = false;
-          }, 4000);
           onComplete();
         }, 600);
       },

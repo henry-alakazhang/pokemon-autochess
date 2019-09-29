@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Status } from '../../../core/game.model';
 import { PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import {
@@ -217,7 +218,17 @@ export class CombatScene extends Scene {
    * Adds a turn for the given Pokemon, based on its speed
    */
   setTurn(pokemon: PokemonObject) {
-    setTimeout(() => this.takeTurn(pokemon), getTurnDelay(pokemon.basePokemon));
+    const delay = getTurnDelay(pokemon.basePokemon);
+    // reduce the duration of each status
+    (Object.keys(pokemon.status) as Status[]).forEach((s: Status) => {
+      const duration = pokemon.status[s];
+      if (duration) {
+        const remaining = duration - delay;
+        // reset to undefined if status is over
+        pokemon.status[s] = remaining >= 0 ? remaining : undefined;
+      }
+    });
+    setTimeout(() => this.takeTurn(pokemon), delay);
   }
 
   /**

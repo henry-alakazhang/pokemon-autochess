@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Status } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
@@ -40,7 +41,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   basePokemon: Pokemon;
 
   status: {
-    paralyse?: boolean;
+    [k in Status]?: number;
   } = {};
 
   // TODO: clean up messiness in model
