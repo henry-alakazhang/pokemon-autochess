@@ -30,6 +30,8 @@ export const voltTackle: Move = {
       .play('volt-tackle');
     sprite.on(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
       sprite.destroy();
+      // TODO: do some little hops or something to add some flair
+      // maybe when https://trello.com/c/CZajATA8/43 is done and it's not a pain to chain tweens.
       scene.add.tween({
         targets: [user],
         duration: getTurnDelay(user.basePokemon) * 0.15,

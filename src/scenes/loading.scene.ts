@@ -121,9 +121,9 @@ export class LoadingScene extends Scene {
       key: `volt-tackle`,
       frames: this.anims.generateFrameNumbers('volt-tackle', {
         start: 0,
-        end: 41,
+        end: 12,
       }),
-      frameRate: 30,
+      frameRate: 24,
       repeat: 0,
     });
   }
