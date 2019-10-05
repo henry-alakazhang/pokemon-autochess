@@ -189,7 +189,7 @@ const rawPokemonData = {
   pikachu: {
     ...getEvolution('pichu', 2),
     displayName: 'Pikachu',
-    evolution: 'pikachu',
+    evolution: 'raichu',
   },
   raichu: {
     ...getEvolution('pichu', 3),
