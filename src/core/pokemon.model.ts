@@ -1,5 +1,5 @@
 import { Move } from './move.model';
-import { braveBird, shadowTag, thunderWave } from './moves';
+import { braveBird, shadowTag, thunderWave, voltTackle } from './moves';
 
 export type Type =
   | 'normal'
@@ -133,6 +133,23 @@ const basePokemonData = {
     },
     move: thunderWave,
   },
+  pichu: {
+    base: 'pichu',
+    categories: ['electric'],
+    tier: 1,
+    maxHP: 60,
+    maxPP: 10,
+    attack: 90,
+    defense: 55,
+    specAttack: 90,
+    specDefense: 80,
+    speed: 110,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: voltTackle,
+  },
 } as const;
 
 /**
@@ -164,6 +181,20 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
  * Uses the BasePokemon as a basis
  */
 const rawPokemonData = {
+  pichu: {
+    ...getEvolution('pichu', 1),
+    displayName: 'Pichu',
+    evolution: 'pikachu',
+  },
+  pikachu: {
+    ...getEvolution('pichu', 2),
+    displayName: 'Pikachu',
+    evolution: 'pikachu',
+  },
+  raichu: {
+    ...getEvolution('pichu', 3),
+    displayName: 'Raichu',
+  },
   litwick: {
     ...getEvolution('litwick', 1),
     displayName: 'Litwick',

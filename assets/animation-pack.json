@@ -1,0 +1,15 @@
+{
+  "sprites": {
+    "files": [
+      {
+        "type": "spritesheet",
+        "key": "volt-tackle",
+        "url": "assets/animations/volt-tackle.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 80
+        }
+      }
+    ]
+  }
+}

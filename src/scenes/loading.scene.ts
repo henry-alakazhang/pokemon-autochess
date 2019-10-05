@@ -65,6 +65,7 @@ export class LoadingScene extends Scene {
 
     this.load.pack('sprites', 'assets/sprite-pack.json');
     this.load.pack('fx', 'assets/fx-pack.json');
+    this.load.pack('animations', 'assets/animation-pack.json');
   }
 
   update(): void {
@@ -114,6 +115,16 @@ export class LoadingScene extends Scene {
         frameRate: 6,
         repeat: -1,
       });
+    });
+
+    this.anims.create({
+      key: `volt-tackle`,
+      frames: this.anims.generateFrameNumbers('volt-tackle', {
+        start: 0,
+        end: 41,
+      }),
+      frameRate: 30,
+      repeat: 0,
     });
   }
 }
