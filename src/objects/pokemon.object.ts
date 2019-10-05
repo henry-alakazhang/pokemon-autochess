@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { Status } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
@@ -38,6 +39,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   name: PokemonName;
   side: 'player' | 'enemy';
   basePokemon: Pokemon;
+
+  status: {
+    [k in Status]?: number;
+  } = {};
 
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
@@ -119,7 +124,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // 1 px of bottom border
 
     // bar background
-    this.bars.fillStyle(0x000000, 1);
+    const backgroundColor = this.status.paralyse ? 0x666600 : 0x000000;
+    this.bars.fillStyle(backgroundColor, 1);
     this.bars.fillRect(-this.width / 2, -this.height / 2, this.width, 10);
 
     // hp bar
