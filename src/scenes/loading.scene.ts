@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { animations } from '../core/animations';
 import { allPokemonNames } from '../core/pokemon.model';
 import { getBaseTexture } from '../helpers';
 import { MenuScene } from './menu.scene';
@@ -117,14 +118,16 @@ export class LoadingScene extends Scene {
       });
     });
 
-    this.anims.create({
-      key: `volt-tackle`,
-      frames: this.anims.generateFrameNumbers('volt-tackle', {
-        start: 0,
-        end: 12,
-      }),
-      frameRate: 24,
-      repeat: 0,
+    animations.forEach(animation => {
+      this.anims.create({
+        key: animation.key,
+        frames: this.anims.generateFrameNumbers(animation.key, {
+          start: 0,
+          end: animation.frames - 1,
+        }),
+        frameRate: (animation.frames * 1000) / animation.duration,
+        repeat: animation.repeat || 0,
+      });
     });
   }
 }

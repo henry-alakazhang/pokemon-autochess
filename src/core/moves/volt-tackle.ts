@@ -10,12 +10,14 @@ import { Move, MoveConfig } from '../move.model';
  * Volt Tackle - Pikachu line's move
  *
  * Deals heavy damage to a single target with some recoil to the user.
- * 250ms cast time
+ * 500ms cast time
+ *
+ * TODO: differentiate this from Brave Bird
  */
 export const voltTackle: Move = {
   displayName: 'Volt Tackle',
   type: 'active',
-  damage: [200, 350, 500],
+  damage: [300, 450, 600],
   defenseStat: 'defense',
   get description() {
     return `Deals ${this.damage.join(
