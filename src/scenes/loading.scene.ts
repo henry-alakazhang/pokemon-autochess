@@ -118,10 +118,10 @@ export class LoadingScene extends Scene {
       });
     });
 
-    animations.forEach(animation => {
+    Object.entries(animations).forEach(([key, animation]) => {
       this.anims.create({
-        key: animation.key,
-        frames: this.anims.generateFrameNumbers(animation.key, {
+        key,
+        frames: this.anims.generateFrameNumbers(animation.texture, {
           start: 0,
           end: animation.frames - 1,
         }),
