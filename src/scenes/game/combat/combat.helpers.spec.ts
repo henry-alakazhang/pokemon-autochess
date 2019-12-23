@@ -2,9 +2,7 @@ import * as expect from 'expect';
 import { PokemonObject } from '../../../objects/pokemon.object';
 import { getFacing, getNearestTarget, pathfind } from './combat.helpers';
 
-// eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
 const playerMock = { side: 'player' } as PokemonObject;
-// eslint-disable-next-line @typescript-eslint/no-object-literal-type-assertion
 const enemyMock = { side: 'enemy' } as PokemonObject;
 
 describe('getNearestTarget', () => {
