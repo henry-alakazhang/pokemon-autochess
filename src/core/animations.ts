@@ -26,5 +26,5 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 8,
     duration: 300,
     repeat: -1,
-  }
+  },
 };

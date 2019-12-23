@@ -1,7 +1,7 @@
 import { Move, MoveConfig } from '../move.model';
 
 /**
- * Razor WInd - Shiftry line's move
+ * Razor Wind - Shiftry line's move
  *
  * Starts a whirlwind which triggers after 2 seconds,
  * dealing significant damage over time to an area around the target
