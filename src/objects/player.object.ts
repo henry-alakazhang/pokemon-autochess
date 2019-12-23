@@ -1,9 +1,9 @@
 export class Player {
-  currentHP: number = 100;
-  maxHP: number = 100;
-  gold: number = 20;
+  currentHP = 100;
+  maxHP = 100;
+  gold = 20;
   /** Consecutive win/loss streak */
-  streak: number = 0;
+  streak = 0;
 
   /**
    * Calculate streaks and award win gold
