@@ -1,5 +1,6 @@
 import { Move } from './move.model';
 import { braveBird, shadowTag, thunderWave, voltTackle } from './moves';
+import { razorWind } from './moves/razor-wind';
 
 export type Type =
   | 'normal'
@@ -150,6 +151,23 @@ const basePokemonData = {
     },
     move: voltTackle,
   },
+  seedot: {
+    base: 'seedot',
+    categories: ['grass', 'dark'],
+    tier: 1,
+    maxHP: 90,
+    maxPP: 15,
+    attack: 100,
+    defense: 60,
+    specAttack: 90,
+    specDefense: 60,
+    speed: 80,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: razorWind,
+  },
 } as const;
 
 /**
@@ -194,6 +212,20 @@ const rawPokemonData = {
   raichu: {
     ...getEvolution('pichu', 3),
     displayName: 'Raichu',
+  },
+  seedot: {
+    ...getEvolution('seedot', 1),
+    displayName: 'Seedot',
+    evolution: 'nuzleaf',
+  },
+  nuzleaf: {
+    ...getEvolution('seedot', 2),
+    displayName: 'Nuzleaf',
+    evolution: 'shiftry',
+  },
+  shiftry: {
+    ...getEvolution('seedot', 3),
+    displayName: 'Shiftry',
   },
   litwick: {
     ...getEvolution('litwick', 1),

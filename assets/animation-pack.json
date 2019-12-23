@@ -9,6 +9,24 @@
           "frameWidth": 72,
           "frameHeight": 80
         }
+      },
+      {
+        "type": "spritesheet",
+        "key": "razor-wind-base",
+        "url": "assets/animations/razor-wind-base.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 24
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "razor-wind-wind",
+        "url": "assets/animations/razor-wind-wind.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 48
+        }
       }
     ]
   }
