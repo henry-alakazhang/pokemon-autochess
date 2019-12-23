@@ -5,6 +5,8 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Starts a whirlwind which triggers after 2 seconds,
  * dealing significant damage over time to an area around the target
+ *
+ * TODO: actually make it AOE
  */
 export const razorWind: Move = {
   displayName: 'Razor Wind',
@@ -25,7 +27,7 @@ export const razorWind: Move = {
       y: user.y - 10,
       yoyo: true,
       ease: 'Quad.easeOut',
-      repeat: 2,
+      repeat: 1,
       onComplete: () => {
         // animation: small spinny whirlwind effect below the poekmon
         const base = scene.add
