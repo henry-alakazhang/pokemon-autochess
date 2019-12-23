@@ -5,7 +5,7 @@ interface AnimationData {
   readonly frames: number;
   /** Duration in milliseconds of the animation */
   readonly duration: number;
-  /** Number of repeats, if applicable */
+  /** Number of repeats, if applicable (-1 for indefinite loop) */
   readonly repeat?: number;
 }
 
@@ -14,5 +14,17 @@ export const animations: { [key: string]: AnimationData } = {
     texture: 'volt-tackle',
     frames: 13,
     duration: 500,
+  },
+  'razor-wind-base': {
+    texture: 'razor-wind-base',
+    frames: 8,
+    duration: 300,
+    repeat: -1,
+  },
+  'razor-wind-wind': {
+    texture: 'razor-wind-wind',
+    frames: 8,
+    duration: 300,
+    repeat: -1,
   },
 };

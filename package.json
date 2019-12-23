@@ -3,6 +3,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "ts-node scripts/generate-sprite-pack.ts",
+    "prestart": "yarn prepare",
     "build:dev": "webpack --env dev",
     "build:prod": "webpack --env prod",
     "fix": "eslint --cache --ext ts . --fix",
