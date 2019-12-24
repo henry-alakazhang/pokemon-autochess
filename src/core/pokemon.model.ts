@@ -1,5 +1,11 @@
 import { Move } from './move.model';
-import { braveBird, shadowTag, thunderWave, voltTackle } from './moves';
+import {
+  braveBird,
+  shadowTag,
+  thunderWave,
+  twineedle,
+  voltTackle,
+} from './moves';
 import { razorWind } from './moves/razor-wind';
 
 export type Type =
@@ -168,6 +174,28 @@ const basePokemonData = {
     },
     move: razorWind,
   },
+  weedle: {
+    base: 'weedle',
+    categories: ['bug', 'poison'],
+    tier: 1,
+    maxHP: 65,
+    // slight hack: weedle has 0 PP and an active move which effectively replaces the basic attack
+    maxPP: 0,
+    attack: 90,
+    defense: 40,
+    specAttack: 45,
+    specDefense: 80,
+    speed: 75,
+    basicAttack: {
+      range: 2,
+      stat: 'attack',
+      projectile: {
+        key: 'stinger',
+        speed: 400,
+      },
+    },
+    move: twineedle,
+  },
 } as const;
 
 /**
@@ -199,6 +227,20 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
  * Uses the BasePokemon as a basis
  */
 const rawPokemonData = {
+  weedle: {
+    ...getEvolution('weedle', 1),
+    displayName: 'Weedle',
+    evolution: 'kakuna',
+  },
+  kakuna: {
+    ...getEvolution('weedle', 2),
+    displayName: 'Kakuna',
+    evolution: 'beedrill',
+  },
+  beedrill: {
+    ...getEvolution('weedle', 3),
+    displayName: 'Beedrill',
+  },
   pichu: {
     ...getEvolution('pichu', 1),
     displayName: 'Pichu',

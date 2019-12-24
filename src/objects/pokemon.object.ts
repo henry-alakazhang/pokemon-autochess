@@ -28,6 +28,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   outlineSprite: Phaser.GameObjects.Sprite;
   isOutlined = false;
 
+  name: PokemonName;
+  basePokemon: Pokemon;
+
   /** HP and PP bars above the Pokemon */
   bars: Phaser.GameObjects.Graphics;
   currentHP: number;
@@ -35,10 +38,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   currentPP: number;
   maxPP?: number;
 
+  /* some combat specific stuff */
   id: string;
-  name: PokemonName;
   side: 'player' | 'enemy';
-  basePokemon: Pokemon;
+  consecutiveAttacks = 0;
 
   status: {
     [k in Status]?: number;
