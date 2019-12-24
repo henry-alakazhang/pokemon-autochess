@@ -27,4 +27,9 @@ export const animations: { [key: string]: AnimationData } = {
     duration: 300,
     repeat: -1,
   },
+  softboiled: {
+    texture: 'softboiled',
+    frames: 17,
+    duration: 1300,
+  },
 };

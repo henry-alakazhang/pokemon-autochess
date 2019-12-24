@@ -11,7 +11,7 @@ export interface MoveConfig {
   onComplete: Function;
 }
 
-interface ActiveMove {
+export interface ActiveMove {
   displayName: string;
   type: 'active';
   description: string;
@@ -45,7 +45,7 @@ interface ActiveMove {
   defenseStat?: 'defense' | 'specDefense';
 }
 
-interface PassiveMove {
+export interface PassiveMove {
   displayName: string;
   type: 'passive';
   description: string;

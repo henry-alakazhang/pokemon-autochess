@@ -3,6 +3,7 @@ import {
   braveBird,
   razorWind,
   shadowTag,
+  softboiled,
   thunderWave,
   twineedle,
   voltTackle,
@@ -196,6 +197,23 @@ const basePokemonData = {
     },
     move: twineedle,
   },
+  happiny: {
+    base: 'happiny',
+    categories: ['normal'],
+    tier: 2,
+    maxHP: 255,
+    maxPP: 25,
+    attack: 10,
+    defense: 10,
+    specAttack: 75,
+    specDefense: 135,
+    speed: 55,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: softboiled,
+  },
 } as const;
 
 /**
@@ -240,6 +258,20 @@ const rawPokemonData = {
   beedrill: {
     ...getEvolution('weedle', 3),
     displayName: 'Beedrill',
+  },
+  happiny: {
+    ...getEvolution('happiny', 1),
+    displayName: 'Happiny',
+    evolution: 'chansey',
+  },
+  chansey: {
+    ...getEvolution('happiny', 2),
+    displayName: 'Chansey',
+    evolution: 'blissey',
+  },
+  blissey: {
+    ...getEvolution('happiny', 3),
+    displayName: 'Blissey',
   },
   pichu: {
     ...getEvolution('pichu', 1),

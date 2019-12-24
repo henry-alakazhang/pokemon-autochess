@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { Status } from '../../../core/game.model';
-import { PokemonName } from '../../../core/pokemon.model';
+import { Attack, PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
@@ -367,26 +367,41 @@ export class CombatScene extends Scene {
           defender.takeDamage(damage);
         } else {
           // otherwise fire off a projectile
-          const projectile = new Projectile(
-            this,
-            attacker.x,
-            attacker.y,
-            attack.projectile.key,
-            defender,
-            attack.projectile.speed
-          );
-          this.physics.add.existing(this.add.existing(projectile));
-          // store this in the `projectiles` map under a random key
-          const projectileKey = generateId();
-          this.projectiles[projectileKey] = projectile;
-          // cause event when it hits
-          projectile.on(Phaser.GameObjects.Events.DESTROY, () => {
+          this.fireProjectile(attacker, defender, attack.projectile, () => {
             attacker.dealDamage(damage);
             defender.takeDamage(damage);
-            delete this.projectiles[projectileKey];
           });
         }
       },
+    });
+  }
+
+  /**
+   * Fires a projectile from one Pokemon to another.
+   * Creates the Projectile object, and handles cleanup when it does
+   * or when the scene is cleaned up.
+   */
+  fireProjectile(
+    from: PokemonObject,
+    to: PokemonObject,
+    projectile: NonNullable<Attack['projectile']>,
+    onDestroy: Function
+  ) {
+    const projectileObj = new Projectile(
+      this,
+      from.x,
+      from.y,
+      projectile.key,
+      to,
+      projectile.speed
+    );
+    this.physics.add.existing(this.add.existing(projectileObj));
+    // store this in the `projectiles` map under a random key
+    const projectileKey = generateId();
+    this.projectiles[projectileKey] = projectileObj;
+    projectileObj.on(Phaser.GameObjects.Events.DESTROY, () => {
+      onDestroy();
+      delete this.projectiles[projectileKey];
     });
   }
 }
