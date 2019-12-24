@@ -322,49 +322,71 @@ export class CombatScene extends Scene {
     }
 
     // otherwise make a basic attack
-    const damage = calculateDamage(
-      pokemon.basePokemon,
-      targetPokemon.basePokemon,
-      attack
-    );
+    this.basicAttack(pokemon, targetPokemon, () => {
+      // afterwards, end the turn
+      this.setTurn(pokemon);
+    });
+  }
+
+  /**
+   * Fires off a basic attack. Melee attacks hit at the tip of the animation,
+   * while ranged ones fire off a projectile which deals damage when it hts.
+   *
+   * @param attacker Pokemon firing the projectile
+   * @param defender Pokemon defending the attack
+   * @param attack Attack being used
+   */
+  basicAttack(
+    attacker: PokemonObject,
+    defender: PokemonObject,
+    onComplete?: Function
+  ) {
     // attack animation is just moving to the enemy and back
     this.add.tween({
-      targets: [pokemon],
-      duration: getTurnDelay(pokemon.basePokemon) * 0.15,
-      ...getAttackAnimation(pokemon, facing),
+      targets: [attacker],
+      duration: getTurnDelay(attacker.basePokemon) * 0.15,
+      ...getAttackAnimation(attacker, getFacing(attacker, defender)),
       yoyo: true,
       ease: 'Power1',
+      onComplete: () => {
+        // attack is considered done after the animation ends
+        if (onComplete) {
+          onComplete();
+        }
+      },
       onYoyo: () => {
+        const attack = attacker.basePokemon.basicAttack;
+        const damage = calculateDamage(
+          attacker.basePokemon,
+          defender.basePokemon,
+          attack
+        );
         if (!attack.projectile) {
-          // deal damage when the animation "hits"
-          pokemon.dealDamage(damage);
-          targetPokemon.takeDamage(damage);
+          // deal damage immediately
+          attacker.dealDamage(damage);
+          defender.takeDamage(damage);
         } else {
-          // or add particle for projectile
-          const projectile = new Projectile(
+          // otherwise fire off a projectile
+          const projectileObj = new Projectile(
             this,
-            pokemon.x,
-            pokemon.y,
+            attacker.x,
+            attacker.y,
             attack.projectile.key,
-            targetPokemon,
+            defender,
             attack.projectile.speed
           );
-          this.physics.add.existing(this.add.existing(projectile));
+          this.physics.add.existing(this.add.existing(projectileObj));
           // store this in the `projectiles` map under a random key
           const projectileKey = generateId();
-          this.projectiles[projectileKey] = projectile;
+          this.projectiles[projectileKey] = projectileObj;
           // cause event when it hits
-          projectile.on(Phaser.GameObjects.Events.DESTROY, () => {
-            pokemon.dealDamage(damage);
-            targetPokemon.takeDamage(damage);
+          projectileObj.on(Phaser.GameObjects.Events.DESTROY, () => {
+            attacker.dealDamage(damage);
+            defender.takeDamage(damage);
             delete this.projectiles[projectileKey];
           });
         }
       },
     });
-
-    // turn over, wait until next one
-    // delay is 100/speed seconds
-    this.setTurn(pokemon);
   }
 }

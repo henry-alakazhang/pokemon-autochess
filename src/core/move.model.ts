@@ -1,9 +1,10 @@
 import { PokemonObject } from '../objects/pokemon.object';
 import { Coords } from '../scenes/game/combat/combat.helpers';
+import { CombatScene } from '../scenes/game/combat/combat.scene';
 
 export type Move = ActiveMove | PassiveMove;
 export interface MoveConfig {
-  scene: Phaser.Scene;
+  scene: CombatScene;
   board: (PokemonObject | undefined)[][];
   user: PokemonObject;
   target: PokemonObject;
