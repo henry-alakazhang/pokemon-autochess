@@ -18,5 +18,9 @@ Install Yarn -> https://yarnpkg.com/en/docs/install
 `yarn start` to start the local dev server    
 Visit `localhost:8080` to access the game    
 
+## Contributing
+There's a trello board here with all the stuff I'm planning: https://trello.com/b/ncSePCMD/pokemon-autochess
+Feel free to create an issue, then a PR if you want to add some code. There's a `standalone` tag for good tasks that aren't dependent on anything else.
+
 ## Game Design Resources
 https://drive.google.com/open?id=136L8KTz_NVKMUWZYl-B14twMeDyIot6p
