@@ -246,28 +246,41 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const targetCoords = getNearestTarget(
-      this.board,
-      myCoords,
-      BOARD_WIDTH,
-      BOARD_WIDTH
-    );
+    // use move if available, otherwise use basic attack
+    let selectedAttack =
+      pokemon.currentPP === pokemon.maxPP &&
+      pokemon.basePokemon.move &&
+      pokemon.basePokemon.move.type === 'active'
+        ? pokemon.basePokemon.move
+        : pokemon.basePokemon.basicAttack;
+    let selectedCoords =
+      'getTarget' in selectedAttack && selectedAttack.getTarget
+        ? selectedAttack.getTarget(this.board, myCoords)
+        : getNearestTarget(this.board, myCoords, BOARD_WIDTH, BOARD_WIDTH);
+
+    if (!selectedCoords) {
+      // if move has no valid target, fall back to basic attack
+      selectedAttack = pokemon.basePokemon.basicAttack;
+      selectedCoords = getNearestTarget(
+        this.board,
+        myCoords,
+        BOARD_WIDTH,
+        BOARD_WIDTH
+      );
+    }
+
+    // use const variables to make type inferencing neater below
+    const attack = selectedAttack;
+    const targetCoords = selectedCoords;
+
     if (!targetCoords) {
-      // do nothing and never do anything agian
+      // if basic attack has no valid target, do nothing and never do anything agian
       return;
     }
 
     // face target
     const facing = getFacing(myCoords, targetCoords);
     pokemon.playAnimation(facing);
-
-    // use move if available, otherwise use basic attack
-    const attack =
-      pokemon.currentPP === pokemon.maxPP &&
-      pokemon.basePokemon.move &&
-      pokemon.basePokemon.move.type === 'active'
-        ? pokemon.basePokemon.move
-        : pokemon.basePokemon.basicAttack;
 
     // move if out of range
     if (getGridDistance(myCoords, targetCoords) > attack.range) {

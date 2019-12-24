@@ -1,4 +1,5 @@
 import { PokemonObject } from '../objects/pokemon.object';
+import { Coords } from '../scenes/game/combat/combat.helpers';
 
 export type Move = ActiveMove | PassiveMove;
 export interface MoveConfig {
@@ -14,6 +15,17 @@ interface ActiveMove {
   type: 'active';
   description: string;
   range: number;
+  /**
+   * Picks a target for the move and returns its coordinates,
+   * or undefined if no valid target eists
+   *
+   * Only needs to be defined for moves with special targetting
+   * (such as aoe moves, buffs, etc)
+   */
+  getTarget?(
+    board: (PokemonObject | undefined)[][],
+    userCoords: Coords
+  ): Coords | undefined;
   /**
    * Use the move and trigger animations, effects, damage, etc.
    * Calls `onComplete` when all animations and effects are done.
