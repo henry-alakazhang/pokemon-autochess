@@ -255,7 +255,7 @@ export class CombatScene extends Scene {
         : pokemon.basePokemon.basicAttack;
     let selectedCoords =
       'getTarget' in selectedAttack && selectedAttack.getTarget
-        ? selectedAttack.getTarget(pokemon, this.board)
+        ? selectedAttack.getTarget(this.board, myCoords)
         : getNearestTarget(this.board, myCoords, BOARD_WIDTH, BOARD_WIDTH);
 
     if (!selectedCoords) {

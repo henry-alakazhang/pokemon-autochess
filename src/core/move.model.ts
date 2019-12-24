@@ -23,8 +23,8 @@ interface ActiveMove {
    * (such as aoe moves, buffs, etc)
    */
   getTarget?(
-    user: PokemonObject,
-    board: (PokemonObject | undefined)[][]
+    board: (PokemonObject | undefined)[][],
+    userCoords: Coords
   ): Coords | undefined;
   /**
    * Use the move and trigger animations, effects, damage, etc.
