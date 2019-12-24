@@ -190,8 +190,8 @@ const basePokemonData = {
       range: 2,
       stat: 'attack',
       projectile: {
-        key: 'firedart',
-        speed: 300,
+        key: 'stinger',
+        speed: 400,
       },
     },
     move: twineedle,

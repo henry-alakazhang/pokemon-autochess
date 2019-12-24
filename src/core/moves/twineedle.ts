@@ -19,7 +19,7 @@ export const twineedle: Move = {
     // hit once
     scene.basicAttack(user, target, () => {
       user.consecutiveAttacks++;
-      // if 3rd attack, hit attack
+      // if 3rd attack, hit again
       if (user.consecutiveAttacks === hitsToProc[user.basePokemon.stage - 1]) {
         user.consecutiveAttacks = 0;
         scene.basicAttack(user, target);

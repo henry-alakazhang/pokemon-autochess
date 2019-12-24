@@ -367,7 +367,7 @@ export class CombatScene extends Scene {
           defender.takeDamage(damage);
         } else {
           // otherwise fire off a projectile
-          const projectileObj = new Projectile(
+          const projectile = new Projectile(
             this,
             attacker.x,
             attacker.y,
@@ -375,12 +375,12 @@ export class CombatScene extends Scene {
             defender,
             attack.projectile.speed
           );
-          this.physics.add.existing(this.add.existing(projectileObj));
+          this.physics.add.existing(this.add.existing(projectile));
           // store this in the `projectiles` map under a random key
           const projectileKey = generateId();
-          this.projectiles[projectileKey] = projectileObj;
+          this.projectiles[projectileKey] = projectile;
           // cause event when it hits
-          projectileObj.on(Phaser.GameObjects.Events.DESTROY, () => {
+          projectile.on(Phaser.GameObjects.Events.DESTROY, () => {
             attacker.dealDamage(damage);
             defender.takeDamage(damage);
             delete this.projectiles[projectileKey];
