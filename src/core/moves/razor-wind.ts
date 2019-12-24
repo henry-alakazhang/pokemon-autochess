@@ -1,5 +1,5 @@
-import { Move, MoveConfig } from '../move.model';
 import { flatten } from '../../helpers';
+import { Move, MoveConfig } from '../move.model';
 
 /**
  * Razor Wind - Shiftry line's move

@@ -1,12 +1,12 @@
 import { Move } from './move.model';
 import {
   braveBird,
+  razorWind,
   shadowTag,
   thunderWave,
   twineedle,
   voltTackle,
 } from './moves';
-import { razorWind } from './moves/razor-wind';
 
 export type Type =
   | 'normal'
