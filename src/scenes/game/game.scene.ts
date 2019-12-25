@@ -169,7 +169,14 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      name: 'shiftry',
+      name: 'blissey',
+      side: 'enemy',
+    });
+    this.enemyBoard[0][3] = new PokemonObject({
+      scene: this,
+      x: 0,
+      y: 0,
+      name: 'blissey',
       side: 'enemy',
     });
   }

@@ -3,15 +3,6 @@
     "files": [
       {
         "type": "spritesheet",
-        "key": "volt-tackle",
-        "url": "assets/animations/volt-tackle.png",
-        "frameConfig": {
-          "frameWidth": 72,
-          "frameHeight": 80
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "razor-wind-base",
         "url": "assets/animations/razor-wind-base.png",
         "frameConfig": {
@@ -26,6 +17,24 @@
         "frameConfig": {
           "frameWidth": 56,
           "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "softboiled",
+        "url": "assets/animations/softboiled.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "volt-tackle",
+        "url": "assets/animations/volt-tackle.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 80
         }
       }
     ]

@@ -190,6 +190,18 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   /**
+   * Cause this pokemon to heal health
+   */
+  public heal(amount: number) {
+    if (amount < 0 || this.currentHP <= 0) {
+      return;
+    }
+
+    this.currentHP = Math.min(this.maxHP, this.currentHP + amount);
+    this.redrawBars();
+  }
+
+  /**
    * Cause this pokemon to deal damage
    * Triggers effects that happen on attack, such as mana generation
    */
