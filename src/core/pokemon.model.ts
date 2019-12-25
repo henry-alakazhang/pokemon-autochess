@@ -1,6 +1,7 @@
 import { Move } from './move.model';
 import {
   braveBird,
+  furyCutter,
   razorWind,
   shadowTag,
   softboiled,
@@ -214,6 +215,24 @@ const basePokemonData = {
     },
     move: softboiled,
   },
+  scyther: {
+    base: 'scyther',
+    // NOTE: Scyther gains the Steel type when it evolves into Scizor
+    categories: ['bug'],
+    tier: 4,
+    maxHP: 70,
+    maxPP: 10,
+    attack: 130,
+    defense: 100,
+    specAttack: 65,
+    specDefense: 80,
+    speed: 65,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: furyCutter,
+  },
 } as const;
 
 /**
@@ -286,6 +305,22 @@ const rawPokemonData = {
   raichu: {
     ...getEvolution('pichu', 3),
     displayName: 'Raichu',
+  },
+  scyther: {
+    ...getEvolution('scyther', 1),
+    displayName: 'Scyther',
+    evolution: 'scizor-1',
+  },
+  'scizor-1': {
+    ...getEvolution('scyther', 2),
+    categories: ['bug', 'steel'],
+    displayName: 'Scizor',
+    evolution: 'scizor-2',
+  },
+  'scizor-2': {
+    ...getEvolution('scyther', 3),
+    categories: ['bug', 'steel'],
+    displayName: 'Scizor',
   },
   seedot: {
     ...getEvolution('seedot', 1),
