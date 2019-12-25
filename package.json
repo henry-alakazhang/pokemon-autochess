@@ -10,7 +10,8 @@
     "lint": "eslint --cache --ext ts .",
     "start": "webpack-dev-server -d --env dev",
     "test": "ts-mocha src/**/*.spec.ts",
-    "watch": "webpack --env dev --watch"
+    "watch": "webpack --env dev --watch",
+    "pokemon": "ts-node scripts/pokemon-stats.ts"
   },
   "devDependencies": {
     "@types/expect": "^1.20.4",
