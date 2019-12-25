@@ -112,7 +112,7 @@ export class CombatScene extends Scene {
 
   update() {
     // trigger updates on each projectile
-    Object.values(this.projectiles).forEach(x => x && x.update());
+    Object.values(this.projectiles).forEach(x => x?.update());
   }
 
   checkRoundEnd() {
@@ -166,8 +166,7 @@ export class CombatScene extends Scene {
         // TODO find a cleaner way of doing this
         this.board = this.board.map(col =>
           col.map(cell => {
-            console.log(cell && cell.id, pokemon.id);
-            return cell && cell.id === pokemon.id ? undefined : cell;
+            return cell?.id === pokemon.id ? undefined : cell;
           })
         );
         this.checkRoundEnd();
@@ -206,7 +205,7 @@ export class CombatScene extends Scene {
     let location;
     this.board.forEach((col, x) => {
       col.forEach((pokemon, y) => {
-        if (pokemon && pokemon.id === id) {
+        if (pokemon?.id === id) {
           location = { x, y };
         }
       });

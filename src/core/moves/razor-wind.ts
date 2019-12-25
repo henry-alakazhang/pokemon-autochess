@@ -57,7 +57,7 @@ export const razorWind: Move = {
           // TODO move this into a helper / pass it into the data here
           const targetPokemon = flatten(
             board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-          ).find(({ pokemon }) => pokemon && pokemon.id === target.id);
+          ).find(({ pokemon }) => pokemon?.id === target.id);
           if (!targetPokemon) {
             return;
           }

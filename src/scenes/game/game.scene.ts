@@ -294,7 +294,7 @@ export class GameScene extends Phaser.Scene {
     }
     // hide all the prep-only stuff
     this.mainboard.forEach(col =>
-      col.forEach(pokemon => pokemon && pokemon.setVisible(false))
+      col.forEach(pokemon => pokemon?.setVisible(false))
     );
     this.prepGrid.setVisible(false);
     this.input.enabled = false;
@@ -316,7 +316,7 @@ export class GameScene extends Phaser.Scene {
 
     // show all the prep-only stuff
     this.mainboard.forEach(col =>
-      col.forEach(pokemon => pokemon && pokemon.setVisible(true))
+      col.forEach(pokemon => pokemon?.setVisible(true))
     );
     this.prepGrid.setVisible(true);
     this.input.enabled = true;

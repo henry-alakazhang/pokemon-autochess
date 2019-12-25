@@ -63,7 +63,12 @@ export function getNearestTarget(
   }
 
   const { side } = self;
-  const steps = [[-1, 1], [-1, -1], [1, -1], [1, 1]];
+  const steps = [
+    [-1, 1],
+    [-1, -1],
+    [1, -1],
+    [1, 1],
+  ];
 
   // the following code is some pathfinding magic
   // don't question it or look too closely
