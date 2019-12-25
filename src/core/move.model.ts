@@ -10,14 +10,13 @@ export interface MoveConfig<T extends Targetting> {
   board: (PokemonObject | undefined)[][];
   user: PokemonObject;
   /** The targetted Pokemon for the move. Always exists if the move is unit-targetted */
-  target: T extends 'ground' ? PokemonObject | undefined : PokemonObject;
+  target: T extends 'unit' ? PokemonObject : PokemonObject | undefined;
   targetCoords: Coords;
   onComplete: Function;
 }
 
 /**
  * Moves which (typically) require PP and have to be used to have an effect
- * The generic parameter is whether the move has a specific targetted unit or not (is ground targetted)
  */
 export interface ActiveMove<T extends Targetting> {
   displayName: string;
