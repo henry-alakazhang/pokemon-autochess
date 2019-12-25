@@ -1,16 +1,12 @@
-import { Move } from '../move.model';
+import { Move, MoveConfig } from '../move.model';
 
 export const thunderWave: Move = {
   displayName: 'Thunder Wave',
   type: 'active',
   description: 'Paralyses the target for 4 seconds.',
   range: 2,
-  use({ scene, board, user, targetCoords, onComplete }) {
-    const target = board[targetCoords.x][targetCoords.y];
-    if (!target) {
-      return onComplete();
-    }
-
+  targetting: 'unit',
+  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     // hopping animation
     scene.add.tween({
       targets: [user],

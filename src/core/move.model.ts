@@ -2,20 +2,33 @@ import { PokemonObject } from '../objects/pokemon.object';
 import { Coords } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 
-export type Move = ActiveMove | PassiveMove;
-export interface MoveConfig {
+export type Move = ActiveMove<'ground'> | ActiveMove<'unit'> | PassiveMove;
+export type Targetting = 'ground' | 'unit';
+
+export interface MoveConfig<T extends Targetting> {
   scene: CombatScene;
   board: (PokemonObject | undefined)[][];
   user: PokemonObject;
+  /** The targetted Pokemon for the move. Always exists if the move is unit-targetted */
+  target: T extends 'ground' ? PokemonObject | undefined : PokemonObject;
   targetCoords: Coords;
   onComplete: Function;
 }
 
-export interface ActiveMove {
+/**
+ * Moves which (typically) require PP and have to be used to have an effect
+ * The generic parameter is whether the move has a specific targetted unit or not (is ground targetted)
+ */
+export interface ActiveMove<T extends Targetting> {
   displayName: string;
   type: 'active';
   description: string;
   range: number;
+
+  /**
+   * Whether the move specifically targets a unit or not
+   */
+  targetting: T;
 
   /**
    * Picks a target for the move and returns its coordinates,
@@ -42,7 +55,7 @@ export interface ActiveMove {
    * Honestly I would rather have it return a Promise,
    * but a callback keeps it more consistent with Phaser.
    */
-  use(config: MoveConfig): void;
+  use(config: MoveConfig<T>): void;
 
   /* here follow a bunch of optional fields for damage and effect calculation */
 

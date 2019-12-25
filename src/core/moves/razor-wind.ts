@@ -18,6 +18,7 @@ export const razorWind: Move = {
   type: 'active',
   damage: [600, 1000, 1800],
   defenseStat: 'specDefense',
+  targetting: 'ground',
   get description() {
     return `After 2 seconds, whips up a whirlwind which deals ${this.damage.join(
       '/'
@@ -41,7 +42,7 @@ export const razorWind: Move = {
       { x: coords.x + 1, y: coords.y + 1 },
     ];
   },
-  use({ scene, user, targetCoords, board, onComplete }: MoveConfig) {
+  use({ scene, user, targetCoords, board, onComplete }: MoveConfig<'ground'>) {
     // double-hopping animation
     const gfxTarget = getCoordinatesForGrid(targetCoords);
     scene.add.tween({

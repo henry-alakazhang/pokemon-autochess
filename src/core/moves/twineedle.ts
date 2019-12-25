@@ -11,15 +11,11 @@ export const twineedle: Move = {
   displayName: 'Twineedle',
   type: 'active',
   range: 2,
+  targetting: 'unit',
   get description() {
     return `Every 3 / 2 / 1 attacks hits twice and poisons the target`;
   },
-  use({ scene, board, user, targetCoords, onComplete }: MoveConfig) {
-    const target = board[targetCoords.x][targetCoords.y];
-    if (!target) {
-      return onComplete();
-    }
-
+  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     const hitsToProc = [3, 2, 1];
     // hit once
     scene.basicAttack(user, target, () => {

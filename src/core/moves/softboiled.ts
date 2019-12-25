@@ -14,6 +14,7 @@ export const softboiled: Move = {
   displayName: 'Softboiled',
   type: 'active',
   damage: [300, 500, 700],
+  targetting: 'unit',
   get description() {
     return `Heals the lowest-health ally for ${this.damage.join('/')}`;
   },
@@ -35,12 +36,7 @@ export const softboiled: Move = {
     // clean pokemon out of coords
     return found ? { x: found.x, y: found.y } : undefined;
   },
-  use({ scene, board, user, targetCoords, onComplete }: MoveConfig) {
-    const target = board[targetCoords.x][targetCoords.y];
-    if (!target) {
-      return onComplete();
-    }
-
+  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     // hopping animation
     scene.add.tween({
       targets: [user],

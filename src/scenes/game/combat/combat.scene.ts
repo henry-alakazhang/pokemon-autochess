@@ -298,14 +298,23 @@ export class CombatScene extends Scene {
       return;
     }
 
+    const targetPokemon = this.board[targetCoords.x][targetCoords.y];
+
     // if it's a move, use it
     if ('use' in attack) {
       pokemon.currentPP = 0;
+      if (attack.targetting === 'unit' && !targetPokemon) {
+        // end turn since there's no valid target
+        return this.setTurn(pokemon);
+      }
       attack.use({
         scene: this,
         board: this.board,
         user: pokemon,
         targetCoords,
+        // cast here because it's always PokemonObject when we need it to be
+        // we know because we just checkked `targetted && !targetPokemon`.
+        target: targetPokemon as PokemonObject,
         onComplete: () => {
           if (pokemon.currentHP > 0) {
             this.setTurn(pokemon);
@@ -315,8 +324,8 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const targetPokemon = this.board[targetCoords.x][targetCoords.y];
     if (!targetPokemon) {
+      // end turn since there's no valid target
       return this.setTurn(pokemon);
     }
 
