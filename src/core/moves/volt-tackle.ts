@@ -25,7 +25,12 @@ export const voltTackle: Move = {
     )} damage to a single target, with some recoil to the user.`;
   },
   range: 1,
-  use({ scene, user, target, onComplete }: MoveConfig) {
+  use({ scene, board, user, targetCoords, onComplete }: MoveConfig) {
+    const target = board[targetCoords.x][targetCoords.y];
+    if (!target) {
+      return onComplete();
+    }
+
     // animation: some sparks then a tackle
     const sprite = scene.add
       .sprite(user.x, user.y, 'volt-tackle')

@@ -7,7 +7,7 @@ export interface MoveConfig {
   scene: CombatScene;
   board: (PokemonObject | undefined)[][];
   user: PokemonObject;
-  target: PokemonObject;
+  targetCoords: Coords;
   onComplete: Function;
 }
 
@@ -16,6 +16,7 @@ export interface ActiveMove {
   type: 'active';
   description: string;
   range: number;
+
   /**
    * Picks a target for the move and returns its coordinates,
    * or undefined if no valid target eists
@@ -27,6 +28,13 @@ export interface ActiveMove {
     board: (PokemonObject | undefined)[][],
     userCoords: Coords
   ): Coords | undefined;
+
+  /**
+   * Returns the set of targetted squares for the move's area
+   * of effect when "centered" on a certain square
+   */
+  getAOE?(coords: Coords): Coords[];
+
   /**
    * Use the move and trigger animations, effects, damage, etc.
    * Calls `onComplete` when all animations and effects are done.

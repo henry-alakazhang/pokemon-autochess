@@ -35,7 +35,12 @@ export const softboiled: Move = {
     // clean pokemon out of coords
     return found ? { x: found.x, y: found.y } : undefined;
   },
-  use({ scene, user, target, onComplete }: MoveConfig) {
+  use({ scene, board, user, targetCoords, onComplete }: MoveConfig) {
+    const target = board[targetCoords.x][targetCoords.y];
+    if (!target) {
+      return onComplete();
+    }
+
     // hopping animation
     scene.add.tween({
       targets: [user],

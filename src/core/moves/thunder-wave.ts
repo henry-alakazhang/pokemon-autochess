@@ -5,7 +5,12 @@ export const thunderWave: Move = {
   type: 'active',
   description: 'Paralyses the target for 4 seconds.',
   range: 2,
-  use({ scene, user, target, onComplete }) {
+  use({ scene, board, user, targetCoords, onComplete }) {
+    const target = board[targetCoords.x][targetCoords.y];
+    if (!target) {
+      return onComplete();
+    }
+
     // hopping animation
     scene.add.tween({
       targets: [user],

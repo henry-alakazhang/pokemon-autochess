@@ -26,7 +26,11 @@ export const braveBird: Move = {
     )} damage to a single target, with some recoil to the user.`;
   },
   range: 1,
-  use({ scene, user, target, onComplete }: MoveConfig) {
+  use({ scene, board, user, targetCoords, onComplete }: MoveConfig) {
+    const target = board[targetCoords.x][targetCoords.y];
+    if (!target) {
+      return onComplete();
+    }
     // animation: bird overlaying on top of Pokemon that grows
     const img = scene.add
       .image(user.x, user.y, 'brave-bird')

@@ -1,4 +1,8 @@
-import { flatten } from '../../helpers';
+import { Coords, optimiseAOE } from '../../scenes/game/combat/combat.helpers';
+import {
+  CombatScene,
+  getCoordinatesForGrid,
+} from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
 /**
@@ -20,8 +24,26 @@ export const razorWind: Move = {
     )} damage over 2 seconds`;
   },
   range: 3,
-  use({ scene, user, target, board, onComplete }: MoveConfig) {
+  getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
+    return optimiseAOE({
+      board,
+      user,
+      range: this.range,
+      getAOE: this.getAOE,
+    });
+  },
+  /** Area of effect is a 4-tile square */
+  getAOE(coords: Coords) {
+    return [
+      { x: coords.x, y: coords.y },
+      { x: coords.x, y: coords.y + 1 },
+      { x: coords.x + 1, y: coords.y },
+      { x: coords.x + 1, y: coords.y + 1 },
+    ];
+  },
+  use({ scene, user, targetCoords, board, onComplete }: MoveConfig) {
     // double-hopping animation
+    const gfxTarget = getCoordinatesForGrid(targetCoords);
     scene.add.tween({
       targets: [user],
       duration: 150,
@@ -32,7 +54,7 @@ export const razorWind: Move = {
       onComplete: () => {
         // animation: small spinny whirlwind effect below the poekmon
         const base = scene.add
-          .sprite(target.x + 35, target.y + 35, 'razor-wind-base')
+          .sprite(gfxTarget.x + 35, gfxTarget.y + 35, 'razor-wind-base')
           .setDepth(-1)
           .play('razor-wind-base');
         // turn is over after casting
@@ -41,7 +63,7 @@ export const razorWind: Move = {
         window.setTimeout(() => {
           base.destroy();
           const wind = scene.add
-            .sprite(target.x + 35, target.y + 35, 'razor-wind-wind')
+            .sprite(gfxTarget.x + 35, gfxTarget.y + 35, 'razor-wind-wind')
             .setScale(0.5, 0.5)
             .play('razor-wind-wind');
           scene.add.tween({
@@ -52,25 +74,12 @@ export const razorWind: Move = {
           });
           // the code below uses setInterval so the first tick will occur after the tween ends
 
-          const dph = this.damage[user.basePokemon.stage - 1] / 3;
-          // get board coords of the target Pokemon
-          // TODO move this into a helper / pass it into the data here
-          const targetPokemon = flatten(
-            board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-          ).find(({ pokemon }) => pokemon?.id === target.id);
-          if (!targetPokemon) {
-            return;
-          }
           let hits = 0;
+          const dph = this.damage[user.basePokemon.stage - 1] / 2;
           const interval = window.setInterval(() => {
             // deal damage to each person in range (2 x 2 square)
-            const targets = [
-              board[targetPokemon.x][targetPokemon.y],
-              board[targetPokemon.x][targetPokemon.y + 1],
-              board[targetPokemon.x + 1][targetPokemon.y],
-              board[targetPokemon.x + 1][targetPokemon.y + 1],
-            ];
-            targets.forEach(pokemon => {
+            this.getAOE(targetCoords).forEach(coord => {
+              const pokemon = board[coord.x]?.[coord.y];
               if (pokemon && pokemon.side !== user.side) {
                 user.dealDamage(dph);
                 pokemon.takeDamage(dph);

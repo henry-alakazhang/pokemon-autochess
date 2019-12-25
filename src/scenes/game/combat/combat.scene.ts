@@ -36,7 +36,7 @@ const BOARD_WIDTH = 5;
 /**
  * Returns the graphical x and y coordinates for a spot in the battle grid.
  */
-function getCoordinatesForGrid({ x, y }: Coords): Coords {
+export function getCoordinatesForGrid({ x, y }: Coords): Coords {
   return { x: GRID_X + (x - 2) * CELL_WIDTH, y: GRID_Y + (y - 2) * CELL_WIDTH };
 }
 
@@ -298,11 +298,6 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const targetPokemon = this.board[targetCoords.x][targetCoords.y];
-    if (!targetPokemon) {
-      return;
-    }
-
     // if it's a move, use it
     if ('use' in attack) {
       pokemon.currentPP = 0;
@@ -310,7 +305,7 @@ export class CombatScene extends Scene {
         scene: this,
         board: this.board,
         user: pokemon,
-        target: targetPokemon,
+        targetCoords,
         onComplete: () => {
           if (pokemon.currentHP > 0) {
             this.setTurn(pokemon);
@@ -318,6 +313,11 @@ export class CombatScene extends Scene {
         },
       });
       return;
+    }
+
+    const targetPokemon = this.board[targetCoords.x][targetCoords.y];
+    if (!targetPokemon) {
+      return this.setTurn(pokemon);
     }
 
     // otherwise make a basic attack
