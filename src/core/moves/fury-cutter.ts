@@ -31,10 +31,10 @@ export const furyCutter: Move = {
       yoyo: true,
       ease: 'Quad.easeOut',
       onComplete: () => {
-        // ... into attack animation
+        // ... into a faster-than-usual attack animation
         scene.add.tween({
           targets: [user],
-          duration: getTurnDelay(user.basePokemon) * 0.15,
+          duration: getTurnDelay(user.basePokemon) * 0.1,
           ...getAttackAnimation(user, getFacing(user, target)),
           yoyo: true,
           ease: 'Power1',
