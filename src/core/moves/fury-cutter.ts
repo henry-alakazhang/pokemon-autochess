@@ -16,13 +16,14 @@ export const furyCutter: Move = {
   type: 'active',
   damage: [100, 200, 400],
   defenseStat: 'defense',
+  targetting: 'unit',
   get description() {
     return `Deals ${this.damage.join(
       '/'
     )} damage to a single target, increasing each time it hits`;
   },
   range: 1,
-  use({ scene, user, target, onComplete }: MoveConfig) {
+  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     // hopping animation ...
     scene.add.tween({
       targets: [user],
