@@ -32,4 +32,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 17,
     duration: 1300,
   },
+  'fury-cutter': {
+    texture: 'fury-cutter',
+    frames: 12,
+    duration: 300,
+  },
 };
