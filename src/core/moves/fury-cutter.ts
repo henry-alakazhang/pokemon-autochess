@@ -57,7 +57,7 @@ export const furyCutter: Move = {
                 // otherwise, clean up
                 window.setTimeout(() => {
                   animationArr.forEach(sprite => sprite.destroy());
-                });
+                }, 200);
               }
             };
             playAnimation(user.consecutiveAttacks);
