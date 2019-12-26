@@ -20,13 +20,14 @@ export const braveBird: Move = {
   type: 'active',
   damage: [200, 350, 500],
   defenseStat: 'defense',
+  targetting: 'unit',
   get description() {
     return `Deals ${this.damage.join(
       '/'
     )} damage to a single target, with some recoil to the user.`;
   },
   range: 1,
-  use({ scene, user, target, onComplete }: MoveConfig) {
+  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     // animation: bird overlaying on top of Pokemon that grows
     const img = scene.add
       .image(user.x, user.y, 'brave-bird')

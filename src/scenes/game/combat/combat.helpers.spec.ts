@@ -1,6 +1,12 @@
 import * as expect from 'expect';
 import { PokemonObject } from '../../../objects/pokemon.object';
-import { getFacing, getNearestTarget, pathfind } from './combat.helpers';
+import {
+  Coords,
+  getFacing,
+  getNearestTarget,
+  optimiseAOE,
+  pathfind,
+} from './combat.helpers';
 
 const playerMock = { side: 'player' } as PokemonObject;
 const enemyMock = { side: 'enemy' } as PokemonObject;
@@ -258,6 +264,188 @@ describe('pathfind', () => {
         1
       )
     ).toEqual(undefined);
+  });
+});
+
+const singleTargetAOEMock = (coords: Coords) => [coords];
+const lineAOEMock = (coords: Coords) => [
+  { x: coords.x, y: coords.y + 1 },
+  coords,
+];
+const crossAOEMock = (coords: Coords) => [
+  { x: coords.x - 1, y: coords.y - 1 },
+  { x: coords.x - 1, y: coords.y + 1 },
+  coords,
+  { x: coords.x + 1, y: coords.y - 1 },
+  { x: coords.x + 1, y: coords.y + 1 },
+];
+
+describe('optimiseAOE', () => {
+  it('should return nothing if there is nobody attacking', () => {
+    expect(
+      optimiseAOE({
+        board: [[]],
+        user: { x: 0, y: 0 },
+        range: 1,
+        getAOE: singleTargetAOEMock,
+      })
+    ).toBeUndefined();
+  });
+
+  it('should return nothing if there are no targets', () => {
+    expect(
+      optimiseAOE({
+        board: [[playerMock]],
+        user: { x: 0, y: 0 },
+        range: 1,
+        getAOE: singleTargetAOEMock,
+      })
+    ).toBeUndefined();
+  });
+
+  it(`should return a target if there is one in range
+      A.. 
+     >B.. | range = 1
+      ...`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, enemyMock, undefined],
+          [undefined, undefined, undefined],
+          [undefined, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 1,
+        getAOE: singleTargetAOEMock,
+      })
+    ).toEqual({ x: 0, y: 1 });
+  });
+
+  it(`should not return a target if they are out of range
+      A.. 
+      ... | range = 1
+      B..`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [undefined, undefined, undefined],
+          [undefined, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 1,
+        getAOE: singleTargetAOEMock,
+      })
+    ).toBeUndefined();
+  });
+
+  it(`should pick targets for a multi-target aoe
+     A..
+    >B.. | range = 2
+     B.. `, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, enemyMock, enemyMock],
+          [undefined, undefined, undefined],
+          [undefined, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 2,
+        getAOE: lineAOEMock,
+      })
+    ).toEqual({ x: 0, y: 1 });
+  });
+
+  it(`should maximise targets when able to
+      AB.
+     >B..
+      B..`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, enemyMock, enemyMock],
+          [enemyMock, undefined, undefined],
+          [undefined, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 2,
+        getAOE: lineAOEMock,
+      })
+    ).toEqual({ x: 0, y: 1 });
+  });
+
+  it(`should still pick a target if unable to maximise targets
+         v
+        ABB
+        ... | range = 2
+        ... `, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, undefined],
+          [enemyMock, undefined, undefined],
+          [enemyMock, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 2,
+        getAOE: lineAOEMock,
+      })
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it(`should be able to utilise the AOE if targets are out of direct range
+      A..
+     >... | range = 1
+      B..`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [undefined, undefined, undefined],
+          [undefined, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 1,
+        getAOE: lineAOEMock,
+      })
+    ).toEqual({ x: 0, y: 1 });
+  });
+
+  it(`should work with an odd AOE
+      A.B
+      .X.
+      B.B`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [undefined, undefined, undefined],
+          [enemyMock, undefined, enemyMock],
+        ],
+        user: { x: 0, y: 0 },
+        range: 100,
+        getAOE: crossAOEMock,
+      })
+    ).toEqual({ x: 1, y: 1 });
+  });
+
+  it(`should work if the AOE goes off the board
+      AB.
+      ..B<
+      .B.`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, undefined],
+          [enemyMock, undefined, enemyMock],
+          [undefined, enemyMock, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 100,
+        getAOE: crossAOEMock,
+      })
+    ).toEqual({ x: 2, y: 1 });
   });
 });
 

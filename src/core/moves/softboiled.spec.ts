@@ -26,8 +26,8 @@ const lowEnemyMock = {
 
 describe('softboiled', () => {
   describe('getTarget', () => {
-    const softboiled = sb as ActiveMove;
-    let getTarget: NonNullable<ActiveMove['getTarget']>;
+    const softboiled = sb as ActiveMove<'unit'>;
+    let getTarget: NonNullable<typeof softboiled.getTarget>;
     before(() => {
       if (!softboiled.getTarget) {
         throw new Error('getTarget not defined for softboiled!');
