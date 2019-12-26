@@ -19,13 +19,14 @@ export const voltTackle: Move = {
   type: 'active',
   damage: [300, 450, 600],
   defenseStat: 'defense',
+  targetting: 'unit',
   get description() {
     return `Deals ${this.damage.join(
       '/'
     )} damage to a single target, with some recoil to the user.`;
   },
   range: 1,
-  use({ scene, user, target, onComplete }: MoveConfig) {
+  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     // animation: some sparks then a tackle
     const sprite = scene.add
       .sprite(user.x, user.y, 'volt-tackle')

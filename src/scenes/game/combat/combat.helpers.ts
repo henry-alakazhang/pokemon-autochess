@@ -178,6 +178,57 @@ export function pathfind(
 }
 
 /**
+ * Picks the best square to target to maximise an area of effect,
+ * given a user, range and shape-producing function
+ */
+export function optimiseAOE({
+  board,
+  user,
+  range,
+  getAOE,
+  targetAllies = false,
+}: {
+  board: CombatScene['board'];
+  user: Coords;
+  range: number;
+  getAOE: (coords: Coords) => Coords[];
+  targetAllies?: boolean;
+}): Coords | undefined {
+  const userSide = board[user.x][user.y]?.side;
+  if (!userSide) {
+    return undefined;
+  }
+
+  let best: Coords | undefined;
+  let most = 0;
+  board.forEach((col, x) =>
+    col.forEach((_, y) => {
+      const tryCoords = { x, y };
+      // ignore squares outside of range
+      if (getGridDistance(user, tryCoords) > range) {
+        return;
+      }
+
+      // check how many people this would hit
+      const numberHit = getAOE(tryCoords).filter(hit => {
+        const targetSide = board[hit.x]?.[hit.y]?.side;
+        return (
+          targetSide &&
+          (targetAllies ? targetSide === userSide : targetSide !== userSide)
+        );
+      }).length;
+
+      if (numberHit > most) {
+        best = tryCoords;
+        most = numberHit;
+      }
+    })
+  );
+
+  return best;
+}
+
+/**
  * Returns the turn delay in milliseconds for a pokemon.
  *
  * The delay scales from 0.5 APS at 50 base speed to 1.0 at 125 speed.
