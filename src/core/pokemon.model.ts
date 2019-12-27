@@ -392,3 +392,35 @@ export const buyablePokemon = allPokemonNames.filter(
  * The data for Pokemon, exported in a shape guaranteed to match the `Pokemon` type.
  */
 export const pokemonData: { [k in PokemonName]: Pokemon } = rawPokemonData;
+
+/**
+ * some logging stuff
+ * todo: remove in prod
+ */
+
+const categories: { [k: string]: number } = {};
+
+const tiers = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+};
+
+Object.values(basePokemonData).forEach(pokemon => {
+  // sum up the types/categories
+  pokemon.categories.forEach((category: string) => {
+    if (category in categories) {
+      categories[category]++;
+    } else {
+      categories[category] = 1;
+    }
+  });
+
+  // sum up the stages
+  tiers[pokemon.tier]++;
+});
+
+console.log('Category summary:', categories);
+console.log('Stage summary:', tiers);
