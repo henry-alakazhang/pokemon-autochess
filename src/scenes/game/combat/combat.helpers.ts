@@ -1,3 +1,4 @@
+import { Targetting } from '../../../core/move.model';
 import { Pokemon } from '../../../core/pokemon.model';
 import { assertNever } from '../../../helpers';
 import { PokemonAnimationType } from '../../../objects/pokemon.object';
@@ -187,12 +188,14 @@ export function optimiseAOE({
   range,
   getAOE,
   targetAllies = false,
+  targetting = 'ground',
 }: {
   board: CombatScene['board'];
   user: Coords;
   range: number;
-  getAOE: (coords: Coords) => Coords[];
+  getAOE: (coords: Coords, myCoords: Coords) => Coords[];
   targetAllies?: boolean;
+  targetting?: Targetting;
 }): Coords | undefined {
   const userSide = board[user.x][user.y]?.side;
   if (!userSide) {
@@ -202,15 +205,19 @@ export function optimiseAOE({
   let best: Coords | undefined;
   let most = 0;
   board.forEach((col, x) =>
-    col.forEach((_, y) => {
+    col.forEach((unitAtCoords, y) => {
       const tryCoords = { x, y };
       // ignore squares outside of range
       if (getGridDistance(user, tryCoords) > range) {
         return;
       }
+      // ignore squares without units if we need to target one
+      if (targetting === 'unit' && !unitAtCoords) {
+        return;
+      }
 
       // check how many people this would hit
-      const numberHit = getAOE(tryCoords).filter(hit => {
+      const numberHit = getAOE(tryCoords, user).filter(hit => {
         const targetSide = board[hit.x]?.[hit.y]?.side;
         return (
           targetSide &&

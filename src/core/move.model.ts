@@ -43,9 +43,11 @@ export interface ActiveMove<T extends Targetting> {
 
   /**
    * Returns the set of targetted squares for the move's area
-   * of effect when "centered" on a certain square
+   * of effect when "centered" on a certain square.
+   *
+   * This may involve the user's own coords (for directional attacks)
    */
-  getAOE?(coords: Coords): Coords[];
+  getAOE?(coords: Coords, myCoords: Coords): Coords[];
 
   /**
    * Use the move and trigger animations, effects, damage, etc.
