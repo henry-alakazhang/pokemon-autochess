@@ -89,7 +89,6 @@ function getSideboardLocationForCoordinates({
   x,
   y,
 }: Coords): PokemonLocation | undefined {
-  console.log(x, y, SIDEBOARD_Y);
   // 35 = CELL_WIDTH / 2
   // ie. the distance to the top of the sideboard
   if (y < SIDEBOARD_Y - 35 || y > SIDEBOARD_Y + 35) {
