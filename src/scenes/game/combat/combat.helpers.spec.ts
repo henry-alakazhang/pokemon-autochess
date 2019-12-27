@@ -279,6 +279,15 @@ const crossAOEMock = (coords: Coords) => [
   { x: coords.x + 1, y: coords.y - 1 },
   { x: coords.x + 1, y: coords.y + 1 },
 ];
+// 2 square line in the direction of the target
+const directionLineAOEMock = (coords: Coords, myCoords: Coords) => {
+  const dx = coords.x - myCoords.x;
+  const dy = coords.y - myCoords.y;
+  return [
+    { x: myCoords.x + dx, y: myCoords.y + dy },
+    { x: myCoords.x + 2 * dx, y: myCoords.y + 2 * dy },
+  ];
+};
 
 describe('optimiseAOE', () => {
   it('should return nothing if there is nobody attacking', () => {
@@ -446,6 +455,46 @@ describe('optimiseAOE', () => {
         getAOE: crossAOEMock,
       })
     ).toEqual({ x: 2, y: 1 });
+  });
+
+  it(`should always pick a unit for a unit-targetted AOE
+       v
+      ABB
+      ..B
+      B.B`, () => {
+    // ie. it shouldn't be the center tile with 3 targets
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [enemyMock, undefined, undefined],
+          [enemyMock, enemyMock, enemyMock],
+        ],
+        user: { x: 0, y: 0 },
+        range: 100,
+        getAOE: crossAOEMock,
+        targetting: 'unit',
+      })
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it(`should work with moves that change AOE depending on user position
+       v
+      ABB
+      BBB
+      .BB`, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [enemyMock, enemyMock, undefined],
+          [enemyMock, undefined, undefined],
+        ],
+        user: { x: 0, y: 0 },
+        range: 1,
+        getAOE: directionLineAOEMock,
+      })
+    ).toEqual({ x: 1, y: 0 });
   });
 });
 
