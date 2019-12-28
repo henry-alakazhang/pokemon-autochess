@@ -118,6 +118,9 @@ export class LoadingScene extends Scene {
     });
 
     Object.entries(animations).forEach(([key, animation]) => {
+      if (!this.textures.exists(key)) {
+        throw new Error(`Missing textures for ${key}!`);
+      }
       this.anims.create({
         key,
         frames: this.anims.generateFrameNumbers(animation.texture, {

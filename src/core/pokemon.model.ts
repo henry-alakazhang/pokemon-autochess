@@ -1,6 +1,7 @@
 import { Move } from './move.model';
 import {
   braveBird,
+  dragonDance,
   furyCutter,
   razorWind,
   shadowTag,
@@ -56,6 +57,11 @@ export interface Attack {
     readonly key: string;
     readonly speed: number;
   };
+  /**
+   * If this attack can't be used.
+   * hacky way to implement Pokemon without basic attacks :)
+   */
+  readonly unusable?: boolean;
 }
 
 export interface Pokemon {
@@ -233,6 +239,26 @@ const basePokemonData = {
     },
     move: furyCutter,
   },
+  magikarp: {
+    base: 'magikarp',
+    // NOTE: Magikarp gains the Flying type when it evolves into Gyarados
+    categories: ['water'],
+    tier: 1,
+    maxHP: 95,
+    maxPP: 20,
+    attack: 125,
+    defense: 79,
+    specAttack: 60,
+    specDefense: 100,
+    speed: 81,
+    // NOTE: Magikarp-1's basic attack is unusable
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    // NOTE: Magikarp-1 and -2 have no move - only Gyarados has this
+    move: dragonDance,
+  },
 } as const;
 
 /**
@@ -321,6 +347,30 @@ const rawPokemonData = {
     ...getEvolution('scyther', 3),
     categories: ['bug', 'steel'],
     displayName: 'Scizor',
+  },
+  magikarp: {
+    ...getEvolution('magikarp', 1),
+    attack: 0,
+    specAttack: 0,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+      unusable: true,
+    },
+    move: undefined,
+    displayName: 'Magikarp',
+    evolution: 'magikarp-2',
+  },
+  'magikarp-2': {
+    ...getEvolution('magikarp', 2),
+    move: undefined,
+    displayName: 'Magikarp',
+    evolution: 'gyarados',
+  },
+  gyarados: {
+    ...getEvolution('magikarp', 3),
+    categories: ['water', 'flying'],
+    displayName: 'Gyarados',
   },
   seedot: {
     ...getEvolution('seedot', 1),

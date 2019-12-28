@@ -349,6 +349,14 @@ export class CombatScene extends Scene {
     defender: PokemonObject,
     onComplete?: Function
   ) {
+    // don't do anything if the attacker can't attack
+    if (attacker.basePokemon.basicAttack.unusable) {
+      if (onComplete) {
+        onComplete();
+      }
+      return;
+    }
+
     // attack animation is just moving to the enemy and back
     this.add.tween({
       targets: [attacker],

@@ -275,4 +275,32 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.outlineSprite.setVisible(this.isOutlined);
     return this;
   }
+
+  /**
+   * Adjust any of a Pokemon's stats by a provided %
+   */
+  public changeStats({
+    attack = 1,
+    defense = 1,
+    specAttack = 1,
+    specDefense = 1,
+    speed = 1,
+  }: {
+    attack?: number;
+    defense?: number;
+    specAttack?: number;
+    specDefense?: number;
+    speed?: number;
+  }) {
+    // this is a bit hacky, but we just override the base Pokemon with a new object.
+    // TODO (if needed?) implement some proper stat-stage tracking thing
+    this.basePokemon = {
+      ...this.basePokemon,
+      attack: this.basePokemon.attack * attack,
+      defense: this.basePokemon.defense * defense,
+      specAttack: this.basePokemon.specAttack * specAttack,
+      specDefense: this.basePokemon.specDefense * specDefense,
+      speed: this.basePokemon.speed * speed,
+    };
+  }
 }
