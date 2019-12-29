@@ -223,8 +223,8 @@ const basePokemonData = {
   },
   scyther: {
     base: 'scyther',
-    // NOTE: Scyther gains the Steel type when it evolves into Scizor
-    categories: ['bug'],
+    // NOTE: Stage 1 Scyther is pure bug
+    categories: ['bug', 'steel'],
     tier: 4,
     maxHP: 70,
     maxPP: 10,
@@ -241,8 +241,8 @@ const basePokemonData = {
   },
   magikarp: {
     base: 'magikarp',
-    // NOTE: Magikarp gains the Flying type when it evolves into Gyarados
-    categories: ['water'],
+    // NOTE: Stage 1 and 2 Magikarp are pure water
+    categories: ['water', 'flying'],
     tier: 1,
     maxHP: 95,
     maxPP: 20,
@@ -251,12 +251,12 @@ const basePokemonData = {
     specAttack: 60,
     specDefense: 100,
     speed: 81,
-    // NOTE: Magikarp-1's basic attack is unusable
+    // NOTE: Stage 1 Magikarp's basic attack is unusable
     basicAttack: {
       range: 1,
       stat: 'attack',
     },
-    // NOTE: Magikarp-1 and -2 have no move - only Gyarados has this
+    // NOTE: Stage 1 and 2 Magikarp have no move - only Gyarados has this
     move: dragonDance,
   },
 } as const;
@@ -334,18 +334,17 @@ const rawPokemonData = {
   },
   scyther: {
     ...getEvolution('scyther', 1),
+    categories: ['bug'],
     displayName: 'Scyther',
     evolution: 'scizor-1',
   },
   'scizor-1': {
     ...getEvolution('scyther', 2),
-    categories: ['bug', 'steel'],
     displayName: 'Scizor',
     evolution: 'scizor-2',
   },
   'scizor-2': {
     ...getEvolution('scyther', 3),
-    categories: ['bug', 'steel'],
     displayName: 'Scizor',
   },
   magikarp: {
@@ -357,19 +356,20 @@ const rawPokemonData = {
       stat: 'attack',
       unusable: true,
     },
+    categories: ['water'],
     move: undefined,
     displayName: 'Magikarp',
     evolution: 'magikarp-2',
   },
   'magikarp-2': {
     ...getEvolution('magikarp', 2),
+    categories: ['water'],
     move: undefined,
     displayName: 'Magikarp',
     evolution: 'gyarados',
   },
   gyarados: {
     ...getEvolution('magikarp', 3),
-    categories: ['water', 'flying'],
     displayName: 'Gyarados',
   },
   seedot: {
