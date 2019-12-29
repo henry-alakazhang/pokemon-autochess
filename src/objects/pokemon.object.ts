@@ -176,8 +176,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.outlineSprite.play(`${this.texture.key}--${type}`);
   }
 
-  public move({ x, y }: Coords) {
-    this.scene.add.tween({
+  public move({ x, y }: Coords, onComplete?: Function) {
+    return this.scene.add.tween({
       targets: [this, this.bars],
       duration: getTurnDelay(this.basePokemon) * 0.75,
       x,
@@ -185,6 +185,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       ease: 'Quad',
       onComplete: () => {
         this.setPosition(x, y);
+        if (onComplete) {
+          onComplete();
+        }
       },
     });
   }
