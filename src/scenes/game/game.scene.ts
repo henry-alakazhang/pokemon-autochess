@@ -164,18 +164,11 @@ export class GameScene extends Phaser.Scene {
     this.enemyBoard = Array(5)
       .fill(undefined)
       .map(() => Array(5).fill(undefined));
-    this.enemyBoard[0][4] = new PokemonObject({
-      scene: this,
-      x: 0,
-      y: 0,
-      name: 'blissey',
-      side: 'enemy',
-    });
     this.enemyBoard[0][3] = new PokemonObject({
       scene: this,
       x: 0,
       y: 0,
-      name: 'blissey',
+      name: 'gyarados',
       side: 'enemy',
     });
   }

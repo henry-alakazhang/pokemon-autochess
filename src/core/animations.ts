@@ -37,4 +37,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 12,
     duration: 300,
   },
+  'dragon-dance': {
+    texture: 'dragon-dance',
+    frames: 14,
+    duration: 910,
+  },
 };
