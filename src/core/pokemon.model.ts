@@ -283,7 +283,7 @@ const basePokemonData = {
     categories: ['normal'],
     tier: 3,
     maxHP: 85,
-    maxPP: 12,
+    maxPP: 22,
     attack: 80,
     defense: 70,
     specAttack: 135,
