@@ -29,6 +29,8 @@
     "no-console": 0,
     "no-new": 0,
     "no-param-reassign": 0,
+    // doesn't work nicely with optional chaining on function calls
+    "no-unused-expressions": 0,
     "prettier/prettier": 2,
     "@typescript-eslint/array-type": 0,
     "@typescript-eslint/indent": 0,

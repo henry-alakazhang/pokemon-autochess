@@ -118,14 +118,16 @@ export class LoadingScene extends Scene {
     });
 
     Object.entries(animations).forEach(([key, animation]) => {
-      if (!this.textures.exists(key)) {
+      if (!this.textures.exists(animation.texture)) {
         throw new Error(`Missing textures for ${key}!`);
       }
+      const start = animation.start || 0;
       this.anims.create({
+        defaultTextureKey: animation.texture,
         key,
         frames: this.anims.generateFrameNumbers(animation.texture, {
-          start: 0,
-          end: animation.frames - 1,
+          start,
+          end: start + animation.frames - 1,
         }),
         frameRate: (animation.frames * 1000) / animation.duration,
         repeat: animation.repeat || 0,
