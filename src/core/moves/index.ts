@@ -1,6 +1,7 @@
 export * from './brave-bird';
 export * from './dragon-dance';
 export * from './fury-cutter';
+export * from './ice-shard';
 export * from './razor-wind';
 export * from './shadow-tag';
 export * from './softboiled';

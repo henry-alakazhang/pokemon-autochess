@@ -9,6 +9,7 @@ export interface MoveConfig<T extends Targetting> {
   scene: CombatScene;
   board: (PokemonObject | undefined)[][];
   user: PokemonObject;
+  userCoords: Coords;
   /** The targetted Pokemon for the move. Always exists if the move is unit-targetted */
   target: T extends 'unit' ? PokemonObject : PokemonObject | undefined;
   targetCoords: Coords;

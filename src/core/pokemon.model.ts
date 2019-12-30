@@ -3,6 +3,7 @@ import {
   braveBird,
   dragonDance,
   furyCutter,
+  iceShard,
   razorWind,
   shadowTag,
   softboiled,
@@ -259,6 +260,23 @@ const basePokemonData = {
     // NOTE: Stage 1 and 2 Magikarp have no move - only Gyarados has this
     move: dragonDance,
   },
+  sneasel: {
+    base: 'sneasel',
+    categories: ['ice', 'dark'],
+    tier: 4,
+    maxHP: 70,
+    maxPP: 12,
+    attack: 120,
+    defense: 65,
+    specAttack: 45,
+    specDefense: 85,
+    speed: 125,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: iceShard,
+  },
 } as const;
 
 /**
@@ -371,6 +389,20 @@ const rawPokemonData = {
   gyarados: {
     ...getEvolution('magikarp', 3),
     displayName: 'Gyarados',
+  },
+  sneasel: {
+    ...getEvolution('sneasel', 1),
+    displayName: 'Sneasel',
+    evolution: 'weavile',
+  },
+  weavile: {
+    ...getEvolution('sneasel', 2),
+    displayName: 'Weavile',
+    evolution: 'weavile-2',
+  },
+  'weavile-2': {
+    ...getEvolution('sneasel', 3),
+    displayName: 'Weavile',
   },
   seedot: {
     ...getEvolution('seedot', 1),

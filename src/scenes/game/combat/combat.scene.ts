@@ -179,7 +179,7 @@ export class CombatScene extends Scene {
     this.board[x][y] = pokemon;
   }
 
-  movePokemon(start: Coords, end: Coords) {
+  movePokemon(start: Coords, end: Coords, onComplete?: Function) {
     const facing = getFacing(start, end);
     const mover = this.board[start.x][start.y];
     if (!mover) {
@@ -190,7 +190,7 @@ export class CombatScene extends Scene {
     this.board[end.x][end.y] = mover;
     this.board[start.x][start.y] = undefined;
     const newPosition = getCoordinatesForGrid(end);
-    mover.move(newPosition);
+    mover.move(newPosition, onComplete);
   }
 
   /**
@@ -311,6 +311,7 @@ export class CombatScene extends Scene {
         scene: this,
         board: this.board,
         user: pokemon,
+        userCoords: myCoords,
         targetCoords,
         // cast here because it's always PokemonObject when we need it to be
         // we know because we just checkked `targetted && !targetPokemon`.
@@ -356,6 +357,9 @@ export class CombatScene extends Scene {
       }
       return;
     }
+
+    const facing = getFacing(attacker, defender);
+    attacker.playAnimation(facing);
 
     // attack animation is just moving to the enemy and back
     this.add.tween({
