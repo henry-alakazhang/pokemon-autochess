@@ -509,6 +509,13 @@ const tiers = {
   5: 0,
 };
 
+const ranges: { [k: number]: number } = {};
+
+const attackStats = {
+  attack: 0,
+  specAttack: 0,
+};
+
 Object.values(basePokemonData).forEach(pokemon => {
   // sum up the types/categories
   pokemon.categories.forEach((category: string) => {
@@ -517,9 +524,16 @@ Object.values(basePokemonData).forEach(pokemon => {
     }
   });
 
-  // sum up the stages
+  if (!ranges[pokemon.basicAttack.range]) {
+    ranges[pokemon.basicAttack.range] = 0;
+  }
+  ranges[pokemon.basicAttack.range]++;
+  attackStats[pokemon.basicAttack.stat]++;
+
   tiers[pokemon.tier]++;
 });
 
-console.log('Category summary:', categories);
-console.log('Stage summary:', tiers);
+console.log('Categories:', categories);
+console.log('Stages:', tiers);
+console.log('Basic attack ranges:', ranges);
+console.log('Basic attack stats', attackStats);
