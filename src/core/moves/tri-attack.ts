@@ -71,7 +71,9 @@ export const triAttack: Move = {
             // set timeouts to inflict damage when the explosions occur
 
             // explosion 1: single target
-            board[targetCoords.x]?.[targetCoords.y]?.takeDamage(damage);
+            if (board[targetCoords.x]?.[targetCoords.y]?.side !== user.side) {
+              board[targetCoords.x]?.[targetCoords.y]?.takeDamage(damage);
+            }
 
             // explosion 2: 9 squares
             window.setTimeout(() => {
@@ -83,14 +85,16 @@ export const triAttack: Move = {
                 duration: 150,
                 ease: Phaser.Math.Easing.Quadratic.In,
                 onComplete: () => {
-                  this.getAOE(targetCoords).forEach(({ x, y }) =>
-                    board[x]?.[y]?.takeDamage(damage)
+                  this.getAOE(targetCoords).forEach(
+                    ({ x, y }) =>
+                      board[x]?.[y]?.side !== user.side &&
+                      board[x]?.[y]?.takeDamage(damage)
                   );
                 },
               });
             }, animations['tri-attack-fire'].duration);
 
-            // explosion 3: 9-tile aoe all around the initial target
+            // explosion 3: also 9 squares
             window.setTimeout(() => {
               explosions.play('tri-attack-ice');
               scene.add.tween({
@@ -100,8 +104,10 @@ export const triAttack: Move = {
                 duration: 150,
                 ease: Phaser.Math.Easing.Quadratic.In,
                 onComplete: () => {
-                  this.getAOE(targetCoords).forEach(({ x, y }) =>
-                    board[x]?.[y]?.takeDamage(damage)
+                  this.getAOE(targetCoords).forEach(
+                    ({ x, y }) =>
+                      board[x]?.[y]?.side !== user.side &&
+                      board[x]?.[y]?.takeDamage(damage)
                   );
                 },
               });
