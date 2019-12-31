@@ -478,6 +478,27 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 1, y: 0 });
   });
 
+  it(`should pick a unit of the right side for a unit-targetted AOE
+      AAA
+      .BA<
+      AAA`, () => {
+    // ie. it shouldn't be the center tile which is not an ally
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, playerMock],
+          [playerMock, enemyMock, playerMock],
+          [playerMock, playerMock, playerMock],
+        ],
+        user: { x: 0, y: 0 },
+        range: 100,
+        getAOE: crossAOEMock,
+        targetting: 'unit',
+        targetAllies: true,
+      })
+    ).toEqual({ x: 2, y: 1 });
+  });
+
   it(`should work with moves that change AOE depending on user position
        v
       ABB

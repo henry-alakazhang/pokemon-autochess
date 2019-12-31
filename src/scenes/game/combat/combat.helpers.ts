@@ -178,6 +178,10 @@ export function pathfind(
   }
 }
 
+export function getOppositeSide(side: 'player' | 'enemy') {
+  return side === 'player' ? 'enemy' : 'player';
+}
+
 /**
  * Picks the best square to target to maximise an area of effect,
  * given a user, range and shape-producing function
@@ -201,6 +205,7 @@ export function optimiseAOE({
   if (!userSide) {
     return undefined;
   }
+  const targetSide = targetAllies ? userSide : getOppositeSide(userSide);
 
   let best: Coords | undefined;
   let most = 0;
@@ -211,19 +216,15 @@ export function optimiseAOE({
       if (getGridDistance(user, tryCoords) > range) {
         return;
       }
-      // ignore squares without units if we need to target one
-      if (targetting === 'unit' && !unitAtCoords) {
+      // ignore squares without targettable units if we need to target one
+      if (targetting === 'unit' && unitAtCoords?.side !== targetSide) {
         return;
       }
 
       // check how many people this would hit
-      const numberHit = getAOE(tryCoords, user).filter(hit => {
-        const targetSide = board[hit.x]?.[hit.y]?.side;
-        return (
-          targetSide &&
-          (targetAllies ? targetSide === userSide : targetSide !== userSide)
-        );
-      }).length;
+      const numberHit = getAOE(tryCoords, user).filter(
+        hit => board[hit.x]?.[hit.y]?.side === targetSide
+      ).length;
 
       if (numberHit > most) {
         best = tryCoords;
