@@ -48,6 +48,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "tri-attack",
+        "url": "assets/animations/tri-attack.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "volt-tackle",
         "url": "assets/animations/volt-tackle.png",
         "frameConfig": {

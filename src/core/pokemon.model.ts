@@ -8,6 +8,7 @@ import {
   shadowTag,
   softboiled,
   thunderWave,
+  triAttack,
   twineedle,
   voltTackle,
 } from './moves';
@@ -277,6 +278,27 @@ const basePokemonData = {
     },
     move: iceShard,
   },
+  porygon: {
+    base: 'porygon',
+    categories: ['normal'],
+    tier: 3,
+    maxHP: 85,
+    maxPP: 22,
+    attack: 80,
+    defense: 70,
+    specAttack: 135,
+    specDefense: 75,
+    speed: 90,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+      projectile: {
+        key: 'tri-attack-projectile',
+        speed: 400,
+      },
+    },
+    move: triAttack,
+  },
 } as const;
 
 /**
@@ -389,6 +411,20 @@ const rawPokemonData = {
   gyarados: {
     ...getEvolution('magikarp', 3),
     displayName: 'Gyarados',
+  },
+  porygon: {
+    ...getEvolution('porygon', 1),
+    displayName: 'Porygon',
+    evolution: 'porygon2',
+  },
+  porygon2: {
+    ...getEvolution('porygon', 2),
+    displayName: 'Porygon2',
+    evolution: 'porygonz',
+  },
+  porygonz: {
+    ...getEvolution('porygon', 3),
+    displayName: 'Porygon-Z',
   },
   sneasel: {
     ...getEvolution('sneasel', 1),

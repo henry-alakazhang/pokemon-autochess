@@ -6,5 +6,6 @@ export * from './razor-wind';
 export * from './shadow-tag';
 export * from './softboiled';
 export * from './thunder-wave';
+export * from './tri-attack';
 export * from './twineedle';
 export * from './volt-tackle';
