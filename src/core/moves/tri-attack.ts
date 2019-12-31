@@ -1,8 +1,12 @@
 import {
   Coords,
   getGridDistance,
+  optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
-import { getCoordinatesForGrid } from '../../scenes/game/combat/combat.scene';
+import {
+  CombatBoard,
+  getCoordinatesForGrid,
+} from '../../scenes/game/combat/combat.scene';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
@@ -26,6 +30,15 @@ export const triAttack: Move = {
     )} 3 times over an increasing area.`;
   },
   range: 3,
+  getTarget(board: CombatBoard, user: Coords) {
+    return optimiseAOE({
+      board,
+      user,
+      range: this.range,
+      getAOE: this.getAOE,
+      targetting: 'unit',
+    });
+  },
   /**
    * 3x3 area centered on a location
    */
