@@ -212,7 +212,11 @@ describe('pathfind', () => {
     ...`, () => {
     expect(
       pathfind(
-        [[enemyMock], [], [playerMock]],
+        [
+          [enemyMock, undefined, undefined],
+          [undefined, undefined, undefined],
+          [playerMock, undefined, undefined],
+        ],
         { x: 0, y: 0 },
         { x: 2, y: 0 },
         1
@@ -226,7 +230,11 @@ describe('pathfind', () => {
     ..B`, () => {
     expect(
       pathfind(
-        [[enemyMock], [], [undefined, undefined, playerMock]],
+        [
+          [enemyMock, undefined, undefined],
+          [undefined, undefined, undefined],
+          [undefined, undefined, playerMock],
+        ],
         { x: 0, y: 0 },
         { x: 2, y: 2 },
         1
@@ -240,7 +248,11 @@ describe('pathfind', () => {
     ..B`, () => {
     expect(
       pathfind(
-        [[enemyMock], [playerMock], [undefined, undefined, playerMock]],
+        [
+          [enemyMock, undefined, undefined],
+          [playerMock, undefined, undefined],
+          [undefined, undefined, playerMock],
+        ],
         { x: 0, y: 0 },
         { x: 2, y: 2 },
         1
@@ -255,8 +267,8 @@ describe('pathfind', () => {
     expect(
       pathfind(
         [
-          [enemyMock, playerMock],
-          [playerMock],
+          [enemyMock, playerMock, undefined],
+          [playerMock, undefined, undefined],
           [playerMock, undefined, playerMock],
         ],
         { x: 0, y: 0 },
