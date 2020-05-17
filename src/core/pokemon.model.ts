@@ -4,6 +4,7 @@ import {
   dragonDance,
   furyCutter,
   iceShard,
+  magnetPull,
   razorWind,
   shadowTag,
   softboiled,
@@ -299,6 +300,27 @@ const basePokemonData = {
     },
     move: triAttack,
   },
+  magnemite: {
+    base: 'magnemite',
+    categories: ['electric', 'steel'],
+    tier: 2,
+    maxHP: 70,
+    maxPP: 20,
+    attack: 70,
+    defense: 115,
+    specAttack: 130,
+    specDefense: 90,
+    speed: 60,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+      projectile: {
+        key: 'electricdart',
+        speed: 250,
+      },
+    },
+    move: magnetPull,
+  },
 } as const;
 
 /**
@@ -495,6 +517,20 @@ const rawPokemonData = {
   'rotomw-3': {
     ...getEvolution('rotomw', 3),
     displayName: 'Rotom Wash',
+  },
+  magnemite: {
+    ...getEvolution('magnemite', 1),
+    displayName: 'Magnemite',
+    evolution: 'magneton',
+  },
+  magneton: {
+    ...getEvolution('magnemite', 2),
+    displayName: 'Magneton',
+    evolution: 'magnezone',
+  },
+  magnezone: {
+    ...getEvolution('magnemite', 3),
+    displayName: 'Magnezone',
   },
 } as const;
 

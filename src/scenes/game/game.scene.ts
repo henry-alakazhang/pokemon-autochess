@@ -168,7 +168,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      name: 'porygon2',
+      name: 'magneton',
       side: 'enemy',
     });
   }

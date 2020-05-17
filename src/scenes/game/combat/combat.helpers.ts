@@ -20,6 +20,15 @@ export function coordsEqual(first: Coords, second: Coords) {
   return first.x === second.x && first.y === second.y;
 }
 
+export function inBounds(board: unknown[][], coords: Coords) {
+  return (
+    coords.x >= 0 &&
+    coords.x < board.length &&
+    coords.y >= 0 &&
+    coords.y < board[coords.x].length
+  );
+}
+
 /*
   This file has a `getNearestTarget` and a `pathfind` function,
   which are both implementations of breadth-first search.
@@ -153,11 +162,7 @@ export function pathfind(
       { x: check.x, y: check.y - 1 },
     ].forEach(newCoord => {
       if (
-        newCoord.x >= 0 &&
-        // FIXME: don't hardcode this length
-        newCoord.x < board.length &&
-        newCoord.y >= 0 &&
-        newCoord.y < board.length &&
+        inBounds(board, newCoord) &&
         !seen[newCoord.x][newCoord.y] &&
         !board[newCoord.x][newCoord.y]
       ) {
@@ -234,6 +239,52 @@ export function optimiseAOE({
   );
 
   return best;
+}
+
+/**
+ * Picks the furthest square  the coords of the unit furthest away from the user of a move.
+ *
+ * TODO: might be able to do a sneaky here and merge this into optimiseAOE with a clever getAOE function.
+ */
+export function getFurthestTarget({
+  board,
+  user,
+  targetAllies,
+}: {
+  board: CombatScene['board'];
+  user: Coords;
+  targetAllies?: boolean;
+}): Coords | undefined {
+  const userSide = board[user.x][user.y]?.side;
+  if (!userSide) {
+    return undefined;
+  }
+  const targetSide = targetAllies ? userSide : getOppositeSide(userSide);
+
+  let furthest: Coords | undefined;
+  board.forEach((col, x) => {
+    col.forEach((unitAtCoords, y) => {
+      const tryCoords = { x, y };
+
+      // ignore unit if nonexistent or not ally
+      if (unitAtCoords?.side !== targetSide) {
+        return;
+      }
+
+      // set furthest if it doesn't exist yet
+      if (!furthest) {
+        furthest = tryCoords;
+        return;
+      }
+
+      // otherwise set if this is further than the furthest
+      if (getGridDistance(user, tryCoords) > getGridDistance(user, furthest)) {
+        furthest = tryCoords;
+      }
+    });
+  });
+
+  return furthest;
 }
 
 /**
