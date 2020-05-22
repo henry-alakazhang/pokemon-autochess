@@ -12,6 +12,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
+  zapCannon,
 } from './moves';
 
 export type Type =
@@ -321,6 +322,27 @@ const basePokemonData = {
     },
     move: magnetPull,
   },
+  grubbin: {
+    base: 'grubbin',
+    categories: ['electric', 'bug'],
+    tier: 1,
+    maxHP: 77,
+    maxPP: 15,
+    attack: 70,
+    defense: 90,
+    specAttack: 145,
+    specDefense: 75,
+    speed: 43,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+      projectile: {
+        key: 'electricdart',
+        speed: 200,
+      },
+    },
+    move: zapCannon,
+  },
 } as const;
 
 /**
@@ -531,6 +553,20 @@ const rawPokemonData = {
   magnezone: {
     ...getEvolution('magnemite', 3),
     displayName: 'Magnezone',
+  },
+  grubbin: {
+    ...getEvolution('grubbin', 1),
+    displayName: 'Grubbin',
+    evolution: 'charjabug',
+  },
+  charjabug: {
+    ...getEvolution('grubbin', 2),
+    displayName: 'Charjabug',
+    evolution: 'vikavolt',
+  },
+  vikavolt: {
+    ...getEvolution('grubbin', 3),
+    displayName: 'Vikavolt',
   },
 } as const;
 
