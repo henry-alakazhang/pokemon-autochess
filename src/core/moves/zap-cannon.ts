@@ -14,12 +14,9 @@ import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
 /**
- * Volt Tackle - Pikachu line's move
+ * Zap Cannon - Grubbin line's move
  *
- * Deals heavy damage to a single target with some recoil to the user.
- * 500ms cast time
- *
- * TODO: differentiate this from Brave Bird
+ * Charges for 2s, then deals damage in a line
  */
 export const zapCannon: Move = {
   displayName: 'Zap Cannon',
