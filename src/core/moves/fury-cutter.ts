@@ -62,17 +62,13 @@ export const furyCutter: Move = {
               }
             };
             playAnimation(user.consecutiveAttacks);
-            const damage = calculateDamage(
-              user.basePokemon,
-              target.basePokemon,
-              {
-                // damage increases by 50% each strike
-                damage:
-                  this.damage[user.basePokemon.stage - 1] *
-                  1.5 ** user.consecutiveAttacks,
-                defenseStat: 'defense',
-              }
-            );
+            const damage = calculateDamage(user, target, {
+              // damage increases by 50% each strike
+              damage:
+                this.damage[user.basePokemon.stage - 1] *
+                1.5 ** user.consecutiveAttacks,
+              defenseStat: 'defense',
+            });
             target.takeDamage(damage);
           },
         });

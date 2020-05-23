@@ -89,14 +89,10 @@ export const zapCannon: Move = {
               return;
             }
             if (pokemon.side !== user.side) {
-              const damage = calculateDamage(
-                user.basePokemon,
-                pokemon.basePokemon,
-                {
-                  damage: this.damage[user.basePokemon.stage - 1],
-                  defenseStat: this.defenseStat,
-                }
-              );
+              const damage = calculateDamage(user, pokemon, {
+                damage: this.damage[user.basePokemon.stage - 1],
+                defenseStat: this.defenseStat,
+              });
               pokemon.takeDamage(damage);
             }
           });

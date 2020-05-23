@@ -377,11 +377,7 @@ export class CombatScene extends Scene {
       },
       onYoyo: () => {
         const attack = attacker.basePokemon.basicAttack;
-        const damage = calculateDamage(
-          attacker.basePokemon,
-          defender.basePokemon,
-          attack
-        );
+        const damage = calculateDamage(attacker, defender, attack);
         if (!attack.projectile) {
           // deal damage immediately
           attacker.dealDamage(damage);

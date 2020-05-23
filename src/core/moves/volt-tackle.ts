@@ -42,7 +42,7 @@ export const voltTackle: Move = {
         yoyo: true,
         ease: 'Power1',
         onYoyo: () => {
-          const damage = calculateDamage(user.basePokemon, target.basePokemon, {
+          const damage = calculateDamage(user, target, {
             damage: this.damage[user.basePokemon.stage - 1],
             defenseStat: 'defense',
           });

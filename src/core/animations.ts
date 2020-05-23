@@ -66,4 +66,22 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 9,
     duration: 300,
   },
+  'cotton-guard-start': {
+    texture: 'cotton-guard',
+    frames: 10,
+    duration: 500,
+  },
+  'cotton-guard-spin': {
+    texture: 'cotton-guard',
+    start: 10,
+    frames: 12,
+    duration: 600,
+    repeat: -1,
+  },
+  'cotton-guard-end': {
+    texture: 'cotton-guard',
+    start: 22,
+    frames: 11,
+    duration: 550,
+  },
 };

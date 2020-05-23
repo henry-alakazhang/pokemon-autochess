@@ -1,4 +1,5 @@
 export * from './brave-bird';
+export * from './cotton-guard';
 export * from './dragon-dance';
 export * from './fury-cutter';
 export * from './ice-shard';

@@ -50,6 +50,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     };
   } = {};
 
+  attachments: Phaser.GameObjects.GameObject[] = [];
+
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
     super(
@@ -111,6 +113,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.bars.setVisible(visible);
     this.outlineSprite.setVisible(visible && this.isOutlined);
     return super.setVisible(visible);
+  }
+
+  /** Attaches a GameObject so it moves with the PokemonObject */
+  attach(object: Phaser.GameObjects.GameObject) {
+    this.attachments.push(object);
+  }
+
+  /** Detaches an attached GameObject */
+  detach(object: Phaser.GameObjects.GameObject) {
+    this.attachments = this.attachments.filter(item => item === object);
   }
 
   destroy() {
@@ -181,7 +193,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   public move({ x, y }: Coords, onComplete?: Function) {
     this.scene.add.tween({
-      targets: [this, this.bars],
+      targets: [this, this.bars, ...this.attachments],
       duration: getTurnDelay(this.basePokemon) * 0.75,
       x,
       y,
@@ -213,12 +225,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    */
   public dealDamage(amount: number) {
     // damage / 10, capped at 2
-    if (this.maxPP && this.currentPP < this.maxPP) {
-      this.currentPP = Math.min(
-        this.maxPP,
-        this.currentPP + Math.min(2, Math.round(amount / 10))
-      );
-    }
+    this.addPP(Math.min(2, Math.round(amount / 10)));
     this.redrawBars();
   }
 
@@ -232,12 +239,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     // trigger on-hit events like mana
     if (triggerEvents) {
-      if (this.maxPP && this.currentPP < this.maxPP) {
-        this.currentPP = Math.min(
-          this.maxPP,
-          this.currentPP + Math.min(2, Math.round(amount / 10))
-        );
-      }
+      this.addPP(Math.min(2, Math.round(amount / 10)));
     }
 
     const actualDamage = Math.min(this.currentHP, amount);
@@ -261,6 +263,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     if (this.currentHP === 0) {
       // destroy UI elements first
       this.bars.destroy();
+      // TODO: destroy attachments?
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
       this.scene.add.tween({
@@ -274,6 +277,18 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         callbackScope: this,
       });
     }
+  }
+
+  public addPP(amount: number): this {
+    // move is active - can't gain PP
+    if (this.status.moveIsActive) {
+      return this;
+    }
+
+    if (this.maxPP && this.currentPP < this.maxPP) {
+      this.currentPP = Math.min(this.maxPP, this.currentPP + amount);
+    }
+    return this;
   }
 
   public toggleOutline(): this {
@@ -310,10 +325,14 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     };
   }
 
-  public addStatus(status: Status, duration: number, value?: number) {
+  public addStatus(status: Status, duration: number, value?: number): this {
+    if (this.status.statusImmunity) {
+      return this;
+    }
     this.status[status] = {
       value,
       duration,
     };
+    return this;
   }
 }

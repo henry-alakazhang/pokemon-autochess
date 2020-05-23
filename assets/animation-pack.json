@@ -3,6 +3,15 @@
     "files": [
       {
         "type": "spritesheet",
+        "key": "cotton-guard",
+        "url": "assets/animations/cotton-guard.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "dragon-dance",
         "url": "assets/animations/dragon-dance.png",
         "frameConfig": {
