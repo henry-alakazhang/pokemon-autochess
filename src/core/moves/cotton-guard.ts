@@ -37,9 +37,12 @@ export const cottonGuard: Move = {
       .sprite(user.x, user.y, 'cotton-guard')
       .play('cotton-guard-start');
     user.attach(cotton);
+    user.addStatus('moveIsActive', DURATION);
     cotton.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
       user
-        .addStatus('moveDuration', DURATION)
+        // adding moveIsActive here will refresh the duration
+        // so it lasts the same as everything else
+        .addStatus('moveIsActive', DURATION)
         .addStatus(
           'percentDamageReduction',
           DURATION,

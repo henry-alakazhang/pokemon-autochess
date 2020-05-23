@@ -3,4 +3,4 @@ export type Status =
   | 'percentDamageReduction'
   | 'statusImmunity'
   /** the user can't gain PP because their move is active right now */
-  | 'moveDuration';
+  | 'moveIsActive';

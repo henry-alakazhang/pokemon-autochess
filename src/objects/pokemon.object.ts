@@ -281,7 +281,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   public addPP(amount: number): this {
     // move is active - can't gain PP
-    if (this.status.moveDuration) {
+    if (this.status.moveIsActive) {
       return this;
     }
 
