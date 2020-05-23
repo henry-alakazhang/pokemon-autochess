@@ -313,7 +313,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public addStatus(status: Status, duration: number, value?: number) {
     this.status[status] = {
       value,
-      duration
+      duration,
     };
   }
 }
