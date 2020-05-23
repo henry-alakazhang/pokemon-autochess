@@ -97,7 +97,6 @@ export class ShopScene extends Phaser.Scene {
    * Refreshes the shop with new pokemon.
    */
   reroll(): void {
-    console.log(this.pool);
     // Remove the old pokemon
     this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();

@@ -192,7 +192,6 @@ export class GameScene extends Phaser.Scene {
     });
 
     buyablePokemon.forEach(pokemon => {
-      console.log(pokemon);
       this.pool[pokemon] = POOL_SIZES[pokemonData[pokemon].tier];
     });
   }
