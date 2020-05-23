@@ -6,6 +6,8 @@ I don't own the concept of Pokemon, the sprites, or anything else related to Pok
 
 Gen 1-5 sprites owned by GameFreak, The Pokemon Company and/or Nintendo
 Gen 6 sprites credit to [princess-phoenix](https://www.deviantart.com/princess-phoenix/art/Gen-6-Kalos-Pokemon-Overworld-Sprites-525954409).
+Gen 7 sprites credit to [larryturbo, princess-phoenix, kidkatt, Zender1752 and SageDeoxys](https://www.deviantart.com/larryturbo/art/Gen-7-Alola-Overworld-Sprites-805455576)
+Gen 8 sprites credit to [SageDeoxys](https://www.deviantart.com/sagedeoxys/art/ZIP-Pokemon-Gen-8-Overworld-Spritesheets-by-Sage-827405664)
 
 ## Running the game
 
