@@ -48,6 +48,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "thunder",
+        "url": "assets/animations/thunder.png",
+        "frameConfig": {
+          "frameWidth": 224,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "tri-attack",
         "url": "assets/animations/tri-attack.png",
         "frameConfig": {

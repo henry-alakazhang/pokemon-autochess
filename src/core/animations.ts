@@ -61,4 +61,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 7,
     duration: 1000,
   },
+  thunder: {
+    texture: 'thunder',
+    frames: 9,
+    duration: 300,
+  },
 };

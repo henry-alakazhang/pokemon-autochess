@@ -10,3 +10,4 @@ export * from './thunder-wave';
 export * from './tri-attack';
 export * from './twineedle';
 export * from './volt-tackle';
+export * from './zap-cannon';
