@@ -1,6 +1,7 @@
 import { Move } from './move.model';
 import {
   braveBird,
+  cottonGuard,
   dragonDance,
   furyCutter,
   iceShard,
@@ -343,6 +344,23 @@ const basePokemonData = {
     },
     move: zapCannon,
   },
+  wooloo: {
+    base: 'wooloo',
+    categories: ['normal'],
+    tier: 1,
+    maxHP: 72,
+    maxPP: 15,
+    attack: 80,
+    defense: 100,
+    specAttack: 60,
+    specDefense: 90,
+    speed: 88,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: cottonGuard,
+  },
 } as const;
 
 /**
@@ -567,6 +585,20 @@ const rawPokemonData = {
   vikavolt: {
     ...getEvolution('grubbin', 3),
     displayName: 'Vikavolt',
+  },
+  wooloo: {
+    ...getEvolution('wooloo', 1),
+    displayName: 'Wooloo',
+    evolution: 'dubwool',
+  },
+  dubwool: {
+    ...getEvolution('wooloo', 2),
+    displayName: 'Dubwool',
+    evolution: 'dubwool-2',
+  },
+  'dubwool-2': {
+    ...getEvolution('wooloo', 3),
+    displayName: 'Dubwool',
   },
 } as const;
 

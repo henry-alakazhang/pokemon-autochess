@@ -1,7 +1,10 @@
 import { Targetting } from '../../../core/move.model';
 import { Pokemon } from '../../../core/pokemon.model';
 import { assertNever } from '../../../helpers';
-import { PokemonAnimationType } from '../../../objects/pokemon.object';
+import {
+  PokemonAnimationType,
+  PokemonObject,
+} from '../../../objects/pokemon.object';
 import { CombatScene } from './combat.scene';
 
 export interface Coords {
@@ -347,19 +350,25 @@ type OffenseAction =
     };
 
 export function calculateDamage(
-  attacker: Pokemon,
-  defender: Pokemon,
+  attacker: PokemonObject,
+  defender: PokemonObject,
   attack: OffenseAction
 ) {
   // use specified defenseStat, or the one that correlates to the attack stat
   const defenseStatName =
     attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';
   // use base attack/defense so the formula doesn't scale exponentially with level
-  const baseDamage = 'damage' in attack ? attack.damage : attacker[attack.stat];
-  const defenseValue = defender[defenseStatName];
+  const baseDamage =
+    'damage' in attack ? attack.damage : attacker.basePokemon[attack.stat];
+  const defenseValue = defender.basePokemon[defenseStatName];
 
   // reduction is stat / 5, rounded down to the nearest 5
-  const reduction = (Math.floor(defenseValue / 25) * 5) / 100;
+  const defenseReduction = (Math.floor(defenseValue / 25) * 5) / 100;
+  // bonus percentage reduction from a buff
+  const statusReduction =
+    (defender.status.percentDamageReduction?.value ?? 0) / 100;
 
-  return Math.round(baseDamage * (1 - reduction) + 2);
+  return Math.round(
+    baseDamage * (1 - defenseReduction) * (1 - statusReduction) + 2
+  );
 }

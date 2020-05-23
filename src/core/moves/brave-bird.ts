@@ -55,14 +55,10 @@ export const braveBird: Move = {
             }
 
             img.destroy();
-            const damage = calculateDamage(
-              user.basePokemon,
-              target.basePokemon,
-              {
-                damage: this.damage[user.basePokemon.stage - 1],
-                defenseStat: 'defense',
-              }
-            );
+            const damage = calculateDamage(user, target, {
+              damage: this.damage[user.basePokemon.stage - 1],
+              defenseStat: 'defense',
+            });
             target.takeDamage(damage);
             user.takeDamage(Math.floor(damage / 4), false);
             onComplete();
