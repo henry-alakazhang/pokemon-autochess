@@ -24,7 +24,7 @@ export const thunderWave: Move = {
           clearInterval(flashAnimation);
           img.destroy();
 
-          target.status.paralyse = 4000;
+          target.addStatus('paralyse', 4000);
           target.redrawBars();
           onComplete();
         }, 600);

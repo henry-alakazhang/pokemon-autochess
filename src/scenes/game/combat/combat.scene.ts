@@ -220,11 +220,12 @@ export class CombatScene extends Scene {
     const delay = getTurnDelay(pokemon.basePokemon);
     // reduce the duration of each status
     (Object.keys(pokemon.status) as Status[]).forEach((s: Status) => {
-      const duration = pokemon.status[s];
-      if (duration) {
-        const remaining = duration - delay;
-        // reset to undefined if status is over
-        pokemon.status[s] = remaining >= 0 ? remaining : undefined;
+      const statusValue = pokemon.status[s];
+      if (statusValue) {
+        statusValue.duration -= delay;
+        if (statusValue.duration <= 0) {
+          pokemon.status[s] = undefined;
+        }
       }
     });
     setTimeout(() => this.takeTurn(pokemon), delay);

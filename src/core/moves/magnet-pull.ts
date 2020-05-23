@@ -52,7 +52,7 @@ export const magnetPull: Move = {
     )[0];
 
     // paralyse
-    target.status.paralyse = 4000;
+    target.addStatus('paralyse', 4000);
     target.takeDamage(this.damage[user.basePokemon.stage - 1]);
     target.redrawBars();
     // move if possible

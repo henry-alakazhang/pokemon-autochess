@@ -44,7 +44,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   consecutiveAttacks = 0;
 
   status: {
-    [k in Status]?: number;
+    [k in Status]?: {
+      value?: number;
+      duration: number;
+    };
   } = {};
 
   // TODO: clean up messiness in model
@@ -304,6 +307,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       specAttack: this.basePokemon.specAttack * specAttack,
       specDefense: this.basePokemon.specDefense * specDefense,
       speed: this.basePokemon.speed * speed,
+    };
+  }
+
+  public addStatus(status: Status, duration: number, value?: number) {
+    this.status[status] = {
+      value,
+      duration
     };
   }
 }
