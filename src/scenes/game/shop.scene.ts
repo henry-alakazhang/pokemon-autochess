@@ -100,6 +100,10 @@ export class ShopScene extends Phaser.Scene {
     // Remove the old pokemon
     this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();
+      // put it back into the pool to roll for
+      // preeetty sure it will be in the pool if we're putting it back
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pokemon.pokemonName]! += 1;
     });
 
     // populate with random Pokemon
@@ -114,6 +118,10 @@ export class ShopScene extends Phaser.Scene {
         pick =
           buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)];
       }
+      // take the pokemon out of the pool
+      // non-null assertion here is ok because we literally just checked it
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pick]! -= 1;
       this.pokemonForSale[i] = new PokemonForSaleObject(this, currCoords, pick);
     }
   }

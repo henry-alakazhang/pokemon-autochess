@@ -614,9 +614,6 @@ export class GameScene extends Phaser.Scene {
       return false;
     }
 
-    // prettty sure the pool will always have this Pokemon
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.pool[pokemonName]! -= 1;
     player.gold -= pokemonData[pokemonName].tier;
     this.addPokemonToSideboard(pokemonName);
     return true;
