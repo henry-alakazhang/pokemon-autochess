@@ -5,6 +5,7 @@ import {
   getTurnDelay,
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
+import * as Tweens from '../tweens';
 
 /**
  * Fury Cutter - Scizor line's move
@@ -24,13 +25,8 @@ export const furyCutter: Move = {
   },
   range: 1,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
-    // hopping animation ...
-    scene.add.tween({
+    Tweens.hop(scene, {
       targets: [user],
-      duration: 150,
-      y: user.y - 10,
-      yoyo: true,
-      ease: 'Quad.easeOut',
       onComplete: () => {
         // ... into a faster-than-usual attack animation
         scene.add.tween({

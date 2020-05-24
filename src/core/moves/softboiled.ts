@@ -2,6 +2,7 @@ import { flatten } from '../../helpers';
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
+import * as Tweens from '../tweens';
 
 /**
  * Softboiled, Blissey line's move
@@ -37,13 +38,8 @@ export const softboiled: Move = {
     return found ? { x: found.x, y: found.y } : undefined;
   },
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
-    // hopping animation
-    scene.add.tween({
+    Tweens.hop(scene, {
       targets: [user],
-      duration: 150,
-      y: user.y - 10,
-      yoyo: true,
-      ease: 'Quad.easeOut',
       onComplete: () => {
         // throw egg
         scene.fireProjectile(user, target, { key: 'egg', speed: 300 }, () => {

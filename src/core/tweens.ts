@@ -68,3 +68,31 @@ export async function spin(
     });
   });
 }
+
+export async function hop(
+  scene: Phaser.Scene,
+  {
+    targets,
+    repeat = 0,
+    onComplete,
+  }: {
+    targets: Phaser.GameObjects.GameObject[];
+    repeat?: number;
+    onComplete?: Function;
+  }
+) {
+  return new Promise(resolve => {
+    scene.add.tween({
+      targets,
+      duration: 150,
+      y: '-= 10',
+      yoyo: true,
+      ease: 'Quad.easeOut',
+      repeat,
+      onComplete: () => {
+        onComplete?.();
+        resolve();
+      },
+    });
+  });
+}

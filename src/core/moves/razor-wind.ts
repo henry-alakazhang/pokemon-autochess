@@ -4,6 +4,7 @@ import {
   getCoordinatesForGrid,
 } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
+import * as Tweens from '../tweens';
 
 /**
  * Razor Wind - Shiftry line's move
@@ -43,14 +44,10 @@ export const razorWind: Move = {
     ];
   },
   use({ scene, user, targetCoords, board, onComplete }: MoveConfig<'ground'>) {
-    // double-hopping animation
     const gfxTarget = getCoordinatesForGrid(targetCoords);
-    scene.add.tween({
+    Tweens.hop(scene, {
       targets: [user],
-      duration: 150,
-      y: user.y - 10,
-      yoyo: true,
-      ease: 'Quad.easeOut',
+      // double-hopping animation
       repeat: 1,
       onComplete: () => {
         // animation: small spinny whirlwind effect below the poekmon

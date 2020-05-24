@@ -1,6 +1,7 @@
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
+import * as Tweens from '../tweens';
 
 /**
  * Cotton Guard - Dubwool line's move
@@ -24,14 +25,7 @@ export const cottonGuard: Move = {
   },
   use({ scene, user, onComplete }: MoveConfig<'ground'>) {
     const DURATION = 6000;
-    // hopping animation
-    scene.add.tween({
-      targets: [user],
-      duration: 150,
-      y: user.y - 10,
-      yoyo: true,
-      ease: 'Quad.easeOut',
-    });
+    Tweens.hop(scene, { targets: [user] });
 
     const cotton = scene.add
       .sprite(user.x, user.y, 'cotton-guard')
