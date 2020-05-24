@@ -6,6 +6,7 @@ import {
   furyCutter,
   iceShard,
   magnetPull,
+  quiverDance,
   razorWind,
   shadowTag,
   softboiled,
@@ -361,6 +362,23 @@ const basePokemonData = {
     },
     move: cottonGuard,
   },
+  larvesta: {
+    base: 'larvesta',
+    categories: ['fire', 'bug'],
+    tier: 3,
+    maxHP: 85,
+    maxPP: 16,
+    attack: 60,
+    defense: 65,
+    specAttack: 135,
+    specDefense: 105,
+    speed: 100,
+    basicAttack: {
+      range: 1,
+      stat: 'specAttack',
+    },
+    move: quiverDance,
+  },
 } as const;
 
 /**
@@ -599,6 +617,20 @@ const rawPokemonData = {
   'dubwool-2': {
     ...getEvolution('wooloo', 3),
     displayName: 'Dubwool',
+  },
+  larvesta: {
+    ...getEvolution('larvesta', 1),
+    displayName: 'Larvesta',
+    evolution: 'volcarona',
+  },
+  volcarona: {
+    ...getEvolution('larvesta', 2),
+    displayName: 'Volcarona',
+    evolution: 'volcarona-2',
+  },
+  'volcarona-2': {
+    ...getEvolution('larvesta', 2),
+    displayName: 'Volcarona',
   },
 } as const;
 

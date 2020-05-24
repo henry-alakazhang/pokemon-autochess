@@ -84,4 +84,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 11,
     duration: 550,
   },
+  'quiver-dance': {
+    texture: 'quiver-dance',
+    frames: 31,
+    duration: 1000,
+  },
 };
