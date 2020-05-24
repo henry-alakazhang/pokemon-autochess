@@ -1,4 +1,8 @@
-import { PokemonName } from '../../core/pokemon.model';
+import {
+  buyablePokemon,
+  pokemonData,
+  PokemonName,
+} from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
@@ -30,6 +34,14 @@ const SHOP_X = 400;
 const SHOP_Y = 175;
 
 const MAX_MAINBOARD_POKEMON = 6;
+
+const POOL_SIZES = {
+  1: 3,
+  2: 3,
+  3: 3,
+  4: 3,
+  5: 3,
+};
 
 /**
  * Returns the graphical x and y coordinates for a spot in the sideboard.
@@ -120,6 +132,13 @@ type PokemonLocation =
 export class GameScene extends Phaser.Scene {
   static readonly KEY = 'GameScene';
 
+  /**
+   * The pool of available Pokemon to buy in the shop
+   */
+  private pool: {
+    [k in PokemonName]?: number;
+  } = {};
+
   /* TEMPORARY JUNK */
   nextRoundButton: Button;
   shopButton: Phaser.GameObjects.GameObject;
@@ -168,8 +187,12 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      name: 'dubwool-2',
+      name: 'wooloo',
       side: 'enemy',
+    });
+
+    buyablePokemon.forEach(pokemon => {
+      this.pool[pokemon] = POOL_SIZES[pokemonData[pokemon].tier];
     });
   }
 
@@ -223,6 +246,7 @@ export class GameScene extends Phaser.Scene {
 
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.player = this.player; // temporary solution
+    this.shop.pool = this.pool;
     this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
     this.scene.launch(ShopScene.KEY);
 
@@ -290,6 +314,11 @@ export class GameScene extends Phaser.Scene {
     );
     this.prepGrid.setVisible(false);
     this.input.enabled = false;
+    // hide the shop
+    if (!this.scene.isPaused(ShopScene.KEY)) {
+      this.scene.pause(ShopScene.KEY);
+      this.scene.setVisible(false, ShopScene.KEY);
+    }
 
     const sceneData: CombatSceneData = {
       playerBoard: this.mainboard,
@@ -575,13 +604,33 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  buyPokemon(player: Player, pokemonName: PokemonName): boolean {
+    const price = pokemonData[pokemonName].tier;
+    if (this.player.gold < price) {
+      return false;
+    }
+
+    if (!this.canAddPokemonToSideboard()) {
+      return false;
+    }
+
+    player.gold -= pokemonData[pokemonName].tier;
+    this.addPokemonToSideboard(pokemonName);
+    return true;
+  }
+
   sellPokemon(player: Player, pokemon: PokemonObject) {
-    // TODO: add pokemon back into pool
     if (pokemon.basePokemon.stage === 1) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pokemon.basePokemon.base]! += 1;
       player.gold += pokemon.basePokemon.tier;
     } else if (pokemon.basePokemon.stage === 2) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pokemon.basePokemon.base]! += 3;
       player.gold += pokemon.basePokemon.tier + 2;
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pokemon.basePokemon.base]! += 9;
       player.gold += pokemon.basePokemon.tier + 4;
     }
 

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { buyablePokemon } from '../../core/pokemon.model';
+import { buyablePokemon, PokemonName } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
@@ -18,6 +18,9 @@ export class ShopScene extends Phaser.Scene {
   private pokemonForSale: PokemonForSaleObject[] = new Array(CELL_COUNT);
 
   public player: Player; // hacky temporary solution
+  public pool: {
+    [k in PokemonName]?: number;
+  } = {};
 
   constructor() {
     super({
@@ -97,36 +100,44 @@ export class ShopScene extends Phaser.Scene {
     // Remove the old pokemon
     this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();
+      // put it back into the pool to roll for
+      // preeetty sure it will be in the pool if we're putting it back
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pokemon.pokemonName]! += 1;
     });
 
-    // For now, just populate with random pokemon
+    // populate with random Pokemon
+    // TODO: scale chance based on amount remaining in pool
     for (let i = 0; i < CELL_COUNT; ++i) {
       const currCoords = this.getCoordinatesForShopIndex(i);
-      this.pokemonForSale[i] = new PokemonForSaleObject(
-        this,
-        currCoords,
-        buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)]
-      );
+      let pick =
+        buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)];
+      // don't pick if the pool is out of this Pokemon
+      // in theory this will go infinite if we buy too many Pokemon :thinking:
+      while (!this.pool[pick]) {
+        pick =
+          buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)];
+      }
+      // take the pokemon out of the pool
+      // non-null assertion here is ok because we literally just checked it
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.pool[pick]! -= 1;
+      this.pokemonForSale[i] = new PokemonForSaleObject(this, currCoords, pick);
     }
   }
 
   buyPokemon(index: number): boolean {
-    const price = this.pokemonForSale[index].cost;
-    if (this.player.gold < price) {
-      return false;
-    }
-
     const gameScene = this.scene.get(GameScene.KEY) as GameScene;
-    if (!gameScene.canAddPokemonToSideboard()) {
-      return false;
+
+    const bought = gameScene.buyPokemon(
+      this.player,
+      this.pokemonForSale[index].pokemonName
+    );
+    if (bought) {
+      this.pokemonForSale[index].destroy();
+      delete this.pokemonForSale[index];
     }
-
-    gameScene.addPokemonToSideboard(this.pokemonForSale[index].pokemonName);
-    this.player.gold -= price;
-    this.pokemonForSale[index].destroy();
-    delete this.pokemonForSale[index];
-
-    return true;
+    return bought;
   }
 
   /**
