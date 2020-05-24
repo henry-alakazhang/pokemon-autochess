@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { buyablePokemon, PokemonName } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';

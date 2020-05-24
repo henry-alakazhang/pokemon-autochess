@@ -1,5 +1,3 @@
-import * as Phaser from 'phaser';
-
 /**
  * Spins in a circle or elliptical shape
  */

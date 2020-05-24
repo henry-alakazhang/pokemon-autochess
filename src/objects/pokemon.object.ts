@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { Status } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';

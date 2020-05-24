@@ -1,4 +1,3 @@
-import * as Phaser from 'phaser';
 import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { Coords } from '../scenes/game/combat/combat.helpers';
 
