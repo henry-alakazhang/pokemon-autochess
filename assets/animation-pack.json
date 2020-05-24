@@ -30,6 +30,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "quiver-dance",
+        "url":"assets/animations/quiver-dance.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "razor-wind-base",
         "url": "assets/animations/razor-wind-base.png",
         "frameConfig": {
