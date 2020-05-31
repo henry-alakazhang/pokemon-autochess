@@ -531,10 +531,10 @@ describe('optimiseAOE', () => {
   });
 
   it(`should pick from the provided pool even if not optimal
-    A B 
-     B  
-   >B B 
-  if it only allows vertical movement
+      A B 
+       B  
+     >B B 
+      if it only allows vertical movement
   `, () => {
     expect(
       optimiseAOE({
@@ -556,10 +556,10 @@ describe('optimiseAOE', () => {
   });
 
   it(`should still range when picking from a provided pool
-    A B 
-   > B  
-    B B 
-  if it only allows vertical movement
+      A B 
+     > B  
+      B B 
+      if it only allows vertical movement
   `, () => {
     expect(
       optimiseAOE({
