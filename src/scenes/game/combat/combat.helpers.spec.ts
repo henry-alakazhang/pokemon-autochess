@@ -532,6 +532,31 @@ describe('optimiseAOE', () => {
 
   it(`should pick from the provided pool even if not optimal
     A B 
+     B  
+   >B B 
+  if it only allows vertical movement
+  `, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [undefined, enemyMock, undefined],
+          [enemyMock, undefined, enemyMock],
+        ],
+        user: { x: 0, y: 0 },
+        range: 99,
+        getAOE: crossAOEMock,
+        pool: [
+          { x: 0, y: 0 },
+          { x: 0, y: 1 },
+          { x: 0, y: 2 },
+        ],
+      })
+    ).toEqual({ x: 0, y: 2 });
+  });
+
+  it(`should still range when picking from a provided pool
+    A B 
    > B  
     B B 
   if it only allows vertical movement
@@ -544,15 +569,15 @@ describe('optimiseAOE', () => {
           [enemyMock, undefined, enemyMock],
         ],
         user: { x: 0, y: 0 },
-        range: 99,
-        getAOE: directionLineAOEMock,
+        range: 1,
+        getAOE: crossAOEMock,
         pool: [
           { x: 0, y: 0 },
           { x: 0, y: 1 },
           { x: 0, y: 2 },
         ],
       })
-    ).toEqual({ x: 0, y: 1 });
+    ).toEqual({ x: 0, y: 0 });
   });
 });
 
