@@ -529,6 +529,31 @@ describe('optimiseAOE', () => {
       })
     ).toEqual({ x: 1, y: 0 });
   });
+
+  it(`should pick from the provided pool even if not optimal
+    A B 
+   > B  
+    B B 
+  if it only allows vertical movement
+  `, () => {
+    expect(
+      optimiseAOE({
+        board: [
+          [playerMock, undefined, enemyMock],
+          [undefined, enemyMock, undefined],
+          [enemyMock, undefined, enemyMock],
+        ],
+        user: { x: 0, y: 0 },
+        range: 99,
+        getAOE: directionLineAOEMock,
+        pool: [
+          { x: 0, y: 0 },
+          { x: 0, y: 1 },
+          { x: 0, y: 2 },
+        ],
+      })
+    ).toEqual({ x: 0, y: 1 });
+  });
 });
 
 describe('getFacing', () => {
