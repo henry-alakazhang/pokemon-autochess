@@ -1,18 +1,10 @@
-import {
-  buyablePokemon,
-  pokemonData,
-  PokemonName,
-} from '../../core/pokemon.model';
+import { buyablePokemon, pokemonData, PokemonName } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from './combat/combat.helpers';
-import {
-  CombatBoard,
-  CombatScene,
-  CombatSceneData,
-} from './combat/combat.scene';
+import { CombatBoard, CombatScene, CombatSceneData } from './combat/combat.scene';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -187,7 +179,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      name: 'wooloo',
+      name: 'gabite',
       side: 'enemy',
     });
 

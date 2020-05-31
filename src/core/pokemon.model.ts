@@ -3,6 +3,7 @@ import {
   braveBird,
   cottonGuard,
   dragonDance,
+  dragonRush,
   furyCutter,
   iceShard,
   magnetPull,
@@ -379,6 +380,23 @@ const basePokemonData = {
     },
     move: quiverDance,
   },
+  gible: {
+    base: 'gible',
+    categories: ['dragon', 'ground'],
+    tier: 3,
+    maxHP: 108,
+    maxPP: 5,
+    attack: 130,
+    defense: 95,
+    specAttack: 80,
+    specDefense: 85,
+    speed: 102,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: dragonRush,
+  },
 } as const;
 
 /**
@@ -631,6 +649,20 @@ const rawPokemonData = {
   'volcarona-2': {
     ...getEvolution('larvesta', 2),
     displayName: 'Volcarona',
+  },
+  gible: {
+    ...getEvolution('gible', 1),
+    displayName: 'Gible',
+    evolution: 'gabite',
+  },
+  gabite: {
+    ...getEvolution('gible', 2),
+    displayName: 'Gabite',
+    evolution: 'garchomp',
+  },
+  garchomp: {
+    ...getEvolution('gible', 3),
+    displayName: 'Garchomp',
   },
 } as const;
 

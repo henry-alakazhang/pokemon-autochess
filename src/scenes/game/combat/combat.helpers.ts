@@ -201,6 +201,7 @@ export function optimiseAOE({
   getAOE,
   targetAllies = false,
   targetting = 'ground',
+  pool,
 }: {
   board: CombatScene['board'];
   user: Coords;
@@ -208,6 +209,8 @@ export function optimiseAOE({
   getAOE: (coords: Coords, myCoords: Coords) => Coords[];
   targetAllies?: boolean;
   targetting?: Targetting;
+  /** Specific tiles to optimise from (ignoring others) */
+  pool?: Coords[];
 }): Coords | undefined {
   const userSide = board[user.x][user.y]?.side;
   if (!userSide) {
@@ -217,29 +220,45 @@ export function optimiseAOE({
 
   let best: Coords | undefined;
   let most = 0;
-  board.forEach((col, x) =>
-    col.forEach((unitAtCoords, y) => {
-      const tryCoords = { x, y };
-      // ignore squares outside of range
-      if (getGridDistance(user, tryCoords) > range) {
-        return;
-      }
-      // ignore squares without targettable units if we need to target one
-      if (targetting === 'unit' && unitAtCoords?.side !== targetSide) {
-        return;
-      }
 
-      // check how many people this would hit
-      const numberHit = getAOE(tryCoords, user).filter(
-        hit => board[hit.x]?.[hit.y]?.side === targetSide
-      ).length;
+  const checkCoords = (x: number, y: number) => {
+    const tryCoords = { x, y };
+    const unitAtCoords = board[x]?.[y];
+    if (!inBounds(board, tryCoords)) {
+      return;
+    }
 
-      if (numberHit > most) {
-        best = tryCoords;
-        most = numberHit;
-      }
-    })
-  );
+    // ignore squares outside of range
+    if (getGridDistance(user, tryCoords) > range) {
+      return;
+    }
+    // ignore squares without targettable units if we need to target one
+    if (targetting === 'unit' && unitAtCoords?.side !== targetSide) {
+      return;
+    }
+
+    // check how many people this would hit
+    const numberHit = getAOE(tryCoords, user).filter(
+      hit => board[hit.x]?.[hit.y]?.side === targetSide
+    ).length;
+
+    if (numberHit > most) {
+      best = tryCoords;
+      most = numberHit;
+    }
+  };
+
+  if (pool) {
+    // if given a pool, just search in the pool
+    pool.forEach(({ x, y }) => checkCoords(x, y));
+  } else {
+    // otherwise, search the entire board
+    board.forEach((col, x) =>
+      col.forEach((_, y) => {
+        checkCoords(x, y);
+      })
+    );
+  }
 
   return best;
 }
