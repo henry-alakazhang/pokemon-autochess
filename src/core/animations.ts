@@ -89,4 +89,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 31,
     duration: 1000,
   },
+  'dragon-rush': {
+    texture: 'dragon-rush',
+    frames: 24,
+    duration: 800,
+  },
 };

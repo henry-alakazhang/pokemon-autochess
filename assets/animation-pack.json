@@ -21,6 +21,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "dragon-rush",
+        "url": "assets/animations/dragon-rush.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "fury-cutter",
         "url": "assets/animations/fury-cutter.png",
         "frameConfig": {
