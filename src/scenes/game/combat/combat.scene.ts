@@ -4,7 +4,7 @@ import { Attack, PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
-  PokemonObject
+  PokemonObject,
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
 import {
@@ -15,7 +15,7 @@ import {
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
-  pathfind
+  pathfind,
 } from './combat.helpers';
 
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
@@ -293,9 +293,10 @@ export class CombatScene extends Scene {
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
         console.log('no valid step');
-        // can't reach: just do nothing and wait for next turn
+        // can't reach: just reset targetting and wait for next turn
         // FIXME: I'm pretty sure this will result in times when the Pokemon
         // will tunnel-vision and freeze up even if there are other valid targets
+        pokemon.currentTarget = undefined;
         this.setTurn(pokemon);
         return;
       }
