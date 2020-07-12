@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { Status } from '../../../core/game.model';
 import { Attack, PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
+import { FloatingText } from '../../../objects/floating-text.object';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -388,15 +389,29 @@ export class CombatScene extends Scene {
       onYoyo: () => {
         const attack = attacker.basePokemon.basicAttack;
         const damage = calculateDamage(attacker, defender, attack);
+        // TODO: if we add evasion, calculate it here
+        const hits = !attacker.status.blind;
+
+        const onHit = () => {
+          if (hits) {
+            // if it hits, deal damage
+            attacker.dealDamage(damage);
+            defender.takeDamage(damage);
+          } else {
+            // otherwise show miss text
+            this.add.existing(
+              new FloatingText(this, defender.x, defender.y, 'MISS!')
+            );
+          }
+        };
+
         if (!attack.projectile) {
-          // deal damage immediately
-          attacker.dealDamage(damage);
-          defender.takeDamage(damage);
+          // hit immediately
+          onHit();
         } else {
           // otherwise fire off a projectile
           this.fireProjectile(attacker, defender, attack.projectile, () => {
-            attacker.dealDamage(damage);
-            defender.takeDamage(damage);
+            onHit();
           });
         }
       },

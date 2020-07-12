@@ -22,7 +22,6 @@ export const thunderWave: Move = {
           img.destroy();
 
           target.addStatus('paralyse', 4000);
-          target.redrawBars();
           onComplete();
         }, 600);
       },

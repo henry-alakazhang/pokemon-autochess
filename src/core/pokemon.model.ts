@@ -7,6 +7,7 @@ import {
   furyCutter,
   iceShard,
   magnetPull,
+  nightDaze,
   quiverDance,
   razorWind,
   shadowTag,
@@ -397,6 +398,23 @@ const basePokemonData = {
     },
     move: dragonRush,
   },
+  zorua: {
+    base: 'zorua',
+    categories: ['dark'],
+    tier: 3,
+    maxHP: 60,
+    maxPP: 10,
+    attack: 105,
+    defense: 60,
+    specAttack: 120,
+    specDefense: 60,
+    speed: 105,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: nightDaze,
+  },
 } as const;
 
 /**
@@ -663,6 +681,20 @@ const rawPokemonData = {
   garchomp: {
     ...getEvolution('gible', 3),
     displayName: 'Garchomp',
+  },
+  zorua: {
+    ...getEvolution('zorua', 1),
+    displayName: 'Zorua',
+    evolution: 'zorua-2',
+  },
+  'zorua-2': {
+    ...getEvolution('zorua', 2),
+    displayName: 'Zorua',
+    evolution: 'zoroark',
+  },
+  zoroark: {
+    ...getEvolution('zorua', 3),
+    displayName: 'Zoroark',
   },
 } as const;
 

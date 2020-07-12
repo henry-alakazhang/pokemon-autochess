@@ -32,6 +32,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   /** HP and PP bars above the Pokemon */
   bars: Phaser.GameObjects.Graphics;
+  blindIcon: Phaser.GameObjects.Image;
   currentHP: number;
   maxHP: number;
   currentPP: number;
@@ -80,6 +81,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       .setDisplaySize(this.width + 8, this.height + 8)
       .setTintFill(0xffffff)
       .setVisible(false);
+    this.blindIcon = this.scene.add
+      .image(this.x, this.y - 20, 'blind')
+      .setVisible(false);
+    this.attach(this.blindIcon);
 
     // default state is facing the player
     this.playAnimation('down');
@@ -184,6 +189,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         : 0, // empty if no PP
       2
     );
+
+    this.blindIcon.setVisible(!!this.status.blind);
   }
 
   public playAnimation(type: PokemonAnimationType) {
@@ -263,6 +270,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     if (this.currentHP === 0) {
       // destroy UI elements first
       this.bars.destroy();
+      this.blindIcon.destroy();
       // TODO: destroy attachments?
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
@@ -333,6 +341,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       value,
       duration,
     };
+    this.redrawBars();
     return this;
   }
 }
