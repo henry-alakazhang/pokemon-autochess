@@ -84,6 +84,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.blindIcon = this.scene.add
       .image(this.x, this.y - 20, 'blind')
       .setVisible(false);
+    this.attach(this.blindIcon);
 
     // default state is facing the player
     this.playAnimation('down');
@@ -269,6 +270,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     if (this.currentHP === 0) {
       // destroy UI elements first
       this.bars.destroy();
+      this.blindIcon.destroy();
       // TODO: destroy attachments?
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
