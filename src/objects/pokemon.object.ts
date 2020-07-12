@@ -41,6 +41,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   id: string;
   side: 'player' | 'enemy';
   consecutiveAttacks = 0;
+  currentTarget?: PokemonObject;
 
   status: {
     [k in Status]?: {
