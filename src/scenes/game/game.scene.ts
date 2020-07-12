@@ -1,7 +1,7 @@
 import {
   buyablePokemon,
   pokemonData,
-  PokemonName
+  PokemonName,
 } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
@@ -11,7 +11,7 @@ import { Coords } from './combat/combat.helpers';
 import {
   CombatBoard,
   CombatScene,
-  CombatSceneData
+  CombatSceneData,
 } from './combat/combat.scene';
 import { ShopScene } from './shop.scene';
 
