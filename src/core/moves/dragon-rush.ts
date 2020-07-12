@@ -100,6 +100,8 @@ export const dragonRush: Move = {
           board[x][y]?.takeDamage(damage);
         }
       });
+      // reset target after movement
+      user.currentTarget = undefined;
     }, 250);
   },
 } as const;

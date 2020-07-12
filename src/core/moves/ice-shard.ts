@@ -91,6 +91,8 @@ export const iceShard: Move = {
           user.clearAlpha();
           onComplete();
         });
+        // reassign target after movement
+        user.currentTarget = weakestPokemon;
       }
     });
   },

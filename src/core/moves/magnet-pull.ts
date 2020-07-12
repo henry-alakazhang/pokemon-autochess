@@ -58,6 +58,10 @@ export const magnetPull: Move = {
     // move if possible
     if (moveCoords) {
       scene.movePokemon(targetCoords, moveCoords, () => {
+        // start attacking the pulled Pokemon
+        user.currentTarget = target;
+        // reset pulled Pokemon's targetting
+        target.currentTarget = undefined;
         onComplete();
       });
     }
