@@ -201,11 +201,15 @@ export class CombatScene extends Scene {
    *
    * Doing a search will also double as a check that the Pokemon is alive
    */
-  getBoardLocationForPokemon({ id }: PokemonObject): Coords | undefined {
+  getBoardLocationForPokemon(target?: PokemonObject): Coords | undefined {
+    if (!target) {
+      return undefined;
+    }
+
     let location;
     this.board.forEach((col, x) => {
       col.forEach((pokemon, y) => {
-        if (pokemon?.id === id) {
+        if (pokemon?.id === target.id) {
           location = { x, y };
         }
       });
@@ -246,6 +250,12 @@ export class CombatScene extends Scene {
       return;
     }
 
+    // simple targetting logic: either use an existing saved target
+    // or use the nearest available Pokemon
+    const simpleTargetCoords =
+      this.getBoardLocationForPokemon(pokemon.currentTarget) ??
+      getNearestTarget(this.board, myCoords, BOARD_WIDTH, BOARD_WIDTH);
+
     // use move if available, otherwise use basic attack
     let selectedAttack =
       pokemon.currentPP === pokemon.maxPP &&
@@ -253,20 +263,16 @@ export class CombatScene extends Scene {
       pokemon.basePokemon.move.type === 'active'
         ? pokemon.basePokemon.move
         : pokemon.basePokemon.basicAttack;
+    // use move-specific targetting, or default to prepicked target
     let selectedCoords =
       'getTarget' in selectedAttack && selectedAttack.getTarget
         ? selectedAttack.getTarget(this.board, myCoords)
-        : getNearestTarget(this.board, myCoords, BOARD_WIDTH, BOARD_WIDTH);
+        : simpleTargetCoords;
 
     if (!selectedCoords) {
       // if move has no valid target, fall back to basic attack
       selectedAttack = pokemon.basePokemon.basicAttack;
-      selectedCoords = getNearestTarget(
-        this.board,
-        myCoords,
-        BOARD_WIDTH,
-        BOARD_WIDTH
-      );
+      selectedCoords = simpleTargetCoords;
     }
 
     // use const variables to make type inferencing neater below
@@ -287,9 +293,10 @@ export class CombatScene extends Scene {
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
         console.log('no valid step');
-        // can't reach: just do nothing and wait for next turn
+        // can't reach: just reset targetting and wait for next turn
         // FIXME: I'm pretty sure this will result in times when the Pokemon
         // will tunnel-vision and freeze up even if there are other valid targets
+        pokemon.currentTarget = undefined;
         this.setTurn(pokemon);
         return;
       }
@@ -330,6 +337,9 @@ export class CombatScene extends Scene {
       // end turn since there's no valid target
       return this.setTurn(pokemon);
     }
+
+    // save the current target if it exists
+    pokemon.currentTarget = targetPokemon;
 
     // otherwise make a basic attack
     this.basicAttack(pokemon, targetPokemon, () => {
