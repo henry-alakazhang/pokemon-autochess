@@ -10,6 +10,7 @@ export * from './quiver-dance';
 export * from './razor-wind';
 export * from './shadow-tag';
 export * from './softboiled';
+export * from './teleport';
 export * from './thunder-wave';
 export * from './tri-attack';
 export * from './twineedle';

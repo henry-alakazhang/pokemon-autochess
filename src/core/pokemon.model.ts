@@ -12,6 +12,7 @@ import {
   razorWind,
   shadowTag,
   softboiled,
+  teleport,
   thunderWave,
   triAttack,
   twineedle,
@@ -415,6 +416,27 @@ const basePokemonData = {
     },
     move: nightDaze,
   },
+  abra: {
+    base: 'abra',
+    categories: ['psychic'],
+    tier: 2,
+    maxHP: 55,
+    maxPP: 10,
+    attack: 50,
+    defense: 45,
+    specAttack: 135,
+    specDefense: 95,
+    speed: 120,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+      projectile: {
+        key: 'spoon',
+        speed: 300,
+      },
+    },
+    move: teleport,
+  },
 } as const;
 
 /**
@@ -695,6 +717,20 @@ const rawPokemonData = {
   zoroark: {
     ...getEvolution('zorua', 3),
     displayName: 'Zoroark',
+  },
+  abra: {
+    ...getEvolution('abra', 1),
+    displayName: 'Abra',
+    evolution: 'kadabra',
+  },
+  kadabra: {
+    ...getEvolution('abra', 2),
+    displayName: 'Kadabra',
+    evolution: 'alakazam',
+  },
+  alakazam: {
+    ...getEvolution('abra', 3),
+    displayName: 'Alakazam',
   },
 } as const;
 
