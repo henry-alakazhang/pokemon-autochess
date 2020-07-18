@@ -2,6 +2,7 @@ import { Move } from './move.model';
 import {
   braveBird,
   cottonGuard,
+  darkestLariat,
   dragonDance,
   dragonRush,
   furyCutter,
@@ -437,6 +438,23 @@ const basePokemonData = {
     },
     move: teleport,
   },
+  litten: {
+    base: 'litten',
+    categories: ['fire', 'dark'],
+    tier: 2,
+    maxHP: 95,
+    maxPP: 15,
+    attack: 115,
+    defense: 90,
+    specAttack: 80,
+    specDefense: 90,
+    speed: 60,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: darkestLariat,
+  },
 } as const;
 
 /**
@@ -731,6 +749,20 @@ const rawPokemonData = {
   alakazam: {
     ...getEvolution('abra', 3),
     displayName: 'Alakazam',
+  },
+  litten: {
+    ...getEvolution('litten', 1),
+    displayName: 'Litten',
+    evolution: 'torracat',
+  },
+  torracat: {
+    ...getEvolution('litten', 2),
+    displayName: 'Torracat',
+    evolution: 'incineroar',
+  },
+  incineroar: {
+    ...getEvolution('litten', 3),
+    displayName: 'Incineroar',
   },
 } as const;
 
