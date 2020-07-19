@@ -14,7 +14,11 @@ import { Move, MoveConfig } from '../move.model';
 export const clone: Move = {
   displayName: 'Clone',
   type: 'active',
+<<<<<<< HEAD
   range: 1,
+=======
+  range: 99,
+>>>>>>> Add Mewtwo
   targetting: 'unit',
   // amount of PP to grant the clone
   damage: [5, 10, 50],
@@ -45,6 +49,10 @@ export const clone: Move = {
       place,
       target.basePokemon.name
     );
+<<<<<<< HEAD
+=======
+    newPokemon.addPP(this.damage[user.basePokemon.stage - 1]);
+>>>>>>> Add Mewtwo
     scene.setTurn(newPokemon);
     onComplete();
   },
