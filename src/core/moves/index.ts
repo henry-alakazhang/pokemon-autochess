@@ -1,4 +1,5 @@
 export * from './brave-bird';
+export * from './clone';
 export * from './cotton-guard';
 export * from './darkest-lariat';
 export * from './dragon-dance';

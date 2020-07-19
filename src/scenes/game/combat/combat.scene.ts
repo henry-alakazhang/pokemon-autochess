@@ -5,7 +5,7 @@ import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
 import {
   PokemonAnimationType,
-  PokemonObject,
+  PokemonObject
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
 import {
@@ -16,7 +16,7 @@ import {
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
-  pathfind,
+  pathfind
 } from './combat.helpers';
 
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
@@ -32,7 +32,7 @@ const GRID_X = 400;
 /** Y-coordinate of the center of the grid */
 const GRID_Y = 250;
 const CELL_WIDTH = 70;
-const BOARD_WIDTH = 5;
+export const BOARD_WIDTH = 5;
 
 /**
  * Returns the graphical x and y coordinates for a spot in the battle grid.
@@ -150,7 +150,7 @@ export class CombatScene extends Scene {
     { x, y }: Coords,
     name: PokemonName,
     startingAnimation?: PokemonAnimationType
-  ) {
+  ): PokemonObject {
     const coords = getCoordinatesForGrid({ x, y });
     const pokemon = new PokemonObject({
       scene: this,
@@ -178,6 +178,7 @@ export class CombatScene extends Scene {
       pokemon.playAnimation(startingAnimation);
     }
     this.board[x][y] = pokemon;
+    return pokemon;
   }
 
   movePokemon(start: Coords, end: Coords, onComplete?: Function) {
@@ -255,7 +256,7 @@ export class CombatScene extends Scene {
     // or use the nearest available Pokemon
     const simpleTargetCoords =
       this.getBoardLocationForPokemon(pokemon.currentTarget) ??
-      getNearestTarget(this.board, myCoords, BOARD_WIDTH, BOARD_WIDTH);
+      getNearestTarget(this.board, myCoords);
 
     // use move if available, otherwise use basic attack
     let selectedAttack =

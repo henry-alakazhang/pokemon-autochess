@@ -1,6 +1,6 @@
 import { Targetting } from '../../../core/move.model';
 import { Pokemon } from '../../../core/pokemon.model';
-import { assertNever } from '../../../helpers';
+import { assertNever, flatten, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -62,20 +62,17 @@ export function inBounds(board: unknown[][], coords: Coords) {
  *   A 3 8
  *     9
  */
-export function getNearestTarget(
+export function getNearest(
   board: CombatScene['board'],
   { x, y }: Coords,
-  /** width of the board */
-  width: number,
-  /** height of the board */
-  height: number
+  condition: (target?: PokemonObject) => boolean
 ): Coords | undefined {
-  const self = board[x][y];
-  if (!self) {
-    return undefined;
+  const width = board.length;
+  if (width === 0) {
+    return;
   }
+  const height = board[0].length;
 
-  const { side } = self;
   const steps = [
     [-1, 1],
     [-1, -1],
@@ -105,9 +102,8 @@ export function getNearestTarget(
       for (let k = 0; k < i; k++) {
         // if still on board
         if (x2 >= 0 && x2 < width && y2 >= 0 && y2 < height) {
-          const target = board[x2][y2];
-          // opposite side matched: target this one
-          if (target && target.side !== side) {
+          // meets the condition: target this one.
+          if (condition(board[x2][y2])) {
             return { x: x2, y: y2 };
           }
         }
@@ -118,6 +114,30 @@ export function getNearestTarget(
       }
     }
   }
+}
+
+export function getNearestTarget(
+  board: CombatScene['board'],
+  { x, y }: Coords
+) {
+  const self = board[x][y];
+  if (!self) {
+    return undefined;
+  }
+
+  return getNearest(
+    board,
+    { x, y },
+    (target?: PokemonObject) => !!(target && target.side !== self.side)
+  );
+}
+
+export function getNearestEmpty(board: CombatScene['board'], { x, y }: Coords) {
+  return getNearest(
+    board,
+    { x, y },
+    (target?: PokemonObject) => !isDefined(target)
+  );
 }
 
 /**
@@ -307,6 +327,35 @@ export function getFurthestTarget({
   });
 
   return furthest;
+}
+
+export function getRandomTarget({
+  board,
+  user,
+  targetAllies,
+}: {
+  board: CombatScene['board'];
+  user: Coords;
+  targetAllies?: boolean;
+}): Coords | undefined {
+  const userSide = board[user.x][user.y]?.side;
+  if (!userSide) {
+    return undefined;
+  }
+  const targetSide = targetAllies ? userSide : getOppositeSide(userSide);
+
+  const possibleTargets = flatten(
+    board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
+  ).filter(({ pokemon }) => pokemon?.side === targetSide);
+
+  if (possibleTargets.length === 0) {
+    return undefined;
+  }
+
+  const choice = Math.floor(Math.random() * possibleTargets.length);
+
+  // technically this returns the Pokemon with it, but the type system should prevent it from being used
+  return possibleTargets[choice];
 }
 
 /**
