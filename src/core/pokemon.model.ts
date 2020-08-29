@@ -19,7 +19,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon
+  zapCannon,
 } from './moves';
 
 export type Type =
