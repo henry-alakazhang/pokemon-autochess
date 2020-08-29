@@ -5,7 +5,7 @@ import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
 import {
   PokemonAnimationType,
-  PokemonObject
+  PokemonObject,
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
 import {
@@ -16,7 +16,7 @@ import {
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
-  pathfind
+  pathfind,
 } from './combat.helpers';
 
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
@@ -32,7 +32,6 @@ const GRID_X = 400;
 /** Y-coordinate of the center of the grid */
 const GRID_Y = 250;
 const CELL_WIDTH = 70;
-export const BOARD_WIDTH = 5;
 
 /**
  * Returns the graphical x and y coordinates for a spot in the battle grid.
