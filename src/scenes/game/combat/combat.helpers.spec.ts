@@ -18,10 +18,12 @@ describe('getNearestTarget', () => {
       ...`, () => {
     expect(
       getNearestTarget(
-        [[], [undefined, playerMock], [undefined, enemyMock]],
-        { x: 1, y: 1 },
-        3,
-        3
+        [
+          [undefined, undefined, undefined],
+          [undefined, playerMock, undefined],
+          [undefined, enemyMock, undefined],
+        ],
+        { x: 1, y: 1 }
       )
     ).toEqual({ x: 2, y: 1 });
   });
@@ -32,10 +34,12 @@ describe('getNearestTarget', () => {
       ...`, () => {
     expect(
       getNearestTarget(
-        [[], [enemyMock, playerMock, undefined], []],
-        { x: 1, y: 1 },
-        3,
-        3
+        [
+          [undefined, undefined, undefined],
+          [enemyMock, playerMock, undefined],
+          [undefined, undefined, undefined],
+        ],
+        { x: 1, y: 1 }
       )
     ).toEqual({ x: 1, y: 0 });
   });
@@ -46,10 +50,12 @@ describe('getNearestTarget', () => {
       ...`, () => {
     expect(
       getNearestTarget(
-        [[], [undefined, playerMock, undefined], []],
-        { x: 1, y: 1 },
-        3,
-        3
+        [
+          [undefined, undefined, undefined],
+          [undefined, playerMock, undefined],
+          [undefined, undefined, undefined],
+        ],
+        { x: 1, y: 1 }
       )
     ).toEqual(undefined);
   });
@@ -58,9 +64,16 @@ describe('getNearestTarget', () => {
       ...
       ...
       ...`, () => {
-    expect(getNearestTarget([[], [], []], { x: 1, y: 1 }, 3, 3)).toEqual(
-      undefined
-    );
+    expect(
+      getNearestTarget(
+        [
+          [undefined, undefined, undefined],
+          [undefined, undefined, undefined],
+          [undefined, undefined, undefined],
+        ],
+        { x: 1, y: 1 }
+      )
+    ).toEqual(undefined);
   });
 
   it(`should prioritise enemies in a clockwise order
@@ -69,10 +82,12 @@ describe('getNearestTarget', () => {
       ...`, () => {
     expect(
       getNearestTarget(
-        [[], [undefined, playerMock, enemyMock], [undefined, enemyMock]],
-        { x: 1, y: 1 },
-        3,
-        3
+        [
+          [undefined, undefined, undefined],
+          [undefined, playerMock, enemyMock],
+          [undefined, enemyMock, undefined],
+        ],
+        { x: 1, y: 1 }
       )
     ).toEqual({ x: 2, y: 1 });
   });
@@ -83,10 +98,12 @@ describe('getNearestTarget', () => {
       .B.`, () => {
     expect(
       getNearestTarget(
-        [[], [undefined, playerMock, enemyMock], [undefined, playerMock]],
-        { x: 1, y: 1 },
-        3,
-        3
+        [
+          [undefined, undefined, undefined],
+          [undefined, playerMock, enemyMock],
+          [undefined, playerMock, undefined],
+        ],
+        { x: 1, y: 1 }
       )
     ).toEqual({ x: 1, y: 2 });
   });
@@ -97,10 +114,12 @@ describe('getNearestTarget', () => {
       ...`, () => {
     expect(
       getNearestTarget(
-        [[undefined, playerMock], [], [undefined, enemyMock]],
-        { x: 0, y: 1 },
-        3,
-        3
+        [
+          [undefined, playerMock, undefined],
+          [undefined, undefined, undefined],
+          [undefined, enemyMock, undefined],
+        ],
+        { x: 0, y: 1 }
       )
     ).toEqual({ x: 2, y: 1 });
   });
@@ -111,10 +130,12 @@ describe('getNearestTarget', () => {
       B..`, () => {
     expect(
       getNearestTarget(
-        [[undefined, playerMock, enemyMock], [], [undefined, enemyMock]],
-        { x: 0, y: 1 },
-        3,
-        3
+        [
+          [undefined, playerMock, enemyMock],
+          [undefined, undefined, undefined],
+          [undefined, enemyMock, undefined],
+        ],
+        { x: 0, y: 1 }
       )
     ).toEqual({ x: 0, y: 2 });
   });
@@ -125,10 +146,12 @@ describe('getNearestTarget', () => {
       A..`, () => {
     expect(
       getNearestTarget(
-        [[undefined, undefined, playerMock], [], [enemyMock]],
-        { x: 0, y: 2 },
-        3,
-        3
+        [
+          [undefined, undefined, playerMock],
+          [undefined, undefined, undefined],
+          [enemyMock, undefined, undefined],
+        ],
+        { x: 0, y: 2 }
       )
     ).toEqual({ x: 2, y: 0 });
   });
@@ -139,10 +162,12 @@ describe('getNearestTarget', () => {
       ..B`, () => {
     expect(
       getNearestTarget(
-        [[playerMock], [], [undefined, undefined, enemyMock]],
-        { x: 0, y: 0 },
-        3,
-        3
+        [
+          [playerMock, undefined, undefined],
+          [undefined, undefined, undefined],
+          [undefined, undefined, enemyMock],
+        ],
+        { x: 0, y: 0 }
       )
     ).toEqual({ x: 2, y: 2 });
   });
@@ -153,10 +178,12 @@ describe('getNearestTarget', () => {
       B..`, () => {
     expect(
       getNearestTarget(
-        [[undefined, undefined, enemyMock], [], [playerMock]],
-        { x: 2, y: 0 },
-        3,
-        3
+        [
+          [undefined, undefined, enemyMock],
+          [undefined, undefined, undefined],
+          [playerMock, undefined, undefined],
+        ],
+        { x: 2, y: 0 }
       )
     ).toEqual({ x: 0, y: 2 });
   });
@@ -167,10 +194,12 @@ describe('getNearestTarget', () => {
       ..A`, () => {
     expect(
       getNearestTarget(
-        [[enemyMock], [], [undefined, undefined, playerMock]],
-        { x: 2, y: 2 },
-        3,
-        3
+        [
+          [enemyMock, undefined, undefined],
+          [undefined, undefined, undefined],
+          [undefined, undefined, playerMock],
+        ],
+        { x: 2, y: 2 }
       )
     ).toEqual({ x: 0, y: 0 });
   });
@@ -181,10 +210,12 @@ describe('getNearestTarget', () => {
       .B.`, () => {
     expect(
       getNearestTarget(
-        [[undefined, playerMock], [enemyMock, undefined, enemyMock], []],
-        { x: 0, y: 1 },
-        3,
-        3
+        [
+          [undefined, playerMock, undefined],
+          [enemyMock, undefined, enemyMock],
+          [undefined, undefined, undefined],
+        ],
+        { x: 0, y: 1 }
       )
     ).toEqual({ x: 1, y: 2 });
   });
@@ -196,10 +227,13 @@ describe('getNearestTarget', () => {
       ....`, () => {
     expect(
       getNearestTarget(
-        [[], [undefined, playerMock], [], [undefined, undefined, enemyMock]],
-        { x: 1, y: 1 },
-        4,
-        4
+        [
+          [undefined, undefined, undefined, undefined],
+          [undefined, playerMock, undefined, undefined],
+          [undefined, undefined, undefined, undefined],
+          [undefined, undefined, enemyMock, undefined],
+        ],
+        { x: 1, y: 1 }
       )
     ).toEqual({ x: 3, y: 2 });
   });

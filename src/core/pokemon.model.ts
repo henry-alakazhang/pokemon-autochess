@@ -1,6 +1,7 @@
 import { Move } from './move.model';
 import {
   braveBird,
+  clone,
   cottonGuard,
   darkestLariat,
   dragonDance,
@@ -75,6 +76,8 @@ export interface Attack {
 }
 
 export interface Pokemon {
+  /** Internal ID / name */
+  readonly name: PokemonName;
   /** Name for display in-game */
   readonly displayName: string;
   readonly categories: ReadonlyArray<Category>;
@@ -455,6 +458,23 @@ const basePokemonData = {
     },
     move: darkestLariat,
   },
+  mewtwo: {
+    base: 'mewtwo',
+    categories: ['psychic'],
+    tier: 5,
+    maxHP: 106,
+    maxPP: 10,
+    attack: 110,
+    defense: 90,
+    specAttack: 154,
+    specDefense: 90,
+    speed: 130,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+    },
+    move: clone,
+  },
 } as const;
 
 /**
@@ -488,59 +508,71 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
 const rawPokemonData = {
   weedle: {
     ...getEvolution('weedle', 1),
+    name: 'weedle',
     displayName: 'Weedle',
     evolution: 'kakuna',
   },
   kakuna: {
     ...getEvolution('weedle', 2),
+    name: 'kakuna',
     displayName: 'Kakuna',
     evolution: 'beedrill',
   },
   beedrill: {
     ...getEvolution('weedle', 3),
+    name: 'beedrill',
     displayName: 'Beedrill',
   },
   happiny: {
     ...getEvolution('happiny', 1),
+    name: 'happiny',
     displayName: 'Happiny',
     evolution: 'chansey',
   },
   chansey: {
     ...getEvolution('happiny', 2),
+    name: 'chansey',
     displayName: 'Chansey',
     evolution: 'blissey',
   },
   blissey: {
     ...getEvolution('happiny', 3),
+    name: 'blissey',
     displayName: 'Blissey',
   },
   pichu: {
     ...getEvolution('pichu', 1),
+    name: 'pichu',
     displayName: 'Pichu',
     evolution: 'pikachu',
   },
   pikachu: {
     ...getEvolution('pichu', 2),
+    name: 'pikachu',
     displayName: 'Pikachu',
     evolution: 'raichu',
   },
   raichu: {
     ...getEvolution('pichu', 3),
+    name: 'raichu',
     displayName: 'Raichu',
   },
   scyther: {
     ...getEvolution('scyther', 1),
     categories: ['bug'],
+    name: 'scyther',
     displayName: 'Scyther',
     evolution: 'scizor-1',
   },
   'scizor-1': {
     ...getEvolution('scyther', 2),
+    name: 'scizor-1',
     displayName: 'Scizor',
     evolution: 'scizor-2',
   },
   'scizor-2': {
     ...getEvolution('scyther', 3),
+    name: 'scizor-2',
     displayName: 'Scizor',
   },
   magikarp: {
@@ -554,6 +586,7 @@ const rawPokemonData = {
     },
     categories: ['water'],
     move: undefined,
+    name: 'magikarp',
     displayName: 'Magikarp',
     evolution: 'magikarp-2',
   },
@@ -561,208 +594,269 @@ const rawPokemonData = {
     ...getEvolution('magikarp', 2),
     categories: ['water'],
     move: undefined,
+    name: 'magikarp-2',
     displayName: 'Magikarp',
     evolution: 'gyarados',
   },
   gyarados: {
     ...getEvolution('magikarp', 3),
+    name: 'gyarados',
     displayName: 'Gyarados',
   },
   porygon: {
     ...getEvolution('porygon', 1),
+    name: 'porygon',
     displayName: 'Porygon',
     evolution: 'porygon2',
   },
   porygon2: {
     ...getEvolution('porygon', 2),
+    name: 'porygon2',
     displayName: 'Porygon2',
     evolution: 'porygonz',
   },
   porygonz: {
     ...getEvolution('porygon', 3),
+    name: 'porygonz',
     displayName: 'Porygon-Z',
   },
   sneasel: {
     ...getEvolution('sneasel', 1),
+    name: 'sneasel',
     displayName: 'Sneasel',
     evolution: 'weavile',
   },
   weavile: {
     ...getEvolution('sneasel', 2),
+    name: 'weavile',
     displayName: 'Weavile',
     evolution: 'weavile-2',
   },
   'weavile-2': {
     ...getEvolution('sneasel', 3),
+    name: 'weavile-2',
     displayName: 'Weavile',
   },
   seedot: {
     ...getEvolution('seedot', 1),
+    name: 'seedot',
     displayName: 'Seedot',
     evolution: 'nuzleaf',
   },
   nuzleaf: {
     ...getEvolution('seedot', 2),
+    name: 'nuzleaf',
     displayName: 'Nuzleaf',
     evolution: 'shiftry',
   },
   shiftry: {
     ...getEvolution('seedot', 3),
+    name: 'shiftry',
     displayName: 'Shiftry',
   },
   litwick: {
     ...getEvolution('litwick', 1),
+    name: 'litwick',
     displayName: 'Litwick',
     evolution: 'lampent',
   },
   lampent: {
     ...getEvolution('litwick', 2),
+    name: 'lampent',
     displayName: 'Lampent',
     evolution: 'chandelure',
   },
   chandelure: {
     ...getEvolution('litwick', 3),
+    name: 'chandelure',
     displayName: 'Chandelure',
   },
   fletchling: {
     ...getEvolution('fletchling', 1),
+    name: 'fletchling',
     displayName: 'Fletchling',
     evolution: 'fletchinder',
   },
   fletchinder: {
     ...getEvolution('fletchling', 2),
+    name: 'fletchinder',
     displayName: 'Fletchinder',
     evolution: 'talonflame',
   },
   talonflame: {
     ...getEvolution('fletchling', 3),
+    name: 'talonflame',
     displayName: 'Talonflame',
   },
   rotomw: {
     ...getEvolution('rotomw', 1),
+    name: 'rotomw',
     displayName: 'Rotom Wash',
     evolution: 'rotomw-2',
   },
   'rotomw-2': {
     ...getEvolution('rotomw', 2),
+    name: 'rotomw-2',
     displayName: 'Rotom Wash',
     evolution: 'rotomw-3',
   },
   'rotomw-3': {
     ...getEvolution('rotomw', 3),
+    name: 'rotomw-3',
     displayName: 'Rotom Wash',
   },
   magnemite: {
     ...getEvolution('magnemite', 1),
+    name: 'magnemite',
     displayName: 'Magnemite',
     evolution: 'magneton',
   },
   magneton: {
     ...getEvolution('magnemite', 2),
+    name: 'magneton',
     displayName: 'Magneton',
     evolution: 'magnezone',
   },
   magnezone: {
     ...getEvolution('magnemite', 3),
+    name: 'magnezone',
     displayName: 'Magnezone',
   },
   grubbin: {
     ...getEvolution('grubbin', 1),
+    name: 'grubbin',
     displayName: 'Grubbin',
     evolution: 'charjabug',
   },
   charjabug: {
     ...getEvolution('grubbin', 2),
+    name: 'charjabug',
     displayName: 'Charjabug',
     evolution: 'vikavolt',
   },
   vikavolt: {
     ...getEvolution('grubbin', 3),
+    name: 'vikavolt',
     displayName: 'Vikavolt',
   },
   wooloo: {
     ...getEvolution('wooloo', 1),
+    name: 'wooloo',
     displayName: 'Wooloo',
     evolution: 'dubwool',
   },
   dubwool: {
     ...getEvolution('wooloo', 2),
+    name: 'dubwool',
     displayName: 'Dubwool',
     evolution: 'dubwool-2',
   },
   'dubwool-2': {
     ...getEvolution('wooloo', 3),
+    name: 'dubwool-2',
     displayName: 'Dubwool',
   },
   larvesta: {
     ...getEvolution('larvesta', 1),
+    name: 'larvesta',
     displayName: 'Larvesta',
     evolution: 'volcarona',
   },
   volcarona: {
     ...getEvolution('larvesta', 2),
+    name: 'volcarona',
     displayName: 'Volcarona',
     evolution: 'volcarona-2',
   },
   'volcarona-2': {
     ...getEvolution('larvesta', 2),
+    name: 'volcarona-2',
     displayName: 'Volcarona',
   },
   gible: {
     ...getEvolution('gible', 1),
+    name: 'gible',
     displayName: 'Gible',
     evolution: 'gabite',
   },
   gabite: {
     ...getEvolution('gible', 2),
+    name: 'gabite',
     displayName: 'Gabite',
     evolution: 'garchomp',
   },
   garchomp: {
     ...getEvolution('gible', 3),
+    name: 'garchomp',
     displayName: 'Garchomp',
   },
   zorua: {
     ...getEvolution('zorua', 1),
+    name: 'zorua',
     displayName: 'Zorua',
     evolution: 'zorua-2',
   },
   'zorua-2': {
     ...getEvolution('zorua', 2),
+    name: 'zorua-2',
     displayName: 'Zorua',
     evolution: 'zoroark',
   },
   zoroark: {
     ...getEvolution('zorua', 3),
+    name: 'zoroark',
     displayName: 'Zoroark',
   },
   abra: {
     ...getEvolution('abra', 1),
+    name: 'abra',
     displayName: 'Abra',
     evolution: 'kadabra',
   },
   kadabra: {
     ...getEvolution('abra', 2),
+    name: 'kadabra',
     displayName: 'Kadabra',
     evolution: 'alakazam',
   },
   alakazam: {
     ...getEvolution('abra', 3),
+    name: 'alakazam',
     displayName: 'Alakazam',
   },
   litten: {
     ...getEvolution('litten', 1),
+    name: 'litten',
     displayName: 'Litten',
     evolution: 'torracat',
   },
   torracat: {
     ...getEvolution('litten', 2),
+    name: 'torracat',
     displayName: 'Torracat',
     evolution: 'incineroar',
   },
   incineroar: {
     ...getEvolution('litten', 3),
+    name: 'incineroar',
     displayName: 'Incineroar',
+  },
+  mewtwo: {
+    ...getEvolution('mewtwo', 1),
+    name: 'mewtwo',
+    displayName: 'Mewtwo',
+    evolution: 'mewtwo-2',
+  },
+  'mewtwo-2': {
+    ...getEvolution('mewtwo', 2),
+    name: 'mewtwo-2',
+    displayName: 'Mewtwo',
+    evolution: 'mewtwo-3',
+  },
+  'mewtwo-3': {
+    ...getEvolution('mewtwo', 3),
+    name: 'mewtwo-3',
+    displayName: 'Mewtwo',
   },
 } as const;
 
