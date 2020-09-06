@@ -13,6 +13,7 @@ import {
   quiverDance,
   razorWind,
   shadowTag,
+  shellTrap,
   softboiled,
   teleport,
   thunderWave,
@@ -475,6 +476,23 @@ const basePokemonData = {
     },
     move: clone,
   },
+  turtonator: {
+    base: 'turtonator',
+    categories: ['fire', 'dragon'],
+    tier: 4,
+    maxHP: 60,
+    maxPP: 15,
+    attack: 78,
+    defense: 135,
+    specAttack: 91,
+    specDefense: 85,
+    speed: 36,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: shellTrap,
+  },
 } as const;
 
 /**
@@ -857,6 +875,23 @@ const rawPokemonData = {
     ...getEvolution('mewtwo', 3),
     name: 'mewtwo-3',
     displayName: 'Mewtwo',
+  },
+  turtonator: {
+    ...getEvolution('turtonator', 1),
+    name: 'turtonator',
+    displayName: 'Turtonator',
+    evolution: 'turtonator-2',
+  },
+  'turtonator-2': {
+    ...getEvolution('turtonator', 2),
+    name: 'turtonator-2',
+    displayName: 'Turtonator',
+    evolution: 'turtonator-3',
+  },
+  'turtonator-3': {
+    ...getEvolution('turtonator', 3),
+    name: 'turtonator-3',
+    displayName: 'Turtonator',
   },
 } as const;
 

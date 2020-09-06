@@ -18,6 +18,7 @@ export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public static readonly Events = {
     Dead: 'dead',
+    Damage: 'damage',
   } as const;
 
   /**
@@ -246,6 +247,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     // trigger on-hit events like mana
     if (triggerEvents) {
+      this.emit(PokemonObject.Events.Damage);
       this.addPP(Math.min(2, Math.round(amount / 10)));
     }
 
