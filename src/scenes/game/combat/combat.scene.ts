@@ -181,6 +181,11 @@ export class CombatScene extends Scene {
   }
 
   movePokemon(start: Coords, end: Coords, onComplete?: Function) {
+    if (start.x === end.x && start.y === end.y) {
+      onComplete?.();
+      return;
+    }
+
     const facing = getFacing(start, end);
     const mover = this.board[start.x][start.y];
     if (!mover) {

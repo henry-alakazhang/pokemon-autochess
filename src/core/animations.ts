@@ -99,4 +99,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 10,
     duration: 320,
   },
+  'meteor-mash': {
+    texture: 'meteor-mash',
+    frames: 5,
+    duration: 1000 / 6,
+  },
 };

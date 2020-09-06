@@ -39,6 +39,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "meteor-mash",
+        "url": "assets/animations/meteor-mash.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 72
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "quiver-dance",
         "url":"assets/animations/quiver-dance.png",
         "frameConfig": {
