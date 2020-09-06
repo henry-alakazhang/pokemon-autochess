@@ -20,7 +20,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon
+  zapCannon,
 } from './moves';
 
 export type Type =
@@ -880,19 +880,19 @@ const rawPokemonData = {
     ...getEvolution('turtonator', 1),
     name: 'turtonator',
     displayName: 'Turtonator',
-    evolution: 'turtonator-2'
+    evolution: 'turtonator-2',
   },
   'turtonator-2': {
     ...getEvolution('turtonator', 2),
     name: 'turtonator-2',
     displayName: 'Turtonator',
-    evolution: 'turtonator-3'
+    evolution: 'turtonator-3',
   },
   'turtonator-3': {
     ...getEvolution('turtonator', 3),
     name: 'turtonator-3',
     displayName: 'Turtonator',
-  }
+  },
 } as const;
 
 export type PokemonName = keyof typeof rawPokemonData;
