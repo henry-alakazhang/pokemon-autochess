@@ -187,7 +187,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      name: 'mewtwo-2',
+      name: 'turtonator-2',
       side: 'enemy',
     });
 

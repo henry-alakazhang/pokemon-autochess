@@ -94,4 +94,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 24,
     duration: 800,
   },
+  'shell-trap': {
+    texture: 'shell-trap',
+    frames: 10,
+    duration: 320,
+  },
 };

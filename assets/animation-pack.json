@@ -66,6 +66,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "shell-trap",
+        "url": "assets/animations/shell-trap.png",
+        "frameConfig": {
+          "frameWidth": 96,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "softboiled",
         "url": "assets/animations/softboiled.png",
         "frameConfig": {
