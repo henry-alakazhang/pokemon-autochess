@@ -21,7 +21,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon
+  zapCannon,
 } from './moves';
 import { leechLife } from './moves/leech-life';
 
@@ -528,7 +528,7 @@ const basePokemonData = {
       stat: 'attack',
     },
     move: leechLife,
-  }
+  },
 } as const;
 
 /**
@@ -962,7 +962,7 @@ const rawPokemonData = {
     ...getEvolution('zubat', 3),
     name: 'crobat',
     displayName: 'Crobat',
-  }
+  },
 } as const;
 
 export type PokemonName = keyof typeof rawPokemonData;
