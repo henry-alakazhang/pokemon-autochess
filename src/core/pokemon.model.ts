@@ -21,8 +21,9 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon,
+  zapCannon
 } from './moves';
+import { leechLife } from './moves/leech-life';
 
 export type Type =
   | 'normal'
@@ -511,6 +512,23 @@ const basePokemonData = {
     },
     move: meteorMash,
   },
+  zubat: {
+    base: 'zubat',
+    categories: ['poison', 'flying'],
+    tier: 1,
+    maxHP: 85,
+    maxPP: 10,
+    attack: 90,
+    defense: 80,
+    specAttack: 70,
+    specDefense: 80,
+    speed: 130,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: leechLife,
+  }
 } as const;
 
 /**
@@ -928,6 +946,23 @@ const rawPokemonData = {
     name: 'metagross',
     displayName: 'Metagross',
   },
+  zubat: {
+    ...getEvolution('zubat', 1),
+    name: 'zubat',
+    displayName: 'Zubat',
+    evolution: 'golbat',
+  },
+  golbat: {
+    ...getEvolution('zubat', 2),
+    name: 'golbat',
+    displayName: 'Golbat',
+    evolution: 'crobat',
+  },
+  crobat: {
+    ...getEvolution('zubat', 3),
+    name: 'crobat',
+    displayName: 'Crobat',
+  }
 } as const;
 
 export type PokemonName = keyof typeof rawPokemonData;
