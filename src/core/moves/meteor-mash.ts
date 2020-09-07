@@ -70,6 +70,7 @@ export const meteorMash: Move = {
               console.log('going to', endCoords);
             }
             // move to the square before
+            // TODO: move faster than default speed/easing
             scene.movePokemon(targetCoords, {
               x: endCoords.x - dx,
               y: endCoords.y - dy,
