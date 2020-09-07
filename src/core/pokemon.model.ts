@@ -9,6 +9,7 @@ import {
   furyCutter,
   iceShard,
   magnetPull,
+  meteorMash,
   nightDaze,
   quiverDance,
   razorWind,
@@ -493,6 +494,23 @@ const basePokemonData = {
     },
     move: shellTrap,
   },
+  beldum: {
+    base: 'beldum',
+    categories: ['steel', 'psychic'],
+    tier: 3,
+    maxHP: 80,
+    maxPP: 15,
+    attack: 135,
+    defense: 130,
+    specAttack: 95,
+    specDefense: 90,
+    speed: 70,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: meteorMash,
+  },
 } as const;
 
 /**
@@ -892,6 +910,23 @@ const rawPokemonData = {
     ...getEvolution('turtonator', 3),
     name: 'turtonator-3',
     displayName: 'Turtonator',
+  },
+  beldum: {
+    ...getEvolution('beldum', 1),
+    name: 'beldum',
+    displayName: 'Beldum',
+    evolution: 'metang',
+  },
+  metang: {
+    ...getEvolution('beldum', 2),
+    name: 'metang',
+    displayName: 'Beldum',
+    evolution: 'metagross',
+  },
+  metagross: {
+    ...getEvolution('beldum', 3),
+    name: 'metagross',
+    displayName: 'Metagross',
   },
 } as const;
 
