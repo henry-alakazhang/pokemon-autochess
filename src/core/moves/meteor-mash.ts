@@ -58,8 +58,6 @@ export const meteorMash: Move = {
               x: targetCoords.x + dx,
               y: targetCoords.y + dy,
             };
-            console.log(targetCoords);
-            console.log('going to', endCoords);
             // find the first blocked / out-of-bounds square
             while (
               inBounds(board, endCoords) &&
@@ -67,7 +65,6 @@ export const meteorMash: Move = {
             ) {
               endCoords.x += dx;
               endCoords.y += dy;
-              console.log('going to', endCoords);
             }
             // move to the square before
             // TODO: move faster than default speed/easing
