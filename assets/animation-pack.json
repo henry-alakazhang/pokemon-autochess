@@ -39,6 +39,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "leech-life",
+        "url": "assets/animations/leech-life.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "meteor-mash",
         "url": "assets/animations/meteor-mash.png",
         "frameConfig": {
