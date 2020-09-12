@@ -101,6 +101,15 @@
         }
       },
       {
+        "type":"spritesheet",
+        "key": "stone-edge",
+        "url": "assets/animations/stone-edge.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 80
+        }
+      },
+      {
         "type": "spritesheet",
         "key": "thunder",
         "url": "assets/animations/thunder.png",
