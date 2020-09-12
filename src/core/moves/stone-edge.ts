@@ -3,6 +3,7 @@ import {
   calculateDamage,
   Coords,
   getAngle,
+  getOppositeSide,
 } from '../../scenes/game/combat/combat.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
@@ -62,7 +63,8 @@ export const stoneEdge: Move = {
         setTimeout(() => {
           const targets = this.getAOE(targetCoords, userCoords)
             .map(coords => board[coords.x]?.[coords.y])
-            .filter(isDefined);
+            .filter(isDefined)
+            .filter(pokemon => pokemon.side === getOppositeSide(user.side));
 
           const rawBaseDamage = this.damage[user.basePokemon.stage - 1];
           // deal more damage if there's only one target
