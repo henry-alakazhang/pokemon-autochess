@@ -109,4 +109,15 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 36,
     duration: 900,
   },
+  'stone-edge-gather': {
+    texture: 'stone-edge',
+    frames: 40,
+    duration: 1300,
+  },
+  'stone-edge-shoot': {
+    texture: 'stone-edge',
+    frames: 21,
+    start: 40,
+    duration: 100,
+  },
 };

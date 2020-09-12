@@ -16,6 +16,7 @@ import {
   shadowTag,
   shellTrap,
   softboiled,
+  stoneEdge,
   teleport,
   thunderWave,
   triAttack,
@@ -529,6 +530,23 @@ const basePokemonData = {
     },
     move: leechLife,
   },
+  larvitar: {
+    base: 'larvitar',
+    categories: ['rock', 'dark'],
+    tier: 3,
+    maxHP: 100,
+    maxPP: 10,
+    attack: 134,
+    defense: 110,
+    specAttack: 95,
+    specDefense: 100,
+    speed: 61,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: stoneEdge,
+  },
 } as const;
 
 /**
@@ -962,6 +980,23 @@ const rawPokemonData = {
     ...getEvolution('zubat', 3),
     name: 'crobat',
     displayName: 'Crobat',
+  },
+  larvitar: {
+    ...getEvolution('larvitar', 1),
+    name: 'larvitar',
+    displayName: 'Larvitar',
+    evolution: 'pupitar',
+  },
+  pupitar: {
+    ...getEvolution('larvitar', 2),
+    name: 'pupitar',
+    displayName: 'Pupitar',
+    evolution: 'tyranitar',
+  },
+  tyranitar: {
+    ...getEvolution('larvitar', 3),
+    name: 'tyranitar',
+    displayName: 'Tyranitar',
   },
 } as const;
 
