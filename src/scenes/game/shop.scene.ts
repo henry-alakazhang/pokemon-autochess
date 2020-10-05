@@ -5,11 +5,12 @@ import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
 import { Coords } from './combat/combat.helpers';
 import { GameScene } from './game.scene';
 
-const CELL_WIDTH = 70;
-const CELL_COUNT = 6;
+const CELL_WIDTH = 140;
+const CELL_HEIGHT = 90;
+const CELL_COUNT = 5;
 const POKEMON_OFFSET = 20;
 const REROLL_COST = 2;
-const BORDER_SIZE = 100;
+const BORDER_SIZE = 50;
 
 export class ShopScene extends Phaser.Scene {
   static readonly KEY = 'ShopScene';
@@ -74,17 +75,17 @@ export class ShopScene extends Phaser.Scene {
    * Draws the shop without the pokemon
    */
   drawBase(): void {
-    const width = CELL_WIDTH * CELL_COUNT + BORDER_SIZE;
-    const height = CELL_WIDTH + BORDER_SIZE;
+    const width = CELL_WIDTH * CELL_COUNT;
+    const height = CELL_HEIGHT + BORDER_SIZE * 2;
     this.add.rectangle(this.centre.x, this.centre.y, width, height, 0x2f4858);
 
     this.add.grid(
       this.centre.x, // center x
       this.centre.y - POKEMON_OFFSET, // center y
       CELL_WIDTH * CELL_COUNT, // total width
-      CELL_WIDTH, // total height
+      CELL_HEIGHT, // total height
       CELL_WIDTH, // cell width
-      CELL_WIDTH, // cell height
+      CELL_HEIGHT, // cell height
       0, // fill: none
       0, // fill alpha: transparent
       0xffaa00, // lines: yellow
