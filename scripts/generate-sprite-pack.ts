@@ -29,7 +29,7 @@ glob('assets/pokemon/*', (err, matches) => {
   fs.writeFileSync(spriteOutputFile, JSON.stringify(output, null, 2));
 });
 
-glob('assets/fx/*', (err, matches) => {
+glob('assets/fx/**/*', (err, matches) => {
   if (err) {
     throw err;
   }

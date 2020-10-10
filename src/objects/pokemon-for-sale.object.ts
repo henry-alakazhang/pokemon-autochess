@@ -4,17 +4,23 @@ import { Coords } from '../scenes/game/combat/combat.helpers';
 /**
  * The pokemon object in the shop, including gold cost and any other elements
  */
-export class PokemonForSaleObject {
+export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
   public pokemonName: PokemonName;
   public cost: number;
 
-  public scene: Phaser.Scene;
   public centre: Coords;
 
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private goldCostText: Phaser.GameObjects.Text;
+  private typeSprites: Phaser.GameObjects.Sprite[];
 
-  constructor(scene: Phaser.Scene, coordinates: Coords, name: PokemonName) {
+  constructor(
+    public scene: Phaser.Scene,
+    coordinates: Coords,
+    name: PokemonName
+  ) {
+    super(scene, 'PokemonForSale');
+
     if (pokemonData[name].stage === 1) {
       this.cost = pokemonData[name].tier;
     } else {
@@ -25,7 +31,6 @@ export class PokemonForSaleObject {
 
     this.pokemonName = name;
 
-    this.scene = scene;
     this.centre = coordinates;
 
     this.drawPokemon();
@@ -34,21 +39,35 @@ export class PokemonForSaleObject {
 
   drawPokemon(): void {
     this.pokemonSprite = this.scene.add.sprite(
-      this.centre.x,
+      this.centre.x + 40,
       this.centre.y,
       this.pokemonName
     );
     this.pokemonSprite.play(`${this.pokemonName}--down`);
+
+    this.typeSprites = pokemonData[
+      this.pokemonName
+    ].categories.map((category, index) =>
+      this.scene.add
+        .sprite(
+          this.centre.x - 30,
+          this.centre.y + (index * 2 - 3) * 8,
+          category
+        )
+        .setDisplaySize(75, 16)
+    );
   }
 
   drawGoldCostText(): void {
     this.goldCostText = this.scene.add
-      .text(this.centre.x, this.centre.y + 50, this.cost.toString())
+      .text(this.centre.x - 25, this.centre.y + 25, this.cost.toString())
+      .setFontSize(20)
       .setOrigin(0.5);
   }
 
   destroy(): void {
     this.pokemonSprite.destroy();
     this.goldCostText.destroy();
+    this.typeSprites.forEach(sprite => sprite.destroy());
   }
 }
