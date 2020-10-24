@@ -11,6 +11,7 @@ export * from './meteor-mash';
 export * from './night-daze';
 export * from './quiver-dance';
 export * from './razor-wind';
+export * from './shadow-ball';
 export * from './shadow-tag';
 export * from './shell-trap';
 export * from './softboiled';

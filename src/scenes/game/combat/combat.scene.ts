@@ -5,7 +5,7 @@ import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
 import {
   PokemonAnimationType,
-  PokemonObject,
+  PokemonObject
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
 import {
@@ -16,7 +16,7 @@ import {
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
-  pathfind,
+  pathfind
 } from './combat.helpers';
 
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
@@ -450,5 +450,13 @@ export class CombatScene extends Scene {
       onDestroy();
       delete this.projectiles[projectileKey];
     });
+  }
+
+  getOverlappingUnits(
+    projectile: Phaser.GameObjects.GameObject,
+  ): PokemonObject[] {
+    return flatten(this.board)
+      .filter(isDefined)
+      .filter(pokemon => this.physics.overlap(pokemon, projectile));
   }
 }

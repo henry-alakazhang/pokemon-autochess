@@ -120,4 +120,17 @@ export const animations: { [key: string]: AnimationData } = {
     start: 40,
     duration: 100,
   },
+  'shadow-ball-start': {
+    texture: 'shadow-ball',
+    frames: 4,
+    start: 0,
+    duration: 60,
+  },
+  'shadow-ball-float': {
+    texture: 'shadow-ball',
+    frames: 12,
+    start: 4,
+    duration: 180,
+    repeat: -1,
+  },
 };
