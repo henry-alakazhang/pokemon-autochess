@@ -5,7 +5,7 @@ import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
 import {
   PokemonAnimationType,
-  PokemonObject
+  PokemonObject,
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
 import {
@@ -16,7 +16,7 @@ import {
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
-  pathfind
+  pathfind,
 } from './combat.helpers';
 
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
@@ -453,7 +453,7 @@ export class CombatScene extends Scene {
   }
 
   getOverlappingUnits(
-    projectile: Phaser.GameObjects.GameObject,
+    projectile: Phaser.GameObjects.GameObject
   ): PokemonObject[] {
     return flatten(this.board)
       .filter(isDefined)
