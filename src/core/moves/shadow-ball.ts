@@ -71,6 +71,7 @@ export const shadowBall: Move = {
                 defenseStat: this.defenseStat,
               });
               target.takeDamage(damage);
+              // TODO: don't apply this more than once ever
               target.changeStats({
                 specDefense: 0.5,
               });
