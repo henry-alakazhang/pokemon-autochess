@@ -42,6 +42,7 @@ export const shadowBall: Move = {
     endCoords.y -= dy;
 
     const hasBeenHit: { [k: string]: boolean } = {};
+    // shadow ball uses collision-based damage due to its slow projectile
     const ball = scene.physics.add
       .sprite(user.x, user.y, 'shadow-ball')
       .play('shadow-ball-start')
@@ -70,6 +71,9 @@ export const shadowBall: Move = {
                 defenseStat: this.defenseStat,
               });
               target.takeDamage(damage);
+              target.changeStats({
+                specDefense: 0.5,
+              });
               hasBeenHit[target.id] = true;
             });
           },
