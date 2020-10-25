@@ -451,4 +451,12 @@ export class CombatScene extends Scene {
       delete this.projectiles[projectileKey];
     });
   }
+
+  getOverlappingUnits(
+    projectile: Phaser.GameObjects.GameObject
+  ): PokemonObject[] {
+    return flatten(this.board)
+      .filter(isDefined)
+      .filter(pokemon => this.physics.overlap(pokemon, projectile));
+  }
 }

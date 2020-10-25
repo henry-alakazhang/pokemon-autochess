@@ -13,6 +13,7 @@ import {
   nightDaze,
   quiverDance,
   razorWind,
+  shadowBall,
   shadowTag,
   shellTrap,
   softboiled,
@@ -547,6 +548,23 @@ const basePokemonData = {
     },
     move: stoneEdge,
   },
+  gastly: {
+    base: 'gastly',
+    categories: ['ghost', 'poison'],
+    tier: 2,
+    maxHP: 60,
+    maxPP: 10,
+    attack: 65,
+    defense: 60,
+    specAttack: 130,
+    specDefense: 75,
+    speed: 110,
+    basicAttack: {
+      range: 1,
+      stat: 'specAttack',
+    },
+    move: shadowBall,
+  },
 } as const;
 
 /**
@@ -997,6 +1015,23 @@ const rawPokemonData = {
     ...getEvolution('larvitar', 3),
     name: 'tyranitar',
     displayName: 'Tyranitar',
+  },
+  gastly: {
+    ...getEvolution('gastly', 1),
+    name: 'gastly',
+    displayName: 'Gastly',
+    evolution: 'haunter',
+  },
+  haunter: {
+    ...getEvolution('gastly', 2),
+    name: 'haunter',
+    displayName: 'Haunter',
+    evolution: 'gengar',
+  },
+  gengar: {
+    ...getEvolution('gastly', 3),
+    name: 'gengar',
+    displayName: 'Gengar',
   },
 } as const;
 

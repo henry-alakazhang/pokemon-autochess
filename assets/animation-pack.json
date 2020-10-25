@@ -84,6 +84,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "shadow-ball",
+        "url": "assets/animations/shadow-ball.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 40
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "shell-trap",
         "url": "assets/animations/shell-trap.png",
         "frameConfig": {
