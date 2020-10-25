@@ -4,7 +4,7 @@ import * as glob from 'glob';
 const spriteOutputFile = 'assets/sprite-pack.json';
 const fxOutputFile = 'assets/fx-pack.json';
 
-glob('assets/pokemon/*', (err, matches) => {
+glob('assets/pokemon/*.png', (err, matches) => {
   if (err) {
     throw err;
   }
@@ -29,7 +29,7 @@ glob('assets/pokemon/*', (err, matches) => {
   fs.writeFileSync(spriteOutputFile, JSON.stringify(output, null, 2));
 });
 
-glob('assets/fx/**/*', (err, matches) => {
+glob('assets/fx/**/*.png', (err, matches) => {
   if (err) {
     throw err;
   }
