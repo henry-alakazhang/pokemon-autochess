@@ -3,6 +3,7 @@ import {
   getOppositeSide,
   inBounds,
 } from '../../scenes/game/combat/combat.helpers';
+import { getCoordinatesForGrid } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
 /**
@@ -40,6 +41,7 @@ export const shadowBall: Move = {
     }
     endCoords.x -= dx;
     endCoords.y -= dy;
+    const ballTarget = getCoordinatesForGrid(endCoords);
 
     const hasBeenHit: { [k: string]: boolean } = {};
     // shadow ball uses collision-based damage due to its slow projectile
@@ -50,8 +52,8 @@ export const shadowBall: Move = {
         ball.play('shadow-ball-float');
         scene.add.tween({
           targets: [ball],
-          x: board[endCoords.x][endCoords.y]?.x,
-          y: board[endCoords.x][endCoords.y]?.y,
+          x: ballTarget.x,
+          y: ballTarget.y,
           duration: 800,
           onUpdate: () => {
             // get all overlapping units that
