@@ -6,6 +6,7 @@ import {
   darkestLariat,
   dragonDance,
   dragonRush,
+  frenzyPlant,
   furyCutter,
   iceShard,
   magnetPull,
@@ -23,7 +24,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon,
+  zapCannon
 } from './moves';
 import { leechLife } from './moves/leech-life';
 
@@ -565,6 +566,23 @@ const basePokemonData = {
     },
     move: shadowBall,
   },
+  bulbasaur: {
+    base: 'bulbasaur',
+    categories: ['grass', 'poison'],
+    tier: 2,
+    maxHP: 80,
+    maxPP: 15,
+    attack: 82,
+    defense: 83,
+    specAttack: 100,
+    specDefense: 100,
+    speed: 80,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: frenzyPlant,
+  },
 } as const;
 
 /**
@@ -1032,6 +1050,41 @@ const rawPokemonData = {
     ...getEvolution('gastly', 3),
     name: 'gengar',
     displayName: 'Gengar',
+  },
+  bulbasaur: {
+    ...getEvolution('bulbasaur', 1),
+    name: 'bulbasaur',
+    displayName: 'Bulbasaur',
+    evolution: 'ivysaur',
+  },
+  ivysaur: {
+    ...getEvolution('bulbasaur', 2),
+    name: 'ivysaur',
+    displayName: 'Ivysaur',
+    evolution: 'venusaur',
+  },
+  venusaur: {
+    ...getEvolution('bulbasaur', 3),
+    name: 'venusaur',
+    displayName: 'Venusaur',
+  },
+  // the plant from bulbasaur line's move uses bulbasaur base stats
+  frenzyplant: {
+    ...getEvolution('bulbasaur', 1),
+    name: 'frenzyplant',
+    displayName: 'Frenzy Plant',
+    maxPP: undefined,
+    move: undefined,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+      projectile: {
+        key: 'seed',
+        speed: 350,
+      }
+    },
+    // override stage so it doesn't appear in the shop
+    stage: 2,
   },
 } as const;
 
