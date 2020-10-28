@@ -24,7 +24,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon
+  zapCannon,
 } from './moves';
 import { leechLife } from './moves/leech-life';
 
@@ -1081,7 +1081,7 @@ const rawPokemonData = {
       projectile: {
         key: 'seed',
         speed: 350,
-      }
+      },
     },
     // override stage so it doesn't appear in the shop
     stage: 2,
