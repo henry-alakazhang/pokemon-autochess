@@ -296,6 +296,13 @@ export class CombatScene extends Scene {
 
     // move if out of range
     if (getGridDistance(myCoords, targetCoords) > attack.range) {
+      if (pokemon.status.immobile) {
+        // can't move: reset target and end turn
+        pokemon.currentTarget = undefined;
+        this.setTurn(pokemon);
+        return;
+      }
+
       const step = pathfind(this.board, myCoords, targetCoords, attack.range);
       if (!step) {
         console.log('no valid step');

@@ -4,6 +4,7 @@ export * from './cotton-guard';
 export * from './darkest-lariat';
 export * from './dragon-dance';
 export * from './dragon-rush';
+export * from './frenzy-plant';
 export * from './fury-cutter';
 export * from './ice-shard';
 export * from './magnet-pull';
