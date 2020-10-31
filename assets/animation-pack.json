@@ -102,6 +102,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "sleep",
+        "url": "assets/animations/sleep.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "softboiled",
         "url": "assets/animations/softboiled.png",
         "frameConfig": {

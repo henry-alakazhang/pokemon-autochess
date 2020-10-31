@@ -1,6 +1,7 @@
 export * from './brave-bird';
 export * from './clone';
 export * from './cotton-guard';
+export * from './dark-void';
 export * from './darkest-lariat';
 export * from './dragon-dance';
 export * from './dragon-rush';

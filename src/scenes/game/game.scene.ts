@@ -187,7 +187,7 @@ export class GameScene extends Phaser.Scene {
       scene: this,
       x: 0,
       y: 0,
-      name: 'ivysaur',
+      name: 'darkrai-2',
       side: 'enemy',
     });
 

@@ -4,6 +4,7 @@ import {
   clone,
   cottonGuard,
   darkestLariat,
+  darkVoid,
   dragonDance,
   dragonRush,
   frenzyPlant,
@@ -583,6 +584,27 @@ const basePokemonData = {
     },
     move: frenzyPlant,
   },
+  darkrai: {
+    base: 'darkrai',
+    categories: ['dark'],
+    tier: 5,
+    maxHP: 70,
+    maxPP: 10,
+    attack: 90,
+    defense: 90,
+    specAttack: 135,
+    specDefense: 90,
+    speed: 125,
+    basicAttack: {
+      range: 2,
+      stat: 'specAttack',
+      projectile: {
+        key: 'blackhole',
+        speed: 250,
+      },
+    },
+    move: darkVoid,
+  },
 } as const;
 
 /**
@@ -1085,6 +1107,23 @@ const rawPokemonData = {
     },
     // override stage so it doesn't appear in the shop
     stage: 2,
+  },
+  darkrai: {
+    ...getEvolution('darkrai', 1),
+    name: 'darkrai',
+    displayName: 'Darkrai',
+    evolution: 'darkrai-2',
+  },
+  'darkrai-2': {
+    ...getEvolution('darkrai', 2),
+    name: 'darkrai-2',
+    displayName: 'Darkrai',
+    evolution: 'darkrai-3',
+  },
+  'darkrai-3': {
+    ...getEvolution('darkrai', 3),
+    name: 'darkrai-3',
+    displayName: 'Darkrai',
   },
 } as const;
 

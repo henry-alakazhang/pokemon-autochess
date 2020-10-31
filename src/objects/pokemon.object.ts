@@ -34,6 +34,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /** HP and PP bars above the Pokemon */
   bars: Phaser.GameObjects.Graphics;
   blindIcon: Phaser.GameObjects.Image;
+  sleepIcon: Phaser.GameObjects.Sprite;
   currentHP: number;
   maxHP: number;
   currentPP: number;
@@ -84,8 +85,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       .setVisible(false);
     this.blindIcon = this.scene.add
       .image(this.x, this.y - 20, 'blind')
+      .setDepth(2)
       .setVisible(false);
     this.attach(this.blindIcon);
+    this.sleepIcon = this.scene.add
+      .sprite(this.x + 10, this.y - 20, 'sleep')
+      .setScale(0.5, 0.5)
+      .setDepth(2)
+      .play('sleep')
+      .setVisible(false);
+    this.attach(this.sleepIcon);
 
     // default state is facing the player
     this.playAnimation('down');
@@ -192,6 +201,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     );
 
     this.blindIcon.setVisible(!!this.status.blind);
+    this.sleepIcon.setVisible(!!this.status.sleep);
   }
 
   public playAnimation(type: PokemonAnimationType) {
@@ -203,8 +213,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.tween({
       targets: [this, this.bars, ...this.attachments],
       duration: getTurnDelay(this.basePokemon) * 0.75,
-      x,
-      y,
+      // add delta so the bars / attachments / etc move properly too
+      x: `+=${x - this.x}`,
+      y: `+=${y - this.y}`,
       ease: 'Quad',
       onComplete: () => {
         this.setPosition(x, y);
@@ -273,6 +284,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       // destroy UI elements first
       this.bars.destroy();
       this.blindIcon.destroy();
+      this.sleepIcon.destroy();
       // TODO: destroy attachments?
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
@@ -345,5 +357,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     };
     this.redrawBars();
     return this;
+  }
+
+  public updateStatuses(timeElapsed: number) {
+    // reduce the duration of each status
+    (Object.keys(this.status) as Status[]).forEach((s: Status) => {
+      const statusValue = this.status[s];
+      if (statusValue) {
+        statusValue.duration -= timeElapsed;
+        if (statusValue.duration <= 0) {
+          this.status[s] = undefined;
+        }
+      }
+    });
+    this.redrawBars();
   }
 }

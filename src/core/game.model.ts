@@ -1,5 +1,6 @@
 export type Status =
   | 'paralyse'
+  | 'sleep'
   | 'blind'
   | 'percentDamageReduction'
   | 'statusImmunity'

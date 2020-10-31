@@ -133,4 +133,12 @@ export const animations: { [key: string]: AnimationData } = {
     duration: 180,
     repeat: -1,
   },
+  sleep: {
+    texture: 'sleep',
+    frames: 2,
+    start: 0,
+    // 6 fps to maintain parity with pokemon movement
+    duration: 1000 / 3,
+    repeat: -1,
+  },
 };

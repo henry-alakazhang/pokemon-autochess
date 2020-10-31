@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import { Status } from '../../../core/game.model';
 import { Attack, PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
@@ -228,16 +227,7 @@ export class CombatScene extends Scene {
    */
   setTurn(pokemon: PokemonObject) {
     const delay = getTurnDelay(pokemon.basePokemon);
-    // reduce the duration of each status
-    (Object.keys(pokemon.status) as Status[]).forEach((s: Status) => {
-      const statusValue = pokemon.status[s];
-      if (statusValue) {
-        statusValue.duration -= delay;
-        if (statusValue.duration <= 0) {
-          pokemon.status[s] = undefined;
-        }
-      }
-    });
+    pokemon.updateStatuses(delay);
     setTimeout(() => this.takeTurn(pokemon), delay);
   }
 
@@ -246,7 +236,7 @@ export class CombatScene extends Scene {
    */
   takeTurn(pokemon: PokemonObject) {
     // can't act: just wait til next turn
-    if (pokemon.status.paralyse) {
+    if (pokemon.status.paralyse || pokemon.status.sleep) {
       this.setTurn(pokemon);
       return;
     }
