@@ -1,3 +1,4 @@
+import { Category } from '../../core/game.model';
 import {
   buyablePokemon,
   pokemonData,
@@ -7,6 +8,7 @@ import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
+import { SynergyMarker } from '../../objects/synergy-marker.object';
 import { Coords } from './combat/combat.helpers';
 import {
   CombatBoard,
@@ -165,6 +167,9 @@ export class GameScene extends Phaser.Scene {
   /** A background for highlighting the valid regions to put Pokemon in */
   prepGridHighlight: Phaser.GameObjects.Shape;
 
+  synergies: { category: Category; count: number }[] = [];
+  synergyIcons: Phaser.GameObjects.GameObject[] = [];
+
   shop: ShopScene;
 
   constructor() {
@@ -272,7 +277,7 @@ export class GameScene extends Phaser.Scene {
 
     this.sellArea = this.add
       .rectangle(
-        90, // centre x
+        710, // centre x
         300, // centre y
         100, // width
         250, // height
@@ -471,6 +476,7 @@ export class GameScene extends Phaser.Scene {
         const { x, y } = getCoordinatesForMainboard(location.coords);
         pokemon.setPosition(x, y);
       }
+      this.updateSynergies();
     } else {
       this.sideboard[location.index] = pokemon;
       // move sprite as well
@@ -496,6 +502,7 @@ export class GameScene extends Phaser.Scene {
       if (existing) {
         existing.destroy();
       }
+      this.updateSynergies();
     } else {
       const existing = this.sideboard[location.index];
       this.sideboard[location.index] = undefined;
@@ -503,6 +510,47 @@ export class GameScene extends Phaser.Scene {
         existing.destroy();
       }
     }
+  }
+
+  updateSynergies() {
+    // build a map of synergy -> count
+    const synergyMap: { [k in Category]?: number } = {};
+    flatten(this.mainboard)
+      .filter(isDefined)
+      // todo: only count unique pokemon
+      .map(pokemon =>
+        pokemon.basePokemon.categories.forEach(category => {
+          const newValue = (synergyMap[category] ?? 0) + 1;
+          synergyMap[category] = newValue;
+        })
+      );
+    // convert to an array of existing synergies
+    this.synergies = Object.entries(synergyMap)
+      .map(([category, count]) =>
+        count ? { category: category as Category, count } : undefined
+      )
+      .filter(isDefined)
+      // order by count, then by type order
+      .sort((a, b) => {
+        if (b.count !== a.count) {
+          return b.count - a.count;
+        }
+        return b.category > a.category ? -1 : 1;
+      });
+    // clean up old icons
+    this.synergyIcons.forEach(icon => icon.destroy());
+    // and add new ones
+    this.synergyIcons = this.synergies.map(({ category, count }, index) =>
+      this.add.existing(
+        new SynergyMarker(
+          this,
+          90,
+          200 + index * SynergyMarker.height,
+          category as Category,
+          count
+        )
+      )
+    );
   }
 
   /**

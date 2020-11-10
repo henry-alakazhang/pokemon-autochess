@@ -1,3 +1,4 @@
+import { Category, Type } from './game.model';
 import { Move } from './move.model';
 import {
   braveBird,
@@ -28,39 +29,6 @@ import {
   zapCannon,
 } from './moves';
 import { leechLife } from './moves/leech-life';
-
-export type Type =
-  | 'normal'
-  | 'fire'
-  | 'fighting'
-  | 'water'
-  | 'flying'
-  | 'grass'
-  | 'poison'
-  | 'electric'
-  | 'ground'
-  | 'psychic'
-  | 'rock'
-  | 'ice'
-  | 'bug'
-  | 'dragon'
-  | 'ghost'
-  | 'dark'
-  | 'steel'
-  | 'fairy';
-
-export type Role =
-  | 'setup sweeper'
-  | 'physical attacker'
-  | 'special attacker'
-  | 'bulky attacker'
-  | 'hazard setter'
-  | 'status support'
-  | 'revenge killer'
-  | 'wall breaker'
-  | 'wall';
-
-export type Category = Type | Role;
 
 export interface Attack {
   /** number of squares away the move can reach */
