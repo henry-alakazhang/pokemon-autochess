@@ -544,8 +544,8 @@ export class GameScene extends Phaser.Scene {
       this.add.existing(
         new SynergyMarker(
           this,
-          90,
-          200 + index * SynergyMarker.height,
+          40,
+          170 + index * SynergyMarker.height,
           category as Category,
           count
         )
