@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { Category, synergyData } from '../../../core/game.model';
 import { Attack, PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
@@ -22,7 +23,9 @@ export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
 export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
   readonly playerBoard: CombatBoard;
+  readonly playerSynergies: { category: Category; count: number }[];
   readonly enemyBoard: CombatBoard;
+  readonly enemySynergies: { category: Category; count: number }[];
   readonly callback: CombatEndCallback;
 }
 
@@ -52,6 +55,11 @@ export class CombatScene extends Scene {
   private board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
   private projectiles: { [k: string]: Projectile } = {};
+
+  private synergies: {
+    player: { category: Category; count: number }[];
+    enemy: { category: Category; count: number }[];
+  };
 
   private combatEndCallback: CombatEndCallback;
 
@@ -103,6 +111,28 @@ export class CombatScene extends Scene {
           )
       )
     );
+
+    this.synergies = {
+      player: data.playerSynergies,
+      enemy: data.enemySynergies,
+    };
+
+    this.synergies.player.forEach(synergy => {
+      synergyData[synergy.category].onRoundStart?.({
+        scene: this,
+        board: this.board,
+        side: 'player',
+        count: synergy.count,
+      });
+    });
+    this.synergies.enemy.forEach(synergy => {
+      synergyData[synergy.category].onRoundStart?.({
+        scene: this,
+        board: this.board,
+        side: 'enemy',
+        count: synergy.count,
+      });
+    });
 
     flatten(this.board)
       .filter(isDefined)
