@@ -1,4 +1,4 @@
-import { Category, synergyData } from '../core/game.model';
+import { Category, getSynergyTier, synergyData } from '../core/game.model';
 
 export class SynergyMarker extends Phaser.GameObjects.Sprite {
   static height = 30;
@@ -36,15 +36,10 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
 
     const { description, thresholds } = synergyData[category];
 
-    // current tier is 1-indexed, so it's the index of the next threshold
-    let tier = thresholds.findIndex(threshold => count < threshold);
-    let nextThreshold = thresholds[tier];
-    // if tier is -1, it means there's no bigger threshold
-    // so we set tier to the max and just use the max threshold as the next one
-    if (tier === -1) {
-      tier = thresholds.length;
-      nextThreshold = thresholds[thresholds.length - 1];
-    }
+    const tier = getSynergyTier(thresholds, count);
+    // tier starts at 1, so next threshold is just the entry after
+    // tier can be `thresholds.length`, in which case it would be undefined and should default to max
+    const nextThreshold = thresholds[tier] ?? thresholds[thresholds.length - 1];
 
     this.thresholdText = scene.add
       .text(x + this.displayWidth + 4, y + 4, `${count}/${nextThreshold}`, {

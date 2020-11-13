@@ -327,7 +327,9 @@ export class GameScene extends Phaser.Scene {
 
     const sceneData: CombatSceneData = {
       playerBoard: this.mainboard,
+      playerSynergies: this.synergies,
       enemyBoard: this.enemyBoard,
+      enemySynergies: [],
       callback: (winner: 'player' | 'enemy') => {
         this.player.battleResult(winner === 'player');
         this.startDowntime();

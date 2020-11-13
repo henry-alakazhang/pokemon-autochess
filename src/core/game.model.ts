@@ -1,3 +1,4 @@
+import { flatten, isDefined } from '../helpers';
 import { PokemonObject } from '../objects/pokemon.object';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 
@@ -62,19 +63,37 @@ export interface Synergy {
   /** Possible effect that occurs on hit */
   readonly onHit?: (config: {
     scene: CombatScene;
+    board: CombatScene['board'];
     attacker: PokemonObject;
     defender: PokemonObject;
+    count: number;
   }) => void;
   /** Possible effect that occurs on being hit */
   readonly onBeingHit?: (config: {
     scene: CombatScene;
+    board: CombatScene['board'];
     attacker: PokemonObject;
     defender: PokemonObject;
+    count: number;
   }) => void;
   /** TODO Possible effect that occurs on start of round */
-  // readonly onRoundStart?: ({ }) => void;
+  readonly onRoundStart?: (config: {
+    scene: CombatScene;
+    board: CombatScene['board'];
+    side: 'player' | 'enemy';
+    count: number;
+  }) => void;
   /** TODO Possible replacement damage calculation */
   // readonly damageCalc?: ({ }) => number;
+}
+
+export function getSynergyTier(thresholds: number[], count: number) {
+  let tier = thresholds.findIndex(threshold => count < threshold);
+  // if tier is -1, it means it's beyond the max
+  if (tier === -1) {
+    tier = thresholds.length;
+  }
+  return tier;
 }
 
 export const synergyData: { [k in Category]: Synergy } = {
@@ -177,8 +196,36 @@ export const synergyData: { [k in Category]: Synergy } = {
   steel: {
     category: 'steel',
     displayName: 'Steel',
-    description: 'Does nothing.',
+    description: `Makes party members immune to status
+effects at the start of the round.
+
+ (2) - lasts 5 seconds
+ (4) - lasts 10 seconds`,
     thresholds: [2, 4],
+    onRoundStart({
+      board,
+      side,
+      count,
+    }: {
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const duration = tier === 1 ? 5000 : 10000;
+      flatten(board)
+        .filter(isDefined)
+        .forEach(pokemon => {
+          if (pokemon.side === side) {
+            // TODO: apply some visual for status immunity
+            pokemon.addStatus('statusImmunity', duration);
+          }
+        });
+    },
   },
   fairy: {
     category: 'fairy',
