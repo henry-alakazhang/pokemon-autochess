@@ -71,8 +71,8 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
     this.background.setInteractive();
     this.background
       .on(Phaser.Input.Events.POINTER_OVER, (pointer: Phaser.Input.Pointer) => {
-        this.descriptionText.setX(pointer.worldX + 10);
-        this.descriptionText.setY(pointer.worldY + 10);
+        this.descriptionText.setX(Math.round(pointer.worldX + 10));
+        this.descriptionText.setY(Math.round(pointer.worldY + 10));
         this.descriptionText.setVisible(true);
       })
       .on(Phaser.Input.Events.POINTER_OUT, () => {
