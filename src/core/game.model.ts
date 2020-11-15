@@ -66,6 +66,7 @@ export interface Synergy {
     board: CombatScene['board'];
     attacker: PokemonObject;
     defender: PokemonObject;
+    damage: number;
     count: number;
   }) => void;
   /** Possible effect that occurs on being hit */
@@ -74,9 +75,10 @@ export interface Synergy {
     board: CombatScene['board'];
     attacker: PokemonObject;
     defender: PokemonObject;
+    damage: number;
     count: number;
   }) => void;
-  /** TODO Possible effect that occurs on start of round */
+  /** Possible effect that occurs on start of round */
   readonly onRoundStart?: (config: {
     scene: CombatScene;
     board: CombatScene['board'];
@@ -130,8 +132,36 @@ export const synergyData: { [k in Category]: Synergy } = {
   grass: {
     category: 'grass',
     displayName: 'Grass',
-    description: 'Does nothing.',
+    description: `All party members drain life when dealing damage.
+
+ (2) - 15% of damage
+ (4) - 30% of damage
+ (6) - 65% of damage`,
     thresholds: [2, 4, 6],
+    onHit({
+      attacker,
+      damage,
+      count,
+    }: {
+      attacker: PokemonObject;
+      damage: number;
+      count: number;
+    }) {
+      // TODO add animation for healing?
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+      switch (tier) {
+        case 1:
+          return attacker.heal(damage * 0.15);
+        case 2:
+          return attacker.heal(damage * 0.3);
+        case 3:
+          return attacker.heal(damage * 0.65);
+        default: // nothing
+      }
+    },
   },
   poison: {
     category: 'poison',

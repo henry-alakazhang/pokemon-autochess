@@ -465,6 +465,7 @@ export class CombatScene extends Scene {
         board: this.board,
         attacker,
         defender,
+        damage: amount,
         count: synergy.count,
       });
     });
@@ -474,6 +475,7 @@ export class CombatScene extends Scene {
         board: this.board,
         attacker,
         defender,
+        damage: amount,
         count: synergy.count,
       });
     });
