@@ -1,5 +1,6 @@
 import { Category } from '../../core/game.model';
 import {
+  allPokemonNames,
   buyablePokemon,
   pokemonData,
   PokemonName,
@@ -9,7 +10,7 @@ import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { SynergyMarker } from '../../objects/synergy-marker.object';
-import { Coords } from './combat/combat.helpers';
+import { Coords, inBounds } from './combat/combat.helpers';
 import {
   CombatBoard,
   CombatScene,
@@ -321,14 +322,15 @@ export class GameScene extends Phaser.Scene {
     this.input.enabled = false;
     // hide the shop
     if (!this.scene.isPaused(ShopScene.KEY)) {
-      this.scene.pause(ShopScene.KEY);
       this.scene.setVisible(false, ShopScene.KEY);
+      this.scene.pause(ShopScene.KEY);
     }
 
     const sceneData: CombatSceneData = {
       playerBoard: this.mainboard,
       playerSynergies: this.synergies,
-      enemyBoard: this.enemyBoard,
+      // enemyBoard: this.enemyBoard,
+      enemyBoard: this.generateEnemyBoard(),
       enemySynergies: [],
       callback: (winner: 'player' | 'enemy') => {
         this.player.battleResult(winner === 'player');
@@ -685,5 +687,57 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.removePokemon(pokemon);
+  }
+
+  /**
+   * Generates a random enemy board with "comparable strength" to the player board.
+   * TEMP function until multiple players are implemented
+   *
+   * TODO: generate with synergies taken into account
+   */
+  generateEnemyBoard() {
+    // calculate total cost of player board
+    const value = flatten(this.mainboard)
+      .filter(isDefined)
+      .reduce(
+        (total, pokemon) =>
+          total + pokemon.basePokemon.tier * 3 ** pokemon.basePokemon.stage,
+        0
+      );
+    let enemyValue = 0;
+    let addedCount = 0;
+    const enemyBoard = Array(5)
+      .fill(undefined)
+      .map(() => Array(5).fill(undefined));
+
+    while (enemyValue < value && addedCount < 6) {
+      const pick =
+        pokemonData[
+          allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
+        ];
+      const pickValue = pick.tier * 3 ** pick.stage;
+      if (pickValue < value - enemyValue + 2) {
+        // ranged units go in back row, melee in front
+        const y = pick.basicAttack.range === 1 ? 3 : 4;
+        let x = 0;
+        // find a spot in the row where the unit will fit
+        while (inBounds(enemyBoard, { x, y }) && isDefined(enemyBoard[x][y])) {
+          x++;
+        }
+        // if such a spot exists, put them there
+        if (inBounds(enemyBoard, { x, y }) && !isDefined(enemyBoard[x][y])) {
+          enemyBoard[x][y] = new PokemonObject({
+            scene: this,
+            x: 0,
+            y: 0,
+            name: pick.name,
+            side: 'enemy',
+          });
+          enemyValue += pickValue;
+          addedCount += 1;
+        }
+      }
+    }
+    return enemyBoard;
   }
 }
