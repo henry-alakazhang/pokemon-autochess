@@ -3,7 +3,7 @@ import {
   allPokemonNames,
   buyablePokemon,
   pokemonData,
-  PokemonName
+  PokemonName,
 } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
@@ -14,7 +14,7 @@ import { Coords, inBounds } from './combat/combat.helpers';
 import {
   CombatBoard,
   CombatScene,
-  CombatSceneData
+  CombatSceneData,
 } from './combat/combat.scene';
 import { ShopScene } from './shop.scene';
 
@@ -692,7 +692,7 @@ export class GameScene extends Phaser.Scene {
   /**
    * Generates a random enemy board with "comparable strength" to the player board.
    * TEMP function until multiple players are implemented
-   * 
+   *
    * TODO: generate with synergies taken into account
    */
   generateEnemyBoard() {
@@ -716,9 +716,7 @@ export class GameScene extends Phaser.Scene {
           allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
         ];
       const pickValue = pick.tier * 3 ** pick.stage;
-      console.log('trying to pick', pick.name);
       if (pickValue < value - enemyValue + 2) {
-        console.log('value is ok');
         // ranged units go in back row, melee in front
         const y = pick.basicAttack.range === 1 ? 3 : 4;
         let x = 0;
@@ -728,7 +726,6 @@ export class GameScene extends Phaser.Scene {
         }
         // if such a spot exists, put them there
         if (inBounds(enemyBoard, { x, y }) && !isDefined(enemyBoard[x][y])) {
-          console.log('inserting');
           enemyBoard[x][y] = new PokemonObject({
             scene: this,
             x: 0,
