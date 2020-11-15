@@ -93,7 +93,7 @@ export const zapCannon: Move = {
                 damage: this.damage[user.basePokemon.stage - 1],
                 defenseStat: this.defenseStat,
               });
-              pokemon.takeDamage(damage);
+              scene.causeDamage(user, pokemon, damage);
             }
           });
         }, animations.thunder.duration * 0.5);

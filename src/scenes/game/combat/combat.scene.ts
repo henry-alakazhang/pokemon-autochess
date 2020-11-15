@@ -427,8 +427,7 @@ export class CombatScene extends Scene {
         const onHit = () => {
           if (hits) {
             // if it hits, deal damage
-            attacker.dealDamage(damage);
-            defender.takeDamage(damage);
+            this.causeDamage(attacker, defender, damage);
           } else {
             // otherwise show miss text
             this.add.existing(
@@ -447,6 +446,36 @@ export class CombatScene extends Scene {
           });
         }
       },
+    });
+  }
+
+  /**
+   * Causes one Pokemon to damage another, triggering all related effects
+   */
+  causeDamage(
+    attacker: PokemonObject,
+    defender: PokemonObject,
+    amount: number
+  ) {
+    attacker.dealDamage(amount);
+    defender.takeDamage(amount);
+    this.synergies[attacker.side].forEach(synergy => {
+      synergyData[synergy.category].onHit?.({
+        scene: this,
+        board: this.board,
+        attacker,
+        defender,
+        count: synergy.count,
+      });
+    });
+    this.synergies[defender.side].forEach(synergy => {
+      synergyData[synergy.category].onBeingHit?.({
+        scene: this,
+        board: this.board,
+        attacker,
+        defender,
+        count: synergy.count,
+      });
     });
   }
 

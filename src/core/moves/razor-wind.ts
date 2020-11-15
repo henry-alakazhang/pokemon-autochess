@@ -79,8 +79,7 @@ export const razorWind: Move = {
             this.getAOE(targetCoords).forEach(coord => {
               const pokemon = board[coord.x]?.[coord.y];
               if (pokemon && pokemon.side !== user.side) {
-                user.dealDamage(dph);
-                pokemon.takeDamage(dph);
+                scene.causeDamage(user, pokemon, dph);
               }
             });
             hits++;

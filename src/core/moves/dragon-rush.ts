@@ -4,6 +4,7 @@ import {
   getAngle,
   getFacing,
   getFurthestTarget,
+  getOppositeSide,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
@@ -96,8 +97,9 @@ export const dragonRush: Move = {
       scene.movePokemon(userCoords, targetCoords, onComplete);
       const damage = this.damage[user.basePokemon.stage - 1];
       this.getAOE(targetCoords, userCoords).forEach(({ x, y }) => {
-        if (board[x][y] && board[x][y]?.side !== user.side) {
-          board[x][y]?.takeDamage(damage);
+        const thisTarget = board[x][y];
+        if (thisTarget?.side === getOppositeSide(user.side)) {
+          scene.causeDamage(user, thisTarget, damage);
         }
       });
       // reset target after movement

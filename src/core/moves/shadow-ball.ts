@@ -72,7 +72,7 @@ export const shadowBall: Move = {
                 damage: this.damage[user.basePokemon.stage - 1],
                 defenseStat: this.defenseStat,
               });
-              target.takeDamage(damage);
+              scene.causeDamage(user, target, damage);
               // TODO: don't apply this more than once ever
               target.changeStats({
                 specDefense: 0.5,

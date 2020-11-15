@@ -37,7 +37,7 @@ export const leechLife: Move = {
           damage: this.damage[user.basePokemon.stage - 1],
           defenseStat: this.defenseStat,
         });
-        target.takeDamage(damage);
+        scene.causeDamage(user, target, damage);
 
         // play bee animation on the target
         const bees = scene.add

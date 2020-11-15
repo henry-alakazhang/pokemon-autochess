@@ -77,7 +77,7 @@ export const meteorMash: Move = {
               damage: this.damage[user.basePokemon.stage - 1],
               defenseStat: 'defense',
             });
-            target.takeDamage(damage);
+            scene.causeDamage(user, target, damage);
 
             if (
               inBounds(board, endCoords) &&
@@ -92,7 +92,7 @@ export const meteorMash: Move = {
                   damage: this.damage[user.basePokemon.stage - 1],
                   defenseStat: 'defense',
                 });
-                otherTarget.takeDamage(otherDamage);
+                scene.causeDamage(user, otherTarget, otherDamage);
                 otherTarget.addStatus('paralyse', 2000);
               }
             } else {
