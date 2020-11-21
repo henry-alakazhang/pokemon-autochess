@@ -1,5 +1,6 @@
 import { flatten, isDefined } from '../helpers';
 import { PokemonObject } from '../objects/pokemon.object';
+import { getNearestEmpty } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 
 export type Status =
@@ -202,8 +203,49 @@ export const synergyData: { [k in Category]: Synergy } = {
   bug: {
     category: 'bug',
     displayName: 'Bug',
-    description: 'Does nothing.',
+    description: `Makes a copy of the least-evolved Bug-type
+Pokemon at the start of the round.
+
+(3) - One copy`,
     thresholds: [3],
+    onRoundStart({
+      scene,
+      board,
+      side,
+      count,
+    }: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const pokemonToCopy = flatten(board)
+        .filter(isDefined)
+        // find all the Bug-types of the appropriate side
+        .filter(
+          pokemon =>
+            pokemon.side === side &&
+            pokemon.basePokemon.categories.includes('bug')
+        )
+        // and sort by star level
+        .sort((pokemonA, pokemonB) => {
+          return pokemonA.basePokemon.stage - pokemonB.basePokemon.stage;
+        })[0];
+      const locationToCopy = scene.getBoardLocationForPokemon(pokemonToCopy);
+      if (!locationToCopy) {
+        return;
+      }
+      const placeToPut = getNearestEmpty(board, locationToCopy);
+      if (!placeToPut) {
+        return;
+      }
+      scene.addPokemon(side, placeToPut, pokemonToCopy.basePokemon.name);
+    },
   },
   dragon: {
     category: 'dragon',
