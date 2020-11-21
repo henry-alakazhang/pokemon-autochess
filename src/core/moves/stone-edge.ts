@@ -75,7 +75,7 @@ export const stoneEdge: Move = {
               damage: realBaseDamage,
               defenseStat: 'defense',
             });
-            pokemon.takeDamage(damage);
+            scene.causeDamage(user, pokemon, damage);
           });
         }, animations['stone-edge-shoot'].duration / 2);
       });

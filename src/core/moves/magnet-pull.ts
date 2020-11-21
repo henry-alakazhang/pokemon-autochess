@@ -51,9 +51,9 @@ export const magnetPull: Move = {
       ({ x, y }) => inBounds(board, { x, y }) && !board[x]?.[y]
     )[0];
 
+    scene.causeDamage(user, target, this.damage[user.basePokemon.stage - 1]);
     // paralyse
     target.addStatus('paralyse', 4000);
-    target.takeDamage(this.damage[user.basePokemon.stage - 1]);
     // move if possible
     if (moveCoords) {
       scene.movePokemon(targetCoords, moveCoords, () => {

@@ -53,7 +53,11 @@ export const darkestLariat: Move = {
     possibleTargets.forEach(coords => {
       const target = board[coords.x][coords.y];
       if (target?.side === getOppositeSide(user.side)) {
-        target.takeDamage(this.damage[user.basePokemon.stage - 1]);
+        scene.causeDamage(
+          user,
+          target,
+          this.damage[user.basePokemon.stage - 1]
+        );
       }
     });
   },

@@ -65,7 +65,7 @@ export const furyCutter: Move = {
                 1.5 ** user.consecutiveAttacks,
               defenseStat: 'defense',
             });
-            target.takeDamage(damage);
+            scene.causeDamage(user, target, damage);
           },
         });
       },

@@ -1,6 +1,7 @@
 import {
   Coords,
   getGridDistance,
+  getOppositeSide,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
 import {
@@ -84,8 +85,9 @@ export const triAttack: Move = {
             // set timeouts to inflict damage when the explosions occur
 
             // explosion 1: single target
-            if (board[targetCoords.x]?.[targetCoords.y]?.side !== user.side) {
-              board[targetCoords.x]?.[targetCoords.y]?.takeDamage(damage);
+            const singleTarget = board[targetCoords.x][targetCoords.y];
+            if (singleTarget?.side === getOppositeSide(user.side)) {
+              scene.causeDamage(user, singleTarget, damage);
             }
 
             // explosion 2: 9 squares
@@ -98,11 +100,12 @@ export const triAttack: Move = {
                 duration: 150,
                 ease: Phaser.Math.Easing.Quadratic.In,
                 onComplete: () => {
-                  this.getAOE(targetCoords).forEach(
-                    ({ x, y }) =>
-                      board[x]?.[y]?.side !== user.side &&
-                      board[x]?.[y]?.takeDamage(damage)
-                  );
+                  this.getAOE(targetCoords).forEach(({ x, y }) => {
+                    const thisTarget = board[x]?.[y];
+                    if (thisTarget?.side === getOppositeSide(user.side)) {
+                      scene.causeDamage(user, thisTarget, damage);
+                    }
+                  });
                 },
               });
             }, animations['tri-attack-fire'].duration);
@@ -117,11 +120,12 @@ export const triAttack: Move = {
                 duration: 150,
                 ease: Phaser.Math.Easing.Quadratic.In,
                 onComplete: () => {
-                  this.getAOE(targetCoords).forEach(
-                    ({ x, y }) =>
-                      board[x]?.[y]?.side !== user.side &&
-                      board[x]?.[y]?.takeDamage(damage)
-                  );
+                  this.getAOE(targetCoords).forEach(({ x, y }) => {
+                    const thisTarget = board[x]?.[y];
+                    if (thisTarget?.side === getOppositeSide(user.side)) {
+                      scene.causeDamage(user, thisTarget, damage);
+                    }
+                  });
                 },
               });
             }, animations['tri-attack-fire'].duration + animations['tri-attack-electric'].duration);
