@@ -1,7 +1,9 @@
 import { flatten, isDefined } from '../helpers';
+import { FloatingText } from '../objects/floating-text.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import { getNearestEmpty } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
+import { GameScene } from '../scenes/game/game.scene';
 
 export type Status =
   | 'paralyse'
@@ -86,6 +88,12 @@ export interface Synergy {
     side: 'player' | 'enemy';
     count: number;
   }) => void;
+  /** Possible effect that occurs on end of round, after combat has concluded */
+  readonly onRoundEnd?: (config: {
+    scene: GameScene;
+    winner: 'player' | 'enemy';
+    count: number;
+  }) => void;
   /** TODO Possible replacement damage calculation */
   // readonly damageCalc?: ({ }) => number;
 }
@@ -103,8 +111,44 @@ export const synergyData: { [k in Category]: Synergy } = {
   normal: {
     category: 'normal',
     displayName: 'Normal',
-    description: 'Does nothing.',
-    thresholds: [2, 4, 6],
+    description: `Each Normal-type Pokemon has a 50% chance
+to Pick Up a Pokeball at end of round.
+
+ (3) - After winning rounds.
+ (6) - After all rounds.`,
+    thresholds: [3, 6],
+    onRoundEnd({
+      scene,
+      winner,
+      count,
+    }: {
+      scene: GameScene;
+      winner: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+      // todo: do on a per-player basis
+      if (tier === 1 && winner !== 'player') {
+        return;
+      }
+
+      flatten(scene.mainboard)
+        .filter(isDefined)
+        .forEach(pokemon => {
+          if (
+            pokemon.basePokemon.categories.includes('normal') &&
+            Math.random() < 0.5
+          ) {
+            scene.add.existing(
+              new FloatingText(scene, pokemon.x, pokemon.y, 'Pick up!')
+            );
+            scene.player.gold++;
+          }
+        });
+    },
   },
   fire: {
     category: 'fire',
