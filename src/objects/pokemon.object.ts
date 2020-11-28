@@ -39,6 +39,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   maxHP: number;
   currentPP: number;
   maxPP?: number;
+  evasion = 0;
 
   /* some combat specific stuff */
   id: string;

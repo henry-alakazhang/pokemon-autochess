@@ -300,8 +300,42 @@ Pokemon at the start of the round.
   ghost: {
     category: 'ghost',
     displayName: 'Ghost',
-    description: 'Does nothing.',
-    thresholds: [3, 6],
+    // TODO: if this is bullshit, make it deterministic
+    // eg. every 4th / 3rd / 2nd attack
+    // eg. for X seconds after using a move / critting / being crit
+    description: `Ghost-types can dodge attacks.
+
+ (2) - 20% chance
+ (4) - 40% chance
+ (6) - 60% chance`,
+    thresholds: [2, 4, 6],
+    onRoundStart({
+      board,
+      side,
+      count,
+    }: {
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const evasionBoost = tier === 1 ? 0.2 : tier === 2 ? 0.4 : 0.6;
+      flatten(board)
+        .filter(isDefined)
+        .forEach(pokemon => {
+          if (
+            pokemon.side === side &&
+            pokemon.basePokemon.categories.includes('ghost')
+          ) {
+            // TODO: better way of setting base evasion ?
+            pokemon.evasion += evasionBoost;
+          }
+        });
+    },
   },
   dark: {
     category: 'dark',

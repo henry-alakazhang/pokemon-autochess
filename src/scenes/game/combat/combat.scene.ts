@@ -421,19 +421,9 @@ export class CombatScene extends Scene {
       onYoyo: () => {
         const attack = attacker.basePokemon.basicAttack;
         const damage = calculateDamage(attacker, defender, attack);
-        // TODO: if we add evasion, calculate it here
-        const hits = !attacker.status.blind;
 
         const onHit = () => {
-          if (hits) {
-            // if it hits, deal damage
-            this.causeDamage(attacker, defender, damage);
-          } else {
-            // otherwise show miss text
-            this.add.existing(
-              new FloatingText(this, defender.x, defender.y, 'MISS!')
-            );
-          }
+          this.causeDamage(attacker, defender, damage, { isAttack: true });
         };
 
         if (!attack.projectile) {
@@ -455,8 +445,24 @@ export class CombatScene extends Scene {
   causeDamage(
     attacker: PokemonObject,
     defender: PokemonObject,
-    amount: number
+    amount: number,
+    { isAttack = false }: { isAttack?: boolean } = {}
   ) {
+    if (isAttack) {
+      // calculate miss chance
+      const accuracy = attacker.status.blind ? 0 : 1;
+      const { evasion } = defender;
+      const hitChance = accuracy * (1 - evasion);
+      if (Math.random() > hitChance) {
+        // doesn't hit
+
+        this.add.existing(
+          new FloatingText(this, defender.x, defender.y, 'MISS!')
+        );
+        return;
+      }
+    }
+
     attacker.dealDamage(amount);
     defender.takeDamage(amount);
     this.synergies[attacker.side].forEach(synergy => {
