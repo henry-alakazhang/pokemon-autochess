@@ -1,4 +1,4 @@
-import { Category } from '../../core/game.model';
+import { Category, synergyData } from '../../core/game.model';
 import {
   allPokemonNames,
   buyablePokemon,
@@ -333,6 +333,13 @@ export class GameScene extends Phaser.Scene {
       enemyBoard: this.generateEnemyBoard(),
       enemySynergies: [],
       callback: (winner: 'player' | 'enemy') => {
+        this.synergies.forEach(synergy => {
+          synergyData[synergy.category].onRoundEnd?.({
+            scene: this,
+            winner,
+            count: synergy.count,
+          });
+        });
         this.player.battleResult(winner === 'player');
         this.startDowntime();
       },
