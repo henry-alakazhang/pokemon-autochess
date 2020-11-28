@@ -94,8 +94,15 @@ export interface Synergy {
     winner: 'player' | 'enemy';
     count: number;
   }) => void;
-  /** TODO Possible replacement damage calculation */
-  // readonly damageCalc?: ({ }) => number;
+  /** Possible extra damage calculation */
+  readonly calculateDamage?: (config: {
+    attacker: PokemonObject;
+    defender: PokemonObject;
+    baseAmount: number;
+    flags: { isAttack?: boolean };
+    side: 'player' | 'enemy';
+    count: number;
+  }) => number;
 }
 
 export function getSynergyTier(thresholds: number[], count: number) {
@@ -294,8 +301,39 @@ Pokemon at the start of the round.
   dragon: {
     category: 'dragon',
     displayName: 'Dragon',
-    description: 'Does nothing.',
+    description: `Boosts the power of Dragon-type moves.
+
+(3) - 50% more damage.`,
     thresholds: [3],
+    calculateDamage({
+      attacker,
+      baseAmount,
+      side,
+      count,
+      flags,
+    }: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      baseAmount: number;
+      flags: { isAttack?: boolean };
+      side: 'player' | 'enemy';
+      count: number;
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+
+      if (
+        attacker.side === side &&
+        attacker.basePokemon.categories.includes('dragon') &&
+        flags.isAttack === false
+      ) {
+        return baseAmount * 1.5;
+      }
+
+      return baseAmount;
+    },
   },
   ghost: {
     category: 'ghost',

@@ -463,8 +463,32 @@ export class CombatScene extends Scene {
       }
     }
 
-    attacker.dealDamage(amount);
-    defender.takeDamage(amount);
+    let totalDamage = amount;
+    this.synergies[attacker.side].forEach(synergy => {
+      totalDamage =
+        synergyData[synergy.category].calculateDamage?.({
+          attacker,
+          defender,
+          baseAmount: totalDamage,
+          flags: { isAttack },
+          side: attacker.side,
+          count: synergy.count,
+        }) ?? totalDamage;
+    });
+    this.synergies[defender.side].forEach(synergy => {
+      totalDamage =
+        synergyData[synergy.category].calculateDamage?.({
+          attacker,
+          defender,
+          baseAmount: totalDamage,
+          flags: { isAttack },
+          side: defender.side,
+          count: synergy.count,
+        }) ?? totalDamage;
+    });
+
+    attacker.dealDamage(totalDamage);
+    defender.takeDamage(totalDamage);
     this.synergies[attacker.side].forEach(synergy => {
       synergyData[synergy.category].onHit?.({
         scene: this,
