@@ -83,11 +83,11 @@ export const iceShard: Move = {
 
       // attack them
       if (weakestPokemon) {
-        // temporarily double attack
-        user.changeStats({ attack: 2 });
+        const prevCritRate = user.critRate;
+        user.critRate = 1;
         scene.basicAttack(user, weakestPokemon, () => {
           // reset to previous state
-          user.changeStats({ attack: 0.5 });
+          user.critRate = prevCritRate;
           user.clearAlpha();
           onComplete();
         });

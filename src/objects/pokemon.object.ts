@@ -40,6 +40,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   currentPP: number;
   maxPP?: number;
   evasion = 0;
+  critRate = 0;
+  critDamage = 1;
 
   /* some combat specific stuff */
   id: string;
@@ -252,7 +254,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /**
    * Cause this pokemon to take damage
    */
-  public takeDamage(amount: number, triggerEvents = true) {
+  public takeDamage(
+    amount: number,
+    {
+      triggerEvents = true,
+      crit = false,
+    }: { triggerEvents?: boolean; crit?: boolean } = {}
+  ) {
     if (amount < 0 || this.currentHP <= 0) {
       return;
     }
@@ -269,7 +277,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     // display damage text
     this.scene.add.existing(
-      new FloatingText(this.scene, this.x, this.y, `${amount}`)
+      new FloatingText(
+        this.scene,
+        this.x,
+        this.y,
+        `${amount}${crit ? '!' : ''}`,
+        crit ? 'large' : 'small'
+      )
     );
     // play flash effect
     this.scene.add.tween({

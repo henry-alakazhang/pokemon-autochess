@@ -446,7 +446,10 @@ export class CombatScene extends Scene {
     attacker: PokemonObject,
     defender: PokemonObject,
     amount: number,
-    { isAttack = false }: { isAttack?: boolean } = {}
+    {
+      isAttack = false,
+      canCrit = false,
+    }: { isAttack?: boolean; canCrit?: boolean } = {}
   ) {
     if (isAttack) {
       // calculate miss chance
@@ -487,8 +490,16 @@ export class CombatScene extends Scene {
         }) ?? totalDamage;
     });
 
+    // if `canCrit` is passed in, use the value
+    // otherwise, all attacks can crit by default
+    const actuallyCanCrit = canCrit ?? isAttack ?? false;
+    const doesCrit = Math.random() < attacker.critRate;
+    if (actuallyCanCrit && doesCrit) {
+      totalDamage *= attacker.critDamage;
+    }
+
     attacker.dealDamage(totalDamage);
-    defender.takeDamage(totalDamage);
+    defender.takeDamage(totalDamage, { crit: doesCrit });
     this.synergies[attacker.side].forEach(synergy => {
       synergyData[synergy.category].onHit?.({
         scene: this,
