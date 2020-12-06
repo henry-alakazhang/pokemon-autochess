@@ -1,11 +1,18 @@
 export class FloatingText extends Phaser.GameObjects.Text {
-  constructor(scene: Phaser.Scene, x: number, y: number, text: string) {
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    text: string,
+    size: 'small' | 'large' = 'small'
+  ) {
     // randomly off-center it by up to 5 px
     const startX = (Math.random() - 0.5) * 10 + x;
     const startY = (Math.random() - 0.5) * 10 + y;
 
     super(scene, startX, startY, text, {
-      fontSize: '18px',
+      fontStyle: size === 'small' ? 'normal' : 'bold',
+      fontSize: size === 'small' ? '18px' : '20px',
     });
 
     this.setOrigin(0, 1);

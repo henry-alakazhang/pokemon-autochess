@@ -47,7 +47,7 @@ export const voltTackle: Move = {
             defenseStat: 'defense',
           });
           scene.causeDamage(user, target, damage);
-          user.takeDamage(Math.floor(damage / 4), false);
+          user.takeDamage(Math.floor(damage / 4), { triggerEvents: false });
           onComplete();
         },
       });

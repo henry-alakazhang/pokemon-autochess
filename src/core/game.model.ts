@@ -378,8 +378,38 @@ Pokemon at the start of the round.
   dark: {
     category: 'dark',
     displayName: 'Dark',
-    description: 'Does nothing.',
+    description: `Dark-type Pokemon can critically hit.
+
+ (2) - 15% chance to deal 200% damage.
+ (4) - 30% chance to deal 250% damage.
+ (6) - 45% chance to deal 300% damage.
+`,
     thresholds: [2, 4, 6],
+    onRoundStart({
+      board,
+      side,
+      count,
+    }: {
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const critRate = tier === 1 ? 0.15 : tier === 2 ? 0.3 : 0.45;
+      const critDamage = tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
+      flatten(board)
+        .filter(isDefined)
+        .forEach(pokemon => {
+          if (pokemon.side === side) {
+            pokemon.critRate = critRate;
+            pokemon.critDamage = critDamage;
+          }
+        });
+    },
   },
   steel: {
     category: 'steel',
