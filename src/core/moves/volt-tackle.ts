@@ -2,7 +2,7 @@ import {
   calculateDamage,
   getAttackAnimation,
   getFacing,
-  getTurnDelay
+  getTurnDelay,
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
