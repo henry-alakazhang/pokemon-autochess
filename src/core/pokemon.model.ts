@@ -1,4 +1,4 @@
-import { Category, Type } from './game.model';
+import { Category, Role, Type } from './game.model';
 import { Move } from './move.model';
 import {
   braveBird,
@@ -84,7 +84,7 @@ export interface Pokemon {
 const basePokemonData = {
   litwick: {
     base: 'litwick',
-    categories: ['fire', 'ghost'],
+    categories: ['fire', 'ghost', 'sweeper'],
     tier: 2,
     maxHP: 60,
     attack: 55,
@@ -104,7 +104,7 @@ const basePokemonData = {
   },
   fletchling: {
     base: 'fletchling',
-    categories: ['fire', 'flying'],
+    categories: ['fire', 'flying', 'revenge killer'],
     tier: 1,
     maxHP: 78,
     maxPP: 10,
@@ -121,7 +121,7 @@ const basePokemonData = {
   },
   rotomw: {
     base: 'rotomw',
-    categories: ['water', 'electric'],
+    categories: ['water', 'electric', 'support'],
     tier: 4,
     maxHP: 50,
     maxPP: 10,
@@ -138,7 +138,7 @@ const basePokemonData = {
   },
   pichu: {
     base: 'pichu',
-    categories: ['electric'],
+    categories: ['electric', 'revenge killer'],
     tier: 1,
     maxHP: 60,
     maxPP: 10,
@@ -155,7 +155,7 @@ const basePokemonData = {
   },
   seedot: {
     base: 'seedot',
-    categories: ['grass', 'dark'],
+    categories: ['grass', 'dark', 'disruptor'],
     tier: 1,
     maxHP: 90,
     maxPP: 15,
@@ -172,7 +172,7 @@ const basePokemonData = {
   },
   weedle: {
     base: 'weedle',
-    categories: ['bug', 'poison'],
+    categories: ['bug', 'poison', 'sweeper'],
     tier: 1,
     maxHP: 65,
     // slight hack: weedle has 0 PP and an active move which effectively replaces the basic attack
@@ -194,7 +194,7 @@ const basePokemonData = {
   },
   happiny: {
     base: 'happiny',
-    categories: ['normal'],
+    categories: ['normal', 'wall'],
     tier: 2,
     maxHP: 255,
     maxPP: 25,
@@ -212,7 +212,7 @@ const basePokemonData = {
   scyther: {
     base: 'scyther',
     // NOTE: Stage 1 Scyther is pure bug
-    categories: ['bug', 'steel'],
+    categories: ['bug', 'steel', 'pivot'],
     tier: 4,
     maxHP: 70,
     maxPP: 10,
@@ -230,7 +230,7 @@ const basePokemonData = {
   magikarp: {
     base: 'magikarp',
     // NOTE: Stage 1 and 2 Magikarp are pure water
-    categories: ['water', 'flying'],
+    categories: ['water', 'flying', 'sweeper'],
     tier: 1,
     maxHP: 95,
     maxPP: 20,
@@ -249,7 +249,7 @@ const basePokemonData = {
   },
   sneasel: {
     base: 'sneasel',
-    categories: ['ice', 'dark'],
+    categories: ['ice', 'dark', 'revenge killer'],
     tier: 4,
     maxHP: 70,
     maxPP: 12,
@@ -266,7 +266,7 @@ const basePokemonData = {
   },
   porygon: {
     base: 'porygon',
-    categories: ['normal'],
+    categories: ['normal', 'wallbreaker'],
     tier: 3,
     maxHP: 85,
     maxPP: 22,
@@ -287,7 +287,7 @@ const basePokemonData = {
   },
   magnemite: {
     base: 'magnemite',
-    categories: ['electric', 'steel'],
+    categories: ['electric', 'steel', 'support'],
     tier: 2,
     maxHP: 70,
     maxPP: 20,
@@ -308,7 +308,7 @@ const basePokemonData = {
   },
   grubbin: {
     base: 'grubbin',
-    categories: ['electric', 'bug'],
+    categories: ['electric', 'bug', 'wallbreaker'],
     tier: 1,
     maxHP: 77,
     maxPP: 15,
@@ -329,7 +329,7 @@ const basePokemonData = {
   },
   wooloo: {
     base: 'wooloo',
-    categories: ['normal'],
+    categories: ['normal', 'wall'],
     tier: 1,
     maxHP: 72,
     maxPP: 15,
@@ -346,7 +346,7 @@ const basePokemonData = {
   },
   larvesta: {
     base: 'larvesta',
-    categories: ['fire', 'bug'],
+    categories: ['fire', 'bug', 'sweeper'],
     tier: 3,
     maxHP: 85,
     maxPP: 16,
@@ -363,7 +363,7 @@ const basePokemonData = {
   },
   gible: {
     base: 'gible',
-    categories: ['dragon', 'ground'],
+    categories: ['dragon', 'ground', 'bulky attacker'],
     tier: 3,
     maxHP: 108,
     maxPP: 5,
@@ -380,7 +380,7 @@ const basePokemonData = {
   },
   zorua: {
     base: 'zorua',
-    categories: ['dark'],
+    categories: ['dark', 'revenge killer'],
     tier: 3,
     maxHP: 60,
     maxPP: 10,
@@ -397,7 +397,7 @@ const basePokemonData = {
   },
   abra: {
     base: 'abra',
-    categories: ['psychic'],
+    categories: ['psychic', 'sweeper'],
     tier: 2,
     maxHP: 55,
     maxPP: 10,
@@ -418,7 +418,7 @@ const basePokemonData = {
   },
   litten: {
     base: 'litten',
-    categories: ['fire', 'dark'],
+    categories: ['fire', 'dark', 'bulky attacker'],
     tier: 2,
     maxHP: 95,
     maxPP: 15,
@@ -435,7 +435,7 @@ const basePokemonData = {
   },
   mewtwo: {
     base: 'mewtwo',
-    categories: ['psychic'],
+    categories: ['psychic', 'disruptor'],
     tier: 5,
     maxHP: 106,
     maxPP: 10,
@@ -452,7 +452,7 @@ const basePokemonData = {
   },
   turtonator: {
     base: 'turtonator',
-    categories: ['fire', 'dragon'],
+    categories: ['fire', 'dragon', 'wall'],
     tier: 4,
     maxHP: 60,
     maxPP: 15,
@@ -469,7 +469,7 @@ const basePokemonData = {
   },
   beldum: {
     base: 'beldum',
-    categories: ['steel', 'psychic'],
+    categories: ['steel', 'psychic', 'bulky attacker'],
     tier: 3,
     maxHP: 80,
     maxPP: 15,
@@ -486,7 +486,7 @@ const basePokemonData = {
   },
   zubat: {
     base: 'zubat',
-    categories: ['poison', 'flying'],
+    categories: ['poison', 'flying', 'disruptor'],
     tier: 1,
     maxHP: 85,
     maxPP: 10,
@@ -503,7 +503,7 @@ const basePokemonData = {
   },
   larvitar: {
     base: 'larvitar',
-    categories: ['rock', 'dark'],
+    categories: ['rock', 'dark', 'bulky attacker'],
     tier: 3,
     maxHP: 100,
     maxPP: 10,
@@ -520,7 +520,7 @@ const basePokemonData = {
   },
   gastly: {
     base: 'gastly',
-    categories: ['ghost', 'poison'],
+    categories: ['ghost', 'poison', 'bulky attacker'],
     tier: 2,
     maxHP: 60,
     maxPP: 10,
@@ -537,7 +537,7 @@ const basePokemonData = {
   },
   bulbasaur: {
     base: 'bulbasaur',
-    categories: ['grass', 'poison'],
+    categories: ['grass', 'poison', 'wall'],
     tier: 2,
     maxHP: 80,
     maxPP: 15,
@@ -554,7 +554,7 @@ const basePokemonData = {
   },
   darkrai: {
     base: 'darkrai',
-    categories: ['dark'],
+    categories: ['dark', 'support'],
     tier: 5,
     maxHP: 70,
     maxPP: 10,
@@ -657,7 +657,7 @@ const rawPokemonData = {
   },
   scyther: {
     ...getEvolution('scyther', 1),
-    categories: ['bug'],
+    categories: ['bug', 'pivot'],
     name: 'scyther',
     displayName: 'Scyther',
     evolution: 'scizor-1',
@@ -682,7 +682,7 @@ const rawPokemonData = {
       stat: 'attack',
       unusable: true,
     },
-    categories: ['water'],
+    categories: ['water', 'sweeper'],
     move: undefined,
     name: 'magikarp',
     displayName: 'Magikarp',
@@ -690,7 +690,7 @@ const rawPokemonData = {
   },
   'magikarp-2': {
     ...getEvolution('magikarp', 2),
-    categories: ['water'],
+    categories: ['water', 'sweeper'],
     move: undefined,
     name: 'magikarp-2',
     displayName: 'Magikarp',
@@ -1113,7 +1113,7 @@ export const pokemonData: { [k in PokemonName]: Pokemon } = rawPokemonData;
  * todo: remove in prod
  */
 
-const categories: { [k in Type]: number } = {
+const types: { [k in Type]: number } = {
   normal: 0,
   fire: 0,
   fighting: 0,
@@ -1134,6 +1134,18 @@ const categories: { [k in Type]: number } = {
   fairy: 0,
 };
 
+const roles: { [k in Role]: number } = {
+  sweeper: 0,
+  'revenge killer': 0,
+  'bulky attacker': 0,
+  wallbreaker: 0,
+  'hazard setter': 0,
+  wall: 0,
+  disruptor: 0,
+  support: 0,
+  pivot: 0,
+};
+
 const tiers = {
   1: 0,
   2: 0,
@@ -1151,9 +1163,12 @@ const attackStats = {
 
 Object.values(basePokemonData).forEach(pokemon => {
   // sum up the types/categories
-  pokemon.categories.forEach((category: string) => {
-    if (category in categories) {
-      categories[category as Type]++;
+  pokemon.categories.forEach((category: Category) => {
+    if (category in types) {
+      types[category as Type]++;
+    }
+    if (category in roles) {
+      roles[category as Role]++;
     }
   });
 
@@ -1166,7 +1181,8 @@ Object.values(basePokemonData).forEach(pokemon => {
   tiers[pokemon.tier]++;
 });
 
-console.log('Categories:', categories);
+console.log('Types:', types);
+console.log('Roles:', roles);
 console.log('Stages:', tiers);
 console.log('Basic attack ranges:', ranges);
 console.log('Basic attack stats', attackStats);

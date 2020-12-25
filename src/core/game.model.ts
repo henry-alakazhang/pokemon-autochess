@@ -35,19 +35,18 @@ export type Type =
   | 'steel'
   | 'fairy';
 
-// TODO implement when ready.
-// export type Role =
-//   | 'setup sweeper'
-//   | 'physical attacker'
-//   | 'special attacker'
-//   | 'bulky attacker'
-//   | 'hazard setter'
-//   | 'status support'
-//   | 'revenge killer'
-//   | 'wall breaker'
-//   | 'wall';
+export type Role =
+  | 'sweeper'
+  | 'revenge killer'
+  | 'bulky attacker'
+  | 'wallbreaker'
+  | 'hazard setter'
+  | 'wall'
+  | 'disruptor'
+  | 'support'
+  | 'pivot';
 
-export type Category = Type;
+export type Category = Type | Role;
 
 /**
  * Model representing the effects of a synergy.
@@ -450,5 +449,59 @@ effects at the start of the round.
     displayName: 'Fairy',
     description: 'Does nothing.',
     thresholds: [2, 4],
+  },
+  sweeper: {
+    category: 'sweeper',
+    displayName: 'Sweeper',
+    description: 'Does nothing.',
+    thresholds: [2, 4, 6],
+  },
+  'revenge killer': {
+    category: 'revenge killer',
+    displayName: 'Revenge Killer',
+    description: 'Does nothing.',
+    thresholds: [2, 4],
+  },
+  wallbreaker: {
+    category: 'wallbreaker',
+    displayName: 'Wallbreaker',
+    description: 'Does nothing.',
+    thresholds: [2, 4],
+  },
+  'hazard setter': {
+    category: 'hazard setter',
+    displayName: 'Hazard Setter',
+    description: 'Does nothing.',
+    thresholds: [2, 4],
+  },
+  'bulky attacker': {
+    category: 'bulky attacker',
+    displayName: 'Bulky Attacker',
+    description: 'Does nothing.',
+    thresholds: [2, 4, 6],
+  },
+  wall: {
+    category: 'wall',
+    displayName: 'Wall',
+    description: 'Does nothing.',
+    thresholds: [2, 4, 6],
+  },
+  disruptor: {
+    category: 'disruptor',
+    displayName: 'Disruptor',
+    description: 'Does nothing.',
+    thresholds: [3],
+  },
+  support: {
+    category: 'support',
+    displayName: 'Support',
+    description: 'Does nothing.',
+    thresholds: [2, 4],
+  },
+  pivot: {
+    category: 'pivot',
+    displayName: 'Pivot',
+    description: 'Does nothing.',
+    thresholds: [3],
   },
 };
