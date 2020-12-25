@@ -498,6 +498,7 @@ export class CombatScene extends Scene {
       totalDamage *= attacker.critDamage;
     }
 
+    totalDamage = Math.round(totalDamage);
     attacker.dealDamage(totalDamage);
     defender.takeDamage(totalDamage, { crit: doesCrit });
     this.synergies[attacker.side].forEach(synergy => {

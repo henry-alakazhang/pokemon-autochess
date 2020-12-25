@@ -159,8 +159,41 @@ to Pick Up a Pokeball at end of round.
   fire: {
     category: 'fire',
     displayName: 'Fire',
-    description: 'Does nothing.',
+    description: `Fire-type Pokemon do 50% more damage
+when low on health.
+
+ (2) - Activates below 33% health.
+ (4) - Activates below 50% health.
+ (6) - Activates below 66% health.`,
     thresholds: [2, 4, 6],
+    calculateDamage({
+      attacker,
+      baseAmount,
+      side,
+      count,
+    }: {
+      attacker: PokemonObject;
+      baseAmount: number;
+      side: 'player' | 'enemy';
+      count: number;
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+
+      const threshold = tier === 1 ? 0.33 : tier === 2 ? 0.5 : 0.66;
+
+      if (
+        attacker.side === side &&
+        attacker.basePokemon.categories.includes('fire') &&
+        attacker.currentHP / attacker.maxHP < threshold
+      ) {
+        return baseAmount * 1.5;
+      }
+
+      return baseAmount;
+    },
   },
   fighting: {
     category: 'fighting',
