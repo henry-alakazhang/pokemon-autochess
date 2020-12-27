@@ -16,13 +16,14 @@ import { SynergyMarker } from './synergy-marker.object';
 const MAX_MAINBOARD_POKEMON = 6;
 
 export class Player extends Phaser.GameObjects.GameObject {
-  currentHP = 100;
-  maxHP = 100;
+  hp = 100;
   gold = 20;
   /** Consecutive win/loss streak */
   streak = 0;
   /** A map storing whether a Pokemon (by id) is currently evolving. */
   markedForEvolution: { [k: string]: boolean } = {};
+
+  nameInList: Phaser.GameObjects.Text;
 
   /** The Pokemon board representing the player's team composition */
   mainboard: CombatBoard = Array(5)
@@ -37,8 +38,23 @@ export class Player extends Phaser.GameObjects.GameObject {
   synergies: { category: Category; count: number }[] = [];
   synergyIcons: SynergyMarker[] = [];
 
-  constructor(scene: GameScene) {
+  constructor(
+    scene: GameScene,
+    public playerName: string,
+    x: number,
+    y: number
+  ) {
     super(scene, 'player');
+
+    this.nameInList = scene.add.text(x, y, `${this.playerName} - ${this.hp}`);
+  }
+
+  update() {
+    this.nameInList.setText(`${this.playerName} - ${this.hp}`);
+  }
+
+  updatePosition(x: number, y: number) {
+    this.nameInList.setPosition(x, y);
   }
 
   /**
@@ -50,7 +66,7 @@ export class Player extends Phaser.GameObjects.GameObject {
       this.streak = Math.max(1, this.streak + 1);
       ++this.gold;
     } else {
-      --this.currentHP; // TODO implement properly
+      --this.hp; // TODO implement properly
       this.streak = Math.min(-1, this.streak - 1);
     }
   }

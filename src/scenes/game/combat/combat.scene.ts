@@ -1,8 +1,9 @@
 import { Scene } from 'phaser';
-import { Category, synergyData } from '../../../core/game.model';
+import { synergyData } from '../../../core/game.model';
 import { Attack, PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
+import { Player } from '../../../objects/player.object';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -22,10 +23,8 @@ import {
 export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
 export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
-  readonly playerBoard: CombatBoard;
-  readonly playerSynergies: { category: Category; count: number }[];
-  readonly enemyBoard: CombatBoard;
-  readonly enemySynergies: { category: Category; count: number }[];
+  readonly player: Player;
+  readonly enemy: Player;
   readonly callback: CombatEndCallback;
 }
 
@@ -54,11 +53,12 @@ export class CombatScene extends Scene {
 
   private board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
+  private title: Phaser.GameObjects.Text;
   private projectiles: { [k: string]: Projectile } = {};
 
-  private synergies: {
-    player: { category: Category; count: number }[];
-    enemy: { category: Category; count: number }[];
+  private players: {
+    player: Player;
+    enemy: Player;
   };
 
   private combatEndCallback: CombatEndCallback;
@@ -90,13 +90,20 @@ export class CombatScene extends Scene {
       1 // line alpha: solid
     );
 
-    data.playerBoard.forEach((col, x) =>
+    this.title = this.add.text(350, 50, `Combat VS ${data.enemy.playerName}`);
+
+    this.players = {
+      player: data.player,
+      enemy: data.enemy,
+    };
+
+    this.players.player.mainboard.forEach((col, x) =>
       col.forEach(
         (pokemon, y) =>
           pokemon && this.addPokemon('player', { x, y }, pokemon.name)
       )
     );
-    data.enemyBoard.forEach((col, x) =>
+    this.players.enemy.mainboard.forEach((col, x) =>
       col.forEach(
         (pokemon, y) =>
           pokemon &&
@@ -112,12 +119,7 @@ export class CombatScene extends Scene {
       )
     );
 
-    this.synergies = {
-      player: data.playerSynergies,
-      enemy: data.enemySynergies,
-    };
-
-    this.synergies.player.forEach(synergy => {
+    this.players.player.synergies.forEach(synergy => {
       synergyData[synergy.category].onRoundStart?.({
         scene: this,
         board: this.board,
@@ -125,7 +127,7 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
-    this.synergies.enemy.forEach(synergy => {
+    this.players.enemy.synergies.forEach(synergy => {
       synergyData[synergy.category].onRoundStart?.({
         scene: this,
         board: this.board,
@@ -166,6 +168,7 @@ export class CombatScene extends Scene {
         backgroundColor: '#000',
         fontSize: '40px',
       })
+      .setDepth(200)
       .setOrigin(0.5, 0.5);
     setTimeout(() => {
       this.combatEndCallback(winner);
@@ -467,7 +470,7 @@ export class CombatScene extends Scene {
     }
 
     let totalDamage = amount;
-    this.synergies[attacker.side].forEach(synergy => {
+    this.players[attacker.side].synergies.forEach(synergy => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
           attacker,
@@ -478,7 +481,7 @@ export class CombatScene extends Scene {
           count: synergy.count,
         }) ?? totalDamage;
     });
-    this.synergies[defender.side].forEach(synergy => {
+    this.players[defender.side].synergies.forEach(synergy => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
           attacker,
@@ -501,7 +504,7 @@ export class CombatScene extends Scene {
     totalDamage = Math.round(totalDamage);
     attacker.dealDamage(totalDamage);
     defender.takeDamage(totalDamage, { crit: doesCrit });
-    this.synergies[attacker.side].forEach(synergy => {
+    this.players[attacker.side].synergies.forEach(synergy => {
       synergyData[synergy.category].onHit?.({
         scene: this,
         board: this.board,
@@ -511,7 +514,7 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
-    this.synergies[defender.side].forEach(synergy => {
+    this.players[defender.side].synergies.forEach(synergy => {
       synergyData[synergy.category].onBeingHit?.({
         scene: this,
         board: this.board,

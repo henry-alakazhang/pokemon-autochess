@@ -11,6 +11,7 @@ import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords, inBounds } from './combat/combat.helpers';
 import { CombatScene, CombatSceneData } from './combat/combat.scene';
+import { getRandomNames } from './game.helpers';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -213,11 +214,13 @@ export class GameScene extends Phaser.Scene {
       .setZ(-1)
       .setVisible(false);
 
-    this.players = new Array(8).fill(undefined).map(() => new Player(this));
+    this.players = ['You', ...getRandomNames(7)].map(
+      (name, index) => new Player(this, name, 620, 100 + 30 * index)
+    );
     // players[0] is always the human player
     [this.player] = this.players;
     this.playerGoldText = this.add.text(50, 100, `Gold: ${this.player.gold}`);
-    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.currentHP}`);
+    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.hp}`);
 
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.player = this.player; // temporary solution
@@ -270,7 +273,14 @@ export class GameScene extends Phaser.Scene {
 
   update() {
     this.playerGoldText.setText(`Gold: ${this.player.gold}`);
-    this.playerHPText.setText(`HP: ${this.player.currentHP}`);
+    this.playerHPText.setText(`HP: ${this.player.hp}`);
+
+    this.players
+      .sort((a, b) => b.hp - a.hp)
+      .forEach((playerObj, index) => {
+        playerObj.update();
+        playerObj.updatePosition(620, 100 + 30 * index);
+      });
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
@@ -295,12 +305,12 @@ export class GameScene extends Phaser.Scene {
       this.scene.pause(ShopScene.KEY);
     }
 
+    const enemy = this.players[Math.floor(Math.random() * 7) + 1];
+    enemy.mainboard = this.generateEnemyBoard();
+
     const sceneData: CombatSceneData = {
-      playerBoard: this.player.mainboard,
-      playerSynergies: this.player.synergies,
-      // enemyBoard: this.enemyBoard,
-      enemyBoard: this.generateEnemyBoard(),
-      enemySynergies: [],
+      player: this.player,
+      enemy,
       callback: (winner: 'player' | 'enemy') => {
         this.player.synergies.forEach(synergy => {
           synergyData[synergy.category].onRoundEnd?.({
@@ -310,7 +320,17 @@ export class GameScene extends Phaser.Scene {
             count: synergy.count,
           });
         });
+        // FIXME: round end synergies always apply to the human player
+        // this.player.synergies.forEach(synergy => {
+        //   synergyData[synergy.category].onRoundEnd?.({
+        //     scene: this,
+        //     board: this.player.mainboard,
+        //     winner,
+        //     count: synergy.count,
+        //   });
+        // });
         this.player.battleResult(winner === 'player');
+        enemy.battleResult(winner === 'enemy');
         this.startDowntime();
       },
     };
@@ -413,11 +433,11 @@ export class GameScene extends Phaser.Scene {
 
   buyPokemon(player: Player, pokemonName: PokemonName): boolean {
     const price = pokemonData[pokemonName].tier;
-    if (this.player.gold < price) {
+    if (player.gold < price) {
       return false;
     }
 
-    if (!this.player.canAddPokemonToSideboard()) {
+    if (!player.canAddPokemonToSideboard()) {
       return false;
     }
 
@@ -441,7 +461,7 @@ export class GameScene extends Phaser.Scene {
       player.gold += pokemon.basePokemon.tier + 4;
     }
 
-    this.player.removePokemon(pokemon);
+    player.removePokemon(pokemon);
   }
 
   /**
