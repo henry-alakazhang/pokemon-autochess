@@ -1,4 +1,4 @@
-import { Category } from '../core/game.model';
+import { Category, getSynergyTier, synergyData } from '../core/game.model';
 import { PokemonName } from '../core/pokemon.model';
 import { flatten, isDefined } from '../helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
@@ -305,11 +305,24 @@ export class Player extends Phaser.GameObjects.GameObject {
     // convert to an array of existing synergies
     this.synergies = Object.entries(synergyMap)
       .map(([category, count]) =>
-        count ? { category: category as Category, count } : undefined
+        count
+          ? {
+              category: category as Category,
+              count,
+              // pre-compute this for sorting purposes as well
+              tier: getSynergyTier(
+                synergyData[category as Category].thresholds,
+                count
+              ),
+            }
+          : undefined
       )
       .filter(isDefined)
-      // order by count, then by type order
+      // order by activated tier, then count, then in alphabetical order
       .sort((a, b) => {
+        if (a.tier !== b.tier) {
+          return b.tier - a.tier;
+        }
         if (b.count !== a.count) {
           return b.count - a.count;
         }
