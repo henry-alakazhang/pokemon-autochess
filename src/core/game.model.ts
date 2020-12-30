@@ -90,6 +90,7 @@ export interface Synergy {
   /** Possible effect that occurs on end of round, after combat has concluded */
   readonly onRoundEnd?: (config: {
     scene: GameScene;
+    board: CombatScene['board'];
     winner: 'player' | 'enemy';
     count: number;
   }) => void;
@@ -125,10 +126,12 @@ to Pick Up a Pokeball at end of round.
     thresholds: [3, 6],
     onRoundEnd({
       scene,
+      board,
       winner,
       count,
     }: {
       scene: GameScene;
+      board: CombatScene['board'];
       winner: 'player' | 'enemy';
       count: number;
     }) {
@@ -141,7 +144,7 @@ to Pick Up a Pokeball at end of round.
         return;
       }
 
-      flatten(scene.mainboard)
+      flatten(board)
         .filter(isDefined)
         .forEach(pokemon => {
           if (

@@ -1,4 +1,4 @@
-import { Category, synergyData } from '../../core/game.model';
+import { synergyData } from '../../core/game.model';
 import {
   allPokemonNames,
   buyablePokemon,
@@ -9,13 +9,9 @@ import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
-import { SynergyMarker } from '../../objects/synergy-marker.object';
 import { Coords, inBounds } from './combat/combat.helpers';
-import {
-  CombatBoard,
-  CombatScene,
-  CombatSceneData,
-} from './combat/combat.scene';
+import { CombatScene, CombatSceneData } from './combat/combat.scene';
+import { getRandomNames } from './game.helpers';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -36,8 +32,6 @@ const SHOP_X = 400;
 /** Y-coordinate of the center of the shop */
 const SHOP_Y = 175;
 
-const MAX_MAINBOARD_POKEMON = 6;
-
 const POOL_SIZES = {
   1: 3,
   2: 3,
@@ -46,10 +40,14 @@ const POOL_SIZES = {
   5: 3,
 };
 
+export type PokemonLocation =
+  | { location: 'mainboard'; coords: Coords }
+  | { location: 'sideboard'; index: number };
+
 /**
  * Returns the graphical x and y coordinates for a spot in the sideboard.
  */
-function getCoordinatesForSideboardIndex(i: number): Coords {
+export function getCoordinatesForSideboardIndex(i: number): Coords {
   return {
     x: SIDEBOARD_X + CELL_WIDTH * (i - (CELL_COUNT - 1) / 2),
     y: SIDEBOARD_Y,
@@ -59,7 +57,7 @@ function getCoordinatesForSideboardIndex(i: number): Coords {
 /**
  * Returns the graphical x and y coordinates for a spot in the mainboard
  */
-function getCoordinatesForMainboard({ x, y }: Coords): Coords {
+export function getCoordinatesForMainboard({ x, y }: Coords): Coords {
   return { x: GRID_X + (x - 2) * CELL_WIDTH, y: GRID_Y + (y - 2) * CELL_WIDTH };
 }
 
@@ -67,7 +65,7 @@ function getCoordinatesForMainboard({ x, y }: Coords): Coords {
  * Returns the mainboard x and y coordinates for a graphical coordinate,
  * or `undefined` if the point isn't on the grid
  */
-function getMainboardLocationForCoordinates({
+export function getMainboardLocationForCoordinates({
   x,
   y,
 }: Coords): PokemonLocation | undefined {
@@ -100,7 +98,7 @@ function getMainboardLocationForCoordinates({
  * Returns the sideboard index for a graphical coordinate,
  * or `undefined` if the point isn't within the sideboard
  */
-function getSideboardLocationForCoordinates({
+export function getSideboardLocationForCoordinates({
   x,
   y,
 }: Coords): PokemonLocation | undefined {
@@ -122,10 +120,6 @@ function getSideboardLocationForCoordinates({
   };
 }
 
-type PokemonLocation =
-  | { location: 'mainboard'; coords: Coords }
-  | { location: 'sideboard'; index: number };
-
 /**
  * The main game scene.
  *
@@ -142,10 +136,11 @@ export class GameScene extends Phaser.Scene {
     [k in PokemonName]?: number;
   } = {};
 
+  players: Player[];
+
   /* TEMPORARY JUNK */
   nextRoundButton: Button;
   shopButton: Phaser.GameObjects.GameObject;
-  enemyBoard: CombatBoard;
   player: Player;
   playerGoldText: Phaser.GameObjects.Text;
   playerHPText: Phaser.GameObjects.Text;
@@ -153,23 +148,13 @@ export class GameScene extends Phaser.Scene {
   sellText: Phaser.GameObjects.Text;
   /* END TEMPORARY JUNK */
 
-  /** The Pokemon board representing the player's team composition */
-  mainboard: CombatBoard;
-  /** The Pokemon in the player's sideboard (spare Pokemon) */
-  sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
-
   /** A reference to the currently selected Pokemon */
   selectedPokemon?: PokemonObject;
-  /** A map storing whether a Pokemon (by id) is currently evolving. */
-  markedForEvolution: { [k: string]: boolean } = {};
 
   /** The grid used to display team composition during the downtime phase */
   prepGrid: Phaser.GameObjects.Grid;
   /** A background for highlighting the valid regions to put Pokemon in */
   prepGridHighlight: Phaser.GameObjects.Shape;
-
-  synergies: { category: Category; count: number }[] = [];
-  synergyIcons: Phaser.GameObjects.GameObject[] = [];
 
   shop: ShopScene;
 
@@ -180,23 +165,6 @@ export class GameScene extends Phaser.Scene {
   }
 
   init() {
-    this.mainboard = Array(5)
-      .fill(undefined)
-      // fill + map rather than `fill` an array because
-      // `fill` will only initialise one array and fill with shallow copies
-      .map(() => Array(5).fill(undefined));
-
-    this.enemyBoard = Array(5)
-      .fill(undefined)
-      .map(() => Array(5).fill(undefined));
-    this.enemyBoard[0][3] = new PokemonObject({
-      scene: this,
-      x: 0,
-      y: 0,
-      name: 'darkrai-2',
-      side: 'enemy',
-    });
-
     buyablePokemon.forEach(pokemon => {
       this.pool[pokemon] = POOL_SIZES[pokemonData[pokemon].tier];
     });
@@ -246,9 +214,13 @@ export class GameScene extends Phaser.Scene {
       .setZ(-1)
       .setVisible(false);
 
-    this.player = new Player();
+    this.players = ['You', ...getRandomNames(7)].map(
+      (name, index) => new Player(this, name, 620, 100 + 30 * index)
+    );
+    // players[0] is always the human player
+    [this.player] = this.players;
     this.playerGoldText = this.add.text(50, 100, `Gold: ${this.player.gold}`);
-    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.currentHP}`);
+    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.hp}`);
 
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.player = this.player; // temporary solution
@@ -301,7 +273,14 @@ export class GameScene extends Phaser.Scene {
 
   update() {
     this.playerGoldText.setText(`Gold: ${this.player.gold}`);
-    this.playerHPText.setText(`HP: ${this.player.currentHP}`);
+    this.playerHPText.setText(`HP: ${this.player.hp}`);
+
+    this.players
+      .sort((a, b) => b.hp - a.hp)
+      .forEach((playerObj, index) => {
+        playerObj.update();
+        playerObj.updatePosition(620, 100 + 30 * index);
+      });
 
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
@@ -315,7 +294,7 @@ export class GameScene extends Phaser.Scene {
       this.selectedPokemon = undefined;
     }
     // hide all the prep-only stuff
-    this.mainboard.forEach(col =>
+    this.player.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(false))
     );
     this.prepGrid.setVisible(false);
@@ -326,21 +305,32 @@ export class GameScene extends Phaser.Scene {
       this.scene.pause(ShopScene.KEY);
     }
 
+    const enemy = this.players[Math.floor(Math.random() * 7) + 1];
+    enemy.mainboard = this.generateEnemyBoard();
+
     const sceneData: CombatSceneData = {
-      playerBoard: this.mainboard,
-      playerSynergies: this.synergies,
-      // enemyBoard: this.enemyBoard,
-      enemyBoard: this.generateEnemyBoard(),
-      enemySynergies: [],
+      player: this.player,
+      enemy,
       callback: (winner: 'player' | 'enemy') => {
-        this.synergies.forEach(synergy => {
+        this.player.synergies.forEach(synergy => {
           synergyData[synergy.category].onRoundEnd?.({
             scene: this,
+            board: this.player.mainboard,
             winner,
             count: synergy.count,
           });
         });
+        // FIXME: round end synergies always apply to the human player
+        // this.player.synergies.forEach(synergy => {
+        //   synergyData[synergy.category].onRoundEnd?.({
+        //     scene: this,
+        //     board: this.player.mainboard,
+        //     winner,
+        //     count: synergy.count,
+        //   });
+        // });
         this.player.battleResult(winner === 'player');
+        enemy.battleResult(winner === 'enemy');
         this.startDowntime();
       },
     };
@@ -349,10 +339,10 @@ export class GameScene extends Phaser.Scene {
 
   startDowntime() {
     this.shop.reroll();
-    this.player.gainRoundEndGold();
+    this.players.forEach(player => player.gainRoundEndGold());
 
     // show all the prep-only stuff
-    this.mainboard.forEach(col =>
+    this.player.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(true))
     );
     this.prepGrid.setVisible(true);
@@ -374,57 +364,12 @@ export class GameScene extends Phaser.Scene {
       getMainboardLocationForCoordinates(clickCoords) ||
       getSideboardLocationForCoordinates(clickCoords);
 
-    const pokemon = this.getPokemonAtLocation(select);
+    const pokemon = this.player.getPokemonAtLocation(select);
     if (!pokemon) {
       return;
     }
 
     this.selectedPokemon = pokemon.toggleOutline();
-  }
-
-  /**
-   * Returns the PokemonObject at the given location (if it exists)
-   */
-  getPokemonAtLocation(location?: PokemonLocation): PokemonObject | undefined {
-    if (!location) {
-      return undefined;
-    }
-    return location.location === 'mainboard'
-      ? this.mainboard[location.coords.x][location.coords.y]
-      : this.sideboard[location.index];
-  }
-
-  canAddPokemonToMainboard() {
-    return (
-      flatten(this.mainboard).filter(v => !!v).length < MAX_MAINBOARD_POKEMON
-    );
-  }
-
-  canAddPokemonToSideboard() {
-    return this.sideboard.includes(undefined);
-  }
-
-  addPokemonToSideboard(pokemon: PokemonName) {
-    if (!this.canAddPokemonToSideboard()) {
-      return;
-    }
-
-    // should never be -1 because we just checked
-    const empty = this.sideboard.findIndex(v => !v);
-    // insert new Pokemon
-    const newPokemon = new PokemonObject({
-      scene: this,
-      ...getCoordinatesForSideboardIndex(empty),
-      name: pokemon,
-      side: 'player',
-    });
-    this.add.existing(newPokemon);
-    this.sideboard[empty] = newPokemon;
-
-    /* check evolutions */
-    if (newPokemon.basePokemon.evolution) {
-      this.applyEvolutions(newPokemon);
-    }
   }
 
   /**
@@ -456,198 +401,21 @@ export class GameScene extends Phaser.Scene {
     }
 
     // check if a Pokemon already exists here
-    const swapTarget = this.getPokemonAtLocation(toLocation);
+    const swapTarget = this.player.getPokemonAtLocation(toLocation);
 
     // don't move add to mainboard if there's no room
     if (
       toLocation.location === 'mainboard' &&
       fromLocation.location === 'sideboard' &&
-      !this.canAddPokemonToMainboard() &&
+      !this.player.canAddPokemonToMainboard() &&
       // can still swap
       !swapTarget
     ) {
       return;
     }
 
-    this.setPokemonAtLocation(toLocation, fromPokemon);
-    this.setPokemonAtLocation(fromLocation, swapTarget);
-  }
-
-  /**
-   * Assigns a Pokemon object to a given location.
-   *
-   * WARNING: Doesn't do any checks or cleanup of the current Pokemon at that location.
-   * Make sure that either the location is empty, or you're tracking the Pokemon there.
-   */
-  setPokemonAtLocation(location: PokemonLocation, pokemon?: PokemonObject) {
-    if (location.location === 'mainboard') {
-      this.mainboard[location.coords.x][location.coords.y] = pokemon;
-      // move sprite as well
-      if (pokemon) {
-        const { x, y } = getCoordinatesForMainboard(location.coords);
-        pokemon.setPosition(x, y);
-      }
-      this.updateSynergies();
-    } else {
-      this.sideboard[location.index] = pokemon;
-      // move sprite as well
-      if (pokemon) {
-        const { x, y } = getCoordinatesForSideboardIndex(location.index);
-        pokemon.setPosition(x, y);
-      }
-    }
-  }
-
-  removePokemon(pokemon: PokemonObject) {
-    const location =
-      getMainboardLocationForCoordinates(pokemon) ||
-      getSideboardLocationForCoordinates(pokemon);
-    if (!location) {
-      // just destroy since it's not displayed anyway?
-      return pokemon.destroy();
-    }
-
-    if (location.location === 'mainboard') {
-      const existing = this.mainboard[location.coords.x][location.coords.y];
-      this.mainboard[location.coords.x][location.coords.y] = undefined;
-      if (existing) {
-        existing.destroy();
-      }
-      this.updateSynergies();
-    } else {
-      const existing = this.sideboard[location.index];
-      this.sideboard[location.index] = undefined;
-      if (existing) {
-        existing.destroy();
-      }
-    }
-  }
-
-  updateSynergies() {
-    // build a map of synergy -> count
-    const synergyMap: { [k in Category]?: number } = {};
-    flatten(this.mainboard)
-      .filter(isDefined)
-      // todo: only count unique pokemon
-      .map(pokemon =>
-        pokemon.basePokemon.categories.forEach(category => {
-          const newValue = (synergyMap[category] ?? 0) + 1;
-          synergyMap[category] = newValue;
-        })
-      );
-    // convert to an array of existing synergies
-    this.synergies = Object.entries(synergyMap)
-      .map(([category, count]) =>
-        count ? { category: category as Category, count } : undefined
-      )
-      .filter(isDefined)
-      // order by count, then by type order
-      .sort((a, b) => {
-        if (b.count !== a.count) {
-          return b.count - a.count;
-        }
-        return b.category > a.category ? -1 : 1;
-      });
-    // clean up old icons
-    this.synergyIcons.forEach(icon => icon.destroy());
-    // and add new ones
-    this.synergyIcons = this.synergies.map(({ category, count }, index) =>
-      this.add.existing(
-        new SynergyMarker(
-          this,
-          40,
-          170 + index * SynergyMarker.height,
-          category as Category,
-          count
-        )
-      )
-    );
-  }
-
-  /**
-   * Checks for possible evolutions that can be triggered by a Pokemon.
-   *
-   * For optimisation purposes, only checks one Pokemon.
-   * This should be fine if it's called every time a new Pokemon is added.
-   */
-  applyEvolutions(newPokemon: PokemonObject) {
-    const evolutionName = newPokemon.basePokemon.evolution;
-    if (!evolutionName) {
-      return;
-    }
-
-    // TODO: make this more imperative if the performance is bad
-    // it's probably fine though
-    const samePokemon =
-      // get all the Pokemon
-      [...flatten(this.mainboard), ...this.sideboard]
-        .filter(isDefined)
-        // that are have the same Name as this one
-        .filter(pokemon => pokemon.name === newPokemon.name)
-        // that aren't already evolving
-        .filter(pokemon => !this.markedForEvolution[pokemon.id])
-        // and pick the first three
-        .slice(0, 3);
-    if (samePokemon.length < 3) {
-      return;
-    }
-    const evoLocation =
-      getMainboardLocationForCoordinates(samePokemon[0]) ||
-      getSideboardLocationForCoordinates(samePokemon[0]);
-    if (!evoLocation) {
-      // should always be defined, but sure
-      console.error('Could not find place to put evolution');
-      return;
-    }
-
-    // mark these pokemon as evolving
-    samePokemon.forEach(pokemon => {
-      this.markedForEvolution[pokemon.id] = true;
-    });
-
-    // play a flashing animation for a bit
-    // not sure how to use tweens to get a flashing trigger of the outline
-    // so this just manually creates one using window.setTimeout
-    let timeout = 350;
-    let flashAnimation: number;
-    const toggleAnim = () => {
-      samePokemon.forEach(pokemon => pokemon.toggleOutline());
-      timeout *= 0.75;
-      flashAnimation = window.setTimeout(toggleAnim, timeout);
-    };
-    toggleAnim();
-
-    window.setTimeout(() => {
-      // end animation
-      window.clearInterval(flashAnimation);
-      // delete old Pokemon
-      samePokemon.forEach(pokemon => {
-        this.markedForEvolution[pokemon.id] = false;
-        this.removePokemon(pokemon);
-      });
-      // add new one
-      const evo = new PokemonObject({
-        scene: this,
-        x: 0,
-        y: 0,
-        name: evolutionName,
-        side: 'player',
-      });
-      this.add.existing(evo);
-      this.setPokemonAtLocation(evoLocation, evo);
-      // play animation to make it super clear
-      evo.setScale(1.5, 1.5);
-      this.add.tween({
-        targets: [evo],
-        scaleX: 1,
-        scaleY: 1,
-        ease: Phaser.Math.Easing.Expo.InOut,
-        duration: 500,
-        onComplete: () => {
-          this.applyEvolutions(evo);
-        },
-      });
-    }, 1000);
+    this.player.setPokemonAtLocation(toLocation, fromPokemon);
+    this.player.setPokemonAtLocation(fromLocation, swapTarget);
   }
 
   /**
@@ -665,16 +433,16 @@ export class GameScene extends Phaser.Scene {
 
   buyPokemon(player: Player, pokemonName: PokemonName): boolean {
     const price = pokemonData[pokemonName].tier;
-    if (this.player.gold < price) {
+    if (player.gold < price) {
       return false;
     }
 
-    if (!this.canAddPokemonToSideboard()) {
+    if (!player.canAddPokemonToSideboard()) {
       return false;
     }
 
     player.gold -= pokemonData[pokemonName].tier;
-    this.addPokemonToSideboard(pokemonName);
+    this.player.addPokemonToSideboard(pokemonName);
     return true;
   }
 
@@ -693,7 +461,7 @@ export class GameScene extends Phaser.Scene {
       player.gold += pokemon.basePokemon.tier + 4;
     }
 
-    this.removePokemon(pokemon);
+    player.removePokemon(pokemon);
   }
 
   /**
@@ -704,7 +472,7 @@ export class GameScene extends Phaser.Scene {
    */
   generateEnemyBoard() {
     // calculate total cost of player board
-    const value = flatten(this.mainboard)
+    const value = flatten(this.player.mainboard)
       .filter(isDefined)
       .reduce(
         (total, pokemon) =>
