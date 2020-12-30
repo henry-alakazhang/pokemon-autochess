@@ -152,6 +152,33 @@ export class Player extends Phaser.GameObjects.GameObject {
     }
   }
 
+  movePokemon(pokemon: PokemonObject, newLocation: PokemonLocation) {
+    // a PokemonObject has an { x, y }, so it fits the function signature
+    const fromLocation =
+      getMainboardLocationForCoordinates(pokemon) ||
+      getSideboardLocationForCoordinates(pokemon);
+    if (!fromLocation) {
+      return;
+    }
+
+    // check if a Pokemon already exists here
+    const swapTarget = this.getPokemonAtLocation(newLocation);
+
+    // don't move add to mainboard if there's no room
+    if (
+      newLocation.location === 'mainboard' &&
+      fromLocation.location === 'sideboard' &&
+      !this.canAddPokemonToMainboard() &&
+      // can still swap
+      !swapTarget
+    ) {
+      return;
+    }
+
+    this.setPokemonAtLocation(newLocation, pokemon);
+    this.setPokemonAtLocation(fromLocation, swapTarget);
+  }
+
   /**
    * Checks for possible evolutions that can be triggered by a Pokemon.
    *

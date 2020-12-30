@@ -377,45 +377,23 @@ export class GameScene extends Phaser.Scene {
    * If no valid location is specified, the Pokemon is deselected.
    */
   movePokemon(clickCoords: Coords) {
-    const fromPokemon = this.selectedPokemon;
-    if (!fromPokemon) {
-      return;
-    }
-    // a PokemonObject has an { x, y }, so it fits the function signature
-    const fromLocation =
-      getMainboardLocationForCoordinates(fromPokemon) ||
-      getSideboardLocationForCoordinates(fromPokemon);
-    if (!fromLocation) {
+    const { selectedPokemon } = this;
+    if (!selectedPokemon) {
       return;
     }
 
     // deselect Pokemon even if we don't move it
-    fromPokemon.toggleOutline();
+    selectedPokemon.toggleOutline();
     this.selectedPokemon = undefined;
 
-    const toLocation =
-      getSideboardLocationForCoordinates(clickCoords) ||
-      getMainboardLocationForCoordinates(clickCoords);
-    if (!toLocation) {
+    const newLocation =
+      getMainboardLocationForCoordinates(clickCoords) ||
+      getSideboardLocationForCoordinates(clickCoords);
+    if (!newLocation) {
       return;
     }
 
-    // check if a Pokemon already exists here
-    const swapTarget = this.player.getPokemonAtLocation(toLocation);
-
-    // don't move add to mainboard if there's no room
-    if (
-      toLocation.location === 'mainboard' &&
-      fromLocation.location === 'sideboard' &&
-      !this.player.canAddPokemonToMainboard() &&
-      // can still swap
-      !swapTarget
-    ) {
-      return;
-    }
-
-    this.player.setPokemonAtLocation(toLocation, fromPokemon);
-    this.player.setPokemonAtLocation(fromLocation, swapTarget);
+    this.player.movePokemon(selectedPokemon, newLocation);
   }
 
   /**
