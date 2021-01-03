@@ -34,7 +34,7 @@ export const nightDaze: Move = {
           damage: this.damage[user.basePokemon.stage - 1],
           defenseStat: 'defense',
         });
-        scene.causeDamage(user, target, damage);
+        scene.causeDamage(user, target, damage, { isAOE: true });
         target.addStatus('blind', 3000);
         onComplete();
       },

@@ -87,7 +87,7 @@ export const triAttack: Move = {
             // explosion 1: single target
             const singleTarget = board[targetCoords.x][targetCoords.y];
             if (singleTarget?.side === getOppositeSide(user.side)) {
-              scene.causeDamage(user, singleTarget, damage);
+              scene.causeDamage(user, singleTarget, damage, { isAOE: true });
             }
 
             // explosion 2: 9 squares
@@ -103,7 +103,9 @@ export const triAttack: Move = {
                   this.getAOE(targetCoords).forEach(({ x, y }) => {
                     const thisTarget = board[x]?.[y];
                     if (thisTarget?.side === getOppositeSide(user.side)) {
-                      scene.causeDamage(user, thisTarget, damage);
+                      scene.causeDamage(user, thisTarget, damage, {
+                        isAOE: true,
+                      });
                     }
                   });
                 },
@@ -123,7 +125,9 @@ export const triAttack: Move = {
                   this.getAOE(targetCoords).forEach(({ x, y }) => {
                     const thisTarget = board[x]?.[y];
                     if (thisTarget?.side === getOppositeSide(user.side)) {
-                      scene.causeDamage(user, thisTarget, damage);
+                      scene.causeDamage(user, thisTarget, damage, {
+                        isAOE: true,
+                      });
                     }
                   });
                 },

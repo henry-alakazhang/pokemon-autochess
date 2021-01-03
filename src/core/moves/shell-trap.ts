@@ -84,7 +84,7 @@ export const shellTrap: Move = {
                 damage: this.damage[user.basePokemon.stage - 1],
                 defenseStat: 'specDefense',
               });
-              scene.causeDamage(user, target, damage);
+              scene.causeDamage(user, target, damage, { isAOE: true });
             }
           });
         };

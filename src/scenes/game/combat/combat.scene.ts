@@ -451,8 +451,9 @@ export class CombatScene extends Scene {
     amount: number,
     {
       isAttack = false,
+      isAOE = false,
       canCrit = false,
-    }: { isAttack?: boolean; canCrit?: boolean } = {}
+    }: { isAttack?: boolean; isAOE?: boolean; canCrit?: boolean } = {}
   ) {
     if (isAttack) {
       // calculate miss chance
@@ -476,7 +477,7 @@ export class CombatScene extends Scene {
           attacker,
           defender,
           baseAmount: totalDamage,
-          flags: { isAttack },
+          flags: { isAttack, isAOE },
           side: attacker.side,
           count: synergy.count,
         }) ?? totalDamage;
@@ -487,7 +488,7 @@ export class CombatScene extends Scene {
           attacker,
           defender,
           baseAmount: totalDamage,
-          flags: { isAttack },
+          flags: { isAttack, isAOE },
           side: defender.side,
           count: synergy.count,
         }) ?? totalDamage;

@@ -99,7 +99,7 @@ export interface Synergy {
     attacker: PokemonObject;
     defender: PokemonObject;
     baseAmount: number;
-    flags: { isAttack?: boolean };
+    flags: { isAttack?: boolean; isAOE?: boolean };
     side: 'player' | 'enemy';
     count: number;
   }) => number;
@@ -213,8 +213,43 @@ when low on health.
   flying: {
     category: 'flying',
     displayName: 'Flying',
-    description: 'Does nothing.',
+    description: `Flying-type Pokemon take less damage from
+moves and attacks which hit an area.
+
+ (2) - 15% less damage
+ (4) - 30% less damage
+ (6) - 45% less damage`,
     thresholds: [2, 4, 6],
+    calculateDamage({
+      defender,
+      baseAmount,
+      side,
+      count,
+      flags: { isAOE },
+    }: {
+      defender: PokemonObject;
+      baseAmount: number;
+      side: 'player' | 'enemy';
+      count: number;
+      flags: { isAOE?: boolean };
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+
+      const multiplier = tier === 1 ? 0.85 : tier === 2 ? 0.7 : 0.55;
+
+      if (
+        isAOE &&
+        defender.side === side &&
+        defender.basePokemon.categories.includes('flying')
+      ) {
+        return baseAmount * multiplier;
+      }
+
+      return baseAmount;
+    },
   },
   grass: {
     category: 'grass',

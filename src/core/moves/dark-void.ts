@@ -55,7 +55,7 @@ export const darkVoid: Move = {
               damage: target.maxHP / 10,
               defenseStat: 'specDefense',
             });
-            scene.causeDamage(user, target, damage);
+            scene.causeDamage(user, target, damage, { isAOE: true });
             user.heal(damage / 2);
           });
         }, 1000);
