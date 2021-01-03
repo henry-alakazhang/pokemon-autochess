@@ -56,7 +56,8 @@ export const darkestLariat: Move = {
         scene.causeDamage(
           user,
           target,
-          this.damage[user.basePokemon.stage - 1]
+          this.damage[user.basePokemon.stage - 1],
+          { isAOE: true }
         );
       }
     });

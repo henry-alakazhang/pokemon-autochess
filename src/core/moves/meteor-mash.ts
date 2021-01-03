@@ -92,7 +92,9 @@ export const meteorMash: Move = {
                   damage: this.damage[user.basePokemon.stage - 1],
                   defenseStat: 'defense',
                 });
-                scene.causeDamage(user, otherTarget, otherDamage);
+                scene.causeDamage(user, otherTarget, otherDamage, {
+                  isAOE: true,
+                });
                 otherTarget.addStatus('paralyse', 2000);
               }
             } else {

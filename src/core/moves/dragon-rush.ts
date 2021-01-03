@@ -99,7 +99,7 @@ export const dragonRush: Move = {
       this.getAOE(targetCoords, userCoords).forEach(({ x, y }) => {
         const thisTarget = board[x][y];
         if (thisTarget?.side === getOppositeSide(user.side)) {
-          scene.causeDamage(user, thisTarget, damage);
+          scene.causeDamage(user, thisTarget, damage, { isAOE: true });
         }
       });
       // reset target after movement
