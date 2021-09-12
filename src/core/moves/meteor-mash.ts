@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Damages a target knocks it back, stunning it and anyone behind it.
  */
-export const meteorMash: Move = {
+const move = {
   displayName: 'Meteor Mash',
   type: 'active',
   range: 1,
@@ -48,7 +48,7 @@ export const meteorMash: Move = {
             const punch = scene.add
               .sprite(target.x, target.y, 'meteor-mash')
               .play('meteor-mash')
-              .once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () =>
+              .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>
                 punch.destroy()
               );
 
@@ -118,3 +118,5 @@ export const meteorMash: Move = {
     });
   },
 } as const;
+
+export const meteorMash: Move = move;

@@ -15,7 +15,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: differentiate this from Volt Tackle
  */
-export const braveBird: Move = {
+const move = {
   displayName: 'Brave Bird',
   type: 'active',
   damage: [200, 350, 500],
@@ -68,3 +68,5 @@ export const braveBird: Move = {
     });
   },
 } as const;
+
+export const braveBird: Move = move;

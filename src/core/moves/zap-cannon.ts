@@ -18,7 +18,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Charges for 2s, then deals damage in a line
  */
-export const zapCannon: Move = {
+const move = {
   displayName: 'Zap Cannon',
   type: 'active',
   damage: [300, 550, 800],
@@ -107,3 +107,5 @@ export const zapCannon: Move = {
     });
   },
 } as const;
+
+export const zapCannon: Move = move;

@@ -10,7 +10,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Summons a plant that attacks enemies
  */
-export const frenzyPlant: Move = {
+const move = {
   displayName: 'Frenzy Plant',
   type: 'active',
   range: 99,
@@ -41,3 +41,5 @@ export const frenzyPlant: Move = {
     onComplete();
   },
 } as const;
+
+export const frenzyPlant: Move = move;

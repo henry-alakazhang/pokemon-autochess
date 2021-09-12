@@ -8,7 +8,7 @@ import * as Tweens from '../tweens';
  *
  * Temporarily reduces all incoming damage and ignores status effects
  */
-export const cottonGuard: Move = {
+const move = {
   displayName: 'Cotton Guard',
   type: 'active',
   range: 1,
@@ -32,7 +32,7 @@ export const cottonGuard: Move = {
       .play('cotton-guard-start');
     user.attach(cotton);
     user.addStatus('moveIsActive', DURATION);
-    cotton.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+    cotton.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       user
         // adding moveIsActive here will refresh the duration
         // so it lasts the same as everything else
@@ -50,14 +50,13 @@ export const cottonGuard: Move = {
       setTimeout(() => {
         if (cotton.active) {
           cotton.play('cotton-guard-end');
-          cotton.once(
-            Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE,
-            () => {
-              cotton.destroy();
-            }
-          );
+          cotton.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            cotton.destroy();
+          });
         }
       }, DURATION);
     });
   },
 } as const;
+
+export const cottonGuard: Move = move;

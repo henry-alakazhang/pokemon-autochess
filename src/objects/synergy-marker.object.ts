@@ -81,9 +81,17 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
   }
 
   destroy() {
-    this.thresholdText.destroy();
-    this.descriptionText.destroy();
-    this.background.destroy();
+    // Only destroy if not part of the scene being destroyed.
+    // Otherwise Phaser can throw errors trying to destroy the same thing twice.
+    // https://github.com/photonstorm/phaser/issues/5520
+    if (
+      this.scene &&
+      this.scene.scene.settings.status !== Phaser.Scenes.SHUTDOWN
+    ) {
+      this.thresholdText.destroy();
+      this.descriptionText.destroy();
+      this.background.destroy();
+    }
     super.destroy();
   }
 }

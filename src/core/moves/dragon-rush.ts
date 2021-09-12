@@ -15,7 +15,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Dashes behind / next to the furthest enemy, dealing damage to every target hit
  */
-export const dragonRush: Move = {
+const move = {
   displayName: 'Dragon Rush',
   type: 'active',
   damage: [500, 800, 1300],
@@ -82,7 +82,7 @@ export const dragonRush: Move = {
       .setRotation(getAngle(userCoords, targetCoords))
       .play('dragon-rush');
     user.attach(rush);
-    rush.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+    rush.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       rush.destroy();
     });
 
@@ -107,3 +107,5 @@ export const dragonRush: Move = {
     }, 250);
   },
 } as const;
+
+export const dragonRush: Move = move;

@@ -12,7 +12,7 @@ import * as Tweens from '../tweens';
  *
  * Deals damage to a single target that increases by 50% each time it hits
  */
-export const furyCutter: Move = {
+const move = {
   displayName: 'Fury Cutter',
   type: 'active',
   damage: [100, 200, 400],
@@ -72,3 +72,5 @@ export const furyCutter: Move = {
     });
   },
 } as const;
+
+export const furyCutter: Move = move;

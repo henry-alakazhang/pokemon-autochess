@@ -9,7 +9,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Teleports to a random spot on the grid, healing and dropping aggro.
  */
-export const teleport: Move = {
+const move = {
   displayName: 'Teleport',
   type: 'active',
   range: 1,
@@ -63,3 +63,5 @@ export const teleport: Move = {
     });
   },
 } as const;
+
+export const teleport: Move = move;

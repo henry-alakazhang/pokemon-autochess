@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: make this just an auto-crit when that exists
  */
-export const iceShard: Move = {
+const move = {
   displayName: 'Ice Shard',
   type: 'active',
   defenseStat: 'defense',
@@ -97,3 +97,5 @@ export const iceShard: Move = {
     });
   },
 } as const;
+
+export const iceShard: Move = move;

@@ -14,7 +14,7 @@ import * as Tweens from '../tweens';
  *
  * Puts a number of enemies to sleep and drains their HP over time.
  */
-export const darkVoid: Move = {
+const move = {
   displayName: 'Dark Void',
   type: 'active',
   defenseStat: 'specDefense',
@@ -66,3 +66,5 @@ export const darkVoid: Move = {
     });
   },
 } as const;
+
+export const darkVoid: Move = move;

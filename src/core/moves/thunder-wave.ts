@@ -1,7 +1,7 @@
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
-export const thunderWave: Move = {
+const move = {
   displayName: 'Thunder Wave',
   type: 'active',
   description: 'Paralyses the target for 4 seconds.',
@@ -27,4 +27,6 @@ export const thunderWave: Move = {
       },
     });
   },
-};
+} as const;
+
+export const thunderWave: Move = move;

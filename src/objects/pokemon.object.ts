@@ -144,8 +144,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   destroy() {
-    this.outlineSprite.destroy();
-    this.bars.destroy();
+    // Only destroy if not part of the scene being destroyed.
+    // Otherwise Phaser can throw errors trying to destroy the same thing twice.
+    // https://github.com/photonstorm/phaser/issues/5520
+    if (
+      this.scene &&
+      this.scene.scene.settings.status !== Phaser.Scenes.SHUTDOWN
+    ) {
+      this.outlineSprite.destroy();
+      this.bars.destroy();
+    }
     super.destroy();
   }
 

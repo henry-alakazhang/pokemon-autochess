@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Copies members of the enemy team to fight for you
  */
-export const clone: Move = {
+const move = {
   displayName: 'Clone',
   type: 'active',
   range: 99,
@@ -50,3 +50,5 @@ export const clone: Move = {
     onComplete();
   },
 } as const;
+
+export const clone: Move = move;

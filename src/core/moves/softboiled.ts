@@ -11,7 +11,7 @@ import * as Tweens from '../tweens';
  *
  * TODO: actually make it target the lowest-health rather than just any low-health
  */
-export const softboiled: Move = {
+const move = {
   displayName: 'Softboiled',
   type: 'active',
   damage: [300, 500, 700],
@@ -46,7 +46,7 @@ export const softboiled: Move = {
           const eggCrack = scene.add
             .sprite(target.x, target.y, 'softboiled')
             .play('softboiled')
-            .on(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            .on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
               target.heal(this.damage[user.basePokemon.stage - 1]);
               eggCrack.destroy();
             });
@@ -56,3 +56,5 @@ export const softboiled: Move = {
     });
   },
 } as const;
+
+export const softboiled: Move = move;

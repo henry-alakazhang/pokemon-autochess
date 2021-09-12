@@ -5,7 +5,7 @@ import { Move } from '../move.model';
  *
  * Makes attacks undodgable.
  */
-export const shadowTag: Move = {
+const move = {
   displayName: 'Shadow Tag',
   type: 'passive',
   description:
@@ -13,4 +13,6 @@ export const shadowTag: Move = {
   flags: {
     undodgable: true,
   },
-};
+} as const;
+
+export const shadowTag: Move = move;

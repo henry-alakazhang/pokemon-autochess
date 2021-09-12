@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Fires a shadowy ball forward that damages and reduces the Special Defense of units hit.
  */
-export const shadowBall: Move = {
+const move = {
   displayName: 'Shadow Ball',
   type: 'active',
   damage: [300, 550, 800],
@@ -48,7 +48,7 @@ export const shadowBall: Move = {
     const ball = scene.physics.add
       .sprite(user.x, user.y, 'shadow-ball')
       .play('shadow-ball-start')
-      .once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+      .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         ball.play('shadow-ball-float');
         scene.add.tween({
           targets: [ball],
@@ -88,3 +88,5 @@ export const shadowBall: Move = {
       });
   },
 } as const;
+
+export const shadowBall: Move = move;

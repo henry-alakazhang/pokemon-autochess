@@ -14,7 +14,7 @@ import * as Tweens from '../tweens';
  *
  * TODO: add custom targetting to hit maximum AoE
  */
-export const razorWind: Move = {
+const move = {
   displayName: 'Razor Wind',
   type: 'active',
   damage: [600, 1000, 1800],
@@ -93,3 +93,5 @@ export const razorWind: Move = {
     });
   },
 } as const;
+
+export const razorWind: Move = move;

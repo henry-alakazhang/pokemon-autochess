@@ -8,7 +8,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Boots attack damage and speed for the rest of the battle
  */
-export const dragonDance: Move = {
+const move = {
   displayName: 'Dragon Dance',
   type: 'active',
   range: 1,
@@ -60,3 +60,5 @@ export const dragonDance: Move = {
     });
   },
 } as const;
+
+export const dragonDance: Move = move;

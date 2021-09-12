@@ -13,7 +13,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * 2-tile piercing rock attack that deals more damage to a single target
  */
-export const stoneEdge: Move = {
+const move = {
   displayName: 'Stone Edge',
   type: 'active',
   range: 1,
@@ -48,11 +48,11 @@ export const stoneEdge: Move = {
       .setOrigin(0, 0.5)
       .setRotation(getAngle(user, target))
       .play('stone-edge-gather')
-      .once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+      .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         // animation 2: fire stones
         stones
           .play('stone-edge-shoot')
-          .once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             console.log('second');
             onComplete();
             stones.destroy();
@@ -81,3 +81,5 @@ export const stoneEdge: Move = {
       });
   },
 } as const;
+
+export const stoneEdge: Move = move;

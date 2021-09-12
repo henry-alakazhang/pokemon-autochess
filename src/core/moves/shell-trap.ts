@@ -14,7 +14,7 @@ import * as Tweens from '../tweens';
  *
  * Reduces damage taken and reflects damage at enemies during the duration
  */
-export const shellTrap: Move = {
+const move = {
   displayName: 'Shell Trap',
   type: 'active',
   range: 1,
@@ -67,7 +67,7 @@ export const shellTrap: Move = {
           const trapAnimation = scene.add
             .sprite(user.x, user.y, 'shell-trap')
             .play('shell-trap')
-            .once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
               trapAnimation.destroy();
             });
 
@@ -99,3 +99,5 @@ export const shellTrap: Move = {
     });
   },
 } as const;
+
+export const shellTrap: Move = move;

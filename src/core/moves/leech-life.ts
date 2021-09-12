@@ -12,7 +12,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Deals damage to a single target and heals the user for half the amount
  */
-export const leechLife: Move = {
+const move = {
   displayName: 'Leech Life',
   type: 'active',
   damage: [150, 250, 400],
@@ -43,7 +43,7 @@ export const leechLife: Move = {
         const bees = scene.add
           .sprite(target.x, target.y, 'leech-life')
           .play('leech-life')
-          .once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             bees.destroy();
           });
         // and move it onto the user
@@ -60,3 +60,5 @@ export const leechLife: Move = {
     });
   },
 } as const;
+
+export const leechLife: Move = move;

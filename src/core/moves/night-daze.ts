@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Damages a target and blinds them for 3 seconds.
  */
-export const nightDaze: Move = {
+const move = {
   displayName: 'Night Daze',
   type: 'active',
   range: 1,
@@ -41,3 +41,5 @@ export const nightDaze: Move = {
     });
   },
 } as const;
+
+export const nightDaze: Move = move;

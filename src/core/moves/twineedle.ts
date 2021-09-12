@@ -7,7 +7,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: make it poison
  */
-export const twineedle: Move = {
+const move = {
   displayName: 'Twineedle',
   type: 'active',
   range: 2,
@@ -30,3 +30,5 @@ export const twineedle: Move = {
     });
   },
 } as const;
+
+export const twineedle: Move = move;

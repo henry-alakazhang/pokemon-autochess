@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Damages surrounding targets, ignoring defense. Should have a low casting cost.
  */
-export const darkestLariat: Move = {
+const move = {
   displayName: 'Darkest Lariat',
   type: 'active',
   range: 1,
@@ -63,3 +63,5 @@ export const darkestLariat: Move = {
     });
   },
 } as const;
+
+export const darkestLariat: Move = move;

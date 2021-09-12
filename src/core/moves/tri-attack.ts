@@ -19,7 +19,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: make the projectile animated
  */
-export const triAttack: Move = {
+const move = {
   displayName: 'Tri-Attack',
   type: 'active',
   damage: [200, 350, 600],
@@ -142,3 +142,5 @@ export const triAttack: Move = {
     });
   },
 } as const;
+
+export const triAttack: Move = move;

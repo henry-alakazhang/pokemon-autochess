@@ -66,8 +66,16 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
   }
 
   destroy(): void {
-    this.pokemonSprite.destroy();
-    this.goldCostText.destroy();
-    this.typeSprites.forEach(sprite => sprite.destroy());
+    // Only destroy if not part of the scene being destroyed.
+    // Otherwise Phaser can throw errors trying to destroy the same thing twice.
+    // https://github.com/photonstorm/phaser/issues/5520
+    if (
+      this.scene &&
+      this.scene.scene.settings.status !== Phaser.Scenes.SHUTDOWN
+    ) {
+      this.pokemonSprite.destroy();
+      this.goldCostText.destroy();
+      this.typeSprites.forEach(sprite => sprite.destroy());
+    }
   }
 }

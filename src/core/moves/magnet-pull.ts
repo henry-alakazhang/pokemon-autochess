@@ -11,7 +11,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Deals damage to and pulls the furthest enemy to the user.
  */
-export const magnetPull: Move = {
+const move = {
   displayName: 'Magnet Pull',
   type: 'active',
   targetting: 'unit',
@@ -66,3 +66,5 @@ export const magnetPull: Move = {
     }
   },
 } as const;
+
+export const magnetPull: Move = move;

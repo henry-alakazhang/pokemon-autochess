@@ -8,7 +8,7 @@ import * as Tweens from '../tweens';
  *
  * Boots special attack, special defense and speed for the rest of the battle
  */
-export const quiverDance: Move = {
+const move = {
   displayName: 'Dragon Dance',
   type: 'active',
   range: 1,
@@ -33,7 +33,7 @@ export const quiverDance: Move = {
       duration: 500,
     });
 
-    dance.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+    dance.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       dance.destroy();
       // at the end, grow and shrink
       scene.add.tween({
@@ -54,3 +54,5 @@ export const quiverDance: Move = {
     });
   },
 } as const;
+
+export const quiverDance: Move = move;
