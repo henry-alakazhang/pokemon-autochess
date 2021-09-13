@@ -62,6 +62,13 @@ export interface Synergy {
   readonly description: string;
   /** Amount of synergy required to trigger different levels */
   readonly thresholds: number[];
+  /** Possible effect that occurs when using move */
+  readonly onMoveUse?: (config: {
+    scene: CombatScene;
+    board: CombatScene['board'];
+    user: PokemonObject;
+    count: number;
+  }) => void;
   /** Possible effect that occurs on hit */
   readonly onHit?: (config: {
     scene: CombatScene;
@@ -294,8 +301,37 @@ moves and attacks which hit an area.
   electric: {
     category: 'electric',
     displayName: 'Electric',
-    description: 'Does nothing.',
+    description: `Whenever an Electric-type pokemon uses its move,
+it boosts the Speed of the whole party.
+
+(2) - 10% boost
+(4) - 20% boost
+(6) - 35% boost`,
     thresholds: [2, 4, 6],
+    onMoveUse({
+      board,
+      user,
+      count,
+    }: {
+      board: CombatScene['board'];
+      user: PokemonObject;
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+      const boost = tier == 1 ? 1.05 : tier === 2 ? 1.15 : 1.25;
+
+      flatten(board)
+        .filter(pokemon => pokemon?.side === user.side)
+        .forEach(pokemon => {
+          // TODO: Add animation (yellow cog buff)
+          pokemon?.changeStats({
+            speed: boost,
+          });
+        });
+    },
   },
   ground: {
     category: 'ground',
