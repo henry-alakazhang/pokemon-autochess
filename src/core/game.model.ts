@@ -321,7 +321,7 @@ it boosts the Speed of the whole party.
       if (tier === 0) {
         return;
       }
-      const boost = tier == 1 ? 1.05 : tier === 2 ? 1.15 : 1.25;
+      const boost = tier === 1 ? 1.05 : tier === 2 ? 1.15 : 1.25;
 
       flatten(board)
         .filter(pokemon => pokemon?.side === user.side)
