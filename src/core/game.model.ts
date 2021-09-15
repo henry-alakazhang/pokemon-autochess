@@ -484,37 +484,56 @@ Pokemon at the start of the round.
   dark: {
     category: 'dark',
     displayName: 'Dark',
-    description: `Dark-type Pokemon can critically hit.
+    description: `Innate: ALL Dark-type Pokemon teleport to the opposite
+side of the battlefield at the start of each round.
+
+Synergy: Dark-type Pokemon gain a critical hit ratio.
 
  (2) - 15% chance to deal 200% damage.
  (4) - 30% chance to deal 250% damage.
- (6) - 45% chance to deal 300% damage.
-`,
+ (6) - 45% chance to deal 300% damage.`,
     thresholds: [2, 4, 6],
     onRoundStart({
+      scene,
       board,
       side,
       count,
     }: {
+      scene: CombatScene;
       board: CombatScene['board'];
       side: 'player' | 'enemy';
       count: number;
     }) {
       const tier = getSynergyTier(this.thresholds, count);
-      if (tier === 0) {
-        return;
-      }
+      // note: we don't skip tier 0 here because Dark-types
+      // have an innate ability which is always active.
 
-      const critRate = tier === 1 ? 0.15 : tier === 2 ? 0.3 : 0.45;
-      const critDamage = tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
-      flatten(board)
-        .filter(isDefined)
-        .forEach(pokemon => {
-          if (pokemon.side === side) {
-            pokemon.critRate = critRate;
-            pokemon.critDamage = critDamage;
+      const critRate =
+        tier === 0 ? 0 : tier === 1 ? 0.15 : tier === 2 ? 0.3 : 0.45;
+      const critDamage = tier === 0 ? 1 : tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
+      flatten(
+        board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
+      ).forEach(slot => {
+        if (
+          slot.pokemon?.side === side &&
+          slot.pokemon.basePokemon.categories.includes('dark')
+        ) {
+          slot.pokemon.critRate = critRate;
+          slot.pokemon.critDamage = critDamage;
+
+          // Jump to nearest spot on opposite side
+          const jumpLocation = getNearestEmpty(board, {
+            x: slot.x,
+            y: board.length - slot.y - 1,
+          });
+          slot.pokemon.setAlpha(0.5);
+          if (jumpLocation) {
+            scene.movePokemon(slot, jumpLocation, () => {
+              slot.pokemon?.clearAlpha();
+            });
           }
-        });
+        }
+      });
     },
   },
   steel: {

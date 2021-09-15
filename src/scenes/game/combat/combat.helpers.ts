@@ -133,6 +133,11 @@ export function getNearestTarget(
 }
 
 export function getNearestEmpty(board: CombatScene['board'], { x, y }: Coords) {
+  // return self if empty before pathfinding
+  if (!board[x][y]) {
+    return { x, y };
+  }
+
   return getNearest(
     board,
     { x, y },
