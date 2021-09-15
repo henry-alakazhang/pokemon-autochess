@@ -141,4 +141,10 @@ export const animations: { [key: string]: AnimationData } = {
     duration: 1000 / 3,
     repeat: -1,
   },
+  explosion: {
+    texture: 'explosion',
+    frames: 4,
+    start: 0,
+    duration: 133,
+  },
 };

@@ -5,6 +5,7 @@ export * from './dark-void';
 export * from './darkest-lariat';
 export * from './dragon-dance';
 export * from './dragon-rush';
+export * from './egg-barrage';
 export * from './frenzy-plant';
 export * from './fury-cutter';
 export * from './ice-shard';

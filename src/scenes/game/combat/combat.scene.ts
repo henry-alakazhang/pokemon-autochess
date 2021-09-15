@@ -51,7 +51,7 @@ export function getCoordinatesForGrid({ x, y }: Coords): Coords {
 export class CombatScene extends Scene {
   static readonly KEY = 'CombatScene';
 
-  private board: CombatBoard;
+  board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
   private title: Phaser.GameObjects.Text;
   private projectiles: { [k: string]: Projectile } = {};
