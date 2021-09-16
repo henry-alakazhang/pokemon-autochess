@@ -26,6 +26,7 @@ const move = {
   },
   range: 99,
   async use({ scene, user, userCoords, onComplete }: MoveConfig<'unit'>) {
+    user.addStatus('moveIsActive', 1000);
     const baseDamage = this.damage[user.basePokemon.tier - 1];
     const shootEgg = () => {
       // fetch latest board to include pokemon that died during attack
