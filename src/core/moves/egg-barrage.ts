@@ -29,7 +29,7 @@ const move = {
     const baseDamage = this.damage[user.basePokemon.tier - 1];
     const shootEgg = () => {
       // fetch latest board to include pokemon that died during attack
-      const board = scene.board;
+      const { board } = scene;
       const targetCoords = getNearestTarget(board, userCoords);
       if (!targetCoords) {
         // end
@@ -74,11 +74,11 @@ const move = {
             .filter(isDefined)
             .forEach(secondaryTarget => {
               if (secondaryTarget.side !== user.side) {
-                const damage = calculateDamage(user, secondaryTarget, {
+                const secondaryDamage = calculateDamage(user, secondaryTarget, {
                   damage: baseDamage / 2,
                   defenseStat: this.defenseStat,
                 });
-                scene.causeDamage(user, secondaryTarget, damage, {
+                scene.causeDamage(user, secondaryTarget, secondaryDamage, {
                   isAOE: true,
                 });
               }
