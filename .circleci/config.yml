@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:12.3
+      - image: circleci/node:14.17
     working_directory: ~/pokemon-autochess
 
     steps:
@@ -25,4 +25,4 @@ jobs:
       - run: yarn prepare
       - run: yarn lint
       - run: yarn test
-      - run: yarn build:dev
+      - run: yarn build
