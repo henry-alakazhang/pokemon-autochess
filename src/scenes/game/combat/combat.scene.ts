@@ -70,6 +70,10 @@ export class CombatScene extends Scene {
   }
 
   create(data: CombatSceneData) {
+    console.log(
+      `Combat: ${data.player.playerName} vs ${data.enemy.playerName}`
+    );
+
     this.board = Array(5)
       .fill(undefined)
       // fill + map rather than `fill` an array because

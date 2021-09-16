@@ -275,7 +275,8 @@ export class GameScene extends Phaser.Scene {
     this.playerGoldText.setText(`Gold: ${this.player.gold}`);
     this.playerHPText.setText(`HP: ${this.player.hp}`);
 
-    this.players
+    // Display players in order without reordering array.
+    [...this.players]
       .sort((a, b) => b.hp - a.hp)
       .forEach((playerObj, index) => {
         playerObj.update();
