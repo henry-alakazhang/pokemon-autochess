@@ -3,6 +3,10 @@
  * Flies towards a target and destroys itself on hit
  */
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
+  static Events = {
+    HIT: 'projectileHit',
+  };
+
   body: Phaser.Physics.Arcade.Body;
 
   target: Phaser.GameObjects.Sprite;
@@ -23,11 +27,19 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
-    // destroy if target goes away or if we reach it
-    if (!this.target || this.scene.physics.overlap(this, this.target)) {
+    // destroy if target goes away
+    if (!this.target || !this.target.active) {
       this.destroy();
       return;
     }
+
+    // mark as hit if the target is hit
+    if (this.scene.physics.overlap(this, this.target)) {
+      this.emit(Projectile.Events.HIT);
+      this.destroy();
+      return;
+    }
+
     // call `moveToObject` again to change direction if needed
     this.scene.physics.moveToObject(this, this.target, this.speed);
     // turn to face target

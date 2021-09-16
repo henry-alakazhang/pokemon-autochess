@@ -544,7 +544,7 @@ export class CombatScene extends Scene {
     from: PokemonObject,
     to: PokemonObject,
     projectile: NonNullable<Attack['projectile']>,
-    onDestroy: Function
+    onHit: Function
   ) {
     const projectileObj = new Projectile(
       this,
@@ -558,8 +558,10 @@ export class CombatScene extends Scene {
     // store this in the `projectiles` map under a random key
     const projectileKey = generateId();
     this.projectiles[projectileKey] = projectileObj;
+    projectileObj.on(Projectile.Events.HIT, () => {
+      onHit();
+    });
     projectileObj.on(Phaser.GameObjects.Events.DESTROY, () => {
-      onDestroy();
       delete this.projectiles[projectileKey];
     });
   }
