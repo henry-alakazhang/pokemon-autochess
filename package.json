@@ -10,6 +10,7 @@
     "prestart": "yarn prepare",
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js",
     "lint": "eslint --cache --ext ts .",
     "fix": "eslint --cache --ext ts . --fix",
     "test": "ts-mocha src/**/*.spec.ts",
