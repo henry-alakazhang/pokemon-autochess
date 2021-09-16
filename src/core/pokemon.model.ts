@@ -8,6 +8,7 @@ import {
   darkVoid,
   dragonDance,
   dragonRush,
+  eggBarrage,
   frenzyPlant,
   furyCutter,
   iceShard,
@@ -573,6 +574,27 @@ const basePokemonData = {
     },
     move: darkVoid,
   },
+  exeggcute: {
+    base: 'exeggcute',
+    categories: ['grass', 'psychic', 'wallbreaker'],
+    tier: 3,
+    maxHP: 95,
+    maxPP: 10,
+    attack: 95,
+    defense: 85,
+    specAttack: 125,
+    specDefense: 75,
+    speed: 55,
+    basicAttack: {
+      range: 2,
+      stat: 'attack',
+      projectile: {
+        key: 'egg',
+        speed: 200,
+      },
+    },
+    move: eggBarrage,
+  },
 } as const;
 
 /**
@@ -1092,6 +1114,23 @@ const rawPokemonData = {
     ...getEvolution('darkrai', 3),
     name: 'darkrai-3',
     displayName: 'Darkrai',
+  },
+  exeggcute: {
+    ...getEvolution('exeggcute', 1),
+    name: 'exeggcute',
+    displayName: 'Exeggcute',
+    evolution: 'exeggutor',
+  },
+  exeggutor: {
+    ...getEvolution('exeggcute', 2),
+    name: 'exeggutor',
+    displayName: 'Exeggutor',
+    evolution: 'exeggutor-2',
+  },
+  'exeggutor-2': {
+    ...getEvolution('exeggcute', 2),
+    name: 'exeggutor-2',
+    displayName: 'Exeggutor',
   },
 } as const;
 

@@ -30,6 +30,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "explosion",
+        "url": "assets/animations/explosion.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "fury-cutter",
         "url": "assets/animations/fury-cutter.png",
         "frameConfig": {
