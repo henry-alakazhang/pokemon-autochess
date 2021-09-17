@@ -94,7 +94,10 @@ export class CombatScene extends Scene {
       1 // line alpha: solid
     );
 
-    this.title = this.add.text(350, 50, `Combat VS ${data.enemy.playerName}`);
+    this.title = this.add
+      .text(400, 50, `VS ${data.enemy.playerName}`)
+      .setFontSize(17)
+      .setOrigin(0.5, 0);
 
     this.players = {
       player: data.player,

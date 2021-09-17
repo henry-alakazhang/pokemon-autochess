@@ -9,9 +9,10 @@ import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
+import { MenuScene } from '../menu.scene';
 import { Coords, inBounds } from './combat/combat.helpers';
 import { CombatScene, CombatSceneData } from './combat/combat.scene';
-import { getRandomNames } from './game.helpers';
+import { getHyperRollStages, getRandomNames, Stage } from './game.helpers';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -134,7 +135,13 @@ export class GameScene extends Phaser.Scene {
    */
   private pool: {
     [k in PokemonName]?: number;
-  } = {};
+  };
+
+  private stages: Stage[];
+  /** Current stage, zero-indexed */
+  private currentStage: number;
+  /** Current round within a stage. This is just a number (ie. 1-indexed) */
+  private currentRound: number;
 
   players: Player[];
 
@@ -146,6 +153,7 @@ export class GameScene extends Phaser.Scene {
   playerHPText: Phaser.GameObjects.Text;
   sellArea: Phaser.GameObjects.Shape;
   sellText: Phaser.GameObjects.Text;
+  currentRoundText: Phaser.GameObjects.Text;
   /* END TEMPORARY JUNK */
 
   /** A reference to the currently selected Pokemon */
@@ -165,6 +173,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   init() {
+    this.pool = {};
     buyablePokemon.forEach(pokemon => {
       this.pool[pokemon] = POOL_SIZES[pokemonData[pokemon].tier];
     });
@@ -213,6 +222,14 @@ export class GameScene extends Phaser.Scene {
       )
       .setZ(-1)
       .setVisible(false);
+
+    this.stages = getHyperRollStages();
+    this.currentStage = 0;
+    this.currentRound = 1;
+    this.currentRoundText = this.add
+      .text(400, 30, `Round ${this.currentStage + 1}-${this.currentRound}`)
+      .setFontSize(20)
+      .setOrigin(0.5, 0);
 
     this.players = ['You', ...getRandomNames(7)].map(
       (name, index) => new Player(this, name, 620, 100 + 30 * index)
@@ -272,6 +289,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   update() {
+    this.currentRoundText.setText(
+      `Round ${this.currentStage + 1}-${this.currentRound}`
+    );
     this.playerGoldText.setText(`Gold: ${this.player.gold}`);
     this.playerHPText.setText(`HP: ${this.player.hp}`);
 
@@ -286,6 +306,10 @@ export class GameScene extends Phaser.Scene {
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
     this.sellArea.setVisible(!!this.selectedPokemon);
+  }
+
+  destroy() {
+    this.scene.stop(ShopScene.KEY);
   }
 
   startCombat() {
@@ -330,8 +354,28 @@ export class GameScene extends Phaser.Scene {
         //     count: synergy.count,
         //   });
         // });
-        this.player.battleResult(winner === 'player');
-        enemy.battleResult(winner === 'enemy');
+        this.player.battleResult(
+          winner === 'player',
+          this.stages[this.currentStage].damage()
+        );
+        enemy.battleResult(
+          winner === 'enemy',
+          this.stages[this.currentStage].damage()
+        );
+        // TODO: handle other players losing
+
+        if (this.player.hp <= 0) {
+          this.add
+            .text(GRID_X, GRID_Y, `YOU LOSE`, {
+              backgroundColor: '#000',
+              fontSize: '40px',
+            })
+            .setDepth(200)
+            .setOrigin(0.5, 0.5);
+          setTimeout(() => {
+            this.scene.start(MenuScene.KEY);
+          }, 2000);
+        }
         this.startDowntime();
       },
     };
@@ -339,6 +383,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDowntime() {
+    this.currentRound += 1;
+    if (this.currentRound > this.stages[this.currentStage].rounds) {
+      this.currentRound = 1;
+      this.currentStage++;
+    }
+
     this.shop.reroll();
     this.players.forEach(player => player.gainRoundEndGold());
 
