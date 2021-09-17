@@ -61,12 +61,12 @@ export class Player extends Phaser.GameObjects.GameObject {
    * Calculate streaks and award win gold
    * @param won True if the round was won by player
    */
-  battleResult(won: boolean): void {
+  battleResult(won: boolean, damage: number): void {
     if (won) {
       this.streak = Math.max(1, this.streak + 1);
       ++this.gold;
     } else {
-      --this.hp; // TODO implement properly
+      this.hp -= damage;
       this.streak = Math.min(-1, this.streak - 1);
     }
   }
