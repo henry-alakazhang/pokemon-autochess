@@ -28,7 +28,7 @@ import {
   triAttack,
   twineedle,
   voltTackle,
-  zapCannon
+  zapCannon,
 } from './moves';
 import { leechLife } from './moves/leech-life';
 
