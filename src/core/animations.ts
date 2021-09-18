@@ -147,4 +147,10 @@ export const animations: { [key: string]: AnimationData } = {
     start: 0,
     duration: 133,
   },
+  'water-hit': {
+    texture: 'water-hit',
+    frames: 14,
+    start: 0,
+    duration: (1000 / 30) * 14,
+  },
 };

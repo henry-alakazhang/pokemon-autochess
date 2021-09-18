@@ -22,6 +22,7 @@ import {
   shellTrap,
   softboiled,
   stoneEdge,
+  surf,
   teleport,
   thunderWave,
   triAttack,
@@ -595,6 +596,23 @@ const basePokemonData = {
     },
     move: eggBarrage,
   },
+  lapras: {
+    base: 'lapras',
+    categories: ['water', 'ice', 'support'],
+    tier: 4,
+    maxHP: 130,
+    maxPP: 10,
+    attack: 85,
+    defense: 80,
+    specAttack: 85,
+    specDefense: 95,
+    speed: 60,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: surf,
+  },
 } as const;
 
 /**
@@ -1131,6 +1149,23 @@ const rawPokemonData = {
     ...getEvolution('exeggcute', 2),
     name: 'exeggutor-2',
     displayName: 'Exeggutor',
+  },
+  lapras: {
+    ...getEvolution('lapras', 1),
+    name: 'lapras',
+    displayName: 'Lapras',
+    evolution: 'lapras-2',
+  },
+  'lapras-2': {
+    ...getEvolution('lapras', 2),
+    name: 'lapras-2',
+    displayName: 'Lapras',
+    evolution: 'lapras-3',
+  },
+  'lapras-3': {
+    ...getEvolution('lapras', 3),
+    name: 'lapras-3',
+    displayName: 'Lapras',
   },
 } as const;
 

@@ -162,6 +162,15 @@
           "frameWidth": 72,
           "frameHeight": 80
         }
+      },
+      {
+        "type": "spritesheet",
+        "key": "water-hit",
+        "url": "assets/animations/water-hit.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 56
+        }
       }
     ]
   }

@@ -118,6 +118,12 @@ export class ShopScene extends Phaser.Scene {
         pick =
           buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)];
       }
+
+      // DEBUG CODE: always add the latest Pokemon for debugging purposes
+      if (i === 0) {
+        pick = buyablePokemon[buyablePokemon.length - 1];
+      }
+
       // take the pokemon out of the pool
       // non-null assertion here is ok because we literally just checked it
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

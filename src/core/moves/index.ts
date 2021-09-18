@@ -19,6 +19,7 @@ export * from './shadow-tag';
 export * from './shell-trap';
 export * from './softboiled';
 export * from './stone-edge';
+export * from './surf';
 export * from './teleport';
 export * from './thunder-wave';
 export * from './tri-attack';
