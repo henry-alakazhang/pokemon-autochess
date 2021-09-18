@@ -20,7 +20,9 @@ import {
   pathfind,
 } from './combat.helpers';
 
-export type CombatEndCallback = (winner: 'player' | 'enemy') => void;
+export type CombatEndCallback = (
+  winner: 'player' | 'enemy' | undefined
+) => void;
 export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
   readonly player: Player;
@@ -54,7 +56,10 @@ export class CombatScene extends Scene {
   board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
   private title: Phaser.GameObjects.Text;
+  private timerText: Phaser.GameObjects.Text;
   private projectiles: { [k: string]: Projectile } = {};
+
+  private timer: number;
 
   private players: {
     player: Player;
@@ -70,6 +75,14 @@ export class CombatScene extends Scene {
   }
 
   create(data: CombatSceneData) {
+    this.timer = 60_000;
+    this.timerText = this.add
+      .text(550, 35, '60')
+      .setOrigin(0, 0)
+      .setFontSize(30)
+      .setPadding(4)
+      .setBackgroundColor('slategrey');
+
     console.log(
       `Combat: ${data.player.playerName} vs ${data.enemy.playerName}`
     );
@@ -148,9 +161,28 @@ export class CombatScene extends Scene {
       .forEach(pokemon => this.setTurn(pokemon));
   }
 
-  update() {
+  update(time: number, delta: number) {
     // trigger updates on each projectile
     Object.values(this.projectiles).forEach(x => x?.update());
+
+    this.timer -= delta;
+    // TODO: speed up combat as we start running out of time
+    this.timerText.setText(`${Math.round(this.timer / 1000)}`);
+
+    if (this.timer <= 0) {
+      this.add
+        .text(GRID_X, GRID_Y, `ROUND OVER: DRAW!`, {
+          backgroundColor: '#000',
+          fontSize: '40px',
+        })
+        .setDepth(200)
+        .setOrigin(0.5, 0.5);
+      this.scene.pause();
+      setTimeout(() => {
+        this.combatEndCallback(undefined);
+        this.scene.stop(CombatScene.KEY);
+      }, 2000);
+    }
   }
 
   checkRoundEnd() {
@@ -177,6 +209,7 @@ export class CombatScene extends Scene {
       })
       .setDepth(200)
       .setOrigin(0.5, 0.5);
+    this.scene.pause();
     setTimeout(() => {
       this.combatEndCallback(winner);
       this.scene.stop(CombatScene.KEY);
