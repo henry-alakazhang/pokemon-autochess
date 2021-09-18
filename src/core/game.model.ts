@@ -12,6 +12,7 @@ export type Status =
   | 'paralyse'
   | 'sleep'
   | 'blind'
+  | 'poison'
   | 'percentDamageReduction'
   | 'statusImmunity'
   | 'immobile'
@@ -325,8 +326,48 @@ moves and attacks which hit an area.
   poison: {
     category: 'poison',
     displayName: 'Poison',
-    description: 'Does nothing.',
+    description: `Poison-type Pokemon apply stacks of Poison
+every time they hit or are hit with an attack.
+
+Poison stacks deal 1% of the target's HP
+at the end of each of their turns.
+
+(3) - 1 stack on hit, max 6 stacks
+(6) - 2 stacks on hit, max 12 stacks`,
     thresholds: [3, 6],
+
+    onHit({
+      attacker,
+      defender,
+      count,
+    }: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      count: number;
+    }) {
+      // TODO add animation for healing?
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      if (attacker.basePokemon.categories.includes('poison')) {
+        const stacksApplied = tier;
+        const maxStacks = tier * 6;
+
+        // Duration is endless, but that's not fixable ATM
+        // FIXME: can't track stacks separately
+        defender.addStatus('poison', 99999, prev =>
+          Math.min(
+            // Add one stack to the previous amount,
+            // initialising to 0 if unset
+            (prev ?? 0) + stacksApplied,
+            // But not over max
+            maxStacks
+          )
+        );
+      }
+    },
   },
   electric: {
     category: 'electric',

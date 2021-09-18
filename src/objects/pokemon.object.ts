@@ -267,7 +267,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     {
       triggerEvents = true,
       crit = false,
-    }: { triggerEvents?: boolean; crit?: boolean } = {}
+      tint = 0xdddddd, // slight darken
+    }: { triggerEvents?: boolean; crit?: boolean; tint?: number } = {}
   ) {
     if (amount < 0 || this.currentHP <= 0) {
       return;
@@ -298,7 +299,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       targets: this,
       duration: 66,
       alpha: 0.9,
-      onStart: () => this.setTint(0xdddddd), // slight darken
+      onStart: () => this.setTint(tint), // slight darken
       onComplete: () => this.clearTint(),
     });
 
@@ -370,12 +371,25 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     };
   }
 
-  public addStatus(status: Status, duration: number, value?: number): this {
+  /**
+   * Add a status with a given duration
+   *
+   * @param status Name of the status
+   * @param duration Duration (overrides existing ones)
+   * @param value Some associated value. Either a number, or a modifier function
+   * @returns
+   */
+  public addStatus(
+    status: Status,
+    duration: number,
+    value?: number | ((prev?: number) => number)
+  ): this {
     if (this.status.statusImmunity) {
       return this;
     }
     this.status[status] = {
-      value,
+      value:
+        typeof value === 'number' ? value : value?.(this.status[status]?.value),
       duration,
     };
     this.redrawBars();
@@ -383,6 +397,17 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   public updateStatuses(timeElapsed: number) {
+    if (this.status.poison) {
+      this.takeDamage(
+        Math.floor((this.maxHP * (this.status.poison?.value ?? 0)) / 100),
+        {
+          triggerEvents: false,
+          // purple flash for poison damage
+          tint: 0xc060c0,
+        }
+      );
+    }
+
     // reduce the duration of each status
     (Object.keys(this.status) as Status[]).forEach((s: Status) => {
       const statusValue = this.status[s];
