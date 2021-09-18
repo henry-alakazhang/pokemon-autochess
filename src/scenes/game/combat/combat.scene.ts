@@ -209,7 +209,6 @@ export class CombatScene extends Scene {
       })
       .setDepth(200)
       .setOrigin(0.5, 0.5);
-    this.scene.pause();
     setTimeout(() => {
       this.combatEndCallback(winner);
       this.scene.stop(CombatScene.KEY);
