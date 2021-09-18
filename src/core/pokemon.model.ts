@@ -409,7 +409,7 @@ const basePokemonData = {
     specDefense: 95,
     speed: 120,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'specAttack',
       projectile: {
         key: 'spoon',
@@ -587,7 +587,7 @@ const basePokemonData = {
     specDefense: 75,
     speed: 55,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'attack',
       projectile: {
         key: 'egg',

@@ -1,7 +1,10 @@
 import { flatten, isDefined } from '../helpers';
 import { FloatingText } from '../objects/floating-text.object';
 import { PokemonObject } from '../objects/pokemon.object';
-import { getNearestEmpty } from '../scenes/game/combat/combat.helpers';
+import {
+  getGridDistance,
+  getNearestEmpty,
+} from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { GameScene } from '../scenes/game/game.scene';
 
@@ -75,6 +78,7 @@ export interface Synergy {
     board: CombatScene['board'];
     attacker: PokemonObject;
     defender: PokemonObject;
+    flags: { isAttack?: boolean; isAOE?: boolean };
     damage: number;
     count: number;
   }) => void;
@@ -84,6 +88,7 @@ export interface Synergy {
     board: CombatScene['board'];
     attacker: PokemonObject;
     defender: PokemonObject;
+    flags: { isAttack?: boolean; isAOE?: boolean };
     damage: number;
     count: number;
   }) => void;
@@ -214,8 +219,33 @@ when low on health.
   water: {
     category: 'water',
     displayName: 'Water',
-    description: 'Does nothing.',
+    description: `All Pokemon gain extra PP on hit.
+
+(2) - 1 extra PP
+(4) - 2 extra PP
+(6) - 3 extra PP`,
     thresholds: [2, 4, 6],
+    onHit({
+      attacker,
+      flags: { isAttack },
+      count,
+    }: {
+      attacker: PokemonObject;
+      flags: { isAttack?: boolean };
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const ppGain = tier === 1 ? 1 : tier === 2 ? 2 : 3;
+      console.log(isAttack, ppGain, attacker);
+      if (isAttack) {
+        attacker.addPP(ppGain);
+        attacker.redrawBars();
+      }
+    },
   },
   flying: {
     category: 'flying',
@@ -342,20 +372,110 @@ it boosts the Speed of the whole party.
   psychic: {
     category: 'psychic',
     displayName: 'Psychic',
-    description: 'Does nothing.',
-    thresholds: [2, 4, 6],
+    description: `Psychic-type Pokemon deal more damage
+the further they are from their target.
+
+(2) - 8% damage per square
+(4) - 15% damage per square`,
+    thresholds: [2, 4],
+    calculateDamage({
+      attacker,
+      defender,
+      baseAmount,
+      side,
+      count,
+    }: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      baseAmount: number;
+      side: 'player' | 'enemy';
+      count: number;
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+      const mult = tier === 1 ? 0.08 : 0.15;
+
+      if (
+        attacker.side === side &&
+        attacker.basePokemon.categories.includes('psychic')
+      ) {
+        const distance = getGridDistance(attacker, defender);
+        // FIXME: ref combatscene
+        const distanceInSquares = distance / 70;
+        return (1 + distanceInSquares * mult) * baseAmount;
+      }
+      return baseAmount;
+    },
   },
   rock: {
     category: 'rock',
     displayName: 'Rock',
-    description: 'Does nothing.',
+    description: `All Rock-type Pokemon take less damage.
+
+(2) - 20 less damage
+(4) - 35 less damage
+(6) - 65 less damage`,
     thresholds: [2, 4, 6],
+    calculateDamage({
+      defender,
+      baseAmount,
+      side,
+      count,
+    }: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      baseAmount: number;
+      side: 'player' | 'enemy';
+      count: number;
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+      const reduction = tier === 1 ? 20 : tier === 2 ? 35 : 65;
+
+      if (
+        defender.side === side &&
+        defender.basePokemon.categories.includes('rock')
+      ) {
+        return Math.max(0, baseAmount - reduction);
+      }
+      return baseAmount;
+    },
   },
   ice: {
     category: 'ice',
     displayName: 'Ice',
-    description: 'Does nothing.',
-    thresholds: [2, 4],
+    description: `All enemy Pokemon are slowed.
+
+(2) - 5% slower
+(3) - 10% slower`,
+    thresholds: [2, 3],
+    onRoundStart({
+      board,
+      side,
+      count,
+    }: {
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+      const slow = tier === 1 ? 0.95 : 0.9;
+
+      flatten(board).forEach(pokemon => {
+        if (pokemon && pokemon.side !== side) {
+          pokemon.changeStats({
+            speed: slow,
+          });
+        }
+      });
+    },
   },
   bug: {
     category: 'bug',
@@ -573,8 +693,37 @@ effects at the start of the round.
   fairy: {
     category: 'fairy',
     displayName: 'Fairy',
-    description: 'Does nothing.',
+    description: `All Pokemon have a maximum amount of
+damage they can take from one hit.
+
+(2) - 30% of their max HP
+(3) - 20% of their max HP
+(4) - 10% of their max HP
+`,
     thresholds: [2, 4],
+    calculateDamage({
+      defender,
+      baseAmount,
+      side,
+      count,
+    }: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      baseAmount: number;
+      side: 'player' | 'enemy';
+      count: number;
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+      const maxHit = tier === 1 ? 0.3 : tier === 2 ? 0.2 : 0.1;
+
+      if (defender.side === side) {
+        return Math.min(baseAmount, maxHit * defender.maxHP);
+      }
+      return baseAmount;
+    },
   },
   sweeper: {
     category: 'sweeper',
