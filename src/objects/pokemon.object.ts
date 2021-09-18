@@ -330,6 +330,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       return this;
     }
 
+    console.log('adding pp');
+
     if (this.maxPP && this.currentPP < this.maxPP) {
       this.currentPP = Math.min(this.maxPP, this.currentPP + amount);
     }

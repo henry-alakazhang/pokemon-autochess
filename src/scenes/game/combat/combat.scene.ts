@@ -559,6 +559,7 @@ export class CombatScene extends Scene {
         attacker,
         defender,
         damage: amount,
+        flags: { isAttack, isAOE },
         count: synergy.count,
       });
     });
@@ -569,6 +570,7 @@ export class CombatScene extends Scene {
         attacker,
         defender,
         damage: amount,
+        flags: { isAttack, isAOE },
         count: synergy.count,
       });
     });
