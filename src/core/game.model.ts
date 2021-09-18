@@ -98,7 +98,7 @@ export interface Synergy {
   readonly onRoundEnd?: (config: {
     scene: GameScene;
     board: CombatScene['board'];
-    winner: 'player' | 'enemy';
+    winner: 'player' | 'enemy' | undefined;
     count: number;
   }) => void;
   /** Possible extra damage calculation */
@@ -139,7 +139,7 @@ to Pick Up a Pokeball at end of round.
     }: {
       scene: GameScene;
       board: CombatScene['board'];
-      winner: 'player' | 'enemy';
+      winner: 'player' | 'enemy' | undefined;
       count: number;
     }) {
       const tier = getSynergyTier(this.thresholds, count);

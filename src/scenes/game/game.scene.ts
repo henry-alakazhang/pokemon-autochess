@@ -336,7 +336,7 @@ export class GameScene extends Phaser.Scene {
     const sceneData: CombatSceneData = {
       player: this.player,
       enemy,
-      callback: (winner: 'player' | 'enemy') => {
+      callback: (winner: 'player' | 'enemy' | undefined) => {
         this.player.synergies.forEach(synergy => {
           synergyData[synergy.category].onRoundEnd?.({
             scene: this,
