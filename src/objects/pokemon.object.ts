@@ -268,7 +268,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       triggerEvents = true,
       crit = false,
       tint = 0xdddddd, // slight darken
-    }: { triggerEvents?: boolean; crit?: boolean; tint?: number } = {}
+    }: {
+      triggerEvents?: boolean;
+      crit?: boolean;
+      /** Color change on hit. Defaults to slightly dark */ tint?: number;
+    } = {}
   ) {
     if (amount < 0 || this.currentHP <= 0) {
       return;
@@ -299,7 +303,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       targets: this,
       duration: 66,
       alpha: 0.9,
-      onStart: () => this.setTint(tint), // slight darken
+      onStart: () => this.setTint(tint),
       onComplete: () => this.clearTint(),
     });
 

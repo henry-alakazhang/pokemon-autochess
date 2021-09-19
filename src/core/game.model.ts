@@ -335,7 +335,6 @@ at the end of each of their turns.
 (3) - 1 stack on hit, max 6 stacks
 (6) - 2 stacks on hit, max 12 stacks`,
     thresholds: [3, 6],
-
     onHit({
       attacker,
       defender,
@@ -345,7 +344,6 @@ at the end of each of their turns.
       defender: PokemonObject;
       count: number;
     }) {
-      // TODO add animation for healing?
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
