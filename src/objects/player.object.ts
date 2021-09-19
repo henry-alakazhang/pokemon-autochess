@@ -222,47 +222,51 @@ export class Player extends Phaser.GameObjects.GameObject {
 
     // play a flashing animation for a bit
     // not sure how to use tweens to get a flashing trigger of the outline
-    // so this just manually creates one using window.setTimeout
-    let timeout = 350;
-    let flashAnimation: number;
-    const toggleAnim = () => {
-      samePokemon.forEach(pokemon => pokemon.toggleOutline());
-      timeout *= 0.75;
-      flashAnimation = window.setTimeout(toggleAnim, timeout);
-    };
-    toggleAnim();
+    // so this just manually creates one using timers
+    const flashTimer = this.scene.time.addEvent({
+      callback: () => {
+        samePokemon.forEach(pokemon => pokemon.toggleOutline());
+        // and make it faster
+        flashTimer.timeScale *= 1.5;
+      },
+      delay: 350,
+      loop: true,
+    });
 
-    window.setTimeout(() => {
-      // end animation
-      window.clearInterval(flashAnimation);
-      // delete old Pokemon
-      samePokemon.forEach(pokemon => {
-        this.markedForEvolution[pokemon.id] = false;
-        this.removePokemon(pokemon);
-      });
-      // add new one
-      const evo = new PokemonObject({
-        scene: this.scene,
-        x: 0,
-        y: 0,
-        name: evolutionName,
-        side: 'player',
-      });
-      this.scene.add.existing(evo);
-      this.setPokemonAtLocation(evoLocation, evo);
-      // play animation to make it super clear
-      evo.setScale(1.5, 1.5);
-      this.scene.add.tween({
-        targets: [evo],
-        scaleX: 1,
-        scaleY: 1,
-        ease: Phaser.Math.Easing.Expo.InOut,
-        duration: 500,
-        onComplete: () => {
-          this.applyEvolutions(evo);
-        },
-      });
-    }, 1000);
+    this.scene.time.addEvent({
+      callback: () => {
+        // end animation
+        flashTimer.remove();
+        // delete old Pokemon
+        samePokemon.forEach(pokemon => {
+          this.markedForEvolution[pokemon.id] = false;
+          this.removePokemon(pokemon);
+        });
+        // add new one
+        const evo = new PokemonObject({
+          scene: this.scene,
+          x: 0,
+          y: 0,
+          name: evolutionName,
+          side: 'player',
+        });
+        this.scene.add.existing(evo);
+        this.setPokemonAtLocation(evoLocation, evo);
+        // play animation to make it super clear
+        evo.setScale(1.5, 1.5);
+        this.scene.add.tween({
+          targets: [evo],
+          scaleX: 1,
+          scaleY: 1,
+          ease: Phaser.Math.Easing.Expo.InOut,
+          duration: 500,
+          onComplete: () => {
+            this.applyEvolutions(evo);
+          },
+        });
+      },
+      delay: 1000,
+    });
   }
 
   removePokemon(pokemon: PokemonObject) {

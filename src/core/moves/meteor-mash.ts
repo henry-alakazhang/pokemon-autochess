@@ -102,16 +102,19 @@ const move = {
               target.addStatus('paralyse', 4000);
             }
 
-            setTimeout(() => {
-              scene.add.tween({
-                targets: [user],
-                duration: 500,
-                ...originalCoords,
-                onComplete: () => {
-                  onComplete();
-                },
-              });
-            }, 250);
+            scene.time.addEvent({
+              callback: () => {
+                scene.add.tween({
+                  targets: [user],
+                  duration: 500,
+                  ...originalCoords,
+                  onComplete: () => {
+                    onComplete();
+                  },
+                });
+              },
+              delay: 250,
+            });
           },
         });
       },

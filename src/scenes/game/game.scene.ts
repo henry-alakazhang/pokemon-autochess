@@ -372,9 +372,12 @@ export class GameScene extends Phaser.Scene {
             })
             .setDepth(200)
             .setOrigin(0.5, 0.5);
-          setTimeout(() => {
-            this.scene.start(MenuScene.KEY);
-          }, 2000);
+          this.time.addEvent({
+            callback: () => {
+              this.scene.start(MenuScene.KEY);
+            },
+            delay: 2000,
+          });
         }
         this.startDowntime();
       },

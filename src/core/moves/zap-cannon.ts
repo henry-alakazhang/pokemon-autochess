@@ -70,7 +70,10 @@ const move = {
           .sprite(user.x, user.y, 'thunder')
           .setOrigin(0, 0.5)
           .setRotation(getAngle(user, targettedLocation))
-          .play('thunder');
+          .play('thunder')
+          .on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            thunder.destroy();
+          });
         // scale length of beam to target distance
         // if longer than the base sprite
         thunder.displayWidth = Math.max(
@@ -82,24 +85,24 @@ const move = {
             targettedLocation.y
           )
         );
-        setTimeout(() => {
-          this.getAOE(userCoords, targetCoords).forEach(({ x, y }) => {
-            const pokemon = board[x]?.[y];
-            if (!pokemon) {
-              return;
-            }
-            if (pokemon.side !== user.side) {
-              const damage = calculateDamage(user, pokemon, {
-                damage: this.damage[user.basePokemon.stage - 1],
-                defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, pokemon, damage, { isAOE: true });
-            }
-          });
-        }, animations.thunder.duration * 0.5);
-        setTimeout(() => {
-          thunder.destroy();
-        }, animations.thunder.duration);
+        scene.time.addEvent({
+          callback: () => {
+            this.getAOE(userCoords, targetCoords).forEach(({ x, y }) => {
+              const pokemon = board[x]?.[y];
+              if (!pokemon) {
+                return;
+              }
+              if (pokemon.side !== user.side) {
+                const damage = calculateDamage(user, pokemon, {
+                  damage: this.damage[user.basePokemon.stage - 1],
+                  defenseStat: this.defenseStat,
+                });
+                scene.causeDamage(user, pokemon, damage, { isAOE: true });
+              }
+            });
+          },
+          delay: animations.thunder.duration * 0.5,
+        });
 
         user.setScale(1, 1);
         onComplete();

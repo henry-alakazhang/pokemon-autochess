@@ -300,7 +300,10 @@ export class CombatScene extends Scene {
   setTurn(pokemon: PokemonObject) {
     const delay = getTurnDelay(pokemon.basePokemon);
     pokemon.updateStatuses(delay);
-    setTimeout(() => this.takeTurn(pokemon), delay);
+    this.time.addEvent({
+      callback: () => this.takeTurn(pokemon),
+      delay,
+    });
   }
 
   /**
