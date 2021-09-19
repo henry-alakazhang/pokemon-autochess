@@ -42,15 +42,17 @@ const move = {
             // animation: play a number of slashes equal to the number of attacks up to now
             const event = scene.time.addEvent({
               callback: () => {
-                if (event.repeatCount >= user.consecutiveAttacks) {
+                // at the end of the loop, clean up
+                if (event.repeatCount === 0) {
                   animationArr.forEach(sprite => sprite.destroy());
+                } else {
+                  animationArr.push(
+                    scene.add
+                      .sprite(target.x, target.y, 'fury-cutter')
+                      .play('fury-cutter')
+                      .setFlipX(event.repeatCount % 2 === 0)
+                  );
                 }
-                animationArr.push(
-                  scene.add
-                    .sprite(target.x, target.y, 'fury-cutter')
-                    .play('fury-cutter')
-                    .setFlipX(event.repeatCount % 2 === 0)
-                );
               },
               delay: 100,
               // repeat once more than necessary to clean up

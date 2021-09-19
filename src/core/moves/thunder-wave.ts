@@ -19,13 +19,14 @@ const move = {
             img.setVisible(!img.visible);
 
             // if this is the end of the animation, apply status
-            if (timer.repeatCount >= timer.repeat) {
+            if (timer.repeatCount === 0) {
               target.addStatus('paralyse', 4000);
             }
           },
           delay: 200,
           repeat: 4,
         });
+        onComplete();
       },
     });
   },
