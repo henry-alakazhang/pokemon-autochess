@@ -36,7 +36,7 @@ export class ShopScene extends Phaser.Scene {
       new Button(this, this.centre.x, this.centre.y + 60, 'Reroll')
     );
 
-    rerollButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+    rerollButton.on(Button.Events.CLICK, () => {
       // maybe not best to be handled by the shop
       if (this.player.gold >= REROLL_COST) {
         this.player.gold -= REROLL_COST;
@@ -49,18 +49,20 @@ export class ShopScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
-        const i = this.getShopIndexForCoordinates({
-          x: event.downX,
-          y: event.downY,
-        });
-        if (i !== undefined) {
-          if (this.pokemonForSale[i] === undefined) {
-            console.log('No pokemon here');
-            return;
-          }
+        if (event.leftButtonDown()) {
+          const i = this.getShopIndexForCoordinates({
+            x: event.downX,
+            y: event.downY,
+          });
+          if (i !== undefined) {
+            if (this.pokemonForSale[i] === undefined) {
+              console.log('No pokemon here');
+              return;
+            }
 
-          if (!this.buyPokemon(i)) {
-            console.log('Not enough gold to buy this pokemon');
+            if (!this.buyPokemon(i)) {
+              console.log('Not enough gold to buy this pokemon');
+            }
           }
         }
       }

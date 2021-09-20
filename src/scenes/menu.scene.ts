@@ -29,7 +29,7 @@ export class MenuScene extends Scene {
     this.startButton = this.add.existing(
       new Button(this, 400, 500, 'Single Player')
     );
-    this.startButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
+    this.startButton.on(Button.Events.CLICK, () =>
       this.scene.start(GameScene.KEY)
     );
   }

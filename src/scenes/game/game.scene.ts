@@ -264,10 +264,12 @@ export class GameScene extends Phaser.Scene {
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
-        if (!this.selectedPokemon) {
-          this.selectPokemon({ x: event.downX, y: event.downY });
-        } else {
-          this.movePokemon({ x: event.downX, y: event.downY });
+        if (event.leftButtonDown()) {
+          if (!this.selectedPokemon) {
+            this.selectPokemon({ x: event.downX, y: event.downY });
+          } else {
+            this.movePokemon({ x: event.downX, y: event.downY });
+          }
         }
       }
     );
@@ -277,9 +279,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.shopButton = this.add.existing(new Button(this, 400, 580, 'Shop'));
-    this.shopButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
-      this.toggleShop()
-    );
+    this.shopButton.on(Button.Events.CLICK, () => this.toggleShop());
 
     this.sellArea = this.add
       .rectangle(
@@ -292,12 +292,16 @@ export class GameScene extends Phaser.Scene {
       )
       .setVisible(false);
 
-    this.sellArea.setInteractive().on('pointerdown', () => {
-      this.sellPokemon(this.player, this.selectedPokemon as PokemonObject);
-    });
+    this.sellArea
+      .setInteractive()
+      .on(Phaser.Input.Events.POINTER_DOWN, (event: Phaser.Input.Pointer) => {
+        if (event.leftButtonDown()) {
+          this.sellPokemon(this.player, this.selectedPokemon as PokemonObject);
+        }
+      });
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
-    this.nextRoundButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+    this.nextRoundButton.on(Button.Events.CLICK, () => {
       this.nextRoundButton.destroy();
       this.startCombat();
     });
@@ -420,7 +424,7 @@ export class GameScene extends Phaser.Scene {
     this.input.enabled = true;
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
-    this.nextRoundButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () => {
+    this.nextRoundButton.on(Button.Events.CLICK, () => {
       this.nextRoundButton.destroy();
       this.startCombat();
     });
