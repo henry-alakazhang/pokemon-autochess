@@ -9,6 +9,7 @@ import {
   PokemonObject,
 } from '../../../objects/pokemon.object';
 import { Projectile } from '../../../objects/projectile.object';
+import { defaultStyle, titleStyle } from '../../../objects/text.helpers';
 import {
   calculateDamage,
   Coords,
@@ -77,7 +78,7 @@ export class CombatScene extends Scene {
   create(data: CombatSceneData) {
     this.timer = 60_000;
     this.timerText = this.add
-      .text(550, 35, '60')
+      .text(550, 35, '60', titleStyle)
       .setOrigin(0, 0)
       .setFontSize(30)
       .setPadding(4)
@@ -108,7 +109,7 @@ export class CombatScene extends Scene {
     );
 
     this.title = this.add
-      .text(400, 50, `VS ${data.enemy.playerName}`)
+      .text(400, 50, `VS ${data.enemy.playerName}`, defaultStyle)
       .setFontSize(17)
       .setOrigin(0.5, 0);
 
@@ -172,6 +173,7 @@ export class CombatScene extends Scene {
     if (this.timer <= 0) {
       this.add
         .text(GRID_X, GRID_Y, `ROUND OVER: DRAW!`, {
+          ...defaultStyle,
           backgroundColor: '#000',
           fontSize: '40px',
         })
@@ -204,6 +206,7 @@ export class CombatScene extends Scene {
     const winner = playerAlive ? 'player' : 'enemy';
     this.add
       .text(GRID_X, GRID_Y, `ROUND OVER: ${winner.toUpperCase()} WINS!`, {
+        ...defaultStyle,
         backgroundColor: '#000',
         fontSize: '40px',
       })

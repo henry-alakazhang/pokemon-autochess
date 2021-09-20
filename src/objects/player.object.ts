@@ -12,6 +12,7 @@ import {
 } from '../scenes/game/game.scene';
 import { PokemonObject } from './pokemon.object';
 import { SynergyMarker } from './synergy-marker.object';
+import { defaultStyle } from './text.helpers';
 
 const MAX_MAINBOARD_POKEMON = 6;
 
@@ -46,7 +47,12 @@ export class Player extends Phaser.GameObjects.GameObject {
   ) {
     super(scene, 'player');
 
-    this.nameInList = scene.add.text(x, y, `${this.playerName} - ${this.hp}`);
+    this.nameInList = scene.add.text(
+      x,
+      y,
+      `${this.playerName} - ${this.hp}`,
+      defaultStyle
+    );
   }
 
   update() {

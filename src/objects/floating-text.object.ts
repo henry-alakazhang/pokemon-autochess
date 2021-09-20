@@ -1,3 +1,5 @@
+import { defaultStyle } from './text.helpers';
+
 export class FloatingText extends Phaser.GameObjects.Text {
   constructor(
     scene: Phaser.Scene,
@@ -11,6 +13,7 @@ export class FloatingText extends Phaser.GameObjects.Text {
     const startY = (Math.random() - 0.5) * 10 + y;
 
     super(scene, startX, startY, text, {
+      ...defaultStyle,
       fontStyle: size === 'small' ? 'normal' : 'bold',
       fontSize: size === 'small' ? '18px' : '20px',
     });

@@ -1,5 +1,6 @@
 import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { Coords } from '../scenes/game/combat/combat.helpers';
+import { titleStyle } from './text.helpers';
 
 /**
  * The pokemon object in the shop, including gold cost and any other elements
@@ -60,7 +61,12 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
 
   drawGoldCostText(): void {
     this.goldCostText = this.scene.add
-      .text(this.centre.x - 25, this.centre.y + 25, this.cost.toString())
+      .text(
+        this.centre.x - 25,
+        this.centre.y + 25,
+        this.cost.toString(),
+        titleStyle
+      )
       .setFontSize(20)
       .setOrigin(0.5);
   }

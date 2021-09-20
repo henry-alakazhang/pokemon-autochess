@@ -9,6 +9,7 @@ import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
+import { defaultStyle } from '../../objects/text.helpers';
 import { MenuScene } from '../menu.scene';
 import { Coords, inBounds } from './combat/combat.helpers';
 import { CombatScene, CombatSceneData } from './combat/combat.scene';
@@ -227,7 +228,12 @@ export class GameScene extends Phaser.Scene {
     this.currentStage = 0;
     this.currentRound = 1;
     this.currentRoundText = this.add
-      .text(400, 30, `Round ${this.currentStage + 1}-${this.currentRound}`)
+      .text(
+        400,
+        30,
+        `Round ${this.currentStage + 1}-${this.currentRound}`,
+        defaultStyle
+      )
       .setFontSize(20)
       .setOrigin(0.5, 0);
 
@@ -236,8 +242,18 @@ export class GameScene extends Phaser.Scene {
     );
     // players[0] is always the human player
     [this.player] = this.players;
-    this.playerGoldText = this.add.text(50, 100, `Gold: ${this.player.gold}`);
-    this.playerHPText = this.add.text(50, 120, `HP: ${this.player.hp}`);
+    this.playerGoldText = this.add.text(
+      50,
+      100,
+      `Gold: ${this.player.gold}`,
+      defaultStyle
+    );
+    this.playerHPText = this.add.text(
+      50,
+      120,
+      `HP: ${this.player.hp}`,
+      defaultStyle
+    );
 
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.player = this.player; // temporary solution
@@ -367,6 +383,7 @@ export class GameScene extends Phaser.Scene {
         if (this.player.hp <= 0) {
           this.add
             .text(GRID_X, GRID_Y, `YOU LOSE`, {
+              ...defaultStyle,
               backgroundColor: '#000',
               fontSize: '40px',
             })

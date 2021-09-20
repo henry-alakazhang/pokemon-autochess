@@ -1,7 +1,11 @@
+import { titleStyle } from './text.helpers';
+
 export class Button extends Phaser.GameObjects.Text {
   constructor(scene: Phaser.Scene, x: number, y: number, text: string) {
-    super(scene, x, y, text, {
+    super(scene, x, y, text.toUpperCase(), {
+      ...titleStyle,
       color: '#FFAA00',
+      fontStyle: 'normal',
       fontSize: '22px',
     });
 

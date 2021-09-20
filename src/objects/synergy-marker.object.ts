@@ -1,4 +1,5 @@
 import { Category, getSynergyTier, synergyData } from '../core/game.model';
+import { defaultStyle, titleStyle } from './text.helpers';
 
 export class SynergyMarker extends Phaser.GameObjects.Sprite {
   static height = 30;
@@ -43,6 +44,7 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
 
     this.thresholdText = scene.add
       .text(x + this.displayWidth + 4, y + 4, `${count}/${nextThreshold}`, {
+        ...titleStyle,
         color: '#000',
       })
       .setOrigin(0);
@@ -61,6 +63,7 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
     // hover text showing the description
     this.descriptionText = scene.add
       .text(0, 0, description, {
+        ...defaultStyle,
         color: '#FFF',
         backgroundColor: '#5F7D99',
         padding: { x: 2, y: 2 },
