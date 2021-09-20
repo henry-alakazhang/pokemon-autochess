@@ -24,9 +24,9 @@ export class LoadingScene extends Scene {
   }
 
   preload(): void {
-    this.add.image(400, 100, 'logo');
+    this.add.image(400, 200, 'logo');
     this.loadingBar = this.add
-      .graphics()
+      .graphics({ y: 150 })
       .fillStyle(0xffffff, 1)
       .fillRect(
         this.cameras.main.width / 4 - 2,
@@ -34,7 +34,7 @@ export class LoadingScene extends Scene {
         this.cameras.main.width / 2 + 4,
         20
       );
-    this.progressBar = this.add.graphics();
+    this.progressBar = this.add.graphics({ y: 150 });
 
     // pass value to change the loading bar fill
     this.load.on(

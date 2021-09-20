@@ -23,11 +23,11 @@ export class MenuScene extends Scene {
   }
 
   create() {
-    this.add.image(400, 100, 'logo');
+    this.add.image(400, 200, 'logo');
     this.addTitlePokemon();
 
     this.startButton = this.add.existing(
-      new Button(this, 400, 400, 'Single Player')
+      new Button(this, 400, 500, 'Single Player')
     );
     this.startButton.on(Phaser.Input.Events.GAMEOBJECT_POINTER_DOWN, () =>
       this.scene.start(GameScene.KEY)
@@ -40,7 +40,7 @@ export class MenuScene extends Scene {
     this.titlePokemon = new PokemonObject({
       scene: this,
       x: 400,
-      y: 300,
+      y: 400,
       name: randomPokemon,
       side: 'player',
     }).setInteractive();
