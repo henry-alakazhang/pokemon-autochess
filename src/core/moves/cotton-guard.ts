@@ -47,14 +47,17 @@ const move = {
       onComplete();
 
       // end animation when status is over
-      setTimeout(() => {
-        if (cotton.active) {
-          cotton.play('cotton-guard-end');
-          cotton.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            cotton.destroy();
-          });
-        }
-      }, DURATION);
+      scene.time.addEvent({
+        callback: () => {
+          if (cotton.active) {
+            cotton.play('cotton-guard-end');
+            cotton.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+              cotton.destroy();
+            });
+          }
+        },
+        delay: DURATION,
+      });
     });
   },
 } as const;

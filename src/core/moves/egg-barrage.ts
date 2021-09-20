@@ -88,16 +88,17 @@ const move = {
       );
     };
 
-    const eggFiringInterval = window.setInterval(() => {
-      shootEgg();
-    }, 200);
+    scene.time.addEvent({
+      callback: () => shootEgg(),
+      delay: 200,
+      repeat: 5,
+    });
     Tweens.spin(scene, {
       targets: [user],
       height: 25,
       width: 25,
       duration: 1000,
       onComplete: () => {
-        window.clearInterval(eggFiringInterval);
         onComplete();
       },
     });

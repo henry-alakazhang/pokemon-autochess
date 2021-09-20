@@ -91,51 +91,65 @@ const move = {
             }
 
             // explosion 2: 9 squares
-            window.setTimeout(() => {
-              explosions.play('tri-attack-electric');
-              scene.add.tween({
-                targets: [explosions],
-                scaleX: 2,
-                scaleY: 2,
-                duration: 150,
-                ease: Phaser.Math.Easing.Quadratic.In,
-                onComplete: () => {
-                  this.getAOE(targetCoords).forEach(({ x, y }) => {
-                    const thisTarget = board[x]?.[y];
-                    if (thisTarget?.side === getOppositeSide(user.side)) {
-                      scene.causeDamage(user, thisTarget, damage, {
-                        isAOE: true,
-                      });
-                    }
-                  });
-                },
-              });
-            }, animations['tri-attack-fire'].duration);
+            scene.time.addEvent({
+              callback: () => {
+                explosions.play('tri-attack-electric');
+                scene.add.tween({
+                  targets: [explosions],
+                  scaleX: 2,
+                  scaleY: 2,
+                  duration: 150,
+                  ease: Phaser.Math.Easing.Quadratic.In,
+                  onComplete: () => {
+                    this.getAOE(targetCoords).forEach(({ x, y }) => {
+                      const thisTarget = board[x]?.[y];
+                      if (thisTarget?.side === getOppositeSide(user.side)) {
+                        scene.causeDamage(user, thisTarget, damage, {
+                          isAOE: true,
+                        });
+                      }
+                    });
+                  },
+                });
+              },
+              delay: animations['tri-attack-fire'].duration,
+            });
 
             // explosion 3: also 9 squares
-            window.setTimeout(() => {
-              explosions.play('tri-attack-ice');
-              scene.add.tween({
-                targets: [explosions],
-                scaleX: 3,
-                scaleY: 3,
-                duration: 150,
-                ease: Phaser.Math.Easing.Quadratic.In,
-                onComplete: () => {
-                  this.getAOE(targetCoords).forEach(({ x, y }) => {
-                    const thisTarget = board[x]?.[y];
-                    if (thisTarget?.side === getOppositeSide(user.side)) {
-                      scene.causeDamage(user, thisTarget, damage, {
-                        isAOE: true,
-                      });
-                    }
-                  });
-                },
-              });
-            }, animations['tri-attack-fire'].duration + animations['tri-attack-electric'].duration);
-            window.setTimeout(() => {
-              explosions.destroy();
-            }, animations['tri-attack-fire'].duration + animations['tri-attack-electric'].duration + animations['tri-attack-ice'].duration);
+            scene.time.addEvent({
+              callback: () => {
+                explosions.play('tri-attack-ice');
+                scene.add.tween({
+                  targets: [explosions],
+                  scaleX: 3,
+                  scaleY: 3,
+                  duration: 150,
+                  ease: Phaser.Math.Easing.Quadratic.In,
+                  onComplete: () => {
+                    this.getAOE(targetCoords).forEach(({ x, y }) => {
+                      const thisTarget = board[x]?.[y];
+                      if (thisTarget?.side === getOppositeSide(user.side)) {
+                        scene.causeDamage(user, thisTarget, damage, {
+                          isAOE: true,
+                        });
+                      }
+                    });
+                  },
+                });
+              },
+              delay:
+                animations['tri-attack-fire'].duration +
+                animations['tri-attack-electric'].duration,
+            });
+            scene.time.addEvent({
+              callback: () => {
+                explosions.destroy();
+              },
+              delay:
+                animations['tri-attack-fire'].duration +
+                animations['tri-attack-electric'].duration +
+                animations['tri-attack-ice'].duration,
+            });
           },
         });
       },

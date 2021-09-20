@@ -40,24 +40,24 @@ const move = {
             user.consecutiveAttacks++;
             const animationArr: Phaser.GameObjects.Sprite[] = [];
             // animation: play a number of slashes equal to the number of attacks up to now
-            const playAnimation = (count: number) => {
-              animationArr.push(
-                scene.add
-                  .sprite(target.x, target.y, 'fury-cutter')
-                  .play('fury-cutter')
-                  .setFlipX(count % 2 === 0)
-              );
-              if (count > 0) {
-                // if there are still attacks to be performed do it.
-                window.setTimeout(() => playAnimation(count - 1), 100);
-              } else {
-                // otherwise, clean up
-                window.setTimeout(() => {
+            const event = scene.time.addEvent({
+              callback: () => {
+                // at the end of the loop, clean up
+                if (event.repeatCount === 0) {
                   animationArr.forEach(sprite => sprite.destroy());
-                }, 200);
-              }
-            };
-            playAnimation(user.consecutiveAttacks);
+                } else {
+                  animationArr.push(
+                    scene.add
+                      .sprite(target.x, target.y, 'fury-cutter')
+                      .play('fury-cutter')
+                      .setFlipX(event.repeatCount % 2 === 0)
+                  );
+                }
+              },
+              delay: 100,
+              // repeat once more than necessary to clean up
+              repeat: user.consecutiveAttacks + 1,
+            });
             const damage = calculateDamage(user, target, {
               // damage increases by 50% each strike
               damage:

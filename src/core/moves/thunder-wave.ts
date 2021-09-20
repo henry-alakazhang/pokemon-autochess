@@ -13,17 +13,20 @@ const move = {
       targets: [user],
       onComplete: () => {
         const img = scene.add.image(target.x, target.y, 'thunder-wave');
-        const flashAnimation = window.setInterval(
-          () => img.setVisible(!img.visible),
-          200
-        );
-        window.setTimeout(() => {
-          clearInterval(flashAnimation);
-          img.destroy();
+        const timer = scene.time.addEvent({
+          callback: () => {
+            // play flicker "animation"
+            img.setVisible(!img.visible);
 
-          target.addStatus('paralyse', 4000);
-          onComplete();
-        }, 600);
+            // if this is the end of the animation, apply status
+            if (timer.repeatCount === 0) {
+              target.addStatus('paralyse', 4000);
+            }
+          },
+          delay: 200,
+          repeat: 4,
+        });
+        onComplete();
       },
     });
   },

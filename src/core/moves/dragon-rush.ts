@@ -87,24 +87,27 @@ const move = {
     });
 
     // wait through the first bit of the dragon rush animation
-    setTimeout(() => {
-      // if target coord is somehow occupied now, don't move
-      // TODO: retarget
-      if (board[targetCoords.x][targetCoords.y] !== undefined) {
-        onComplete();
-        return;
-      }
-      scene.movePokemon(userCoords, targetCoords, onComplete);
-      const damage = this.damage[user.basePokemon.stage - 1];
-      this.getAOE(targetCoords, userCoords).forEach(({ x, y }) => {
-        const thisTarget = board[x][y];
-        if (thisTarget?.side === getOppositeSide(user.side)) {
-          scene.causeDamage(user, thisTarget, damage, { isAOE: true });
+    scene.time.addEvent({
+      callback: () => {
+        // if target coord is somehow occupied now, don't move
+        // TODO: retarget
+        if (board[targetCoords.x][targetCoords.y] !== undefined) {
+          onComplete();
+          return;
         }
-      });
-      // reset target after movement
-      user.currentTarget = undefined;
-    }, 250);
+        scene.movePokemon(userCoords, targetCoords, onComplete);
+        const damage = this.damage[user.basePokemon.stage - 1];
+        this.getAOE(targetCoords, userCoords).forEach(({ x, y }) => {
+          const thisTarget = board[x][y];
+          if (thisTarget?.side === getOppositeSide(user.side)) {
+            scene.causeDamage(user, thisTarget, damage, { isAOE: true });
+          }
+        });
+        // reset target after movement
+        user.currentTarget = undefined;
+      },
+      delay: 250,
+    });
   },
 } as const;
 

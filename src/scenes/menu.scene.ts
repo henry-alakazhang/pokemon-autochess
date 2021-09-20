@@ -57,9 +57,12 @@ export class MenuScene extends Scene {
       .on(
         Phaser.GameObjects.Events.DESTROY,
         () => {
-          window.setTimeout(() => {
-            this.addTitlePokemon();
-          }, 1000);
+          this.time.addEvent({
+            callback: () => {
+              this.addTitlePokemon();
+            },
+            delay: 1000,
+          });
         },
         this
       );

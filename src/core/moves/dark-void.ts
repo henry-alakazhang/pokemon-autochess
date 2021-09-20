@@ -49,19 +49,20 @@ const move = {
         // todo: add attack graphics
         targets.forEach(target => target.addStatus('sleep', 4000));
         // apply damage every second for 4 seconds
-        const damageEffect = window.setInterval(() => {
-          targets.forEach(target => {
-            const damage = calculateDamage(user, target, {
-              damage: target.maxHP / 10,
-              defenseStat: 'specDefense',
+        scene.time.addEvent({
+          callback: () => {
+            targets.forEach(target => {
+              const damage = calculateDamage(user, target, {
+                damage: target.maxHP / 10,
+                defenseStat: 'specDefense',
+              });
+              scene.causeDamage(user, target, damage, { isAOE: true });
+              user.heal(damage / 2);
             });
-            scene.causeDamage(user, target, damage, { isAOE: true });
-            user.heal(damage / 2);
-          });
-        }, 1000);
-        window.setTimeout(() => {
-          window.clearInterval(damageEffect);
-        }, 4000);
+          },
+          delay: 1000,
+          repeat: 4,
+        });
       },
     });
   },

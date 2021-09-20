@@ -91,10 +91,13 @@ const move = {
 
         user.on(PokemonObject.Events.Damage, damageProc);
 
-        setTimeout(() => {
-          user.setTint();
-          user.removeListener(PokemonObject.Events.Damage, damageProc);
-        }, DURATION);
+        scene.time.addEvent({
+          callback: () => {
+            user.setTint();
+            user.removeListener(PokemonObject.Events.Damage, damageProc);
+          },
+          delay: DURATION,
+        });
       },
     });
   },

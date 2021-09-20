@@ -53,31 +53,33 @@ const move = {
         stones
           .play('stone-edge-shoot')
           .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            console.log('second');
             onComplete();
             stones.destroy();
           });
 
         // deal damage halfway through the shoot part of the animation
         // when the rocks pass through the targets
-        setTimeout(() => {
-          const targets = this.getAOE(targetCoords, userCoords)
-            .map(coords => board[coords.x]?.[coords.y])
-            .filter(isDefined)
-            .filter(pokemon => pokemon.side === getOppositeSide(user.side));
+        scene.time.addEvent({
+          callback: () => {
+            const targets = this.getAOE(targetCoords, userCoords)
+              .map(coords => board[coords.x]?.[coords.y])
+              .filter(isDefined)
+              .filter(pokemon => pokemon.side === getOppositeSide(user.side));
 
-          const rawBaseDamage = this.damage[user.basePokemon.stage - 1];
-          // deal more damage if there's only one target
-          const realBaseDamage =
-            targets.length === 1 ? rawBaseDamage * 1.5 : rawBaseDamage;
-          targets.forEach(pokemon => {
-            const damage = calculateDamage(user, pokemon, {
-              damage: realBaseDamage,
-              defenseStat: 'defense',
+            const rawBaseDamage = this.damage[user.basePokemon.stage - 1];
+            // deal more damage if there's only one target
+            const realBaseDamage =
+              targets.length === 1 ? rawBaseDamage * 1.5 : rawBaseDamage;
+            targets.forEach(pokemon => {
+              const damage = calculateDamage(user, pokemon, {
+                damage: realBaseDamage,
+                defenseStat: 'defense',
+              });
+              scene.causeDamage(user, pokemon, damage, { isAOE: true });
             });
-            scene.causeDamage(user, pokemon, damage, { isAOE: true });
-          });
-        }, animations['stone-edge-shoot'].duration / 2);
+          },
+          delay: animations['stone-edge-shoot'].duration / 2,
+        });
       });
   },
 } as const;
