@@ -237,8 +237,8 @@ export class GameScene extends Phaser.Scene {
       .setFontSize(20)
       .setOrigin(0.5, 0);
 
-    this.players = ['You', ...getRandomNames(7)].map(
-      (name, index) => new Player(this, name, 620, 100 + 30 * index)
+    this.players = ['You', ...getRandomNames(7)].map((name, index) =>
+      this.add.existing(new Player(this, name, 620, 100 + 30 * index))
     );
     // players[0] is always the human player
     [this.player] = this.players;

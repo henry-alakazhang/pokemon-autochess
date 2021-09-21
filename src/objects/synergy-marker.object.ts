@@ -28,41 +28,30 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    category: Category,
+    public category: Category,
     count: number
   ) {
     super(scene, x, y, category);
     this.setDisplaySize(100, 22);
     this.setOrigin(0);
 
-    const { description, thresholds } = synergyData[category];
-
-    const tier = getSynergyTier(thresholds, count);
-    // tier starts at 1, so next threshold is just the entry after
-    // tier can be `thresholds.length`, in which case it would be undefined and should default to max
-    const nextThreshold = thresholds[tier] ?? thresholds[thresholds.length - 1];
-
     this.thresholdText = scene.add
-      .text(x + this.displayWidth + 4, y + 4, `${count}/${nextThreshold}`, {
+      .text(x + this.displayWidth + 4, y + 4, ``, {
         ...titleStyle,
         color: '#000',
       })
       .setOrigin(0);
     // background covers the type + text and grows in size based on tier
+    // styles are applied in `setCount()`
     this.background = scene.add
-      .rectangle(
-        this.x - tier,
-        this.y - tier,
-        this.displayWidth + this.thresholdText.displayWidth + 6 + tier * 2,
-        this.displayHeight + tier * 2,
-        this.colors[tier]
-      )
+      .rectangle()
       .setOrigin(0)
       .setDepth(-1);
+    this.setCount(count);
 
     // hover text showing the description
     this.descriptionText = scene.add
-      .text(0, 0, description, {
+      .text(0, 0, synergyData[category].description, {
         ...defaultStyle,
         color: '#FFF',
         backgroundColor: '#5F7D99',
@@ -96,5 +85,38 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
       this.background.destroy();
     }
     super.destroy();
+  }
+
+  setVisible(visible: boolean): this {
+    super.setVisible(visible);
+    this.thresholdText.setVisible(visible);
+    this.background.setVisible(visible);
+    return this;
+  }
+
+  setActive(active: boolean): this {
+    super.setActive(active);
+    this.thresholdText.setActive(active);
+    this.background.setActive(active);
+    return this;
+  }
+
+  setCount(count: number) {
+    const { thresholds } = synergyData[this.category];
+    const tier = getSynergyTier(thresholds, count);
+    // tier starts at 1, so next threshold is just the entry after
+    // tier can be `thresholds.length`, in which case it would be undefined and should default to max
+    const nextThreshold = thresholds[tier] ?? thresholds[thresholds.length - 1];
+
+    this.thresholdText
+      .setPosition(this.x + this.displayWidth + 4, this.y + 4)
+      .setText(`${count}/${nextThreshold}`);
+    this.background
+      .setPosition(this.x - tier, this.y - tier)
+      .setSize(
+        this.displayWidth + this.thresholdText.displayWidth + 6 + tier * 2,
+        this.displayHeight + tier * 2
+      )
+      .setFillStyle(this.colors[tier]);
   }
 }

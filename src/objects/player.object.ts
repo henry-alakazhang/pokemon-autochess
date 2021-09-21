@@ -37,7 +37,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
   synergies: { category: Category; count: number }[] = [];
-  synergyIcons: SynergyMarker[] = [];
+  synergyMarkers: { [k in Category]?: SynergyMarker } = {};
 
   constructor(
     scene: GameScene,
@@ -338,21 +338,25 @@ export class Player extends Phaser.GameObjects.GameObject {
         }
         return b.category > a.category ? -1 : 1;
       });
-    // clean up old icons
-    this.synergyIcons.forEach(icon => icon.destroy());
-    // and add new ones
-    this.synergyIcons = this.synergies.map(
-      ({ category, count }, index) =>
-        this.scene.add.existing(
-          new SynergyMarker(
-            this.scene,
-            40,
-            170 + index * SynergyMarker.height,
-            category as Category,
-            count
-          )
-        ) as SynergyMarker
-    );
+
+    // hide all synergy markers
+    Object.values(this.synergyMarkers).forEach(marker => {
+      marker.setVisible(false).setActive(false);
+    });
+    // then show and reposition the active ones
+    this.synergies.slice(0, 9).forEach((synergy, index) => {
+      if (!this.synergyMarkers[synergy.category]) {
+        // if we haven't created the marker yet, create it now
+        this.synergyMarkers[synergy.category] = this.scene.add.existing(
+          new SynergyMarker(this.scene, 0, 0, synergy.category, synergy.count)
+        );
+      }
+      this.synergyMarkers[synergy.category]
+        ?.setActive(true)
+        .setVisible(true)
+        .setPosition(40, 170 + index * SynergyMarker.height)
+        .setCount(synergy.count);
+    });
   }
 
   canAddPokemonToMainboard() {
