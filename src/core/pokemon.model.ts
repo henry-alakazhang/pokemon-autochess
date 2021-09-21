@@ -213,7 +213,6 @@ const basePokemonData = {
   },
   scyther: {
     base: 'scyther',
-    // NOTE: Stage 1 Scyther is pure bug
     categories: ['bug', 'steel', 'pivot'],
     tier: 4,
     maxHP: 70,
@@ -231,7 +230,6 @@ const basePokemonData = {
   },
   magikarp: {
     base: 'magikarp',
-    // NOTE: Stage 1 and 2 Magikarp are pure water
     categories: ['water', 'flying', 'sweeper'],
     tier: 1,
     maxHP: 95,
@@ -697,7 +695,6 @@ const rawPokemonData = {
   },
   scyther: {
     ...getEvolution('scyther', 1),
-    categories: ['bug', 'pivot'],
     name: 'scyther',
     displayName: 'Scyther',
     evolution: 'scizor-1',
@@ -715,23 +712,29 @@ const rawPokemonData = {
   },
   magikarp: {
     ...getEvolution('magikarp', 1),
-    attack: 0,
-    specAttack: 0,
     basicAttack: {
       range: 1,
       stat: 'attack',
       unusable: true,
     },
-    categories: ['water', 'sweeper'],
-    move: undefined,
+    move: {
+      displayName: 'Splash',
+      type: 'passive',
+      description: `{{user}} flops around to no effect at all. It can't attack.`,
+      flags: {},
+    },
     name: 'magikarp',
     displayName: 'Magikarp',
     evolution: 'magikarp-2',
   },
   'magikarp-2': {
     ...getEvolution('magikarp', 2),
-    categories: ['water', 'sweeper'],
-    move: undefined,
+    move: {
+      displayName: 'Tackle',
+      type: 'passive',
+      description: `{{user}} tackles as a normal attack. It has no move.`,
+      flags: {},
+    },
     name: 'magikarp-2',
     displayName: 'Magikarp',
     evolution: 'gyarados',
