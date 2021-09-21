@@ -22,14 +22,10 @@ export class Button extends Phaser.GameObjects.Text {
       .on(Phaser.Input.Events.POINTER_OUT, () => {
         this.setStyle({ fontStyle: 'normal' });
       })
-      .on(
-        Phaser.Input.Events.POINTER_DOWN,
-        (event: Phaser.Input.Pointer & MouseEvent) => {
-          console.log(event);
-          if (event.leftButtonDown() && !event.defaultPrevented) {
-            this.emit(Button.Events.CLICK);
-          }
+      .on(Phaser.Input.Events.POINTER_DOWN, (event: Phaser.Input.Pointer) => {
+        if (event.leftButtonDown()) {
+          this.emit(Button.Events.CLICK);
         }
-      );
+      });
   }
 }

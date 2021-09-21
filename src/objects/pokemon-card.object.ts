@@ -11,6 +11,7 @@ import {
  *
  * FIXME: Load HTML file from somewhere proper
  * FIXME: Styles should be global or something and not re-inlined every time
+ * FIXME: Probably should only load once ever and just adjust fields for performance reasons
  */
 export class PokemonCard extends Phaser.GameObjects.DOMElement {
   constructor(
@@ -23,17 +24,16 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
 
     const background = '#ddeedd';
     const highlight = '#bbccbb';
-    const border = 'green';
-
-    console.log(pokemon);
+    const border = '2px solid green';
 
     this.setOrigin(0, 1);
+    // DIY react LMAO
     this.createFromHTML(
       `
       <style>
         .PokemonCard {
           font-family: 'Anonymous Pro';
-          border: 2px solid ${border};
+          border: ${border};
           border-radius: 10px;
           background-color: ${background};
           max-width: 300px;
@@ -90,13 +90,13 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
         .VerticalDivider {
           grid-column: 2;
           grid-row: 1 / span 2;
-          border-left: 2px solid ${border};
+          border-left: ${border};
         }
         
         .HorizontalDivider {
           grid-row: 2;
           grid-column: 1 / span 3;
-          border-bottom: 2px solid ${border};
+          border-bottom:${border};
         }
         
         .Stats {
@@ -113,7 +113,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
         .MoveTitleText {
           /* apply bg here to cover the divider line */
           background-color: ${background};
-          border: 2px solid ${border};
+          border: ${border};
           border-radius: 5px;
           margin-left: 3px;
           padding: 2px;
@@ -124,6 +124,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           padding: 2px 5px;
           font-size: 14px;
           overflow-y: scroll;
+          /* FIXME: Apply some styles on Chrome too */
           scrollbar-width: thin;
           scrollbar-color: ${highlight} ${background};
         }

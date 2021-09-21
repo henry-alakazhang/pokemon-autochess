@@ -3,7 +3,7 @@ import { Pokemon } from '../../../core/pokemon.model';
 import { assertNever, flatten, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
-  PokemonObject
+  PokemonObject,
 } from '../../../objects/pokemon.object';
 import { CombatScene } from './combat.scene';
 
@@ -424,7 +424,7 @@ type OffenseAction =
 
 export function getDamageReduction(defense: number) {
   // reduction is stat / 5, rounded down to the nearest 5
- return (Math.floor(defense / 25) * 5) / 100
+  return (Math.floor(defense / 25) * 5) / 100;
 }
 
 export function calculateDamage(
