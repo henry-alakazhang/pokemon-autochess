@@ -3,7 +3,7 @@ import { Pokemon } from '../../../core/pokemon.model';
 import { assertNever, flatten, isDefined } from '../../../helpers';
 import {
   PokemonAnimationType,
-  PokemonObject,
+  PokemonObject
 } from '../../../objects/pokemon.object';
 import { CombatScene } from './combat.scene';
 
@@ -422,6 +422,11 @@ type OffenseAction =
       defenseStat: 'defense' | 'specDefense';
     };
 
+export function getDamageReduction(defense: number) {
+  // reduction is stat / 5, rounded down to the nearest 5
+ return (Math.floor(defense / 25) * 5) / 100
+}
+
 export function calculateDamage(
   attacker: PokemonObject,
   defender: PokemonObject,
@@ -435,8 +440,7 @@ export function calculateDamage(
     'damage' in attack ? attack.damage : attacker.basePokemon[attack.stat];
   const defenseValue = defender.basePokemon[defenseStatName];
 
-  // reduction is stat / 5, rounded down to the nearest 5
-  const defenseReduction = (Math.floor(defenseValue / 25) * 5) / 100;
+  const defenseReduction = getDamageReduction(defenseValue);
   // bonus percentage reduction from a buff
   const statusReduction =
     (defender.status.percentDamageReduction?.value ?? 0) / 100;

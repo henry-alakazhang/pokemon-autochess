@@ -9,7 +9,7 @@ import { PreloadScene } from './scenes/preload.scene';
 export class PokemonAutochessGame extends Game {}
 
 window.onload = () => {
-  new PokemonAutochessGame({
+  const game = new PokemonAutochessGame({
     type: Phaser.AUTO,
     parent: 'canvas',
     width: 800,
@@ -25,6 +25,9 @@ window.onload = () => {
     ],
     physics: {
       default: 'arcade',
+    },
+    dom: {
+      createContainer: true,
     },
   });
 };

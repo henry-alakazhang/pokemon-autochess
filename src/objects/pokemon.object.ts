@@ -3,6 +3,7 @@ import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
+import { PokemonCard } from './pokemon-card.object';
 
 interface SpriteParams {
   readonly scene: Phaser.Scene;
@@ -35,6 +36,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   bars: Phaser.GameObjects.Graphics;
   blindIcon: Phaser.GameObjects.Image;
   sleepIcon: Phaser.GameObjects.Sprite;
+  pokemonTooltip: Phaser.GameObjects.DOMElement;
   currentHP: number;
   maxHP: number;
   currentPP: number;
@@ -98,6 +100,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       .play('sleep')
       .setVisible(false);
     this.attach(this.sleepIcon);
+    // FIXME: Should probably just create one and reuse it between Pokemon
+    this.pokemonTooltip = this.scene.add
+      .existing(new PokemonCard(this.scene, this.x, this.y, this.basePokemon))
+      .setVisible(false);
+    this.attach(this.pokemonTooltip);
 
     // default state is facing the player
     this.playAnimation('down');
@@ -109,6 +116,30 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       })
       .setDepth(1);
     this.redrawBars();
+
+    this.setInteractive().on(
+      Phaser.Input.Events.POINTER_DOWN,
+      (event: Phaser.Input.Pointer) => {
+        if (event.rightButtonDown()) {
+          this.pokemonTooltip.setPosition(event.x, event.y);
+          this.pokemonTooltip.setVisible(true);
+        }
+      }
+    );
+    this.scene.input.on(
+      Phaser.Input.Events.POINTER_DOWN,
+      (event: Phaser.Input.Pointer) => {
+        // hide if clicked outside...
+        // bruh there has to be a better way of handling this
+        if (
+          event.leftButtonDown() ||
+          Math.abs(event.x - this.x) > 35 ||
+          Math.abs(event.y - this.y) > 35
+        ) {
+          this.pokemonTooltip.setVisible(false);
+        }
+      }
+    );
   }
 
   initPhysics() {
@@ -152,6 +183,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       this.scene.scene.settings.status !== Phaser.Scenes.SHUTDOWN
     ) {
       this.outlineSprite.destroy();
+      this.pokemonTooltip.destroy();
       this.bars.destroy();
     }
     super.destroy();
