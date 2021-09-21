@@ -9,12 +9,12 @@ import * as Tweens from '../tweens';
  * Boots special attack, special defense and speed for the rest of the battle
  */
 const move = {
-  displayName: 'Dragon Dance',
+  displayName: 'Quiver Dance',
   type: 'active',
   range: 1,
   targetting: 'ground',
   get description() {
-    return `Boosts special attack damage, special defense and speed by 50% for the rest of the battle.`;
+    return `{{user}} dances to boost its Sp. Attack, Sp. Defense and Speed by 50% for the rest of the battle.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;

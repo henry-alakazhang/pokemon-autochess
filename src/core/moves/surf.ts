@@ -19,9 +19,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
-    return `Sends forth a wave of water, dealing ${this.damage.join(
+    return `{{user}} sends forth a wave of water, dealing ${this.damage.join(
       '/'
-    )} damage to every target in front of or beside the user, knocking them back and stunning them for 1.5 second.`;
+    )} damage to enemies in front of and beside it, knocking them back and stunning them for 1.5 seconds.`;
   },
   range: 1,
   /**

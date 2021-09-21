@@ -44,7 +44,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             "pokemon . stats" 120px
             "moveTitle . stats" 20px
             "move move move" 55px 
-            / 188px 2px 100px;
+            / 198px 2px 100px;
         }
         
         .PokemonDetails {
@@ -222,7 +222,10 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           </span>
         </div>
         <div class="MoveDetails">
-          ${this.pokemon.move?.description}
+          ${this.pokemon.move?.description.replace(
+            /{{user}}/g,
+            this.pokemon.displayName
+          )}
         </div>
       </div>
       `

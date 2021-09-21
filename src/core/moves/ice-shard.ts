@@ -17,7 +17,7 @@ const move = {
   defenseStat: 'defense',
   targetting: 'ground',
   get description() {
-    return `Dashes to the weakest enemy and attacks immediately for critical damage.`;
+    return `{{user}} dashes to the weakest enemy and attacks immediately for a guaranteed critical hit.`;
   },
   range: 100,
   getTarget(board: CombatBoard, myCoords: Coords): Coords | undefined {

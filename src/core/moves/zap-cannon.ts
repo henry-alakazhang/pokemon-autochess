@@ -25,9 +25,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
-    return `Charges for 2 seconds before zapping in a straight line, dealing ${this.damage.join(
+    return `{{user}} charges for 2 seconds before zapping a straight line, dealing ${this.damage.join(
       '/'
-    )} damage to every target hit`;
+    )} damage to every enemy hit.`;
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {

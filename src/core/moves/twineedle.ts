@@ -3,9 +3,7 @@ import { Move, MoveConfig } from '../move.model';
 /**
  * Twineedle - Beedrill line's passive move
  *
- * Every N attack hits twice and poisons
- *
- * TODO: make it poison
+ * Every Nth attack hits twice
  */
 const move = {
   displayName: 'Twineedle',
@@ -13,7 +11,7 @@ const move = {
   range: 2,
   targetting: 'unit',
   get description() {
-    return `Every 3 / 2 / 1 attacks hits twice and poisons the target`;
+    return `{{user}} strikes twice every 3 / 2 / 1 attacks.`;
   },
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     const hitsToProc = [3, 2, 1];

@@ -19,9 +19,9 @@ const move = {
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
-    return `Deals ${this.damage.join(
+    return `{{user}} drains a single enemy's blood, dealing ${this.damage.join(
       '/'
-    )} damage to a single target and heals the user for half that amount.`;
+    )} damage. {{user}}'s HP is restored by half that amount.`;
   },
   range: 1,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {

@@ -19,9 +19,9 @@ const move = {
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
-    return `Deals ${this.damage.join(
+    return `{{user}} slashes a single enemy rapidly to deal ${this.damage.join(
       '/'
-    )} damage to a single target, increasing each time it hits`;
+    )} damage, increasing with each use.`;
   },
   range: 1,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {

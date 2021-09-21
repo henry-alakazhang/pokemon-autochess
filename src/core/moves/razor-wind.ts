@@ -21,9 +21,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'ground',
   get description() {
-    return `After 2 seconds, whips up a whirlwind which deals ${this.damage.join(
+    return `{{user}} whips up a whirlwind. After 2 seconds, the whirlwind deals ${this.damage.join(
       '/'
-    )} damage over 2 seconds`;
+    )} damage over 2 seconds to any enemies caught in it.`;
   },
   range: 3,
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {

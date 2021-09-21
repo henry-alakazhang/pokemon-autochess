@@ -22,9 +22,9 @@ const move = {
   defenseStat: 'defense',
   targetting: 'ground',
   get description() {
-    return `Dashes behind the furthest enemy, dealing ${this.damage.join(
+    return `{{user}} charges, dashing behind the furthest enemy. It deals ${this.damage.join(
       '/'
-    )} damage to every target hit`;
+    )} damage to every enemy it passes through.`;
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {

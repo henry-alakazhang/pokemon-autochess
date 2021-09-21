@@ -20,9 +20,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
-    return `Fires a barrage of 5 egg bombs at the nearest enemy Pokemon, each dealing ${this.damage.join(
+    return `{{user}} rapidly fires 5 eggs at the nearest enemy, each dealing ${this.damage.join(
       '/'
-    )} damage to the target and half to nearby enemy Pokemon.`;
+    )} damage to the target and half to adjacent enemies.`;
   },
   range: 99,
   async use({ scene, user, userCoords, onComplete }: MoveConfig<'unit'>) {

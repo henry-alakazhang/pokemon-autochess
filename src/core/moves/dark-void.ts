@@ -22,9 +22,9 @@ const move = {
   // number of targets
   damage: [2, 3, 8],
   get description() {
-    return `Puts the ${this.damage.join(
+    return `{{user}} puts the ${this.damage.join(
       '/'
-    )} enemies with highest HP to sleep for 4 seconds, and drains 10% of their health per second while they sleep.`;
+    )} enemies with highest HP to sleep for 4 seconds, and drains 10% of their HP/s while they sleep.`;
   },
   range: 100,
   getTarget(board: CombatBoard, myCoords: Coords): Coords | undefined {

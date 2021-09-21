@@ -18,9 +18,9 @@ const move = {
   defenseStat: 'specDefense',
   damage: [200, 350, 500],
   get description() {
-    return `Magnetizes the furtherst enemy Pokemon, dealing ${this.damage.join(
+    return `{{user}} magnetizes the furthest enemy, dealing ${this.damage.join(
       '/'
-    )} damage and pulling them next to this Pokemon.`;
+    )} damage. It is pulled next to {{user}} and paralysed for 2 seconds.`;
   },
   range: 100,
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
@@ -53,7 +53,7 @@ const move = {
 
     scene.causeDamage(user, target, this.damage[user.basePokemon.stage - 1]);
     // paralyse
-    target.addStatus('paralyse', 4000);
+    target.addStatus('paralyse', 2000);
     // move if possible
     if (moveCoords) {
       scene.movePokemon(targetCoords, moveCoords, () => {

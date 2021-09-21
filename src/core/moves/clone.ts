@@ -19,7 +19,7 @@ const move = {
   // amount of PP to grant the clone
   damage: [5, 10, 50],
   get description() {
-    return `Copies a Pokemon from the opposing team, with ${this.damage.join(
+    return `{{user}} clones a random enemy, with ${this.damage.join(
       '/'
     )} bonus PP.`;
   },

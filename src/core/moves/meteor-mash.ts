@@ -18,9 +18,9 @@ const move = {
   targetting: 'unit',
   damage: [400, 750, 1400],
   get description() {
-    return `Hits the target with a punch like a meteor, dealing ${this.damage.join(
+    return `{{user}} winds up for a huge punch to a single enemy. It deals ${this.damage.join(
       '/'
-    )} damage and knocking them back into the nearest unit or a wall. The target and any enemy behind them is stunned for 2 seconds, doubled if hit into a wall.`;
+    )} damage and knocks the target back. The target and any enemy behind it are stunned for 2 seconds, doubled if hit into a wall.`;
   },
   use({
     scene,

@@ -16,9 +16,9 @@ const move = {
   // actually effectiveness haha
   damage: [30, 45, 60],
   get description() {
-    return `Reduces all incoming damage by ${this.damage.join(
+    return `{{user}} reduces all incoming damage by ${this.damage.join(
       '/'
-    )} and ignores statuses for 6 seconds.`;
+    )}% and ignores status effects for 6 seconds.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;

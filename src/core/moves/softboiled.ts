@@ -17,7 +17,9 @@ const move = {
   damage: [300, 500, 700],
   targetting: 'unit',
   get description() {
-    return `Heals the lowest-health ally for ${this.damage.join('/')}`;
+    return `{{user}} throws an egg to the lowest-health ally that that heals it for ${this.damage.join(
+      '/'
+    )} HP.`;
   },
   range: 100,
   /**

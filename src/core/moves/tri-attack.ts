@@ -26,9 +26,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'ground',
   get description() {
-    return `Flings a bomb that deals ${this.damage.join(
+    return `{{user}} flings a bomb at a single enemy that deals ${this.damage.join(
       '/'
-    )} 3 times over an increasing area.`;
+    )} damage three times. Repeated explosions hit more enemies.`;
   },
   range: 3,
   getTarget(board: CombatBoard, user: Coords) {

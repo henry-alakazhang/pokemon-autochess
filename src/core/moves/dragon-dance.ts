@@ -14,7 +14,7 @@ const move = {
   range: 1,
   targetting: 'ground',
   get description() {
-    return `Boosts attack damage and speed by 50% for the rest of the battle.`;
+    return `{{user}} dances to boost its Attack and Speed by 50% for the rest of the battle.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;

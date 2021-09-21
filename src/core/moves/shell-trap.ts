@@ -21,9 +21,9 @@ const move = {
   targetting: 'ground',
   damage: [100, 125, 200],
   get description() {
-    return `Reduces all incoming damage by 40% for 4 seconds. When hit by an attack, explodes to deal ${this.damage.join(
+    return `{{user}} shields itself, reducing all incoming damage by 40% for 4 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
       '/'
-    )} to all adjacent enemies`;
+    )} damage to all adjacent enemies.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;

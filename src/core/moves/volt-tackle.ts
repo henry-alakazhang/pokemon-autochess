@@ -21,9 +21,9 @@ const move = {
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
-    return `Deals ${this.damage.join(
+    return `{{user}} tackles a single target, dealing ${this.damage.join(
       '/'
-    )} damage to a single target, with some recoil to the user.`;
+    )} damage. {{user}} can hurt itself.`;
   },
   range: 1,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {

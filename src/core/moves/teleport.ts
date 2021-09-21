@@ -17,7 +17,7 @@ const move = {
   // actually heal %
   damage: [30, 45, 60],
   get description() {
-    return `Teleports to a random spot on the grid, healing for ${this.damage.join(
+    return `{{user}} teleports to a random spot on the grid, healing for ${this.damage.join(
       '/'
     )}% max HP and dropping aggro.`;
   },

@@ -18,9 +18,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
-    return `Hurls a shadowy blob through the target, dealing ${this.damage.join(
+    return `{{user}} hurls a shadowy blob in a straight line, dealing ${this.damage.join(
       '/'
-    )} damage to every target hit and lowering the Special Defense by 50%.`;
+    )} damage to every enemy hit and lowering their Sp. Defense by 50% until end of combat.`;
   },
   range: 1,
   use({

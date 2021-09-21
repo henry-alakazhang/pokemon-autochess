@@ -9,7 +9,7 @@ const move = {
   displayName: 'Shadow Tag',
   type: 'passive',
   description:
-    "Attacks a Pokemon's shadow, making it impossible to dodge attacks.",
+    "{{user}} attacks a Pokemon's shadow, so its attacks cannot be dodged.",
   flags: {
     undodgable: true,
   },

@@ -18,9 +18,9 @@ const move = {
   targetting: 'unit',
   damage: [150, 200, 350],
   get description() {
-    return `Spins with both arms, hitting all nearby Pokemon for ${this.damage.join(
+    return `{{user}} spins with both arms, hitting all adjacent enemies for ${this.damage.join(
       '/'
-    )} TRUE damage.`;
+    )} damage. Ignores defense.`;
   },
   use({
     scene,

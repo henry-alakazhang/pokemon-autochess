@@ -4,7 +4,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Thunder Wave',
   type: 'active',
-  description: 'Paralyses the target for 4 seconds.',
+  description:
+    '{{user}} sends a jolt of electricity at a single enemy, paralysing it for 4 seconds.',
   range: 2,
   targetting: 'unit',
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {

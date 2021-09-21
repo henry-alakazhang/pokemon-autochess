@@ -18,9 +18,9 @@ const move = {
   // HP of the plant
   damage: [150, 350, 600],
   get description() {
-    return `Summon a plant in a nearby square with ${this.damage.join(
+    return `{{user}} summons a plant in a nearby square with its Attack and ${this.damage.join(
       '/'
-    )} HP and this Pokemon's attack`;
+    )} HP.`;
   },
   getTarget(board: CombatBoard, user: Coords) {
     return getNearestEmpty(board, user);

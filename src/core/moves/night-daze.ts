@@ -18,9 +18,9 @@ const move = {
   targetting: 'unit',
   damage: [350, 600, 1200],
   get description() {
-    return `Hits the target with a pitch-black blast, dealing ${this.damage.join(
+    return `{{user}} hits a single enemy with a pitch-black blast, dealing ${this.damage.join(
       '/'
-    )} damage and blinding them for 3 seconds`;
+    )} damage and blinding it for 3 seconds`;
   },
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     scene.add.tween({
