@@ -26,5 +26,8 @@ window.onload = () => {
     physics: {
       default: 'arcade',
     },
+    dom: {
+      createContainer: true,
+    },
   });
 };
