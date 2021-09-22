@@ -1,5 +1,6 @@
 import { flatten, isDefined } from '../helpers';
 import { FloatingText } from '../objects/floating-text.object';
+import { Player } from '../objects/player.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import {
   getGridDistance,
@@ -104,7 +105,8 @@ export interface Synergy {
   readonly onRoundEnd?: (config: {
     scene: GameScene;
     board: CombatScene['board'];
-    winner: 'player' | 'enemy' | undefined;
+    player: Player;
+    won: boolean;
     count: number;
   }) => void;
   /** Possible extra damage calculation */
@@ -140,20 +142,21 @@ to Pick Up a Pokeball at end of round.
     onRoundEnd({
       scene,
       board,
-      winner,
+      player,
+      won,
       count,
     }: {
       scene: GameScene;
       board: CombatScene['board'];
-      winner: 'player' | 'enemy' | undefined;
+      player: Player;
+      won: boolean;
       count: number;
     }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
       }
-      // todo: do on a per-player basis
-      if (tier === 1 && winner !== 'player') {
+      if (tier === 1 && won) {
         return;
       }
 
@@ -164,10 +167,11 @@ to Pick Up a Pokeball at end of round.
             pokemon.basePokemon.categories.includes('normal') &&
             Math.random() < 0.5
           ) {
+            // FIXME: only show pick up text for visible player
             scene.add.existing(
               new FloatingText(scene, pokemon.x, pokemon.y, 'Pick up!')
             );
-            scene.player.gold++;
+            player.gold++;
           }
         });
     },

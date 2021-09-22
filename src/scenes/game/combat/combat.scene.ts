@@ -21,14 +21,13 @@ import {
   pathfind,
 } from './combat.helpers';
 
-export type CombatEndCallback = (
-  winner: 'player' | 'enemy' | undefined
-) => void;
+export interface CombatEndEvent {
+  readonly winner: 'player' | 'enemy' | undefined;
+}
 export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
   readonly player: Player;
   readonly enemy: Player;
-  readonly callback: CombatEndCallback;
 }
 
 /** X-coordinate of the center of the grid */
@@ -53,6 +52,9 @@ export function getCoordinatesForGrid({ x, y }: Coords): Coords {
  */
 export class CombatScene extends Scene {
   static readonly KEY = 'CombatScene';
+  static Events = {
+    COMBAT_END: 'combatComplete',
+  };
 
   board: CombatBoard;
   private grid: Phaser.GameObjects.Grid;
@@ -66,8 +68,6 @@ export class CombatScene extends Scene {
     player: Player;
     enemy: Player;
   };
-
-  private combatEndCallback: CombatEndCallback;
 
   constructor() {
     super({
@@ -93,7 +93,6 @@ export class CombatScene extends Scene {
       // fill + map rather than `fill` an array because
       // `fill` will only initialise one array and fill with shallow copies
       .map(() => Array(5).fill(undefined));
-    this.combatEndCallback = data.callback;
 
     this.grid = this.add.grid(
       GRID_X, // center x
@@ -180,8 +179,10 @@ export class CombatScene extends Scene {
         .setDepth(200)
         .setOrigin(0.5, 0.5);
       this.scene.pause();
+      this.events.emit(CombatScene.Events.COMBAT_END, {
+        winner: undefined,
+      } as CombatEndEvent);
       setTimeout(() => {
-        this.combatEndCallback(undefined);
         this.scene.stop(CombatScene.KEY);
       }, 2000);
     }
@@ -212,8 +213,10 @@ export class CombatScene extends Scene {
       })
       .setDepth(200)
       .setOrigin(0.5, 0.5);
+    this.events.emit(CombatScene.Events.COMBAT_END, {
+      winner,
+    } as CombatEndEvent);
     setTimeout(() => {
-      this.combatEndCallback(winner);
       this.scene.stop(CombatScene.KEY);
     }, 2000);
   }

@@ -12,8 +12,17 @@ import { PokemonObject } from '../../objects/pokemon.object';
 import { defaultStyle } from '../../objects/text.helpers';
 import { MenuScene } from '../menu.scene';
 import { Coords, inBounds } from './combat/combat.helpers';
-import { CombatScene, CombatSceneData } from './combat/combat.scene';
-import { getHyperRollStages, getRandomNames, Stage } from './game.helpers';
+import {
+  CombatEndEvent,
+  CombatScene,
+  CombatSceneData,
+} from './combat/combat.scene';
+import {
+  getHyperRollStages,
+  getRandomNames,
+  shuffle,
+  Stage,
+} from './game.helpers';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -302,7 +311,7 @@ export class GameScene extends Phaser.Scene {
 
     this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
     this.nextRoundButton.on(Button.Events.CLICK, () => {
-      this.nextRoundButton.destroy();
+      this.nextRoundButton.setVisible(false).setActive(false);
       this.startCombat();
     });
     this.add.existing(this.nextRoundButton);
@@ -333,16 +342,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   startCombat() {
-    // deselect any selected Pokemon
-    if (this.selectedPokemon) {
-      this.selectedPokemon.toggleOutline();
-      this.selectedPokemon = undefined;
-    }
+    // slightly hacky: trigger a click event far away
+    // this deselects Pokemon, closes any info cards and so on.
+    this.events.emit(Phaser.Input.Events.POINTER_DOWN, { x: 0, y: 0 });
     // hide all the prep-only stuff
     this.player.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(false))
     );
     this.prepGrid.setVisible(false);
+    // TODO: allow interacting with sideboard/shop during combat
     this.input.enabled = false;
     // hide the shop
     if (!this.scene.isPaused(ShopScene.KEY)) {
@@ -350,63 +358,105 @@ export class GameScene extends Phaser.Scene {
       this.scene.pause(ShopScene.KEY);
     }
 
-    const enemy = this.players[Math.floor(Math.random() * 7) + 1];
-    enemy.mainboard = this.generateEnemyBoard();
+    const pairings = this.matchmakePairings();
+    console.log('PAIRINGS', pairings);
+    pairings.forEach(pairing => {
+      let [player1, player2] = [pairing[0], pairing[1]];
+      // force human player to be player 1
+      if (player2 === this.player) {
+        [player1, player2] = [player2, player1];
+      }
 
-    const sceneData: CombatSceneData = {
-      player: this.player,
-      enemy,
-      callback: (winner: 'player' | 'enemy' | undefined) => {
-        this.player.synergies.forEach(synergy => {
-          synergyData[synergy.category].onRoundEnd?.({
-            scene: this,
-            board: this.player.mainboard,
-            winner,
-            count: synergy.count,
+      if (player1 === this.player) {
+        // human player: show combat
+        player2.mainboard = this.generateEnemyBoard();
+        this.scene.launch(CombatScene.KEY, {
+          player: player1,
+          enemy: player2,
+        } as CombatSceneData);
+        this.scene
+          .get(CombatScene.KEY)
+          .events.once(
+            CombatScene.Events.COMBAT_END,
+            ({ winner }: CombatEndEvent) => {
+              this.handleCombatResult(player1, winner === 'player');
+              this.handleCombatResult(player2, winner === 'enemy');
+            }
+          );
+        this.scene
+          .get(CombatScene.KEY)
+          .events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.startDowntime();
           });
-        });
-        // FIXME: round end synergies always apply to the human player
-        // this.player.synergies.forEach(synergy => {
-        //   synergyData[synergy.category].onRoundEnd?.({
-        //     scene: this,
-        //     board: this.player.mainboard,
-        //     winner,
-        //     count: synergy.count,
-        //   });
-        // });
-        this.player.battleResult(
-          winner === 'player',
-          this.stages[this.currentStage].damage()
-        );
-        enemy.battleResult(
-          winner === 'enemy',
-          this.stages[this.currentStage].damage()
-        );
-        // TODO: handle other players losing
+      } else {
+        // AI players: after combat ends, randomly determine a winner
+        this.scene
+          .get(CombatScene.KEY)
+          .events.once(CombatScene.Events.COMBAT_END, () => {
+            const won = Math.random() < 0.5;
+            this.handleCombatResult(player1, won);
+            this.handleCombatResult(player2, !won);
+          });
+      }
+    });
+  }
 
-        if (this.player.hp <= 0) {
-          this.add
-            .text(GRID_X, GRID_Y, `YOU LOSE`, {
-              ...defaultStyle,
-              backgroundColor: '#000',
-              fontSize: '40px',
-            })
-            .setDepth(200)
-            .setOrigin(0.5, 0.5);
-          this.time.addEvent({
-            callback: () => {
-              this.scene.start(MenuScene.KEY);
-            },
-            delay: 2000,
-          });
-        }
-        this.startDowntime();
-      },
-    };
-    this.scene.launch(CombatScene.KEY, sceneData);
+  // TODO: should this all just live inside Player?
+  handleCombatResult(player: Player, won: boolean) {
+    player.synergies.forEach(synergy => {
+      synergyData[synergy.category].onRoundEnd?.({
+        scene: this,
+        board: player.mainboard,
+        player,
+        won,
+        count: synergy.count,
+      });
+    });
+    player.battleResult(won, this.stages[this.currentStage].damage());
   }
 
   startDowntime() {
+    // TODO: handle other players losing
+    if (this.player.hp <= 0) {
+      this.add
+        .text(GRID_X, GRID_Y, `YOU LOSE`, {
+          ...defaultStyle,
+          backgroundColor: '#000',
+          fontSize: '40px',
+        })
+        .setDepth(200)
+        .setOrigin(0.5, 0.5);
+      this.time.addEvent({
+        callback: () => {
+          this.scene.start(MenuScene.KEY);
+        },
+        delay: 2000,
+      });
+      return;
+    }
+
+    // other players that are still alive
+    const remainingPlayers = this.players.filter(
+      player => player !== this.player && player.hp > 0
+    );
+    if (remainingPlayers.length <= 0) {
+      this.add
+        .text(GRID_X, GRID_Y, `YOU WIN!!`, {
+          ...defaultStyle,
+          backgroundColor: '#242',
+          fontSize: '40px',
+        })
+        .setDepth(200)
+        .setOrigin(0.5, 0.5);
+      this.time.addEvent({
+        callback: () => {
+          this.scene.start(MenuScene.KEY);
+        },
+        delay: 2000,
+      });
+      return;
+    }
+
     this.currentRound += 1;
     if (this.currentRound > this.stages[this.currentStage].rounds) {
       this.currentRound = 1;
@@ -423,12 +473,7 @@ export class GameScene extends Phaser.Scene {
     this.prepGrid.setVisible(true);
     this.input.enabled = true;
 
-    this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
-    this.nextRoundButton.on(Button.Events.CLICK, () => {
-      this.nextRoundButton.destroy();
-      this.startCombat();
-    });
-    this.add.existing(this.nextRoundButton);
+    this.nextRoundButton.setActive(true).setVisible(true);
   }
 
   /**
@@ -515,6 +560,24 @@ export class GameScene extends Phaser.Scene {
     }
 
     player.removePokemon(pokemon);
+  }
+
+  /**
+   * Randomise pairings and return an index -> index mapping
+   */
+  matchmakePairings(): [Player, Player][] {
+    // literally just shuffle it and return pairs
+    // TODO: prevent the same players playing too often.
+    const order = shuffle(this.players.map((_, index) => index)).map(
+      index => this.players[index]
+    );
+
+    return [
+      [order[0], order[1]],
+      [order[2], order[3]],
+      [order[4], order[5]],
+      [order[6], order[7]],
+    ];
   }
 
   /**

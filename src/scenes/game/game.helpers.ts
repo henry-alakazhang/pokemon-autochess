@@ -19,6 +19,22 @@ export function getHyperRollStages(): Stage[] {
 }
 
 /**
+ * Shuffles the first `amount` elements of a given array.
+ * Modifies the array in-place and returns it.
+ */
+export function shuffle<T>(array: T[], amount = array.length - 1): T[] {
+  // shuffle the list with a bastardised Fisher-Yates:
+  // for each item (up to the limit we care about)
+  for (let i = 0; i < amount; i++) {
+    // pick a random other element (that we haven't already swapped)
+    const swapIndex = Math.floor(Math.random() * (array.length - i)) + i;
+    // and swap the two (fancy ES6 syntax)
+    [array[i], array[swapIndex]] = [array[swapIndex], array[i]];
+  }
+  return array;
+}
+
+/**
  * Returns `amount` random names from a name list, with no repeats.
  */
 export function getRandomNames(amount: number): string[] {
@@ -56,13 +72,5 @@ export function getRandomNames(amount: number): string[] {
     'Marnie',
   ];
 
-  // shuffle the list with a bastardised Fisher-Yates:
-  // for each item (up to the limit we care about)
-  for (let i = 0; i < amount; i++) {
-    // pick a random other element (that we haven't already swapped)
-    const swapIndex = Math.floor(Math.random() * (names.length - i)) + i;
-    // and swap the two (fancy ES6 syntax)
-    [names[i], names[swapIndex]] = [names[swapIndex], names[i]];
-  }
-  return names.slice(0, amount);
+  return shuffle(names, amount).slice(0, amount);
 }
