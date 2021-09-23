@@ -32,6 +32,9 @@
     "no-param-reassign": 0,
     // doesn't work nicely with optional chaining on function calls
     "no-unused-expressions": 0,
+    // replace no-useless-constructor with typescript-eslint version
+    "no-useless-constructor": 0,
+    "@typescript-eslint/no-useless-constructor": [2],
     "prettier/prettier": 2,
     "no-use-before-define": 0,
     "@typescript-eslint/no-use-before-define": 2,

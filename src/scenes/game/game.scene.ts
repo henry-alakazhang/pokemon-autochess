@@ -23,6 +23,7 @@ import {
   shuffle,
   Stage,
 } from './game.helpers';
+import { SHOP_POOL_SIZES } from './shop.helpers';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -42,14 +43,6 @@ const CELL_COUNT = 8;
 const SHOP_X = 400;
 /** Y-coordinate of the center of the shop */
 const SHOP_Y = 175;
-
-const POOL_SIZES = {
-  1: 3,
-  2: 3,
-  3: 3,
-  4: 3,
-  5: 3,
-};
 
 export type PokemonLocation =
   | { location: 'mainboard'; coords: Coords }
@@ -142,6 +135,9 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * The pool of available Pokemon to buy in the shop
+   *
+   * EVERY POOL IN THE GAME is a reference to this object.
+   * Don't accidentally reassign it.
    */
   private pool: {
     [k in PokemonName]?: number;
@@ -185,7 +181,7 @@ export class GameScene extends Phaser.Scene {
   init() {
     this.pool = {};
     buyablePokemon.forEach(pokemon => {
-      this.pool[pokemon] = POOL_SIZES[pokemonData[pokemon].tier];
+      this.pool[pokemon] = SHOP_POOL_SIZES[pokemonData[pokemon].tier];
     });
   }
 
@@ -264,11 +260,9 @@ export class GameScene extends Phaser.Scene {
       defaultStyle
     );
 
+    this.scene.launch(ShopScene.KEY, { player: this.player, pool: this.pool });
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
-    this.shop.player = this.player; // temporary solution
-    this.shop.pool = this.pool;
     this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
-    this.scene.launch(ShopScene.KEY);
 
     this.input.on(
       Phaser.Input.Events.POINTER_DOWN,

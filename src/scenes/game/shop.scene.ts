@@ -1,9 +1,10 @@
-import { buyablePokemon, PokemonName } from '../../core/pokemon.model';
+import { PokemonName } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
 import { Coords } from './combat/combat.helpers';
 import { GameScene } from './game.scene';
+import { rerollShop } from './shop.helpers';
 
 const CELL_WIDTH = 140;
 const CELL_HEIGHT = 90;
@@ -12,15 +13,22 @@ const POKEMON_OFFSET = 20;
 const REROLL_COST = 2;
 const BORDER_SIZE = 50;
 
+export interface ShopSceneData {
+  readonly player: Player;
+  readonly pool: {
+    [k in PokemonName]?: number;
+  };
+}
+
 export class ShopScene extends Phaser.Scene {
   static readonly KEY = 'ShopScene';
   private centre: Coords = { x: 0, y: 0 };
-  private pokemonForSale: PokemonForSaleObject[] = new Array(CELL_COUNT);
+  private pokemonForSale: PokemonForSaleObject[] = Array(CELL_COUNT);
 
   public player: Player; // hacky temporary solution
   public pool: {
     [k in PokemonName]?: number;
-  } = {};
+  };
 
   constructor() {
     super({
@@ -28,7 +36,10 @@ export class ShopScene extends Phaser.Scene {
     });
   }
 
-  create(): void {
+  create(data: ShopSceneData): void {
+    this.player = data.player;
+    this.pool = data.pool;
+
     this.drawBase();
     this.reroll();
 
@@ -102,36 +113,17 @@ export class ShopScene extends Phaser.Scene {
     // Remove the old pokemon
     this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();
-      // put it back into the pool to roll for
-      // preeetty sure it will be in the pool if we're putting it back
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.pool[pokemon.pokemonName]! += 1;
     });
 
-    // populate with random Pokemon
-    // TODO: scale chance based on amount remaining in pool
-    for (let i = 0; i < CELL_COUNT; ++i) {
+    const newShop = rerollShop(
+      this.pool,
+      this.pokemonForSale.map(pokemon => pokemon.pokemonName)
+    );
+
+    this.pokemonForSale = newShop.map((pokemon, i) => {
       const currCoords = this.getCoordinatesForShopIndex(i);
-      let pick =
-        buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)];
-      // don't pick if the pool is out of this Pokemon
-      // in theory this will go infinite if we buy too many Pokemon :thinking:
-      while (!this.pool[pick]) {
-        pick =
-          buyablePokemon[Math.floor(Math.random() * buyablePokemon.length)];
-      }
-
-      // DEBUG CODE: always add the latest Pokemon for debugging purposes
-      if (i === 0) {
-        pick = buyablePokemon[buyablePokemon.length - 1];
-      }
-
-      // take the pokemon out of the pool
-      // non-null assertion here is ok because we literally just checked it
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.pool[pick]! -= 1;
-      this.pokemonForSale[i] = new PokemonForSaleObject(this, currCoords, pick);
-    }
+      return new PokemonForSaleObject(this, currCoords, pokemon);
+    });
   }
 
   buyPokemon(index: number): boolean {
