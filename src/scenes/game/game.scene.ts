@@ -1,17 +1,10 @@
 import { synergyData } from '../../core/game.model';
-import {
-  allPokemonNames,
-  buyablePokemon,
-  pokemonData,
-  PokemonName,
-} from '../../core/pokemon.model';
-import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { defaultStyle } from '../../objects/text.helpers';
 import { MenuScene } from '../menu.scene';
-import { Coords, inBounds } from './combat/combat.helpers';
+import { Coords } from './combat/combat.helpers';
 import {
   CombatEndEvent,
   CombatScene,
@@ -23,7 +16,7 @@ import {
   shuffle,
   Stage,
 } from './game.helpers';
-import { SHOP_POOL_SIZES } from './shop.helpers';
+import { ShopPool } from './shop.helpers';
 import { ShopScene } from './shop.scene';
 
 /** X-coordinate of the center of the grid */
@@ -137,11 +130,8 @@ export class GameScene extends Phaser.Scene {
    * The pool of available Pokemon to buy in the shop
    *
    * EVERY POOL IN THE GAME is a reference to this object.
-   * Don't accidentally reassign it.
    */
-  private pool: {
-    [k in PokemonName]?: number;
-  };
+  private readonly pool = new ShopPool();
 
   private stages: Stage[];
   /** Current stage, zero-indexed */
@@ -175,13 +165,6 @@ export class GameScene extends Phaser.Scene {
   constructor() {
     super({
       key: GameScene.KEY,
-    });
-  }
-
-  init() {
-    this.pool = {};
-    buyablePokemon.forEach(pokemon => {
-      this.pool[pokemon] = SHOP_POOL_SIZES[pokemonData[pokemon].tier];
     });
   }
 
@@ -243,7 +226,9 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     this.players = ['You', ...getRandomNames(7)].map((name, index) =>
-      this.add.existing(new Player(this, name, 620, 100 + 30 * index))
+      this.add.existing(
+        new Player(this, name, 620, 100 + 30 * index, this.pool, index === 0)
+      )
     );
     // players[0] is always the human player
     [this.player] = this.players;
@@ -299,7 +284,7 @@ export class GameScene extends Phaser.Scene {
       .setInteractive()
       .on(Phaser.Input.Events.POINTER_DOWN, (event: Phaser.Input.Pointer) => {
         if (event.leftButtonDown()) {
-          this.sellPokemon(this.player, this.selectedPokemon as PokemonObject);
+          this.player.sellPokemon(this.selectedPokemon as PokemonObject);
         }
       });
 
@@ -336,6 +321,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   startCombat() {
+    // take AI player turns
+    this.players.forEach(player => {
+      if (player !== this.player) {
+        player.takeEnemyTurn();
+      }
+    });
+
     // slightly hacky: trigger a click event far away
     // this deselects Pokemon, closes any info cards and so on.
     this.events.emit(Phaser.Input.Events.POINTER_DOWN, { x: 0, y: 0 });
@@ -363,7 +355,6 @@ export class GameScene extends Phaser.Scene {
 
       if (player1 === this.player) {
         // human player: show combat
-        player2.mainboard = this.generateEnemyBoard();
         this.scene.launch(CombatScene.KEY, {
           player: player1,
           enemy: player2,
@@ -523,39 +514,6 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  buyPokemon(player: Player, pokemonName: PokemonName): boolean {
-    const price = pokemonData[pokemonName].tier;
-    if (player.gold < price) {
-      return false;
-    }
-
-    if (!player.canAddPokemonToSideboard()) {
-      return false;
-    }
-
-    player.gold -= pokemonData[pokemonName].tier;
-    this.player.addPokemonToSideboard(pokemonName);
-    return true;
-  }
-
-  sellPokemon(player: Player, pokemon: PokemonObject) {
-    if (pokemon.basePokemon.stage === 1) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.pool[pokemon.basePokemon.base]! += 1;
-      player.gold += pokemon.basePokemon.tier;
-    } else if (pokemon.basePokemon.stage === 2) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.pool[pokemon.basePokemon.base]! += 3;
-      player.gold += pokemon.basePokemon.tier + 2;
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.pool[pokemon.basePokemon.base]! += 9;
-      player.gold += pokemon.basePokemon.tier + 4;
-    }
-
-    player.removePokemon(pokemon);
-  }
-
   /**
    * Randomise pairings and return an index -> index mapping
    */
@@ -572,57 +530,5 @@ export class GameScene extends Phaser.Scene {
       [order[4], order[5]],
       [order[6], order[7]],
     ];
-  }
-
-  /**
-   * Generates a random enemy board with "comparable strength" to the player board.
-   * TEMP function until multiple players are implemented
-   *
-   * TODO: generate with synergies taken into account
-   */
-  generateEnemyBoard() {
-    // calculate total cost of player board
-    const value = flatten(this.player.mainboard)
-      .filter(isDefined)
-      .reduce(
-        (total, pokemon) =>
-          total + pokemon.basePokemon.tier * 3 ** pokemon.basePokemon.stage,
-        0
-      );
-    let enemyValue = 0;
-    let addedCount = 0;
-    const enemyBoard = Array(5)
-      .fill(undefined)
-      .map(() => Array(5).fill(undefined));
-
-    while (enemyValue < value && addedCount < 6) {
-      const pick =
-        pokemonData[
-          allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)]
-        ];
-      const pickValue = pick.tier * 3 ** pick.stage;
-      if (pickValue < value - enemyValue + 2) {
-        // ranged units go in back row, melee in front
-        const y = pick.basicAttack.range === 1 ? 3 : 4;
-        let x = 0;
-        // find a spot in the row where the unit will fit
-        while (inBounds(enemyBoard, { x, y }) && isDefined(enemyBoard[x][y])) {
-          x++;
-        }
-        // if such a spot exists, put them there
-        if (inBounds(enemyBoard, { x, y }) && !isDefined(enemyBoard[x][y])) {
-          enemyBoard[x][y] = new PokemonObject({
-            scene: this,
-            x: 0,
-            y: 0,
-            name: pick.name,
-            side: 'enemy',
-          });
-          enemyValue += pickValue;
-          addedCount += 1;
-        }
-      }
-    }
-    return enemyBoard;
   }
 }

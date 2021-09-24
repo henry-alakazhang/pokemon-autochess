@@ -1,10 +1,8 @@
-import { PokemonName } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
 import { Coords } from './combat/combat.helpers';
-import { GameScene } from './game.scene';
-import { rerollShop } from './shop.helpers';
+import { ShopPool } from './shop.helpers';
 
 const CELL_WIDTH = 140;
 const CELL_HEIGHT = 90;
@@ -15,9 +13,7 @@ const BORDER_SIZE = 50;
 
 export interface ShopSceneData {
   readonly player: Player;
-  readonly pool: {
-    [k in PokemonName]?: number;
-  };
+  readonly pool: ShopPool;
 }
 
 export class ShopScene extends Phaser.Scene {
@@ -25,10 +21,8 @@ export class ShopScene extends Phaser.Scene {
   private centre: Coords = { x: 0, y: 0 };
   private pokemonForSale: PokemonForSaleObject[] = Array(CELL_COUNT);
 
-  public player: Player; // hacky temporary solution
-  public pool: {
-    [k in PokemonName]?: number;
-  };
+  private player: Player; // hacky temporary solution
+  private pool: ShopPool;
 
   constructor() {
     super({
@@ -115,8 +109,7 @@ export class ShopScene extends Phaser.Scene {
       pokemon.destroy();
     });
 
-    const newShop = rerollShop(
-      this.pool,
+    const newShop = this.pool.reroll(
       this.pokemonForSale.map(pokemon => pokemon.pokemonName)
     );
 
@@ -127,10 +120,7 @@ export class ShopScene extends Phaser.Scene {
   }
 
   buyPokemon(index: number): boolean {
-    const gameScene = this.scene.get(GameScene.KEY) as GameScene;
-
-    const bought = gameScene.buyPokemon(
-      this.player,
+    const bought = this.player.buyPokemon(
       this.pokemonForSale[index].pokemonName
     );
     if (bought) {
