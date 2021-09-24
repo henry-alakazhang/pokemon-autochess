@@ -18,7 +18,7 @@ import { defaultStyle } from './text.helpers';
 
 const MAX_MAINBOARD_POKEMON = 6;
 
-export class Player extends Phaser.GameObjects.Group {
+export class Player extends Phaser.GameObjects.GameObject {
   hp = 100;
   gold = 20;
   /** Consecutive win/loss streak */
@@ -51,8 +51,7 @@ export class Player extends Phaser.GameObjects.Group {
     private readonly pool: ShopPool,
     private visible = false
   ) {
-    super(scene);
-    super.setVisible(visible);
+    super(scene, 'player');
 
     // not part of group - always visible
     // TODO: move to game scene?
@@ -186,7 +185,7 @@ export class Player extends Phaser.GameObjects.Group {
       name: pokemon,
       side: 'player',
     }).setVisible(this.visible);
-    this.add(newPokemon, true);
+    this.scene.add.existing(newPokemon);
     this.sideboard[empty] = newPokemon;
 
     /* check evolutions */
@@ -277,7 +276,7 @@ export class Player extends Phaser.GameObjects.Group {
         name: evolutionName,
         side: 'player',
       }).setVisible(this.visible);
-      this.add(evo, true);
+      this.scene.add.existing(evo);
       this.setPokemonAtLocation(evoLocation, evo);
       return evo;
     };
@@ -329,7 +328,7 @@ export class Player extends Phaser.GameObjects.Group {
       getSideboardLocationForCoordinates(pokemon);
     if (!location) {
       // just destroy since it's not displayed anyway?
-      return this.remove(pokemon, true, true);
+      return pokemon.destroy();
     }
 
     if (location.location === 'mainboard') {
@@ -338,8 +337,7 @@ export class Player extends Phaser.GameObjects.Group {
     } else {
       this.sideboard[location.index] = undefined;
     }
-    // remove, remove from scene and destroy
-    this.remove(pokemon, true, true);
+    pokemon.destroy();
   }
 
   updateSynergies() {
