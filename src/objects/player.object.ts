@@ -71,7 +71,9 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   update() {
-    this.nameInList.setText(`${this.playerName} - ${this.hp}`);
+    this.nameInList.setText(
+      `${this.playerName} - ${this.hp} ${this.visible ? '👁️' : ''}`
+    );
   }
 
   updatePosition(x: number, y: number) {

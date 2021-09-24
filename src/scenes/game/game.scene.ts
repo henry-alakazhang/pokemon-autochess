@@ -233,9 +233,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.players.forEach(player => {
       player.on(Player.Events.SELECT, () => {
-        this.currentVisiblePlayer.setVisible(false);
-        player.setVisible(true);
-        this.currentVisiblePlayer = player;
+        this.watchPlayer(player);
       });
     });
     // players[0] is always the human player
@@ -334,6 +332,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   startCombat() {
+    // switch view back to own board
+    this.watchPlayer(this.humanPlayer);
     // take AI player turns
     this.players.forEach(player => {
       if (player !== this.humanPlayer) {
@@ -472,6 +472,12 @@ export class GameScene extends Phaser.Scene {
     this.input.enabled = true;
 
     this.nextRoundButton.setActive(true).setVisible(true);
+  }
+
+  watchPlayer(player: Player) {
+    this.currentVisiblePlayer.setVisible(false);
+    player.setVisible(true);
+    this.currentVisiblePlayer = player;
   }
 
   /**
