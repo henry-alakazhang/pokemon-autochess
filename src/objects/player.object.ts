@@ -18,7 +18,7 @@ import { defaultStyle } from './text.helpers';
 
 const MAX_MAINBOARD_POKEMON = 6;
 
-export class Player extends Phaser.GameObjects.Group {
+export class Player extends Phaser.GameObjects.GameObject {
   hp = 100;
   gold = 20;
   /** Consecutive win/loss streak */
@@ -51,8 +51,7 @@ export class Player extends Phaser.GameObjects.Group {
     private readonly pool: ShopPool,
     private visible = false
   ) {
-    super(scene);
-    super.setVisible(visible);
+    super(scene, 'player');
 
     // not part of group - always visible
     // TODO: move to game scene?
@@ -329,7 +328,7 @@ export class Player extends Phaser.GameObjects.Group {
       getSideboardLocationForCoordinates(pokemon);
     if (!location) {
       // just destroy since it's not displayed anyway?
-      return this.remove(pokemon, true, true);
+      return pokemon.destroy();
     }
 
     if (location.location === 'mainboard') {
