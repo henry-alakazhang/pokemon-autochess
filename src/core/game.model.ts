@@ -3,8 +3,10 @@ import { FloatingText } from '../objects/floating-text.object';
 import { Player } from '../objects/player.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import {
+  getDamageReduction,
   getGridDistance,
   getNearestEmpty,
+  inBounds,
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { GameScene } from '../scenes/game/game.scene';
@@ -771,8 +773,35 @@ damage they can take from one hit.
   sweeper: {
     category: 'sweeper',
     displayName: 'Sweeper',
-    description: 'Does nothing.',
+    description: `Sweepers gain a stack of increasing
+Speed every time they hit with an attack.
+
+Max 4 stacks.
+
+(2) - 5% Speed per stack
+(4) - 10% Speed per stack
+(6) - 20% Speed per stack`,
     thresholds: [2, 4, 6],
+    onHit({ attacker, count }: { attacker: PokemonObject; count: number }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const perStack = tier === 1 ? 0.05 : tier === 2 ? 0.1 : 0.2;
+
+      if (
+        attacker.basePokemon.categories.includes('sweeper') &&
+        // up to 4 stacks
+        attacker.consecutiveAttacks < 4
+      ) {
+        // bonus is additive, so calculate relative to previous increase
+        const currentBonus = 1 + perStack * attacker.consecutiveAttacks;
+        const newBonus = 1 + perStack * (attacker.consecutiveAttacks + 1);
+        attacker.changeStats({ speed: newBonus / currentBonus });
+        attacker.consecutiveAttacks++;
+      }
+    },
   },
   'revenge killer': {
     category: 'revenge killer',
@@ -783,8 +812,64 @@ damage they can take from one hit.
   wallbreaker: {
     category: 'wallbreaker',
     displayName: 'Wallbreaker',
-    description: 'Does nothing.',
+    description: `Wallbreakers ignore some Defenses
+when they deal damage.
+
+(2) - Ignore 40% of Defenses
+(4) - Ignore 70% of Defenses`,
     thresholds: [2, 4],
+    calculateDamage({
+      attacker,
+      defender,
+      baseAmount,
+      side,
+      count,
+      flags: { isAttack },
+    }: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      baseAmount: number;
+      side: 'player' | 'enemy';
+      count: number;
+      flags: { isAttack?: boolean };
+    }): number {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+
+      if (
+        attacker.side !== side ||
+        !attacker.basePokemon.categories.includes('wallbreaker')
+      ) {
+        return baseAmount;
+      }
+
+      // actual defense stat used after ignoring some
+      const useDefense = tier === 1 ? 0.6 : 0.3;
+
+      // FIXME: This needs to know which defense stat was targetted
+      // For now we guess based on attacker and attack type.
+      let targettedStat: 'defense' | 'specDefense';
+      if (isAttack) {
+        targettedStat =
+          attacker.basePokemon.basicAttack.defenseStat ??
+          (attacker.basePokemon.basicAttack.defenseStat === 'attack'
+            ? 'defense'
+            : 'specDefense');
+      } else {
+        // use defenseStat of active moves; fall back to just defense for other sources
+        targettedStat =
+          (attacker.basePokemon.move?.type === 'active' &&
+            attacker.basePokemon.move.defenseStat) ||
+          'defense';
+      }
+      const prevDR = getDamageReduction(defender.basePokemon[targettedStat]);
+      const newDR = getDamageReduction(
+        defender.basePokemon[targettedStat] * useDefense
+      );
+      return Math.round((baseAmount / (1 - prevDR)) * (1 - newDR));
+    },
   },
   'hazard setter': {
     category: 'hazard setter',
@@ -795,14 +880,94 @@ damage they can take from one hit.
   'bulky attacker': {
     category: 'bulky attacker',
     displayName: 'Bulky Attacker',
-    description: 'Does nothing.',
+    description: `Bulky Attackers have more HP.
+
+(2) - 300 bonus HP
+(4) - 800 bonus HP
+(6) - 1800 bonus HP`,
     thresholds: [2, 4, 6],
+    onRoundStart({
+      board,
+      side,
+      count,
+    }: {
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const boost = tier === 1 ? 300 : tier === 2 ? 800 : 1800;
+      flatten(board)
+        .filter(isDefined)
+        .forEach(pokemon => {
+          if (
+            pokemon.side === side &&
+            pokemon.basePokemon.categories.includes('bulky attacker')
+          ) {
+            pokemon.addStats({ maxHP: boost });
+          }
+        });
+    },
   },
   wall: {
     category: 'wall',
     displayName: 'Wall',
-    description: 'Does nothing.',
+    description: `Walls have more of their better Defense.
+Half the bonus is shared with adjacent allies
+at round start.
+
+(2) - 20 to self, half to allies
+(4) - 50 to self
+(6) - 80 to self`,
     thresholds: [2, 4, 6],
+    onRoundStart({
+      board,
+      side,
+      count,
+    }: {
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const boost = tier === 1 ? 20 : tier === 2 ? 30 : 50;
+      board.forEach((col, x) =>
+        col.forEach((pokemon, y) => {
+          if (
+            pokemon?.side === side &&
+            pokemon.basePokemon.categories.includes('wall')
+          ) {
+            const betterStat =
+              pokemon.basePokemon.defense > pokemon.basePokemon.specDefense
+                ? 'defense'
+                : 'specDefense';
+            pokemon.addStats({ [betterStat]: boost });
+            const adjacentPokemon = [
+              { x, y: y - 1 },
+              { x, y: y + 1 },
+              { x: x - 1, y },
+              { x: x + 1, y },
+            ];
+            adjacentPokemon.forEach(({ x: ax, y: ay }) => {
+              if (
+                inBounds(board, { x: ax, y: ay }) &&
+                board[ax][ay]?.side === side
+              ) {
+                board[ax][ay]?.addStats({ [betterStat]: boost });
+              }
+            });
+          }
+        })
+      );
+    },
   },
   disruptor: {
     category: 'disruptor',
@@ -813,8 +978,41 @@ damage they can take from one hit.
   support: {
     category: 'support',
     displayName: 'Support',
-    description: 'Does nothing.',
-    thresholds: [2, 4],
+    description: `Whenever a Support uses its move,
+it shares PP with non-Support allies.
+
+(2) - 20% of the move to all
+(3) - 33% of the move to all`,
+    thresholds: [2, 3],
+    onMoveUse({
+      board,
+      user,
+      count,
+    }: {
+      board: CombatScene['board'];
+      user: PokemonObject;
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      if (user.basePokemon.categories.includes('support')) {
+        const sharePercent = tier === 1 ? 0.2 : 0.33;
+
+        flatten(board)
+          .filter(
+            pokemon =>
+              pokemon?.side === user.side &&
+              !pokemon.basePokemon.categories.includes('support')
+          )
+          .forEach(pokemon => {
+            // TODO: Add animation (blue buff effect?)
+            pokemon?.addPP((user.maxPP ?? 10) * sharePercent).redrawBars();
+          });
+      }
+    },
   },
   pivot: {
     category: 'pivot',

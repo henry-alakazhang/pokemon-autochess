@@ -408,6 +408,38 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   /**
+   * Adjust any of a Pokemon's stats by a provided flat amount
+   */
+  public addStats({
+    maxHP = 0,
+    attack = 0,
+    defense = 0,
+    specAttack = 0,
+    specDefense = 0,
+    speed = 0,
+  }: {
+    maxHP?: number;
+    attack?: number;
+    defense?: number;
+    specAttack?: number;
+    specDefense?: number;
+    speed?: number;
+  }) {
+    // this is a bit hacky, but we just override the base Pokemon with a new object.
+    // TODO (if needed?) implement some proper stat-stage tracking thing
+    this.maxHP += maxHP;
+    this.currentHP += maxHP;
+    this.basePokemon = {
+      ...this.basePokemon,
+      attack: this.basePokemon.attack + attack,
+      defense: this.basePokemon.defense + defense,
+      specAttack: this.basePokemon.specAttack + specAttack,
+      specDefense: this.basePokemon.specDefense + specDefense,
+      speed: this.basePokemon.speed + speed,
+    };
+  }
+
+  /**
    * Add a status with a given duration
    *
    * @param status Name of the status
