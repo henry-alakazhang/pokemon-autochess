@@ -36,6 +36,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   streak = 0;
   /** A map storing whether a Pokemon (by id) is currently evolving. */
   markedForEvolution: { [k: string]: boolean } = {};
+  isHumanPlayer: boolean;
 
   nameInList: Phaser.GameObjects.Text;
 
@@ -52,6 +53,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   synergies: { category: Category; count: number }[] = [];
   synergyMarkers: { [k in Category]?: SynergyMarker } = {};
 
+  readonly pool: ShopPool;
   currentShop: PokemonName[];
 
   private visible: boolean;
@@ -61,11 +63,17 @@ export class Player extends Phaser.GameObjects.GameObject {
     public playerName: string,
     x: number,
     y: number,
-    private readonly pool: ShopPool,
-    private isHumanPlayer = false
+    {
+      pool,
+      isHumanPlayer = false,
+      initialLevel = 1,
+    }: { pool: ShopPool; isHumanPlayer?: boolean; initialLevel?: number }
   ) {
     super(scene, 'player');
+    this.pool = pool;
+    this.isHumanPlayer = isHumanPlayer;
     this.visible = isHumanPlayer;
+    this.level = initialLevel;
 
     // not part of group - always visible
     // TODO: move to game scene?

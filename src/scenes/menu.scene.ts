@@ -15,7 +15,6 @@ export class MenuScene extends Scene {
   static readonly KEY = 'MenuScene';
 
   private titlePokemon: PokemonObject;
-  private startButton: Phaser.GameObjects.GameObject;
 
   constructor() {
     super({
@@ -27,12 +26,22 @@ export class MenuScene extends Scene {
     this.add.image(400, 200, 'logo');
     this.addTitlePokemon();
 
-    this.startButton = this.add.existing(
-      new Button(this, 400, 500, 'Play Hyper Roll (1P)')
-    );
-    this.startButton.on(Button.Events.CLICK, () =>
-      this.scene.start(GameScene.KEY, getHyperRollGameMode())
-    );
+    this.add
+      .existing(new Button(this, 400, 475, 'Play Hyper Roll (1P)'))
+      .on(Button.Events.CLICK, () =>
+        this.scene.start(GameScene.KEY, getHyperRollGameMode())
+      );
+
+    this.add
+      .existing(new Button(this, 400, 525, 'Debug Mode'))
+      .on(Button.Events.CLICK, () =>
+        this.scene.start(GameScene.KEY, {
+          stages: [
+            { rounds: 99, damage: () => 1, gold: () => 20, autolevel: 6 },
+          ],
+          levelCosts: undefined,
+        })
+      );
   }
 
   addTitlePokemon() {

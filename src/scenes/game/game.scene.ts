@@ -222,7 +222,11 @@ export class GameScene extends Phaser.Scene {
 
     this.players = ['You', ...getRandomNames(7)].map((name, index) =>
       this.add.existing(
-        new Player(this, name, 620, 100 + 30 * index, this.pool, index === 0)
+        new Player(this, name, 620, 100 + 30 * index, {
+          pool: this.pool,
+          isHumanPlayer: index === 0,
+          initialLevel: this.gameMode.stages[this.currentStage].autolevel,
+        })
       )
     );
     this.players.forEach(player => {
