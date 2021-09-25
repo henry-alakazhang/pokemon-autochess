@@ -144,7 +144,8 @@ export class GameScene extends Phaser.Scene {
   /* TEMPORARY JUNK */
   nextRoundButton: Button;
   shopButton: Phaser.GameObjects.GameObject;
-  player: Player;
+  humanPlayer: Player;
+  currentVisiblePlayer: Player;
   playerGoldText: Phaser.GameObjects.Text;
   playerHPText: Phaser.GameObjects.Text;
   sellArea: Phaser.GameObjects.Shape;
@@ -230,22 +231,32 @@ export class GameScene extends Phaser.Scene {
         new Player(this, name, 620, 100 + 30 * index, this.pool, index === 0)
       )
     );
+    this.players.forEach(player => {
+      player.on(Player.Events.SELECT, () => {
+        this.watchPlayer(player);
+      });
+    });
     // players[0] is always the human player
-    [this.player] = this.players;
+    [this.humanPlayer] = this.players;
+    this.currentVisiblePlayer = this.humanPlayer;
+
     this.playerGoldText = this.add.text(
       50,
       100,
-      `Gold: ${this.player.gold}`,
+      `Gold: ${this.currentVisiblePlayer.gold}`,
       defaultStyle
     );
     this.playerHPText = this.add.text(
       50,
       120,
-      `HP: ${this.player.hp}`,
+      `HP: ${this.currentVisiblePlayer.hp}`,
       defaultStyle
     );
 
-    this.scene.launch(ShopScene.KEY, { player: this.player, pool: this.pool });
+    this.scene.launch(ShopScene.KEY, {
+      player: this.humanPlayer,
+      pool: this.pool,
+    });
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
 
@@ -284,7 +295,7 @@ export class GameScene extends Phaser.Scene {
       .setInteractive()
       .on(Phaser.Input.Events.POINTER_DOWN, (event: Phaser.Input.Pointer) => {
         if (event.leftButtonDown()) {
-          this.player.sellPokemon(this.selectedPokemon as PokemonObject);
+          this.humanPlayer.sellPokemon(this.selectedPokemon as PokemonObject);
         }
       });
 
@@ -300,8 +311,8 @@ export class GameScene extends Phaser.Scene {
     this.currentRoundText.setText(
       `Round ${this.currentStage + 1}-${this.currentRound}`
     );
-    this.playerGoldText.setText(`Gold: ${this.player.gold}`);
-    this.playerHPText.setText(`HP: ${this.player.hp}`);
+    this.playerGoldText.setText(`Gold: ${this.currentVisiblePlayer.gold}`);
+    this.playerHPText.setText(`HP: ${this.currentVisiblePlayer.hp}`);
 
     // Display players in order without reordering array.
     [...this.players]
@@ -321,9 +332,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   startCombat() {
+    // switch view back to own board
+    this.watchPlayer(this.humanPlayer);
     // take AI player turns
     this.players.forEach(player => {
-      if (player !== this.player) {
+      if (player !== this.humanPlayer) {
         player.takeEnemyTurn();
       }
     });
@@ -332,7 +345,7 @@ export class GameScene extends Phaser.Scene {
     // this deselects Pokemon, closes any info cards and so on.
     this.events.emit(Phaser.Input.Events.POINTER_DOWN, { x: 0, y: 0 });
     // hide all the prep-only stuff
-    this.player.mainboard.forEach(col =>
+    this.currentVisiblePlayer.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(false))
     );
     this.prepGrid.setVisible(false);
@@ -349,11 +362,11 @@ export class GameScene extends Phaser.Scene {
     pairings.forEach(pairing => {
       let [player1, player2] = [pairing[0], pairing[1]];
       // force human player to be player 1
-      if (player2 === this.player) {
+      if (player2 === this.humanPlayer) {
         [player1, player2] = [player2, player1];
       }
 
-      if (player1 === this.player) {
+      if (player1 === this.humanPlayer) {
         // human player: show combat
         this.scene.launch(CombatScene.KEY, {
           player: player1,
@@ -402,7 +415,7 @@ export class GameScene extends Phaser.Scene {
 
   startDowntime() {
     // TODO: handle other players losing
-    if (this.player.hp <= 0) {
+    if (this.humanPlayer.hp <= 0) {
       this.add
         .text(GRID_X, GRID_Y, `YOU LOSE`, {
           ...defaultStyle,
@@ -422,7 +435,7 @@ export class GameScene extends Phaser.Scene {
 
     // other players that are still alive
     const remainingPlayers = this.players.filter(
-      player => player !== this.player && player.hp > 0
+      player => player !== this.humanPlayer && player.hp > 0
     );
     if (remainingPlayers.length <= 0) {
       this.add
@@ -452,13 +465,19 @@ export class GameScene extends Phaser.Scene {
     this.players.forEach(player => player.gainRoundEndGold());
 
     // show all the prep-only stuff
-    this.player.mainboard.forEach(col =>
+    this.currentVisiblePlayer.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(true))
     );
     this.prepGrid.setVisible(true);
     this.input.enabled = true;
 
     this.nextRoundButton.setActive(true).setVisible(true);
+  }
+
+  watchPlayer(player: Player) {
+    this.currentVisiblePlayer.setVisible(false);
+    player.setVisible(true);
+    this.currentVisiblePlayer = player;
   }
 
   /**
@@ -469,7 +488,7 @@ export class GameScene extends Phaser.Scene {
       getMainboardLocationForCoordinates(clickCoords) ||
       getSideboardLocationForCoordinates(clickCoords);
 
-    const pokemon = this.player.getPokemonAtLocation(select);
+    const pokemon = this.humanPlayer.getPokemonAtLocation(select);
     if (!pokemon) {
       return;
     }
@@ -498,7 +517,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    this.player.movePokemon(selectedPokemon, newLocation);
+    this.humanPlayer.movePokemon(selectedPokemon, newLocation);
   }
 
   /**

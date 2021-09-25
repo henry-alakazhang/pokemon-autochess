@@ -156,6 +156,9 @@ export class CombatScene extends Scene {
       });
     });
 
+    // check immediately in case someone is open-forting
+    this.checkRoundEnd();
+
     flatten(this.board)
       .filter(isDefined)
       .forEach(pokemon => this.setTurn(pokemon));

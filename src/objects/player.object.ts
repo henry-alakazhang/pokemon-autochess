@@ -19,6 +19,10 @@ import { defaultStyle } from './text.helpers';
 const MAX_MAINBOARD_POKEMON = 6;
 
 export class Player extends Phaser.GameObjects.GameObject {
+  static Events = {
+    SELECT: 'selectPlayer',
+  };
+
   hp = 100;
   gold = 20;
   /** Consecutive win/loss streak */
@@ -43,32 +47,46 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   currentShop: PokemonName[];
 
+  private visible: boolean;
+
   constructor(
     scene: GameScene,
     public playerName: string,
     x: number,
     y: number,
     private readonly pool: ShopPool,
-    private visible = false
+    private isHumanPlayer = false
   ) {
     super(scene, 'player');
+    this.visible = isHumanPlayer;
 
     // not part of group - always visible
     // TODO: move to game scene?
-    this.nameInList = scene.add.text(
-      x,
-      y,
-      `${this.playerName} - ${this.hp}`,
-      defaultStyle
-    );
+    this.nameInList = scene.add
+      .text(x, y, `${this.playerName} - ${this.hp}`, defaultStyle)
+      .setInteractive()
+      .on(Phaser.Input.Events.POINTER_DOWN, () => {
+        this.emit(Player.Events.SELECT);
+      });
   }
 
   update() {
-    this.nameInList.setText(`${this.playerName} - ${this.hp}`);
+    this.nameInList.setText(
+      `${this.playerName} - ${this.hp} ${this.visible ? '👁️' : ''}`
+    );
   }
 
   updatePosition(x: number, y: number) {
     this.nameInList.setPosition(x, y);
+  }
+
+  setVisible(visible: boolean): this {
+    this.visible = visible;
+    [...flatten(this.mainboard), ...this.sideboard].forEach(pokemon =>
+      pokemon?.setVisible(visible)
+    );
+    this.updateSynergies();
+    return this;
   }
 
   /**
@@ -183,7 +201,7 @@ export class Player extends Phaser.GameObjects.GameObject {
       scene: this.scene,
       ...getCoordinatesForSideboardIndex(empty),
       name: pokemon,
-      side: 'player',
+      side: this.isHumanPlayer ? 'player' : 'enemy',
     }).setVisible(this.visible);
     this.scene.add.existing(newPokemon);
     this.sideboard[empty] = newPokemon;
@@ -274,7 +292,7 @@ export class Player extends Phaser.GameObjects.GameObject {
         x: 0,
         y: 0,
         name: evolutionName,
-        side: 'player',
+        side: this.isHumanPlayer ? 'player' : 'enemy',
       }).setVisible(this.visible);
       this.scene.add.existing(evo);
       this.setPokemonAtLocation(evoLocation, evo);
@@ -379,15 +397,16 @@ export class Player extends Phaser.GameObjects.GameObject {
         return b.category > a.category ? -1 : 1;
       });
 
+    // hide all synergy markers
+    Object.values(this.synergyMarkers).forEach(marker => {
+      marker.setVisible(false).setActive(false);
+    });
+
     if (!this.visible) {
       // if this is hidden, don't bother rendering synergies.
       return;
     }
 
-    // hide all synergy markers
-    Object.values(this.synergyMarkers).forEach(marker => {
-      marker.setVisible(false).setActive(false);
-    });
     // then show and reposition the active ones
     this.synergies.slice(0, 9).forEach((synergy, index) => {
       if (!this.synergyMarkers[synergy.category]) {
