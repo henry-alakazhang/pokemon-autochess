@@ -1,21 +1,62 @@
+import { Player } from '../../objects/player.object';
+
+/**
+ * A representation of a game mode, with all its options
+ */
+export interface GameMode {
+  /** The set of stages (which are made up of rounds) */
+  readonly stages: Stage[];
+  /** Whether players can spend gold on exp to level up */
+  readonly levelCosts?: number[];
+}
+
 export interface Stage {
+  /** Number of rounds to play through (1-1, 1-2, etc) */
   readonly rounds: number;
-  // TODO: calculate damage based on remaining Pokemon
+  /** Formula for damage at end of round */
   readonly damage: () => number;
+  /** Formula for gold gain at end of round */
+  readonly gold: (player: Player, won: boolean, streak: number) => number;
+  /** Whether to automatically level the player at the start of the stage */
+  readonly autolevel?: number;
   // TODO: add only when shop is there
   // readonly pokemarts: number[];
 }
 
-export function getHyperRollStages(): Stage[] {
-  return [
-    { rounds: 2, damage: () => 5 },
-    { rounds: 2, damage: () => 7 },
-    { rounds: 3, damage: () => 9 },
-    { rounds: 3, damage: () => 11 },
-    { rounds: 3, damage: () => 13 },
-    { rounds: 9, damage: () => 15 },
-    { rounds: 4, damage: () => 99 },
-  ];
+export function getHyperRollGameMode(): GameMode {
+  const streakGold = (streak: number) => {
+    if (streak > 5) {
+      return 3;
+    }
+    if (streak > 4) {
+      return 2;
+    }
+    if (streak > 2) {
+      return 1;
+    }
+    return 0;
+  };
+  // function that creates a function that returns how much gold is earned
+  const goldGainFunc = (base: number) => {
+    // hyper roll gold gain - base amount + 2 gold for wins + streak gold
+    // hyper roll has no interest.
+    return (player: Player, won: boolean, streak: number) =>
+      base + (won ? 2 : 0) + streakGold(streak);
+  };
+
+  return {
+    stages: [
+      { rounds: 1, damage: () => 5, gold: goldGainFunc(3) },
+      { rounds: 2, damage: () => 7, autolevel: 2, gold: goldGainFunc(3) },
+      { rounds: 3, damage: () => 9, autolevel: 3, gold: goldGainFunc(4) },
+      { rounds: 4, damage: () => 11, autolevel: 4, gold: goldGainFunc(4) },
+      { rounds: 5, damage: () => 13, autolevel: 5, gold: goldGainFunc(5) },
+      { rounds: 9, damage: () => 15, autolevel: 6, gold: goldGainFunc(5) },
+      // last section is sudden death. 99 damage, no gold - game must end!
+      { rounds: 5, damage: () => 99, gold: () => 0 },
+    ],
+    levelCosts: undefined,
+  };
 }
 
 /**

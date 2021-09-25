@@ -10,12 +10,7 @@ import {
   CombatScene,
   CombatSceneData,
 } from './combat/combat.scene';
-import {
-  getHyperRollStages,
-  getRandomNames,
-  shuffle,
-  Stage,
-} from './game.helpers';
+import { GameMode, getRandomNames, shuffle } from './game.helpers';
 import { ShopPool } from './shop.helpers';
 import { ShopScene } from './shop.scene';
 
@@ -133,7 +128,7 @@ export class GameScene extends Phaser.Scene {
    */
   private readonly pool = new ShopPool();
 
-  private stages: Stage[];
+  private gameMode: GameMode;
   /** Current stage, zero-indexed */
   private currentStage: number;
   /** Current round within a stage. This is just a number (ie. 1-indexed) */
@@ -146,8 +141,7 @@ export class GameScene extends Phaser.Scene {
   shopButton: Phaser.GameObjects.GameObject;
   humanPlayer: Player;
   currentVisiblePlayer: Player;
-  playerGoldText: Phaser.GameObjects.Text;
-  playerHPText: Phaser.GameObjects.Text;
+  playerInfoText: Phaser.GameObjects.Text;
   sellArea: Phaser.GameObjects.Shape;
   sellText: Phaser.GameObjects.Text;
   currentRoundText: Phaser.GameObjects.Text;
@@ -169,7 +163,7 @@ export class GameScene extends Phaser.Scene {
     });
   }
 
-  create() {
+  create(mode: GameMode) {
     this.prepGrid = this.add.grid(
       GRID_X, // center x
       GRID_Y, // center y
@@ -213,7 +207,7 @@ export class GameScene extends Phaser.Scene {
       .setZ(-1)
       .setVisible(false);
 
-    this.stages = getHyperRollStages();
+    this.gameMode = mode;
     this.currentStage = 0;
     this.currentRound = 1;
     this.currentRoundText = this.add
@@ -240,16 +234,10 @@ export class GameScene extends Phaser.Scene {
     [this.humanPlayer] = this.players;
     this.currentVisiblePlayer = this.humanPlayer;
 
-    this.playerGoldText = this.add.text(
+    this.playerInfoText = this.add.text(
       50,
       100,
-      `Gold: ${this.currentVisiblePlayer.gold}`,
-      defaultStyle
-    );
-    this.playerHPText = this.add.text(
-      50,
-      120,
-      `HP: ${this.currentVisiblePlayer.hp}`,
+      `Level: ${this.currentVisiblePlayer.level}\nGold: ${this.currentVisiblePlayer.gold}`,
       defaultStyle
     );
 
@@ -311,8 +299,9 @@ export class GameScene extends Phaser.Scene {
     this.currentRoundText.setText(
       `Round ${this.currentStage + 1}-${this.currentRound}`
     );
-    this.playerGoldText.setText(`Gold: ${this.currentVisiblePlayer.gold}`);
-    this.playerHPText.setText(`HP: ${this.currentVisiblePlayer.hp}`);
+    this.playerInfoText.setText(
+      `Level: ${this.currentVisiblePlayer.level}\nGold: ${this.currentVisiblePlayer.gold}`
+    );
 
     // Display players in order without reordering array.
     [...this.players]
@@ -410,7 +399,7 @@ export class GameScene extends Phaser.Scene {
         count: synergy.count,
       });
     });
-    player.battleResult(won, this.stages[this.currentStage].damage());
+    player.battleResult(won, this.gameMode.stages[this.currentStage]);
   }
 
   startDowntime() {
@@ -456,14 +445,20 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.currentRound += 1;
-    if (this.currentRound > this.stages[this.currentStage].rounds) {
+    if (this.currentRound > this.gameMode.stages[this.currentStage].rounds) {
       this.currentRound = 1;
       this.currentStage++;
+
+      // if game mode includes autolevelling, autolevel them
+      const newLevel = this.gameMode.stages[this.currentStage].autolevel;
+      if (newLevel) {
+        this.players.forEach(player => {
+          player.level = newLevel;
+        });
+      }
     }
 
     this.shop.reroll();
-    this.players.forEach(player => player.gainRoundEndGold());
-
     // show all the prep-only stuff
     this.currentVisiblePlayer.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(true))
