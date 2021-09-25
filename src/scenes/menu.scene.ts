@@ -2,6 +2,7 @@ import { Input, Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
 import { Button } from '../objects/button.object';
 import { PokemonObject } from '../objects/pokemon.object';
+import { getHyperRollGameMode } from './game/game.helpers';
 import { GameScene } from './game/game.scene';
 
 /**
@@ -27,10 +28,10 @@ export class MenuScene extends Scene {
     this.addTitlePokemon();
 
     this.startButton = this.add.existing(
-      new Button(this, 400, 500, 'Single Player')
+      new Button(this, 400, 500, 'Play Hyper Roll (1P)')
     );
     this.startButton.on(Button.Events.CLICK, () =>
-      this.scene.start(GameScene.KEY)
+      this.scene.start(GameScene.KEY, getHyperRollGameMode())
     );
   }
 

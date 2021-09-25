@@ -3,6 +3,7 @@ import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { flatten, isDefined } from '../helpers';
 import { inBounds } from '../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
+import { Stage } from '../scenes/game/game.helpers';
 import {
   GameScene,
   getCoordinatesForMainboard,
@@ -16,13 +17,19 @@ import { PokemonObject } from './pokemon.object';
 import { SynergyMarker } from './synergy-marker.object';
 import { defaultStyle } from './text.helpers';
 
-const MAX_MAINBOARD_POKEMON = 6;
-
 export class Player extends Phaser.GameObjects.GameObject {
   static Events = {
     SELECT: 'selectPlayer',
   };
 
+  /**
+   * Player level, which corresponds to the max number of Pokemon they can field
+   * In-game, this is represented by "Gym Badges"
+   */
+  level = 1;
+  // EXP progress to the next level
+  // TODO: implement when implementing traditional games
+  // exp = 0;
   hp = 100;
   gold = 20;
   /** Consecutive win/loss streak */
@@ -93,35 +100,14 @@ export class Player extends Phaser.GameObjects.GameObject {
    * Calculate streaks and award win gold
    * @param won True if the round was won by player
    */
-  battleResult(won: boolean, damage: number): void {
+  battleResult(won: boolean, gameStage: Stage): void {
     if (won) {
       this.streak = Math.max(1, this.streak + 1);
-      ++this.gold;
+      this.gold += gameStage.gold(this, won, Math.abs(this.streak));
     } else {
-      this.hp -= damage;
       this.streak = Math.min(-1, this.streak - 1);
+      this.hp -= gameStage.damage();
     }
-  }
-
-  /**
-   * Increases player gold from round
-   * @returns The amount of gold gained, including interest and streaks
-   */
-  gainRoundEndGold(): number {
-    let goldGain = 1; // base gain
-    goldGain += this.getInterest() + this.getStreakBonus();
-    this.gold += goldGain;
-    return goldGain;
-  }
-
-  private getInterest(): number {
-    return Math.min(5, Math.floor(this.gold / 10));
-  }
-
-  private getStreakBonus(): number {
-    // TODO: min/max cap the streaks for design/balance
-    // right now gold gain is way too much
-    return Math.max(0, Math.abs(this.streak) - 1);
   }
 
   /**
@@ -424,9 +410,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   canAddPokemonToMainboard() {
-    return (
-      flatten(this.mainboard).filter(v => !!v).length < MAX_MAINBOARD_POKEMON
-    );
+    return flatten(this.mainboard).filter(v => !!v).length < this.level;
   }
 
   canAddPokemonToSideboard() {
