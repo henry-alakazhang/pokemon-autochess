@@ -347,15 +347,21 @@ export class Player extends Phaser.GameObjects.GameObject {
   updateSynergies() {
     // build a map of synergy -> count
     const synergyMap: { [k in Category]?: number } = {};
+    const counted: { [k in PokemonName]?: boolean } = {};
     flatten(this.mainboard)
       .filter(isDefined)
-      // todo: only count unique pokemon
-      .map(pokemon =>
+      .forEach(pokemon => {
+        // ignore pokemon if counted already
+        if (counted[pokemon.basePokemon.base]) {
+          return;
+        }
+
+        counted[pokemon.basePokemon.base] = true;
         pokemon.basePokemon.categories.forEach(category => {
           const newValue = (synergyMap[category] ?? 0) + 1;
           synergyMap[category] = newValue;
-        })
-      );
+        });
+      });
     // convert to an array of existing synergies
     this.synergies = Object.entries(synergyMap)
       .map(([category, count]) =>
