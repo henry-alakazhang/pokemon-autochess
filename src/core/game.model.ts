@@ -96,6 +96,13 @@ export interface Synergy {
     damage: number;
     count: number;
   }) => void;
+  readonly onDeath?: (config: {
+    scene: CombatScene;
+    board: CombatScene['board'];
+    pokemon: PokemonObject;
+    side: 'player' | 'enemy';
+    count: number;
+  }) => void;
   /** Possible effect that occurs on start of round */
   readonly onRoundStart?: (config: {
     scene: CombatScene;
@@ -806,8 +813,61 @@ Max 4 stacks.
   'revenge killer': {
     category: 'revenge killer',
     displayName: 'Revenge Killer',
-    description: 'Does nothing.',
+    description: `Whenever an ally Pokemon faints,
+all Revenge Kilers get an Attack boost.
+
+(2) - 50% Attack once
+(4) - Stacks up to three times`,
     thresholds: [2, 4],
+    onDeath({
+      scene,
+      board,
+      pokemon,
+      side,
+      count,
+    }: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      pokemon: PokemonObject;
+      side: 'player' | 'enemy';
+      count: number;
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const maxStacks = tier === 1 ? 1 : 3;
+
+      if (pokemon.side === side) {
+        flatten(board).forEach(boardPokemon => {
+          if (
+            boardPokemon?.side === side &&
+            boardPokemon.basePokemon.categories.includes('revenge killer') &&
+            boardPokemon.consecutiveAttacks < maxStacks
+          ) {
+            // animation: goes red ANGRY
+            scene.tweens.addCounter({
+              from: 255,
+              to: 100,
+              onUpdate: (tween: Phaser.Tweens.Tween) => {
+                boardPokemon.setTint(
+                  Phaser.Display.Color.GetColor(
+                    0xff,
+                    Math.floor(tween.getValue()),
+                    Math.floor(tween.getValue())
+                  )
+                );
+              },
+              duration: 250,
+              yoyo: true,
+            });
+            boardPokemon.changeStats({ attack: 1.5 });
+            boardPokemon.consecutiveAttacks++;
+          }
+        });
+      }
+    },
   },
   wallbreaker: {
     category: 'wallbreaker',

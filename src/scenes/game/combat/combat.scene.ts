@@ -242,6 +242,24 @@ export class CombatScene extends Scene {
     pokemon.on(
       PokemonObject.Events.Dead,
       () => {
+        this.players.player.synergies.forEach(synergy => {
+          synergyData[synergy.category].onDeath?.({
+            scene: this,
+            board: this.board,
+            pokemon,
+            side: 'player',
+            count: synergy.count,
+          });
+        });
+        this.players.enemy.synergies.forEach(synergy => {
+          synergyData[synergy.category].onDeath?.({
+            scene: this,
+            board: this.board,
+            pokemon,
+            side: 'enemy',
+            count: synergy.count,
+          });
+        });
         // rip dead pokemon out of the map
         // TODO find a cleaner way of doing this
         this.board = this.board.map(col =>
