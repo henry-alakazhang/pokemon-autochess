@@ -780,8 +780,7 @@ Max 4 stacks.
 
 (2) - 5% Speed per stack
 (4) - 10% Speed per stack
-(6) - 20% Speed per stack
-`,
+(6) - 20% Speed per stack`,
     thresholds: [2, 4, 6],
     onHit({ attacker, count }: { attacker: PokemonObject; count: number }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -1009,7 +1008,6 @@ it shares PP with non-Support allies.
               !pokemon.basePokemon.categories.includes('support')
           )
           .forEach(pokemon => {
-            console.log('share with', pokemon);
             // TODO: Add animation (blue buff effect?)
             pokemon?.addPP((user.maxPP ?? 10) * sharePercent).redrawBars();
           });
