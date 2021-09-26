@@ -259,14 +259,12 @@ export class CombatScene extends Scene {
             count: synergy.count,
           });
         });
-        // rip dead pokemon out of the map
-        // TODO find a cleaner way of doing this
-        this.board = this.board.map(col =>
-          col.map(cell => {
-            return cell?.id === pokemon.id ? undefined : cell;
-          })
-        );
-        this.checkRoundEnd();
+        this.removePokemon(pokemon);
+        // wait a tick for other death triggers to go off as well
+        this.time.addEvent({
+          callback: () => this.checkRoundEnd(),
+          delay: 0,
+        });
       },
       this
     );
@@ -275,6 +273,16 @@ export class CombatScene extends Scene {
     }
     this.board[x][y] = pokemon;
     return pokemon;
+  }
+
+  removePokemon(toRemove: PokemonObject) {
+    this.board.forEach((col, x) =>
+      col.forEach((pokemon, y) => {
+        if (pokemon?.id === toRemove.id) {
+          this.board[x][y] = undefined;
+        }
+      })
+    );
   }
 
   movePokemon(start: Coords, end: Coords, onComplete?: Function) {
@@ -293,7 +301,7 @@ export class CombatScene extends Scene {
     this.board[end.x][end.y] = mover;
     this.board[start.x][start.y] = undefined;
     const newPosition = getCoordinatesForMainboard(end);
-    mover.move(newPosition, onComplete);
+    mover.move(newPosition, { onComplete });
   }
 
   /**
