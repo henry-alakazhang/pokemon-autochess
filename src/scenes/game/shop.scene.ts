@@ -110,6 +110,7 @@ export class ShopScene extends Phaser.Scene {
     });
 
     const newShop = this.pool.reroll(
+      this.player,
       this.pokemonForSale.map(pokemon => pokemon.pokemonName)
     );
 

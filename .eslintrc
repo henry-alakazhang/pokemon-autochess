@@ -30,6 +30,7 @@
     "no-nested-ternary": 0,
     "no-new": 0,
     "no-param-reassign": 0,
+    "no-continue": 0,
     // doesn't work nicely with optional chaining on function calls
     "no-unused-expressions": 0,
     // replace no-useless-constructor with typescript-eslint version
@@ -44,5 +45,12 @@
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "@typescript-eslint/ban-types": 0
-  }
+  },
+  "overrides": [
+    {
+      "files": "*.spec.ts",
+      // tests are allowed to use "any" for mocks
+      "rules": { "@typescript-eslint/no-explicit-any" : 0 }
+    }
+  ]
 }

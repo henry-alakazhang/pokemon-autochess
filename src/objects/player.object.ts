@@ -435,7 +435,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   takeEnemyTurn() {
-    this.currentShop = this.pool.reroll(this.currentShop);
+    this.currentShop = this.pool.reroll(this, this.currentShop);
     console.log('player', this.playerName, 'bought', this.currentShop[4]);
     this.buyPokemon(this.currentShop[4]);
     const newPokemon = this.getPokemonAtLocation({
