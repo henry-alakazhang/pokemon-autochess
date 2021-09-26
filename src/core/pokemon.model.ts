@@ -14,6 +14,7 @@ import {
   iceShard,
   magnetPull,
   meteorMash,
+  mudBomb,
   nightDaze,
   quiverDance,
   razorWind,
@@ -611,6 +612,23 @@ const basePokemonData = {
     },
     move: surf,
   },
+  mudkip: {
+    base: 'lapras',
+    categories: ['water', 'ground', 'pivot'],
+    tier: 2,
+    maxHP: 100,
+    maxPP: 10,
+    attack: 110,
+    defense: 90,
+    specAttack: 85,
+    specDefense: 90,
+    speed: 60,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: mudBomb,
+  },
 } as const;
 
 /**
@@ -1169,6 +1187,23 @@ const rawPokemonData = {
     ...getEvolution('lapras', 3),
     name: 'lapras-3',
     displayName: 'Lapras',
+  },
+  mudkip: {
+    ...getEvolution('mudkip', 1),
+    name: 'mudkip',
+    displayName: 'Mudkip',
+    evolution: 'marshtomp',
+  },
+  marshtomp: {
+    ...getEvolution('mudkip', 2),
+    name: 'marshtomp',
+    displayName: 'Marshtomp',
+    evolution: 'swampert',
+  },
+  swampert: {
+    ...getEvolution('mudkip', 3),
+    name: 'swampert',
+    displayName: 'Swampert',
   },
 } as const;
 

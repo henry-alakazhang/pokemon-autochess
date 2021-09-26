@@ -158,4 +158,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 15,
     duration: 500,
   },
+  'mud-bomb': {
+    texture: 'mud-bomb',
+    frames: 6,
+    duration: 200,
+  },
 };

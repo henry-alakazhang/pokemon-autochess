@@ -75,6 +75,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "mud-bomb",
+        "url": "assets/animations/mud-bomb.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 36
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "quiver-dance",
         "url":"assets/animations/quiver-dance.png",
         "frameConfig": {

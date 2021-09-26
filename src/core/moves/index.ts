@@ -11,6 +11,7 @@ export * from './fury-cutter';
 export * from './ice-shard';
 export * from './magnet-pull';
 export * from './meteor-mash';
+export * from './mud-bomb';
 export * from './night-daze';
 export * from './quiver-dance';
 export * from './razor-wind';
