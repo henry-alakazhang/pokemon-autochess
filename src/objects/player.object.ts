@@ -3,10 +3,13 @@ import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { flatten, isDefined } from '../helpers';
 import { inBounds } from '../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
-import { Stage } from '../scenes/game/game.helpers';
+import {
+  BOARD_WIDTH,
+  getCoordinatesForMainboard,
+  Stage,
+} from '../scenes/game/game.helpers';
 import {
   GameScene,
-  getCoordinatesForMainboard,
   getCoordinatesForSideboardIndex,
   getMainboardLocationForCoordinates,
   getSideboardLocationForCoordinates,
@@ -41,11 +44,11 @@ export class Player extends Phaser.GameObjects.GameObject {
   nameInList: Phaser.GameObjects.Text;
 
   /** The Pokemon board representing the player's team composition */
-  mainboard: CombatBoard = Array(5)
+  mainboard: CombatBoard = Array(BOARD_WIDTH)
     .fill(undefined)
     // fill + map rather than `fill` an array because
     // `fill` will only initialise one array and fill with shallow copies
-    .map(() => Array(5).fill(undefined));
+    .map(() => Array(BOARD_WIDTH).fill(undefined));
 
   /** The Pokemon in the player's sideboard (spare Pokemon) */
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
@@ -444,7 +447,10 @@ export class Player extends Phaser.GameObjects.GameObject {
     }
 
     // ranged units go in back row, melee in front
-    const y = newPokemon.basePokemon.basicAttack.range === 1 ? 3 : 4;
+    const y =
+      newPokemon.basePokemon.basicAttack.range === 1
+        ? Math.ceil(BOARD_WIDTH / 2)
+        : BOARD_WIDTH - 1;
     let x = 0;
     // find a spot in the row where the unit will fit
     while (

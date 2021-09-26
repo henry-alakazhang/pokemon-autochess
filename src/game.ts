@@ -12,8 +12,8 @@ window.onload = () => {
   new PokemonAutochessGame({
     type: Phaser.AUTO,
     parent: 'canvas',
-    width: 800,
-    height: 600,
+    width: 900,
+    height: 700,
     backgroundColor: '#3A4DB5',
     scene: [
       PreloadScene,

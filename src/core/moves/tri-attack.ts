@@ -4,10 +4,8 @@ import {
   getOppositeSide,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
-import {
-  CombatBoard,
-  getCoordinatesForGrid,
-} from '../../scenes/game/combat/combat.scene';
+import { CombatBoard } from '../../scenes/game/combat/combat.scene';
+import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
@@ -69,7 +67,7 @@ const move = {
           user.y,
           'tri-attack-projectile'
         );
-        const gfxTarget = getCoordinatesForGrid(targetCoords);
+        const gfxTarget = getCoordinatesForMainboard(targetCoords);
         scene.add.tween({
           targets: [projectile],
           x: gfxTarget.x,

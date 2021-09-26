@@ -5,7 +5,7 @@ import {
   getFacing,
   getNearestTarget,
   optimiseAOE,
-  pathfind,
+  pathfind
 } from './combat.helpers';
 
 const playerMock = { side: 'player' } as PokemonObject;
@@ -221,21 +221,25 @@ describe('getNearestTarget', () => {
   });
 
   it(`should work for bigger boards
-      ....
-      .A..
-      ...B
-      ....`, () => {
+      ......
+      ......
+      ......
+      ...A..
+      ......
+      .....B`, () => {
     expect(
       getNearestTarget(
         [
-          [undefined, undefined, undefined, undefined],
-          [undefined, playerMock, undefined, undefined],
-          [undefined, undefined, undefined, undefined],
-          [undefined, undefined, enemyMock, undefined],
+          [undefined, undefined, undefined, undefined, undefined, undefined],
+          [undefined, undefined, undefined, undefined, undefined, undefined],
+          [undefined, undefined, undefined, undefined, undefined, undefined],
+          [undefined, undefined, undefined, playerMock, undefined, undefined],
+          [undefined, undefined, undefined, undefined, undefined, undefined],
+          [undefined, undefined, undefined, undefined, undefined, enemyMock],
         ],
-        { x: 1, y: 1 }
+        { x: 3, y: 3 }
       )
-    ).toEqual({ x: 3, y: 2 });
+    ).toEqual({ x: 5, y: 5 });
   });
 });
 
@@ -310,6 +314,156 @@ describe('pathfind', () => {
         1
       )
     ).toEqual(undefined);
+  });
+
+  it(`should work for larger boards (7x7)`, () => {
+    expect(
+      pathfind(
+        [
+          [
+            enemyMock,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            playerMock,
+          ],
+        ],
+        { x: 0, y: 0 },
+        { x: 6, y: 6 },
+        1
+      )
+    ).toEqual({ x: 1, y: 0 });
+  });
+
+  it(`should work in the edges of larger boards (7x7)`, () => {
+    expect(
+      pathfind(
+        [
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            enemyMock,
+            undefined,
+          ],
+          [
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            playerMock,
+          ],
+        ],
+        { x: 5, y: 5 },
+        { x: 6, y: 6 },
+        1
+      )
+    ).toEqual({ x: 6, y: 5 });
   });
 });
 

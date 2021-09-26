@@ -10,25 +10,28 @@ import {
   CombatScene,
   CombatSceneData,
 } from './combat/combat.scene';
-import { GameMode, getRandomNames, shuffle } from './game.helpers';
+import {
+  BOARD_WIDTH,
+  CELL_WIDTH,
+  GameMode,
+  getRandomNames,
+  GRID_X,
+  GRID_Y,
+  shuffle,
+} from './game.helpers';
 import { ShopPool } from './shop.helpers';
 import { ShopScene } from './shop.scene';
 
-/** X-coordinate of the center of the grid */
-const GRID_X = 400;
-/** Y-coordinate of the center of the grid */
-const GRID_Y = 250;
-const BOARD_WIDTH = 5;
-
+// FIXME: scale this off the canvas width
 /** X-coordinate of the center of the sideboard */
-const SIDEBOARD_X = 400;
+const SIDEBOARD_X = 450;
 /** Y-coordinate of the center of the sideboard */
-const SIDEBOARD_Y = 500;
-const CELL_WIDTH = 70;
+const SIDEBOARD_Y = 600;
 const CELL_COUNT = 8;
 
+// FIXME: scale this off the canvas width
 /** X-coordinate of the center of the shop */
-const SHOP_X = 400;
+const SHOP_X = 450;
 /** Y-coordinate of the center of the shop */
 const SHOP_Y = 175;
 
@@ -47,13 +50,6 @@ export function getCoordinatesForSideboardIndex(i: number): Coords {
 }
 
 /**
- * Returns the graphical x and y coordinates for a spot in the mainboard
- */
-export function getCoordinatesForMainboard({ x, y }: Coords): Coords {
-  return { x: GRID_X + (x - 2) * CELL_WIDTH, y: GRID_Y + (y - 2) * CELL_WIDTH };
-}
-
-/**
  * Returns the mainboard x and y coordinates for a graphical coordinate,
  * or `undefined` if the point isn't on the grid
  */
@@ -61,17 +57,17 @@ export function getMainboardLocationForCoordinates({
   x,
   y,
 }: Coords): PokemonLocation | undefined {
-  // 225 = GRID_X - CELL_WIDTH * BOARD_WIDTH / 2
-  // ie. the distance to the top of the grid
-  const gridx = (x - 225) / CELL_WIDTH;
-  // 75 = GRID_Y - CELL_WIDTH * BOARD_WIDTH / 2
-  // ie. the distance to the left edge of the grid
-  const gridy = (y - 75) / CELL_WIDTH;
+  // the distance to the top of the grid
+  const gridStartX = GRID_X - (CELL_WIDTH * BOARD_WIDTH) / 2;
+  // the distance to the left edge of the grid
+  const gridStartY = GRID_Y - (CELL_WIDTH * BOARD_WIDTH) / 2;
+  const gridx = (x - gridStartX) / CELL_WIDTH;
+  const gridy = (y - gridStartY) / CELL_WIDTH;
 
   if (
     gridx < 0 ||
     gridx >= BOARD_WIDTH ||
-    gridy < BOARD_WIDTH - 2 || // you can only put Pokemon in the bottom half of the grid
+    gridy < Math.ceil(BOARD_WIDTH / 2) || // you can only put Pokemon in the bottom half of the grid
     gridy >= BOARD_WIDTH
   ) {
     return undefined;
@@ -94,15 +90,14 @@ export function getSideboardLocationForCoordinates({
   x,
   y,
 }: Coords): PokemonLocation | undefined {
-  // 35 = CELL_WIDTH / 2
-  // ie. the distance to the top of the sideboard
-  if (y < SIDEBOARD_Y - 35 || y > SIDEBOARD_Y + 35) {
+  // the distance to the top of the sideboard
+  if (y < SIDEBOARD_Y - CELL_WIDTH / 2 || y > SIDEBOARD_Y + CELL_WIDTH / 2) {
     return undefined;
   }
 
-  // 120 = GRID_X - CELL_WIDTH * CELL_COUNT / 2
-  // ie. the distance to the left edge of the sideboard
-  const index = (x - 120) / CELL_WIDTH;
+  // the distance to the left edge of the sideboard
+  const sideboardStartX = SIDEBOARD_X - (CELL_WIDTH * CELL_COUNT) / 2;
+  const index = (x - sideboardStartX) / CELL_WIDTH;
   if (index < 0 || index >= CELL_COUNT) {
     return undefined;
   }
@@ -167,8 +162,8 @@ export class GameScene extends Phaser.Scene {
     this.prepGrid = this.add.grid(
       GRID_X, // center x
       GRID_Y, // center y
-      CELL_WIDTH * 5, // total width
-      CELL_WIDTH * 5, // total height
+      CELL_WIDTH * BOARD_WIDTH, // total width
+      CELL_WIDTH * BOARD_WIDTH, // total height
       CELL_WIDTH, // cell width
       CELL_WIDTH, // cell height
       0, // fill: none
@@ -193,17 +188,21 @@ export class GameScene extends Phaser.Scene {
     this.prepGridHighlight = this.add
       .rectangle(
         GRID_X,
-        // y: 1 tile from the bottom
-        GRID_Y + CELL_WIDTH * 1.5,
+        GRID_Y,
         // width: stretches across all columns
         CELL_WIDTH * BOARD_WIDTH,
-        // height: 2 rows
-        CELL_WIDTH * 2,
+        // height: half the grid rows
+        (CELL_WIDTH * BOARD_WIDTH) / 2,
         // color: ligher colour highlight
         0xffffff,
         // alpha: mostly transparent
         0.2
       )
+      // set y-origin to be 0
+      // this lets us use the grid x/y as the origin point,
+      // and have it cover the bottom of the grid.
+      // needs less math.
+      .setOrigin(0.5, 0)
       .setZ(-1)
       .setVisible(false);
 
@@ -212,7 +211,7 @@ export class GameScene extends Phaser.Scene {
     this.currentRound = 1;
     this.currentRoundText = this.add
       .text(
-        400,
+        this.game.canvas.width / 2,
         30,
         `Round ${this.currentStage + 1}-${this.currentRound}`,
         defaultStyle
@@ -222,7 +221,7 @@ export class GameScene extends Phaser.Scene {
 
     this.players = ['You', ...getRandomNames(7)].map((name, index) =>
       this.add.existing(
-        new Player(this, name, 620, 100 + 30 * index, {
+        new Player(this, name, 720, 100 + 30 * index, {
           pool: this.pool,
           isHumanPlayer: index === 0,
           initialLevel: this.gameMode.stages[this.currentStage].autolevel,
@@ -269,15 +268,17 @@ export class GameScene extends Phaser.Scene {
       this.toggleShop();
     });
 
-    this.shopButton = this.add.existing(new Button(this, 400, 580, 'Shop'));
+    this.shopButton = this.add.existing(
+      new Button(this, this.game.canvas.width / 2, 660, 'Shop')
+    );
     this.shopButton.on(Button.Events.CLICK, () => this.toggleShop());
 
     this.sellArea = this.add
       .rectangle(
-        710, // centre x
-        300, // centre y
-        100, // width
-        250, // height
+        750, // centre x
+        470, // centre y
+        150, // width
+        300, // height
         0xff0000, // color: red
         0.2 // alpha: mostly transparent
       )
@@ -291,7 +292,7 @@ export class GameScene extends Phaser.Scene {
         }
       });
 
-    this.nextRoundButton = new Button(this, SIDEBOARD_X, 450, 'Next Round');
+    this.nextRoundButton = new Button(this, SIDEBOARD_X, 525, 'Next Round');
     this.nextRoundButton.on(Button.Events.CLICK, () => {
       this.nextRoundButton.setVisible(false).setActive(false);
       this.startCombat();
@@ -312,7 +313,7 @@ export class GameScene extends Phaser.Scene {
       .sort((a, b) => b.hp - a.hp)
       .forEach((playerObj, index) => {
         playerObj.update();
-        playerObj.updatePosition(620, 100 + 30 * index);
+        playerObj.updatePosition(720, 100 + 30 * index);
       });
 
     // show the "valid range" highlight if a Pokemon is selected

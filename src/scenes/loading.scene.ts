@@ -24,7 +24,7 @@ export class LoadingScene extends Scene {
   }
 
   preload(): void {
-    this.add.image(400, 200, 'logo');
+    this.add.image(this.game.canvas.width / 2, 200, 'logo');
     this.loadingBar = this.add
       .graphics({ y: 150 })
       .fillStyle(0xffffff, 1)

@@ -11,6 +11,13 @@ import {
 import { Projectile } from '../../../objects/projectile.object';
 import { defaultStyle, titleStyle } from '../../../objects/text.helpers';
 import {
+  BOARD_WIDTH,
+  CELL_WIDTH,
+  getCoordinatesForMainboard,
+  GRID_X,
+  GRID_Y,
+} from '../game.helpers';
+import {
   calculateDamage,
   Coords,
   getAttackAnimation,
@@ -28,19 +35,6 @@ export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
   readonly player: Player;
   readonly enemy: Player;
-}
-
-/** X-coordinate of the center of the grid */
-const GRID_X = 400;
-/** Y-coordinate of the center of the grid */
-const GRID_Y = 250;
-const CELL_WIDTH = 70;
-
-/**
- * Returns the graphical x and y coordinates for a spot in the battle grid.
- */
-export function getCoordinatesForGrid({ x, y }: Coords): Coords {
-  return { x: GRID_X + (x - 2) * CELL_WIDTH, y: GRID_Y + (y - 2) * CELL_WIDTH };
 }
 
 /**
@@ -88,17 +82,17 @@ export class CombatScene extends Scene {
       `Combat: ${data.player.playerName} vs ${data.enemy.playerName}`
     );
 
-    this.board = Array(5)
+    this.board = Array(BOARD_WIDTH)
       .fill(undefined)
       // fill + map rather than `fill` an array because
       // `fill` will only initialise one array and fill with shallow copies
-      .map(() => Array(5).fill(undefined));
+      .map(() => Array(BOARD_WIDTH).fill(undefined));
 
     this.grid = this.add.grid(
       GRID_X, // center x
       GRID_Y, // center y
-      CELL_WIDTH * 5, // total width
-      CELL_WIDTH * 5, // total height
+      CELL_WIDTH * BOARD_WIDTH, // total width
+      CELL_WIDTH * BOARD_WIDTH, // total height
       CELL_WIDTH, // cell width
       CELL_WIDTH, // cell height
       0, // fill: none
@@ -108,7 +102,12 @@ export class CombatScene extends Scene {
     );
 
     this.title = this.add
-      .text(400, 50, `VS ${data.enemy.playerName}`, defaultStyle)
+      .text(
+        this.game.canvas.width / 2,
+        50,
+        `VS ${data.enemy.playerName}`,
+        defaultStyle
+      )
       .setFontSize(17)
       .setOrigin(0.5, 0);
 
@@ -132,7 +131,7 @@ export class CombatScene extends Scene {
             {
               x,
               // flip Y coordinates for enemy teams
-              y: 4 - y,
+              y: BOARD_WIDTH - 1 - y,
             },
             pokemon.name
           )
@@ -230,7 +229,7 @@ export class CombatScene extends Scene {
     name: PokemonName,
     startingAnimation?: PokemonAnimationType
   ): PokemonObject {
-    const coords = getCoordinatesForGrid({ x, y });
+    const coords = getCoordinatesForMainboard({ x, y });
     const pokemon = new PokemonObject({
       scene: this,
       name,
@@ -293,7 +292,7 @@ export class CombatScene extends Scene {
     mover.playAnimation(facing);
     this.board[end.x][end.y] = mover;
     this.board[start.x][start.y] = undefined;
-    const newPosition = getCoordinatesForGrid(end);
+    const newPosition = getCoordinatesForMainboard(end);
     mover.move(newPosition, onComplete);
   }
 
