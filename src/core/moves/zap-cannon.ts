@@ -6,10 +6,8 @@ import {
   getFacing,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
-import {
-  CombatBoard,
-  getCoordinatesForGrid,
-} from '../../scenes/game/combat/combat.scene';
+import { CombatBoard } from '../../scenes/game/combat/combat.scene';
+import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
@@ -65,7 +63,7 @@ const move = {
         // the target may have moved in the charge-up time
         // keep aiming at the original spot
         // TODO: aim at the target's new coords instead?
-        const targettedLocation = getCoordinatesForGrid(targetCoords);
+        const targettedLocation = getCoordinatesForMainboard(targetCoords);
         const thunder = scene.add
           .sprite(user.x, user.y, 'thunder')
           .setOrigin(0, 0.5)

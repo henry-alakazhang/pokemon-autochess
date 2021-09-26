@@ -166,10 +166,13 @@ export function pathfind(
     return undefined;
   }
 
-  // FIXME: Don't hardcode this length
   /** stores the fastest way to reach this step */
-  const prev: Coords[][] = [[], [], [], [], []];
-  const seen: boolean[][] = [[], [], [], [], []];
+  const prev: Coords[][] = Array(board.length)
+    .fill(undefined)
+    .map(() => Array(board.length));
+  const seen: boolean[][] = Array(board.length)
+    .fill(undefined)
+    .map(() => Array(board.length));
 
   const queue = [start];
   while (queue.length > 0) {

@@ -3,7 +3,7 @@ import {
   getOppositeSide,
   inBounds,
 } from '../../scenes/game/combat/combat.helpers';
-import { getCoordinatesForGrid } from '../../scenes/game/combat/combat.scene';
+import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 
 /**
@@ -41,7 +41,7 @@ const move = {
     }
     endCoords.x -= dx;
     endCoords.y -= dy;
-    const ballTarget = getCoordinatesForGrid(endCoords);
+    const ballTarget = getCoordinatesForMainboard(endCoords);
 
     const hasBeenHit: { [k: string]: boolean } = {};
     // shadow ball uses collision-based damage due to its slow projectile

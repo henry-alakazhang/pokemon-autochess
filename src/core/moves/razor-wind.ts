@@ -1,8 +1,6 @@
 import { Coords, optimiseAOE } from '../../scenes/game/combat/combat.helpers';
-import {
-  CombatScene,
-  getCoordinatesForGrid,
-} from '../../scenes/game/combat/combat.scene';
+import { CombatScene } from '../../scenes/game/combat/combat.scene';
+import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
@@ -50,7 +48,7 @@ const move = {
     board,
     onComplete,
   }: MoveConfig<'ground'>) {
-    const gfxTarget = getCoordinatesForGrid(targetCoords);
+    const gfxTarget = getCoordinatesForMainboard(targetCoords);
     await Tweens.hop(scene, {
       targets: [user],
       // double-hopping animation

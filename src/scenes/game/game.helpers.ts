@@ -1,4 +1,24 @@
 import { Player } from '../../objects/player.object';
+import { Coords } from './combat/combat.helpers';
+
+// fixme: scale this off the canvas size
+/** X-coordinate of the center of the grid */
+export const GRID_X = 450;
+/** Y-coordinate of the center of the grid */
+export const GRID_Y = 300;
+export const CELL_WIDTH = 70;
+export const BOARD_WIDTH = 6;
+
+/**
+ * Returns the graphical x and y coordinates for a spot in the mainboard
+ * The x/y is offset to the center of the grid
+ */
+export function getCoordinatesForMainboard({ x, y }: Coords): Coords {
+  return {
+    x: GRID_X + (x - BOARD_WIDTH / 2 + 0.5) * CELL_WIDTH,
+    y: GRID_Y + (y - BOARD_WIDTH / 2 + 0.5) * CELL_WIDTH,
+  };
+}
 
 /**
  * A representation of a game mode, with all its options
