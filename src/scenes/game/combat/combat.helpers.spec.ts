@@ -5,7 +5,7 @@ import {
   getFacing,
   getNearestTarget,
   optimiseAOE,
-  pathfind
+  pathfind,
 } from './combat.helpers';
 
 const playerMock = { side: 'player' } as PokemonObject;

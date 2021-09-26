@@ -4,11 +4,9 @@ import {
   Coords,
   getAngle,
   getFacing,
-  optimiseAOE
+  optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
-import {
-  CombatBoard
-} from '../../scenes/game/combat/combat.scene';
+import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
