@@ -26,6 +26,11 @@ export function getCoordinatesForMainboard({ x, y }: Coords): Coords {
 export interface GameMode {
   /** The set of stages (which are made up of rounds) */
   readonly stages: Stage[];
+  /** Rates of each tier of Pokemon in the shop at each player level */
+  readonly shopRates: {
+    // 6-element array to allow for 1-indexing using Pokemon tiers.
+    [k: string]: [number, number, number, number, number, number];
+  };
   /** Whether players can spend gold on exp to level up */
   readonly levelCosts?: number[];
 }
@@ -75,6 +80,29 @@ export function getHyperRollGameMode(): GameMode {
       // last section is sudden death. 99 damage, no gold - game must end!
       { rounds: 5, damage: () => 99, gold: () => 0 },
     ],
+    shopRates: {
+      1: [0, 100, 0, 0, 0, 0],
+      2: [0, 65, 35, 0, 0, 0],
+      3: [0, 45, 40, 15, 0, 0],
+      4: [0, 30, 38, 25, 7, 0],
+      5: [0, 19, 30, 35, 15, 1],
+      6: [0, 15, 20, 30, 25, 10],
+    },
+    levelCosts: undefined,
+  };
+}
+
+export function getDebugGameMode(): GameMode {
+  return {
+    stages: [{ rounds: 99, damage: () => 1, gold: () => 20, autolevel: 6 }],
+    shopRates: {
+      1: [0, 1, 1, 1, 1, 1],
+      2: [0, 1, 1, 1, 1, 1],
+      3: [0, 1, 1, 1, 1, 1],
+      4: [0, 1, 1, 1, 1, 1],
+      5: [0, 1, 1, 1, 1, 1],
+      6: [0, 1, 1, 1, 1, 1],
+    },
     levelCosts: undefined,
   };
 }

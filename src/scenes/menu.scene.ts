@@ -2,7 +2,7 @@ import { Input, Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
 import { Button } from '../objects/button.object';
 import { PokemonObject } from '../objects/pokemon.object';
-import { getHyperRollGameMode } from './game/game.helpers';
+import { getDebugGameMode, getHyperRollGameMode } from './game/game.helpers';
 import { GameScene } from './game/game.scene';
 
 /**
@@ -37,12 +37,7 @@ export class MenuScene extends Scene {
     this.add
       .existing(new Button(this, center, 525, 'Debug Mode'))
       .on(Button.Events.CLICK, () =>
-        this.scene.start(GameScene.KEY, {
-          stages: [
-            { rounds: 99, damage: () => 1, gold: () => 20, autolevel: 6 },
-          ],
-          levelCosts: undefined,
-        })
+        this.scene.start(GameScene.KEY, getDebugGameMode())
       );
   }
 

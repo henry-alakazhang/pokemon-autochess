@@ -1,4 +1,5 @@
 import { synergyData } from '../../core/game.model';
+import { buyablePokemon, pokemonData } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
@@ -121,7 +122,7 @@ export class GameScene extends Phaser.Scene {
    *
    * EVERY POOL IN THE GAME is a reference to this object.
    */
-  private readonly pool = new ShopPool();
+  private pool: ShopPool;
 
   private gameMode: GameMode;
   /** Current stage, zero-indexed */
@@ -207,6 +208,7 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false);
 
     this.gameMode = mode;
+    this.pool = new ShopPool(mode.shopRates, buyablePokemon, pokemonData);
     this.currentStage = 0;
     this.currentRound = 1;
     this.currentRoundText = this.add

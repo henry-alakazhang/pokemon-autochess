@@ -44,5 +44,12 @@
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "@typescript-eslint/ban-types": 0
-  }
+  },
+  "overrides": [
+    {
+      "files": "*.spec.ts",
+      // tests are allowed to use "any" for mocks
+      "rules": { "@typescript-eslint/no-explicit-any" : 0 }
+    }
+  ]
 }
