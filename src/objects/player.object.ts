@@ -411,7 +411,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     }
 
     // then show and reposition the active ones
-    this.synergies.slice(0, 9).forEach((synergy, index) => {
+    this.synergies.slice(0, 12).forEach((synergy, index) => {
       if (!this.synergyMarkers[synergy.category]) {
         // if we haven't created the marker yet, create it now
         this.synergyMarkers[synergy.category] = this.scene.add.existing(
@@ -421,7 +421,7 @@ export class Player extends Phaser.GameObjects.GameObject {
       this.synergyMarkers[synergy.category]
         ?.setActive(true)
         .setVisible(true)
-        .setPosition(40, 170 + index * SynergyMarker.height)
+        .setPosition(40, 150 + index * SynergyMarker.height)
         .setCount(synergy.count);
     });
   }
