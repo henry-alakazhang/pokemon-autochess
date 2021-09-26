@@ -30,6 +30,7 @@
     "no-nested-ternary": 0,
     "no-new": 0,
     "no-param-reassign": 0,
+    "no-continue": 0,
     // doesn't work nicely with optional chaining on function calls
     "no-unused-expressions": 0,
     // replace no-useless-constructor with typescript-eslint version

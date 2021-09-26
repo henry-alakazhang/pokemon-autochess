@@ -1,28 +1,35 @@
 import * as expect from 'expect';
+import { PokemonName } from '../../core/pokemon.model';
 import { Player } from '../../objects/player.object';
 import { ShopPool } from './shop.helpers';
+
+const alwaysFirst = () => 0;
+const alwaysLast = () => 0.99999;
+/** Returns a random number generator that cycles through given results */
+function customRng(results: number[]) {
+  let index = 0;
+  return () => {
+    const res = results[index];
+    index = (index + 1) % results.length;
+    return res;
+  };
+}
 
 describe.only('shop rerolling', () => {
   const origRandom = Math.random;
 
-  before(() => {
-    // chosen by fair dice roll
-    // this makes the tests run deterministically:
-    // the RNG will always pick the LAST element of a list
-    Math.random = () => 0.9999;
-  });
-
-  after(() => {
+  afterEach(() => {
     Math.random = origRandom;
   });
 
   it('should roll and remove stuff from the pool', () => {
+    Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
         1: [0, 1, 0, 0, 0, 0],
       },
       ['litwick'],
-      { litwick: { tier: 1, base: 'litwick' } } as any,
+      { litwick: { tier: 1, stage: 1, base: 'litwick' } } as any,
       { 1: 5, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
     expect(pool.reroll({ level: 1 } as Player)).toEqual([
@@ -35,15 +42,51 @@ describe.only('shop rerolling', () => {
     expect(pool.pools[1]).toHaveLength(0);
   });
 
+  it('should roll from the correct level for the player', () => {
+    Math.random = alwaysFirst;
+    const pool = new ShopPool(
+      {
+        // level 1: only roll tier 1s
+        1: [0, 1, 0, 0, 0, 0],
+        // level 2: only roll tier 2s
+        2: [0, 0, 1, 0, 0, 0],
+      },
+      ['litwick', 'abra'],
+      {
+        litwick: { tier: 1, stage: 1, base: 'litwick' },
+        abra: { tier: 2, stage: 1, base: 'abra' },
+      } as any,
+      { 1: 5, 2: 5, 3: 0, 4: 0, 5: 0 }
+    );
+    expect(pool.reroll({ level: 1 } as Player)).toEqual([
+      'litwick',
+      'litwick',
+      'litwick',
+      'litwick',
+      'litwick',
+    ]);
+    expect(pool.pools[1]).toHaveLength(0);
+
+    expect(pool.reroll({ level: 2 } as Player)).toEqual([
+      'abra',
+      'abra',
+      'abra',
+      'abra',
+      'abra',
+    ]);
+    expect(pool.pools[2]).toHaveLength(0);
+  });
+
   it('should roll through different pokemon', () => {
+    Math.random = alwaysLast;
     const pool = new ShopPool(
       {
         1: [0, 1, 0, 0, 0, 0],
       },
       ['litwick', 'fletchling'],
       {
-        litwick: { tier: 1, base: 'litwick' },
-        fletchling: { tier: 1, base: 'fletchling' },
+        litwick: { tier: 1, stage: 1, base: 'litwick' },
+        fletchling: { tier: 1, stage: 1, base: 'fletchling' },
       } as any,
       { 1: 3, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
@@ -61,6 +104,7 @@ describe.only('shop rerolling', () => {
   });
 
   it('should put stuff back in the pool when rerolling', () => {
+    Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
         1: [0, 1, 0, 0, 0, 0],
@@ -76,6 +120,7 @@ describe.only('shop rerolling', () => {
   });
 
   it('should put more back for higher stage pokemon', () => {
+    Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
         1: [0, 1, 0, 0, 0, 0],
@@ -108,24 +153,86 @@ describe.only('shop rerolling', () => {
   });
 
   it('should fall back to alternative tiers if current is exhausted', () => {
+    Math.random = customRng([0, 0.9999]);
     const pool = new ShopPool(
       {
         1: [0, 1, 1, 0, 0, 0],
       },
       ['litwick', 'abra'],
       {
-        litwick: { tier: 1, base: 'litwick' },
-        abra: { tier: 2, base: 'abra' },
+        litwick: { tier: 1, stage: 1, base: 'litwick' },
+        abra: { tier: 2, stage: 1, base: 'abra' },
       } as any,
       { 1: 3, 2: 3, 3: 0, 4: 0, 5: 0 }
     );
     expect(pool.reroll({ level: 1 } as Player)).toEqual([
-      // RNG picks from the back
+      // the rng alternates, but is used twice per pull (once for tier, once for pokemon)
+      // so tier 1 ends up being all pulled first
+      'litwick',
+      'litwick',
+      'litwick',
       'abra',
       'abra',
-      'abra',
+    ]);
+  });
+
+  it('should return empty slots if the entire shop is exhausted', () => {
+    Math.random = alwaysFirst;
+    const pool = new ShopPool(
+      {
+        1: [0, 1, 0, 0, 0, 0],
+      },
+      ['litwick'],
+      {
+        litwick: { tier: 1, stage: 1, base: 'litwick' },
+      } as any,
+      { 1: 2, 2: 0, 3: 0, 4: 0, 5: 0 }
+    );
+
+    // eslint-disable-next-line no-sparse-arrays
+    expect(pool.reroll({ level: 1 } as Player)).toEqual([
+      'litwick',
+      'litwick',
+      ,
+      ,
+      ,
+    ]);
+
+    // should have used all remaining Pokemon
+    expect(pool.pools[1]).toHaveLength(0);
+  });
+
+  it('should handle passed shops with deleted elements', () => {
+    Math.random = alwaysFirst;
+    const pool = new ShopPool(
+      {
+        1: [0, 1, 0, 0, 0, 0],
+      },
+      ['litwick'],
+      {
+        litwick: { tier: 1, stage: 1, base: 'litwick' },
+      } as any,
+      { 1: 5, 2: 0, 3: 0, 4: 0, 5: 0 }
+    );
+    const shop: PokemonName[] = [
+      'litwick',
+      'litwick',
+      'litwick',
+      'litwick',
+      'litwick',
+    ];
+    delete shop[1];
+    delete shop[2];
+
+    expect(pool.reroll({ level: 1 } as Player, shop)).toEqual([
+      'litwick',
+      'litwick',
+      'litwick',
       'litwick',
       'litwick',
     ]);
+
+    // should have returned 3 pokemon back
+    expect(pool.pools[1]).toHaveLength(3);
   });
 });

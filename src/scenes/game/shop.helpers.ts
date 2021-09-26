@@ -87,10 +87,21 @@ export class ShopPool {
     // to remove Pokemon from the shop, rather than marking as undefined
     // iterating over an array with missing elements doesn't hit the empty spots
     for (let i = 0; i < currentShop.length; i++) {
+      if (
+        this.rates[player.level].every(
+          availableTier => this.pools[availableTier].length === 0
+        )
+      ) {
+        // if every available tier for this player level is used up,
+        // insert an empty element into the array
+        newShop.length++;
+        continue;
+      }
+
       let tier = getRandomInArray(this.rates[player.level]);
       while (this.pools[tier].length === 0) {
-        // if the tier is already drained, just use the next one
-        tier = tier === 5 ? 1 : ((tier + 1) as 2 | 3 | 4 | 5);
+        // if the tier is already drained, pick a different one
+        tier = getRandomInArray(this.rates[player.level]);
       }
 
       const pool = this.pools[tier];
