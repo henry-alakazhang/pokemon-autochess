@@ -153,4 +153,9 @@ export const animations: { [key: string]: AnimationData } = {
     start: 0,
     duration: (1000 / 30) * 14,
   },
+  cog: {
+    texture: 'cog',
+    frames: 15,
+    duration: 500,
+  },
 };

@@ -420,14 +420,6 @@ export class CombatScene extends Scene {
         // end turn since there's no valid target
         return this.setTurn(pokemon);
       }
-      this.players[pokemon.side].synergies.forEach(synergy => {
-        synergyData[synergy.category].onMoveUse?.({
-          scene: this,
-          board: this.board,
-          user: pokemon,
-          count: synergy.count,
-        });
-      });
       attack.use({
         scene: this,
         board: this.board,
@@ -438,6 +430,14 @@ export class CombatScene extends Scene {
         // we know because we just checkked `targetted && !targetPokemon`.
         target: targetPokemon as PokemonObject,
         onComplete: () => {
+          this.players[pokemon.side].synergies.forEach(synergy => {
+            synergyData[synergy.category].onMoveUse?.({
+              scene: this,
+              board: this.board,
+              user: pokemon,
+              count: synergy.count,
+            });
+          });
           if (pokemon.currentHP > 0) {
             this.setTurn(pokemon);
           }

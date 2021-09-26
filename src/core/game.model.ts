@@ -391,10 +391,12 @@ it boosts the Speed of the whole party.
 (6) - 35% boost`,
     thresholds: [2, 4, 6],
     onMoveUse({
+      scene,
       board,
       user,
       count,
     }: {
+      scene: CombatScene;
       board: CombatScene['board'];
       user: PokemonObject;
       count: number;
@@ -407,9 +409,15 @@ it boosts the Speed of the whole party.
 
       flatten(board)
         .filter(pokemon => pokemon?.side === user.side)
+        .filter(isDefined)
         .forEach(pokemon => {
-          // TODO: Add animation (yellow cog buff)
-          pokemon?.changeStats({
+          const cog = scene.add
+            .sprite(pokemon.x, pokemon.y, 'cog')
+            .play('cog')
+            .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+              cog.destroy();
+            });
+          pokemon.changeStats({
             speed: boost,
           });
         });
@@ -847,6 +855,11 @@ all Revenge Kilers get an Attack boost.
             boardPokemon.consecutiveAttacks < maxStacks
           ) {
             // animation: goes red ANGRY
+            const angry = scene.add.image(
+              boardPokemon.x + 10,
+              boardPokemon.y - 10,
+              'angry'
+            );
             scene.tweens.addCounter({
               from: 255,
               to: 100,
@@ -858,6 +871,9 @@ all Revenge Kilers get an Attack boost.
                     Math.floor(tween.getValue())
                   )
                 );
+              },
+              onComplete: () => {
+                angry.destroy();
               },
               duration: 250,
               yoyo: true,
