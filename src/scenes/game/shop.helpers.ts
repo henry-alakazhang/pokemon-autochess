@@ -63,7 +63,6 @@ export class ShopPool {
     });
 
     pokemonList.forEach(pokemon => {
-      if (!pokemonData[pokemon].categories.includes('pivot')) return;
       this.pools[this.pokemonData[pokemon].tier].push(
         ...Array(poolSizes[this.pokemonData[pokemon].tier]).fill(pokemon)
       );
