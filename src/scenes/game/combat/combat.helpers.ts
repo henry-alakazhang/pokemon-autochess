@@ -146,6 +146,23 @@ export function getNearestEmpty(board: CombatScene['board'], { x, y }: Coords) {
 }
 
 /**
+ * Returns the middle point between a number of coordinates
+ * Calculated via just averaging all the values :)
+ */
+export function getCenter(coords: Coords[]): Coords {
+  const sum = { x: 0, y: 0 };
+  // could do this with a reduce, but this is easier to read for sureee
+  coords.forEach(({ x, y }) => {
+    sum.x += x;
+    sum.y += y;
+  });
+  return {
+    x: Math.round(sum.x / coords.length),
+    y: Math.round(sum.y / coords.length),
+  };
+}
+
+/**
  * Builds a path from start to somewhere in range of the target
  * Returns the first step in the path.
  */

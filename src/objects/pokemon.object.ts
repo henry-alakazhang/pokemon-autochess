@@ -116,6 +116,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       })
       .setDepth(1);
     this.redrawBars();
+    // larger sprites need to be shifted slightly
+    if (this.displayHeight === 128) {
+      this.setOrigin(0.5, 0.75);
+    }
 
     this.setInteractive().on(
       Phaser.Input.Events.POINTER_DOWN,
@@ -247,15 +251,30 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.sleepIcon.setVisible(!!this.status.sleep);
   }
 
+  /**
+   * Rerenders the Pokemon info card.
+   * Don't use this too much; it's probably not very performant.
+   */
+  redrawCard() {
+    this.pokemonTooltip.destroy();
+    this.pokemonTooltip = this.scene.add
+      .existing(new PokemonCard(this.scene, this.x, this.y, this.basePokemon))
+      .setVisible(false);
+  }
+
   public playAnimation(type: PokemonAnimationType) {
     this.play(`${this.texture.key}--${type}`);
     this.outlineSprite.play(`${this.texture.key}--${type}`);
   }
 
-  public move({ x, y }: Coords, onComplete?: Function) {
+  public move(
+    { x, y }: Coords,
+    { onComplete, duration }: { onComplete?: Function; duration?: number } = {}
+  ) {
+    console.log(this.basePokemon?.name, x, y);
     this.scene.add.tween({
       targets: [this, this.bars, ...this.attachments],
-      duration: getTurnDelay(this.basePokemon) * 0.75,
+      duration: duration ?? getTurnDelay(this.basePokemon) * 0.75,
       // add delta so the bars / attachments / etc move properly too
       x: `+=${x - this.x}`,
       y: `+=${y - this.y}`,

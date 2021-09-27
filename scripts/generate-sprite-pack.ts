@@ -1,6 +1,10 @@
 import * as fs from 'fs';
 import * as glob from 'glob';
 
+const sizeOverrides: { [k: string]: number } = {
+  regigigas: 128,
+};
+
 const spriteOutputFile = 'assets/sprite-pack.json';
 const fxOutputFile = 'assets/fx-pack.json';
 
@@ -14,13 +18,14 @@ glob('assets/pokemon/*.png', (err, matches) => {
       files: matches.map(url => {
         const filename = url.split('/').pop();
         const key = filename && filename.split('.')[0];
+        const size = (key && sizeOverrides[key]) ?? 64;
         return {
           type: 'spritesheet',
           key,
           url,
           frameConfig: {
-            frameWidth: 64,
-            frameHeight: 64,
+            frameWidth: size,
+            frameHeight: size,
           },
         };
       }),
