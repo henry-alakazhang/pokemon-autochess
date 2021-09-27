@@ -31,6 +31,7 @@ export interface GameMode {
     // 6-element array to allow for 1-indexing using Pokemon tiers.
     [k: string]: [number, number, number, number, number, number];
   };
+  readonly startingGold: number;
   /** Whether players can spend gold on exp to level up */
   readonly levelCosts?: number[];
 }
@@ -88,13 +89,14 @@ export function getHyperRollGameMode(): GameMode {
       5: [0, 19, 30, 35, 15, 1],
       6: [0, 15, 20, 30, 25, 10],
     },
+    startingGold: 10,
     levelCosts: undefined,
   };
 }
 
 export function getDebugGameMode(): GameMode {
   return {
-    stages: [{ rounds: 99, damage: () => 1, gold: () => 20, autolevel: 6 }],
+    stages: [{ rounds: 99, damage: () => 1, gold: () => 50, autolevel: 6 }],
     shopRates: {
       1: [0, 1, 1, 1, 1, 1],
       2: [0, 1, 1, 1, 1, 1],
@@ -103,6 +105,7 @@ export function getDebugGameMode(): GameMode {
       5: [0, 1, 1, 1, 1, 1],
       6: [0, 1, 1, 1, 1, 1],
     },
+    startingGold: 50,
     levelCosts: undefined,
   };
 }
