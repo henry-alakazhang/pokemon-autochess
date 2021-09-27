@@ -3,16 +3,14 @@ import { FloatingText } from '../objects/floating-text.object';
 import { Player } from '../objects/player.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import {
+  getCenter,
   getDamageReduction,
   getGridDistance,
   getNearestEmpty,
   inBounds,
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
-import {
-  BOARD_WIDTH,
-  getCoordinatesForMainboard,
-} from '../scenes/game/game.helpers';
+import { getCoordinatesForMainboard } from '../scenes/game/game.helpers';
 import { GameScene } from '../scenes/game/game.scene';
 
 export type Status =
@@ -705,6 +703,12 @@ Synergy: Dark-type Pokemon gain a critical hit ratio.
           slot.pokemon.critRate = critRate;
           slot.pokemon.critDamage = critDamage;
 
+          if (slot.pokemon.basePokemon.name === 'regigigas') {
+            // regigigas doesn't jump
+            // TODO don't hardcode this?
+            return;
+          }
+
           // Jump to nearest spot on opposite side
           const jumpLocation = getNearestEmpty(board, {
             x: slot.x,
@@ -1102,9 +1106,9 @@ it shares PP with non-Support allies.
 switch out to the Regigigas Mech.
 They switch back in when it faints.
 
-The Mech has all the stats of the Pivots
-and all of their types combined together.
-Its attacks hit multiple targets.`,
+The Mech gains stats from the Pivots and
+has all of their types combined together.`,
+    // TODO Its attacks hit multiple targets.`
     thresholds: [3],
     onRoundStart({ scene, board, side, count }) {
       const isType: { [k in Type]: boolean } = {
@@ -1131,86 +1135,83 @@ Its attacks hit multiple targets.`,
         return;
       }
 
-      const pivots = flatten(board)
-        .filter(isDefined)
-        .filter(
-          pokemon =>
-            pokemon.side === side &&
-            pokemon.basePokemon.categories.includes('pivot')
-        );
+      const pivots = flatten(
+        board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
+      ).filter(
+        slot =>
+          slot.pokemon?.side === side &&
+          slot.pokemon.basePokemon.categories.includes('pivot')
+      ) as { x: number; y: number; pokemon: PokemonObject }[]; // cast away the undefined, because we know it's not
 
-      // get nearest empty spot to the center of the player board
-      // TODO: base positioning off unit positioning
-      const mechPosition = getNearestEmpty(board, {
-        x: BOARD_WIDTH / 2,
-        y: BOARD_WIDTH / 2 + 1,
-      });
+      // get the nearest space to the center of the pivot units
+      // TODO: should we remove the pivots first?
+      const mechPosition = getNearestEmpty(board, getCenter(pivots));
       if (!mechPosition) {
         // no room for mech: should be impossible
         return;
       }
-      const graphicalPosition = getCoordinatesForMainboard(mechPosition);
 
+      const graphicalPosition = getCoordinatesForMainboard(mechPosition);
       const mech = scene
         .addPokemon(side, mechPosition, 'regigigas')
-        .setScale(0)
-        .setPosition(graphicalPosition.x, graphicalPosition.y - 150);
+        .setScale(0);
       scene.add.tween({
         targets: [mech],
         scaleX: 1,
         scaleY: 1,
-        y: graphicalPosition.y,
         ease: Phaser.Math.Easing.Quadratic.In,
         duration: 500,
       });
 
-      pivots.forEach(pokemon => {
-        // update the mech's stats
-        mech.basePokemon = {
-          ...mech.basePokemon,
-          categories: [
-            ...mech.basePokemon.categories,
-            // only keep the types
-            ...pokemon.basePokemon.categories.filter(
-              synergy => synergy in isType
-            ),
-          ],
-        };
-        mech.addStats({
-          maxHP: pokemon.basePokemon.maxHP,
-          attack: pokemon.basePokemon.attack,
-          defense: pokemon.basePokemon.defense,
-          specAttack: pokemon.basePokemon.specAttack,
-          specDefense: pokemon.basePokemon.specDefense,
-        });
+      pivots
+        // map away the coords since we don't need them here
+        .map(({ pokemon }) => pokemon)
+        .forEach(pokemon => {
+          // update the mech's stats
+          mech.basePokemon = {
+            ...mech.basePokemon,
+            categories: [
+              ...mech.basePokemon.categories,
+              // only keep the types
+              ...pokemon.basePokemon.categories.filter(
+                synergy => synergy in isType
+              ),
+            ],
+          };
+          mech.addStats({
+            maxHP: pokemon.basePokemon.maxHP,
+            attack: pokemon.basePokemon.attack,
+            defense: pokemon.basePokemon.defense,
+            specAttack: pokemon.basePokemon.specAttack,
+            specDefense: pokemon.basePokemon.specDefense,
+          });
 
-        // remove each of them from being tracked by the CombatScene
-        scene.removePokemon(pokemon);
-        // then move them physically to the mech spot and hide them
-        pokemon.move(graphicalPosition, {
-          duration: 500,
-          onComplete: () => {
-            pokemon.setVisible(false).setActive(false);
-          },
+          // remove each of them from being tracked by the CombatScene
+          scene.removePokemon(pokemon);
+          // then move them physically to the mech spot and hide them
+          pokemon.move(graphicalPosition, {
+            duration: 500,
+            onComplete: () => {
+              pokemon.setVisible(false).setActive(false);
+            },
+          });
         });
-      });
 
       mech.redrawCard();
       mech.once(PokemonObject.Events.Dead, () => {
-        pivots.forEach(pokemon => {
-          // FIXME: this should be from the mech's last position
-          // but there's no easy way to get that because it's already been removed from the board.
-          const spotToJump = getNearestEmpty(scene.board, mechPosition);
+        pivots.forEach(slot => {
+          // get the nearest position to where they were at the start of round
+          const spotToJump = getNearestEmpty(scene.board, slot);
           if (!spotToJump) {
             return;
           }
           const graphicalSpot = getCoordinatesForMainboard(spotToJump);
-          pokemon
+          slot.pokemon
             .setVisible(true)
             .setActive(true)
             .move(graphicalSpot);
-          scene.board[spotToJump.x][spotToJump.y] = pokemon;
-          scene.setTurn(pokemon);
+          scene.board[spotToJump.x][spotToJump.y] = slot.pokemon;
+          scene.setTurn(slot.pokemon);
         });
       });
     },

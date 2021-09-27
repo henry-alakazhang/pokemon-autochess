@@ -271,6 +271,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     { x, y }: Coords,
     { onComplete, duration }: { onComplete?: Function; duration?: number } = {}
   ) {
+    console.log(this.basePokemon?.name, x, y);
     this.scene.add.tween({
       targets: [this, this.bars, ...this.attachments],
       duration: duration ?? getTurnDelay(this.basePokemon) * 0.75,
