@@ -227,6 +227,7 @@ export class GameScene extends Phaser.Scene {
           pool: this.pool,
           isHumanPlayer: index === 0,
           initialLevel: this.gameMode.stages[this.currentStage].autolevel,
+          startingGold: this.gameMode.startingGold,
         })
       )
     );

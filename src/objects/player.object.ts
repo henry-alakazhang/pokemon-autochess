@@ -1,7 +1,6 @@
 import { Category, getSynergyTier, synergyData } from '../core/game.model';
 import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { flatten, isDefined } from '../helpers';
-import { inBounds } from '../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
 import {
   BOARD_WIDTH,
@@ -16,6 +15,7 @@ import {
   PokemonLocation,
 } from '../scenes/game/game.scene';
 import { ShopPool } from '../scenes/game/shop.helpers';
+import { AIStrategy, getRandomAI } from './ai/ai';
 import { PokemonObject } from './pokemon.object';
 import { SynergyMarker } from './synergy-marker.object';
 import { defaultStyle } from './text.helpers';
@@ -34,7 +34,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   // TODO: implement when implementing traditional games
   // exp = 0;
   hp = 100;
-  gold = 20;
+  gold: number;
   /** Consecutive win/loss streak */
   streak = 0;
   /** A map storing whether a Pokemon (by id) is currently evolving. */
@@ -59,6 +59,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   readonly pool: ShopPool;
   currentShop: PokemonName[];
 
+  private aiStrategy: AIStrategy;
   private visible: boolean;
 
   constructor(
@@ -70,13 +71,23 @@ export class Player extends Phaser.GameObjects.GameObject {
       pool,
       isHumanPlayer = false,
       initialLevel = 1,
-    }: { pool: ShopPool; isHumanPlayer?: boolean; initialLevel?: number }
+      startingGold = 20,
+    }: {
+      pool: ShopPool;
+      isHumanPlayer?: boolean;
+      initialLevel?: number;
+      startingGold?: number;
+    }
   ) {
     super(scene, 'player');
     this.pool = pool;
     this.isHumanPlayer = isHumanPlayer;
     this.visible = isHumanPlayer;
     this.level = initialLevel;
+    this.gold = startingGold;
+    if (!this.isHumanPlayer) {
+      this.aiStrategy = getRandomAI();
+    }
 
     // not part of group - always visible
     // TODO: move to game scene?
@@ -159,6 +170,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   buyPokemon(pokemonName: PokemonName): boolean {
+    console.log('player', this.playerName, 'bought', pokemonName);
     const price = pokemonData[pokemonName].tier;
     if (this.gold < price) {
       return false;
@@ -436,35 +448,72 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   takeEnemyTurn() {
     this.currentShop = this.pool.reroll(this, this.currentShop);
-    console.log('player', this.playerName, 'bought', this.currentShop[4]);
-    this.buyPokemon(this.currentShop[4]);
-    const newPokemon = this.getPokemonAtLocation({
-      location: 'sideboard',
-      index: 0,
+
+    this.aiStrategy.decideBuys(this).forEach(pokemon => {
+      if (this.buyPokemon(pokemon)) {
+        delete this.currentShop[this.currentShop.indexOf(pokemon)];
+      }
     });
-    if (!newPokemon) {
-      return;
+
+    while (this.aiStrategy.decideReroll(this)) {
+      this.currentShop = this.pool.reroll(this, this.currentShop);
+      this.gold -= 2;
+
+      this.aiStrategy.decideBuys(this).forEach(pokemon => {
+        if (this.buyPokemon(pokemon)) {
+          delete this.currentShop[this.currentShop.indexOf(pokemon)];
+        }
+      });
     }
 
-    // ranged units go in back row, melee in front
-    const y =
-      newPokemon.basePokemon.basicAttack.range === 1
-        ? Math.ceil(BOARD_WIDTH / 2)
-        : BOARD_WIDTH - 1;
-    let x = 0;
-    // find a spot in the row where the unit will fit
-    while (
-      inBounds(this.mainboard, { x, y }) &&
-      isDefined(this.mainboard[x][y])
-    ) {
-      x++;
+    // for everyone in the selected board, position them onto the mainboard
+    const boardOrder = this.aiStrategy.prioritiseBoard(this);
+    // we position them by "removing" all the Pokemon from the board first,
+    // then manually putting them in the right places using `setPokemonAtLocation`
+    for (let x = 0; x < BOARD_WIDTH; x++) {
+      for (let y = 0; y < BOARD_WIDTH; y++) {
+        this.mainboard[x][y] = undefined;
+      }
     }
-    // if such a spot exists, put them there
-    if (
-      inBounds(this.mainboard, { x, y }) &&
-      !isDefined(this.mainboard[x][y])
-    ) {
-      this.movePokemon(newPokemon, { location: 'mainboard', coords: { x, y } });
+    for (let i = 0; i < this.sideboard.length; i++) {
+      this.sideboard[i] = undefined;
     }
+
+    // the index of the first free space in a given row
+    const spaceInRow = [0, 0, 0, 0, 0, 0];
+    boardOrder.forEach((selectedPokemon, index) => {
+      if (index < this.level) {
+        // if index < level, we have room on the board
+
+        // pick a spot for them based on their range.
+        // ranged units go in back row, melee in front
+        const y =
+          selectedPokemon.basePokemon.basicAttack.range === 1
+            ? Math.ceil(BOARD_WIDTH / 2)
+            : BOARD_WIDTH - 1;
+        const x = spaceInRow[y];
+
+        this.setPokemonAtLocation(
+          {
+            location: 'mainboard',
+            coords: { x, y },
+          },
+          selectedPokemon
+        );
+        spaceInRow[y]++;
+        return;
+      }
+
+      // otherwise,  we've already put max pokemon on the board.
+      // the rest go into the sideboard in order
+      // (index - this.level starts at 0)
+      this.setPokemonAtLocation(
+        {
+          location: 'sideboard',
+          index: index - this.level,
+        },
+        selectedPokemon
+      );
+    });
   }
 }
