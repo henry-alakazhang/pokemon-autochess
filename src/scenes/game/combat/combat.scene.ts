@@ -56,6 +56,11 @@ export class CombatScene extends Scene {
   private timerText: Phaser.GameObjects.Text;
   private projectiles: { [k: string]: Projectile } = {};
 
+  private damageGraph: {
+    player: { dealt: { [k: string]: number }; taken: { [k: string]: number } };
+    enemy: { dealt: { [k: string]: number }; taken: { [k: string]: number } };
+  };
+
   private timer: number;
 
   private players: {
@@ -114,6 +119,11 @@ export class CombatScene extends Scene {
     this.players = {
       player: data.player,
       enemy: data.enemy,
+    };
+
+    this.damageGraph = {
+      player: { dealt: {}, taken: {} },
+      enemy: { dealt: {}, taken: {} },
     };
 
     this.players.player.mainboard.forEach((col, x) =>
@@ -184,6 +194,7 @@ export class CombatScene extends Scene {
       this.events.emit(CombatScene.Events.COMBAT_END, {
         winner: undefined,
       } as CombatEndEvent);
+      console.log(this.damageGraph);
       setTimeout(() => {
         this.scene.stop(CombatScene.KEY);
       }, 2000);
@@ -206,6 +217,21 @@ export class CombatScene extends Scene {
 
     console.log('round over');
 
+    const logDamage = (numbers: { [k: string]: number }) => {
+      return Object.entries(numbers)
+        .sort(([, a], [, b]) => b - a)
+        .map(([id, damage]) => `${id.split('-')[0]}: ${damage}`)
+        .join('\n');
+    };
+    console.log('Player damage');
+    console.log(logDamage(this.damageGraph.player.dealt));
+    console.log('Player damage taken');
+    console.log(logDamage(this.damageGraph.player.taken));
+    console.log('Enemy damage');
+    console.log(logDamage(this.damageGraph.enemy.dealt));
+    console.log('Enemy damage taken');
+    console.log(logDamage(this.damageGraph.enemy.taken));
+
     const winner = playerAlive ? 'player' : 'enemy';
     this.add
       .text(GRID_X, GRID_Y, `ROUND OVER: ${winner.toUpperCase()} WINS!`, {
@@ -215,6 +241,7 @@ export class CombatScene extends Scene {
       })
       .setDepth(200)
       .setOrigin(0.5, 0.5);
+    this.scene.pause();
     this.events.emit(CombatScene.Events.COMBAT_END, {
       winner,
     } as CombatEndEvent);
@@ -272,6 +299,13 @@ export class CombatScene extends Scene {
       pokemon.playAnimation(startingAnimation);
     }
     this.board[x][y] = pokemon;
+    // initialize damage graph
+    this.damageGraph[side].dealt[
+      `${pokemon.basePokemon.displayName}-${pokemon.id}`
+    ] = 0;
+    this.damageGraph[side].taken[
+      `${pokemon.basePokemon.displayName}-${pokemon.id}`
+    ] = 0;
     return pokemon;
   }
 
@@ -611,6 +645,13 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
+
+    this.damageGraph[attacker.side].dealt[
+      `${attacker.basePokemon.displayName}-${attacker.id}`
+    ] += amount;
+    this.damageGraph[defender.side].taken[
+      `${defender.basePokemon.displayName}-${defender.id}`
+    ] += amount;
   }
 
   /**
