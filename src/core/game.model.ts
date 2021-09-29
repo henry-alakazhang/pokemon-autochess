@@ -816,13 +816,13 @@ Max 4 stacks.
       if (
         attacker.basePokemon.categories.includes('sweeper') &&
         // up to 4 stacks
-        attacker.consecutiveAttacks < 4
+        attacker.synergyState.sweeper < 4
       ) {
         // bonus is additive, so calculate relative to previous increase
-        const currentBonus = 1 + perStack * attacker.consecutiveAttacks;
-        const newBonus = 1 + perStack * (attacker.consecutiveAttacks + 1);
+        const currentBonus = 1 + perStack * attacker.synergyState.sweeper;
+        const newBonus = 1 + perStack * (attacker.synergyState.sweeper + 1);
         attacker.changeStats({ speed: newBonus / currentBonus });
-        attacker.consecutiveAttacks++;
+        attacker.synergyState.sweeper++;
       }
     },
   },
@@ -860,7 +860,7 @@ all Revenge Kilers get an Attack boost.
           if (
             boardPokemon?.side === side &&
             boardPokemon.basePokemon.categories.includes('revenge killer') &&
-            boardPokemon.consecutiveAttacks < maxStacks
+            boardPokemon.synergyState.revengeKiller < maxStacks
           ) {
             // animation: goes red ANGRY
             const angry = scene.add.image(
@@ -887,7 +887,7 @@ all Revenge Kilers get an Attack boost.
               yoyo: true,
             });
             boardPokemon.changeStats({ attack: 1.5 });
-            boardPokemon.consecutiveAttacks++;
+            boardPokemon.synergyState.revengeKiller++;
           }
         });
       }

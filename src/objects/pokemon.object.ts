@@ -58,6 +58,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     };
   } = {};
 
+  /**
+   * State stored for synergies. Each synergy stores whatever it needs to track.
+   */
+  synergyState: {
+    /** Number of Speed stacks */
+    sweeper: number;
+    /** Number of Attack stacks */
+    revengeKiller: number;
+  } = { sweeper: 0, revengeKiller: 0 };
+
   attachments: Phaser.GameObjects.GameObject[] = [];
 
   // TODO: clean up messiness in model
