@@ -570,7 +570,7 @@ export class CombatScene extends Scene {
     {
       isAttack = false,
       isAOE = false,
-      canCrit = false,
+      canCrit,
     }: { isAttack?: boolean; isAOE?: boolean; canCrit?: boolean } = {}
   ) {
     if (isAttack) {
@@ -615,8 +615,8 @@ export class CombatScene extends Scene {
     // if `canCrit` is passed in, use the value
     // otherwise, all attacks can crit by default
     const actuallyCanCrit = canCrit ?? isAttack ?? false;
-    const doesCrit = Math.random() < attacker.critRate;
-    if (actuallyCanCrit && doesCrit) {
+    const doesCrit = actuallyCanCrit && Math.random() < attacker.critRate;
+    if (doesCrit) {
       totalDamage *= attacker.critDamage;
     }
 
