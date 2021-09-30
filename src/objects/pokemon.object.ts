@@ -318,8 +318,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    * Triggers effects that happen on attack, such as mana generation
    */
   public dealDamage(amount: number) {
-    // damage / 10, capped at 2
-    this.addPP(Math.min(2, Math.round(amount / 10)));
+    // 5% of damage, capped at 2
+    this.addPP(Math.min(2, amount * 0.05));
     this.redrawBars();
   }
 
@@ -345,7 +345,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // trigger on-hit events like mana
     if (triggerEvents) {
       this.emit(PokemonObject.Events.Damage);
-      this.addPP(Math.min(2, Math.round(amount / 10)));
+      this.addPP(Math.min(5, amount * 0.015));
     }
 
     const actualDamage = Math.min(this.currentHP, amount);
