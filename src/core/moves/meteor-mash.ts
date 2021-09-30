@@ -14,6 +14,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Meteor Mash',
   type: 'active',
+  cost: 22,
+  startingPP: 14,
   range: 1,
   targetting: 'unit',
   damage: [400, 750, 1400],

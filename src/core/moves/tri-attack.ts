@@ -20,6 +20,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Tri-Attack',
   type: 'active',
+  cost: 24,
+  startingPP: 20,
   damage: [200, 350, 600],
   defenseStat: 'specDefense',
   targetting: 'ground',

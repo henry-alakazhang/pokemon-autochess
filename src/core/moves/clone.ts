@@ -14,6 +14,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Clone',
   type: 'active',
+  cost: 20,
+  startingPP: 12,
   range: 99,
   targetting: 'unit',
   // amount of PP to grant the clone

@@ -14,6 +14,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Darkest Lariat',
   type: 'active',
+  cost: 6,
+  startingPP: 2,
   range: 1,
   targetting: 'unit',
   damage: [150, 200, 350],

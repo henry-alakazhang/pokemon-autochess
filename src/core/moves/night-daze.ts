@@ -14,6 +14,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Night Daze',
   type: 'active',
+  cost: 16,
+  startingPP: 10,
   range: 1,
   targetting: 'unit',
   damage: [350, 600, 1200],

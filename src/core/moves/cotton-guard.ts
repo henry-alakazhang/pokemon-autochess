@@ -11,6 +11,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Cotton Guard',
   type: 'active',
+  cost: 16,
+  startingPP: 8,
   range: 1,
   targetting: 'ground',
   // actually effectiveness haha

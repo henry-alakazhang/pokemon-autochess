@@ -18,6 +18,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Dragon Rush',
   type: 'active',
+  cost: 18,
+  startingPP: 10,
   damage: [500, 800, 1300],
   defenseStat: 'defense',
   targetting: 'ground',

@@ -15,7 +15,9 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Razor Wind',
   type: 'active',
-  damage: [600, 1000, 1800],
+  cost: 24,
+  startingPP: 12,
+  damage: [400, 700, 1200],
   defenseStat: 'specDefense',
   targetting: 'ground',
   get description() {

@@ -12,6 +12,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Teleport',
   type: 'active',
+  cost: 24,
+  startingPP: 4,
   range: 1,
   targetting: 'ground',
   // actually heal %

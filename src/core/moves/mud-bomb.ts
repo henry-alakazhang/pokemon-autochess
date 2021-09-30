@@ -14,6 +14,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Mud Bomb',
   type: 'active',
+  cost: 24,
+  startingPP: 12,
   range: 1,
   targetting: 'unit',
   damage: [200, 350, 550],

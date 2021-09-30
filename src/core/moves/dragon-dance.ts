@@ -11,6 +11,9 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Dragon Dance',
   type: 'active',
+  // FIXME: Just disable mana after using move
+  cost: 100,
+  startingPP: 92,
   range: 1,
   targetting: 'ground',
   get description() {

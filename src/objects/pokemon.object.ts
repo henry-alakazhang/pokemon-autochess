@@ -88,8 +88,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // load data from Pokemon data
     this.maxHP = this.basePokemon.maxHP;
     this.currentHP = this.maxHP;
-    this.maxPP = this.basePokemon.maxPP;
-    this.currentPP = 0;
+    if (this.basePokemon.move?.type === 'active') {
+      this.maxPP = this.basePokemon.move.cost;
+      this.currentPP = this.basePokemon.move.startingPP;
+    }
+
     this.side = params.side;
 
     this.outlineSprite = this.scene.add

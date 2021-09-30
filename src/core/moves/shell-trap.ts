@@ -17,6 +17,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Shell Trap',
   type: 'active',
+  cost: 20,
+  startingPP: 14,
   range: 1,
   targetting: 'ground',
   damage: [100, 125, 200],

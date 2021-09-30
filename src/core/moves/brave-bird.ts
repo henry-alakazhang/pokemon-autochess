@@ -18,6 +18,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Brave Bird',
   type: 'active',
+  cost: 10,
+  startingPP: 4,
   damage: [200, 350, 500],
   defenseStat: 'defense',
   targetting: 'unit',

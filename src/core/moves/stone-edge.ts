@@ -16,6 +16,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Stone Edge',
   type: 'active',
+  cost: 10,
+  startingPP: 2,
   range: 1,
   targetting: 'unit',
   damage: [400, 700, 1400],

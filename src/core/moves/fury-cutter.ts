@@ -15,6 +15,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Fury Cutter',
   type: 'active',
+  cost: 4,
+  startingPP: 2,
   damage: [100, 200, 400],
   defenseStat: 'defense',
   targetting: 'unit',

@@ -14,6 +14,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Shadow Ball',
   type: 'active',
+  cost: 20,
+  startingPP: 10,
   damage: [300, 550, 800],
   defenseStat: 'specDefense',
   targetting: 'unit',

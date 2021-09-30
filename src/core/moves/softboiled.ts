@@ -14,6 +14,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Softboiled',
   type: 'active',
+  cost: 14,
+  startingPP: 4,
   damage: [300, 500, 700],
   targetting: 'unit',
   get description() {

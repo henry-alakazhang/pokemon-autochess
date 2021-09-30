@@ -17,6 +17,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Volt Tackle',
   type: 'active',
+  cost: 10,
+  startingPP: 4,
   damage: [300, 450, 600],
   defenseStat: 'defense',
   targetting: 'unit',

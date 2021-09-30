@@ -26,6 +26,11 @@ export interface ActiveMove<T extends Targetting> {
   description: string;
   range: number;
 
+  /** Amount of PP needed to use the move */
+  cost: number;
+  /** Amount of PP Pokemon starts with */
+  startingPP: number;
+
   /**
    * Whether the move specifically targets a unit or not
    */

@@ -176,8 +176,12 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           </tr>
           <tr>
             <td></td>
-            <td>Max PP</td>
-            <td>${this.pokemon.maxPP ?? '/'}</td>
+            <td>PP</td>
+            <td>${
+              this.pokemon.move?.type === 'active'
+                ? `${this.pokemon.move.startingPP}/${this.pokemon.move.cost}`
+                : '-'
+            }</td>
             <td></td>
           </tr>
           <tr>

@@ -14,6 +14,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Ice Shard',
   type: 'active',
+  cost: 4,
+  startingPP: 2,
   defenseStat: 'defense',
   targetting: 'ground',
   get description() {

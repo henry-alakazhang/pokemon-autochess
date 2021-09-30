@@ -4,6 +4,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Thunder Wave',
   type: 'active',
+  cost: 16,
+  startingPP: 6,
   description:
     '{{user}} sends a jolt of electricity at a single enemy, paralysing it for 4 seconds.',
   range: 2,

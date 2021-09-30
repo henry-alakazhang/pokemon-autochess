@@ -15,6 +15,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Surf',
   type: 'active',
+  cost: 28,
+  startingPP: 20,
   damage: [400, 850, 1700],
   defenseStat: 'specDefense',
   targetting: 'unit',

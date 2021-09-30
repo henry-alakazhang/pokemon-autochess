@@ -16,6 +16,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Egg Barrage',
   type: 'active',
+  cost: 10,
+  startingPP: 0,
   damage: [80, 140, 200],
   defenseStat: 'specDefense',
   targetting: 'unit',

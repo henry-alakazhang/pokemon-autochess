@@ -19,6 +19,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Zap Cannon',
   type: 'active',
+  cost: 28,
+  startingPP: 14,
   damage: [300, 550, 800],
   defenseStat: 'specDefense',
   targetting: 'unit',

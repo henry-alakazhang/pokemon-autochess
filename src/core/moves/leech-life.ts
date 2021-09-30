@@ -15,6 +15,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Leech Life',
   type: 'active',
+  cost: 14,
+  startingPP: 0,
   damage: [150, 250, 400],
   defenseStat: 'defense',
   targetting: 'unit',

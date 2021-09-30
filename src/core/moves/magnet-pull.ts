@@ -14,7 +14,10 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Magnet Pull',
   type: 'active',
+  cost: 20,
+  startingPP: 20,
   targetting: 'unit',
+  range: 100,
   defenseStat: 'specDefense',
   damage: [200, 350, 500],
   get description() {
@@ -22,7 +25,6 @@ const move = {
       '/'
     )} damage. It is pulled next to {{user}} and paralysed for 2 seconds.`;
   },
-  range: 100,
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
     return getFurthestTarget({
       board,

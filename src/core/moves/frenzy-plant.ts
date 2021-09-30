@@ -13,6 +13,8 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Frenzy Plant',
   type: 'active',
+  cost: 22,
+  startingPP: 16,
   range: 99,
   targetting: 'ground',
   // HP of the plant
