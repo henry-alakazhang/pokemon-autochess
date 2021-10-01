@@ -1,4 +1,8 @@
-import { Coords, optimiseAOE } from '../../scenes/game/combat/combat.helpers';
+import {
+  calculateDamage,
+  Coords,
+  optimiseAOE,
+} from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
@@ -86,7 +90,11 @@ const move = {
             this.getAOE(targetCoords).forEach(coord => {
               const pokemon = board[coord.x]?.[coord.y];
               if (pokemon && pokemon.side !== user.side) {
-                scene.causeDamage(user, pokemon, dph, { isAOE: true });
+                const damage = calculateDamage(user, pokemon, {
+                  damage: dph,
+                  defenseStat: this.defenseStat,
+                });
+                scene.causeDamage(user, pokemon, damage, { isAOE: true });
               }
             });
           },

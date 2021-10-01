@@ -4,7 +4,7 @@
     "browser": true,
     "es6": true
   },
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "eslint-plugin-local-rules"],
   "extends": [
     "airbnb-base",
     "plugin:prettier/recommended",
@@ -44,7 +44,9 @@
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
-    "@typescript-eslint/ban-types": 0
+    "@typescript-eslint/ban-types": 0,
+
+    "local-rules/validate-calculate-damage": ["error"]
   },
   "overrides": [
     {
@@ -52,5 +54,5 @@
       // tests are allowed to use "any" for mocks
       "rules": { "@typescript-eslint/no-explicit-any" : 0 }
     }
-  ]
+  ],
 }

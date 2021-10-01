@@ -1,4 +1,5 @@
 import {
+  calculateDamage,
   Coords,
   getFurthestTarget,
   inBounds,
@@ -53,7 +54,11 @@ const move = {
       ({ x, y }) => inBounds(board, { x, y }) && !board[x]?.[y]
     )[0];
 
-    scene.causeDamage(user, target, this.damage[user.basePokemon.stage - 1]);
+    const damage = calculateDamage(user, target, {
+      damage: this.damage[user.basePokemon.stage - 1],
+      defenseStat: this.defenseStat,
+    });
+    scene.causeDamage(user, target, damage);
     // paralyse
     target.addStatus('paralyse', 2000);
     // move if possible

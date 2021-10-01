@@ -1,4 +1,5 @@
 import {
+  calculateDamage,
   Coords,
   getGridDistance,
   getOppositeSide,
@@ -57,7 +58,6 @@ const move = {
     ];
   },
   use({ scene, board, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
-    const damage = this.damage[user.basePokemon.stage - 1];
     scene.add.tween({
       targets: [user],
       angle: '+=360',
@@ -87,6 +87,10 @@ const move = {
             // explosion 1: single target
             const singleTarget = board[targetCoords.x][targetCoords.y];
             if (singleTarget?.side === getOppositeSide(user.side)) {
+              const damage = calculateDamage(user, singleTarget, {
+                damage: this.damage[user.basePokemon.stage - 1],
+                defenseStat: this.defenseStat,
+              });
               scene.causeDamage(user, singleTarget, damage, { isAOE: true });
             }
 
@@ -104,6 +108,10 @@ const move = {
                     this.getAOE(targetCoords).forEach(({ x, y }) => {
                       const thisTarget = board[x]?.[y];
                       if (thisTarget?.side === getOppositeSide(user.side)) {
+                        const damage = calculateDamage(user, thisTarget, {
+                          damage: this.damage[user.basePokemon.stage - 1],
+                          defenseStat: this.defenseStat,
+                        });
                         scene.causeDamage(user, thisTarget, damage, {
                           isAOE: true,
                         });
@@ -129,6 +137,10 @@ const move = {
                     this.getAOE(targetCoords).forEach(({ x, y }) => {
                       const thisTarget = board[x]?.[y];
                       if (thisTarget?.side === getOppositeSide(user.side)) {
+                        const damage = calculateDamage(user, thisTarget, {
+                          damage: this.damage[user.basePokemon.stage - 1],
+                          defenseStat: this.defenseStat,
+                        });
                         scene.causeDamage(user, thisTarget, damage, {
                           isAOE: true,
                         });
