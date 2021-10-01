@@ -633,7 +633,8 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
 
   return {
     ...basePokemon,
-    maxHP: basePokemon.maxHP * 10 * multi,
+    // effectively sqrt(baseHP) * 100, but rounded down to nearest 50
+    maxHP: Math.floor(2 * Math.sqrt(basePokemon.maxHP) - 1) * 50 * multi,
     attack: basePokemon.attack * multi,
     specAttack: basePokemon.specAttack * multi,
     stage,

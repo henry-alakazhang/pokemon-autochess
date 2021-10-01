@@ -190,8 +190,9 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             <td>${this.pokemon.attack}</td>
             <td></td>
           </tr>
-          <tr title="${getDamageReduction(this.pokemon.defense) *
-            100}% damage reduction">
+          <tr title="${Math.round(
+            getDamageReduction(this.pokemon.defense) * 100
+          )}% damage reduction">
             <td></td>
             <td>Defense</td>
             <td>${this.pokemon.defense}</td>
@@ -203,15 +204,16 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             <td>${this.pokemon.specAttack}</td>
             <td></td>
           </tr>
-          <tr title="${getDamageReduction(this.pokemon.specDefense) *
-            100}% damage reduction">
+          <tr title="${Math.round(
+            getDamageReduction(this.pokemon.specDefense) * 100
+          )}% damage reduction">
             <td></td>
             <td>Sp. Def</td>
             <td>${this.pokemon.specDefense}</td>
             <td></td>
           </tr>
           <tr title="${(1000 / getTurnDelay(this.pokemon)).toFixed(
-            1
+            2
           )} attacks per second">
             <td></td>
             <td>Speed</td>

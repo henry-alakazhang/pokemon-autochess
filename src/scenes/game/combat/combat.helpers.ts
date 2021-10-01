@@ -386,11 +386,11 @@ export function getRandomTarget({
 /**
  * Returns the turn delay in milliseconds for a pokemon.
  *
- * The delay scales from 0.5 APS at 50 base speed to 1.0 at 125 speed.
+ * The delay scales linearly from 0.5 APS at 50 base speed to 1.0 at 150 speed.
  * The minimum is 0.5 APS / 2 seconds per attack (no upper cap)
  */
 export function getTurnDelay(pokemon: Pokemon) {
-  const aps = (pokemon.speed + 25) / 150;
+  const aps = (pokemon.speed + 25) / 175;
   return Math.min(1000 / aps, 2000);
 }
 
@@ -442,9 +442,19 @@ type OffenseAction =
       defenseStat: 'defense' | 'specDefense';
     };
 
+/**
+ * Returns the % damage reduction provided by a defense stat.
+ *
+ * The formula is similar to League/TFT but scales worse because numbers are higher
+ * * 50 base defense provides 15% reduction
+ * * 100 base defense provides 25% reduction
+ * * 200 base defense provides 40% reduction
+ *
+ * This seems like diminishing returns, but it's actually linear in effective HP
+ * Every point of base defense provides 0.33*% more effective HP
+ */
 export function getDamageReduction(defense: number) {
-  // reduction is stat / 5, rounded down to the nearest 5
-  return (Math.floor(defense / 25) * 5) / 100;
+  return Math.round((100 * defense) / (300 + defense)) / 100;
 }
 
 export function calculateDamage(
