@@ -6,16 +6,19 @@ import { FloatingText } from '../../../objects/floating-text.object';
 import { Player } from '../../../objects/player.object';
 import {
   PokemonAnimationType,
-  PokemonObject
+  PokemonObject,
 } from '../../../objects/pokemon.object';
-import { Projectile, ProjectileConfig } from '../../../objects/projectile.object';
+import {
+  Projectile,
+  ProjectileConfig,
+} from '../../../objects/projectile.object';
 import { defaultStyle, titleStyle } from '../../../objects/text.helpers';
 import {
   BOARD_WIDTH,
   CELL_WIDTH,
   getCoordinatesForMainboard,
   GRID_X,
-  GRID_Y
+  GRID_Y,
 } from '../game.helpers';
 import {
   calculateDamage,
@@ -25,7 +28,7 @@ import {
   getGridDistance,
   getNearestTarget,
   getTurnDelay,
-  pathfind
+  pathfind,
 } from './combat.helpers';
 
 export interface CombatEndEvent {
@@ -665,13 +668,9 @@ export class CombatScene extends Scene {
     config: ProjectileConfig,
     onHit: Function
   ) {
-    const projectileObj = this.add.existing(new Projectile(
-      this,
-      from.x,
-      from.y,
-      to,
-      config
-    ));
+    const projectileObj = this.add.existing(
+      new Projectile(this, from.x, from.y, to, config)
+    );
     // store this in the `projectiles` map under a random key
     const projectileKey = generateId();
     this.projectiles[projectileKey] = projectileObj;

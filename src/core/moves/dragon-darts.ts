@@ -17,7 +17,7 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Dragon Darts',
   type: 'active',
-  cost: 4,
+  cost: 5,
   startingPP: 2,
   damage: [175, 300, 500],
   defenseStat: 'defense',
@@ -54,7 +54,7 @@ const move = {
           key: 'dreepy',
           speed: 600,
           animation: 'dreepy--right',
-          trajectory: 'bounceArc',
+          trajectory: 'randomArc',
         },
         () => {
           const damage = calculateDamage(user, target, {

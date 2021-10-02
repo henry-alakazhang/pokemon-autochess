@@ -9,9 +9,9 @@ export interface ProjectileConfig {
    * How the projectile travels.
    *
    * * `straight` flies directly towards the target
-   * * `bounceArc` bounces outwards in a random direction, then flies to the target
+   * * `randomArc` bounces outwards in a random direction, and arcs towards the target
    */
-  trajectory?: 'straight' | 'bounceArc';
+  trajectory?: 'straight' | 'randomArc';
 }
 
 /**
@@ -24,7 +24,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   };
 
   body: Phaser.Physics.Arcade.Body;
-  trajectory: 'straight' | 'bounceArc';
+  trajectory: 'straight' | 'randomArc';
 
   /** How long the projectile has been alive */
   lifetime: number;
@@ -37,26 +37,24 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     config: ProjectileConfig
   ) {
     super(scene, x, y, config.key);
-
     scene.physics.add.existing(this);
 
+    this.lifetime = 0;
     this.trajectory = config.trajectory ?? 'straight';
-
     this.body.setMaxSpeed(config.speed);
 
     // set initial direction
     // note that `update()` always pushes the projectile towards the target
-    // so regardless of which direction it's fired, it will work
+    // so regardless of where it's fired, it will end up in the right place
     switch (this.trajectory) {
-      case 'bounceArc':
+      case 'randomArc':
         // shoot in a random direction
         this.scene.physics.moveTo(
           this,
-          x + (Math.random() - 0.5) * 100,
-          y + (Math.random() - 0.5) * 100,
+          x + (Math.random() - 0.5),
+          y + (Math.random() - 0.5),
           config.speed
         );
-        console.log(this.body.velocity);
         break;
       case 'straight':
       default:
@@ -68,8 +66,6 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     if (config.animation) {
       this.play(config.animation);
     }
-
-    this.lifetime = 0;
   }
 
   update(time: number, delta: number) {
@@ -98,7 +94,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.body.maxSpeed
       );
     } else {
-      // accelerate towards (to create an arc effect)
+      // accelerate towards target (to create an arc effect)
       this.scene.physics.accelerateTo(
         this,
         this.target.x,
@@ -109,7 +105,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
       );
     }
 
-    // turn to face target
+    // rotate to face current direction
     this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
   }
 }
