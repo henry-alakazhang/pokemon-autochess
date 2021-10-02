@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import { synergyData } from '../../../core/game.model';
-import { Attack, PokemonName } from '../../../core/pokemon.model';
+import { PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
 import { FloatingText } from '../../../objects/floating-text.object';
 import { Player } from '../../../objects/player.object';
@@ -8,7 +8,10 @@ import {
   PokemonAnimationType,
   PokemonObject,
 } from '../../../objects/pokemon.object';
-import { Projectile } from '../../../objects/projectile.object';
+import {
+  Projectile,
+  ProjectileConfig,
+} from '../../../objects/projectile.object';
 import { defaultStyle, titleStyle } from '../../../objects/text.helpers';
 import {
   BOARD_WIDTH,
@@ -175,7 +178,7 @@ export class CombatScene extends Scene {
 
   update(time: number, delta: number) {
     // trigger updates on each projectile
-    Object.values(this.projectiles).forEach(x => x?.update());
+    Object.values(this.projectiles).forEach(x => x?.update(time, delta));
 
     this.timer -= delta;
     // TODO: speed up combat as we start running out of time
@@ -621,7 +624,7 @@ export class CombatScene extends Scene {
     }
 
     totalDamage = Math.round(totalDamage);
-    attacker.dealDamage(totalDamage);
+    attacker.dealDamage(totalDamage, { isAttack });
     defender.takeDamage(totalDamage, { crit: doesCrit });
     this.players[attacker.side].synergies.forEach(synergy => {
       synergyData[synergy.category].onHit?.({
@@ -662,18 +665,12 @@ export class CombatScene extends Scene {
   fireProjectile(
     from: PokemonObject,
     to: PokemonObject,
-    projectile: NonNullable<Attack['projectile']>,
+    config: ProjectileConfig,
     onHit: Function
   ) {
-    const projectileObj = new Projectile(
-      this,
-      from.x,
-      from.y,
-      projectile.key,
-      to,
-      projectile.speed
+    const projectileObj = this.add.existing(
+      new Projectile(this, from.x, from.y, to, config)
     );
-    this.physics.add.existing(this.add.existing(projectileObj));
     // store this in the `projectiles` map under a random key
     const projectileKey = generateId();
     this.projectiles[projectileKey] = projectileObj;

@@ -7,6 +7,7 @@ import {
   darkestLariat,
   darkVoid,
   dragonDance,
+  dragonDarts,
   dragonRush,
   eggBarrage,
   frenzyPlant,
@@ -614,6 +615,22 @@ const basePokemonData = {
       stat: 'attack',
     },
   },
+  dreepy: {
+    base: 'dreepy',
+    categories: ['dragon', 'ghost', 'revenge killer'],
+    tier: 3,
+    maxHP: 88,
+    attack: 120,
+    defense: 75,
+    specAttack: 100,
+    specDefense: 75,
+    speed: 142,
+    basicAttack: {
+      range: 2,
+      stat: 'attack',
+    },
+    move: dragonDarts,
+  },
 } as const;
 
 /**
@@ -1195,6 +1212,23 @@ const rawPokemonData = {
     ...getEvolution('regigigas', 3),
     name: 'regigigas',
     displayName: 'Regigigas',
+  },
+  dreepy: {
+    ...getEvolution('dreepy', 1),
+    name: 'dreepy',
+    displayName: 'Dreepy',
+    evolution: 'drakloak',
+  },
+  drakloak: {
+    ...getEvolution('dreepy', 2),
+    name: 'drakloak',
+    displayName: 'Drakloak',
+    evolution: 'dragapult',
+  },
+  dragapult: {
+    ...getEvolution('dreepy', 3),
+    name: 'dragapult',
+    displayName: 'Dragapult',
   },
 } as const;
 
