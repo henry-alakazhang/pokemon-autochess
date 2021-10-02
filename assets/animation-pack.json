@@ -66,6 +66,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "magma-storm",
+        "url": "assets/animations/magma-storm.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 96
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "meteor-mash",
         "url": "assets/animations/meteor-mash.png",
         "frameConfig": {

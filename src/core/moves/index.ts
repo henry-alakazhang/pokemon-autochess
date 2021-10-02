@@ -10,6 +10,7 @@ export * from './egg-barrage';
 export * from './frenzy-plant';
 export * from './fury-cutter';
 export * from './ice-shard';
+export * from './magma-storm';
 export * from './magnet-pull';
 export * from './meteor-mash';
 export * from './mud-bomb';

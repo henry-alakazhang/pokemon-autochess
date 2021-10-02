@@ -163,4 +163,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 6,
     duration: 200,
   },
+  'magma-storm': {
+    texture: 'magma-storm',
+    frames: 50,
+    duration: (1000 * 5) / 6,
+  },
 };

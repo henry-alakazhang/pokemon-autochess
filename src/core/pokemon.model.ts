@@ -13,6 +13,7 @@ import {
   frenzyPlant,
   furyCutter,
   iceShard,
+  magmaStorm,
   magnetPull,
   meteorMash,
   mudBomb,
@@ -648,6 +649,22 @@ const basePokemonData = {
     },
     move: dragonDarts,
   },
+  heatran: {
+    base: 'heatran',
+    categories: ['fire', 'steel', 'wallbreaker'],
+    tier: 5,
+    maxHP: 91,
+    attack: 90,
+    defense: 106,
+    specAttack: 130,
+    specDefense: 106,
+    speed: 77,
+    basicAttack: {
+      range: 1,
+      stat: 'specAttack',
+    },
+    move: magmaStorm,
+  },
 } as const;
 
 /**
@@ -1246,6 +1263,23 @@ const rawPokemonData = {
     ...getEvolution('dreepy', 3),
     name: 'dragapult',
     displayName: 'Dragapult',
+  },
+  heatran: {
+    ...getEvolution('heatran', 1),
+    name: 'heatran',
+    displayName: 'Heatran',
+    evolution: 'heatran-2',
+  },
+  'heatran-2': {
+    ...getEvolution('heatran', 2),
+    name: 'heatran-2',
+    displayName: 'Heatran',
+    evolution: 'heatran-3',
+  },
+  'heatran-3': {
+    ...getEvolution('heatran', 3),
+    name: 'heatran-3',
+    displayName: 'Heatran',
   },
 } as const;
 
