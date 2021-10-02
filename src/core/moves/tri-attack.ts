@@ -31,7 +31,7 @@ const move = {
       '/'
     )} damage three times. Repeated explosions hit more enemies.`;
   },
-  range: 3,
+  range: 5,
   getTarget(board: CombatBoard, user: Coords) {
     return optimiseAOE({
       board,

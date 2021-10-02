@@ -11,7 +11,7 @@ const move = {
   // slight hack: this move is a move that "casts" every attack instead of trigering
   cost: 0,
   startingPP: 0,
-  range: 2,
+  range: 3,
   targetting: 'unit',
   get description() {
     return `{{user}} strikes twice every 3 / 2 / 1 attacks.`;
@@ -19,15 +19,19 @@ const move = {
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     const hitsToProc = [3, 2, 1];
     // hit once
-    scene.basicAttack(user, target, () => {
-      user.consecutiveAttacks++;
-      // if 3rd attack, hit again
-      if (user.consecutiveAttacks === hitsToProc[user.basePokemon.stage - 1]) {
-        user.consecutiveAttacks = 0;
-        scene.basicAttack(user, target);
-      }
-      // second attack animation is free, end immediately
-      onComplete();
+    scene.basicAttack(user, target, {
+      onComplete: () => {
+        user.consecutiveAttacks++;
+        // if 3rd attack, hit again
+        if (
+          user.consecutiveAttacks === hitsToProc[user.basePokemon.stage - 1]
+        ) {
+          user.consecutiveAttacks = 0;
+          scene.basicAttack(user, target);
+        }
+        // second attack animation is free, end immediately
+        onComplete();
+      },
     });
   },
 } as const;

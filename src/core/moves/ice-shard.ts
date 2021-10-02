@@ -87,11 +87,13 @@ const move = {
       if (weakestPokemon) {
         const prevCritRate = user.critRate;
         user.critRate = 1;
-        scene.basicAttack(user, weakestPokemon, () => {
-          // reset to previous state
-          user.critRate = prevCritRate;
-          user.clearAlpha();
-          onComplete();
+        scene.basicAttack(user, weakestPokemon, {
+          onComplete: () => {
+            // reset to previous state
+            user.critRate = prevCritRate;
+            user.clearAlpha();
+            onComplete();
+          },
         });
         // reassign target after movement
         user.currentTarget = weakestPokemon;

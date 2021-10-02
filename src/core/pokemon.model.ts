@@ -45,7 +45,8 @@ export interface Attack {
   /** details for the particle/fx for the projectile */
   readonly projectile?: {
     readonly key: string;
-    readonly speed: number;
+    /** 300 is slow, 500 is medium, 700 is fast */
+    readonly speed: 300 | 500 | 700;
   };
   /**
    * If this attack can't be used.
@@ -100,7 +101,7 @@ const basePokemonData = {
       stat: 'specAttack',
       projectile: {
         key: 'firedart',
-        speed: 200,
+        speed: 300,
       },
     },
     move: shadowTag,
@@ -132,8 +133,12 @@ const basePokemonData = {
     specDefense: 107,
     speed: 86,
     basicAttack: {
-      range: 1,
+      range: 3,
       stat: 'specAttack',
+      projectile: {
+        key: 'electricdart',
+        speed: 300,
+      },
     },
     move: thunderWave,
   },
@@ -164,8 +169,12 @@ const basePokemonData = {
     specDefense: 60,
     speed: 80,
     basicAttack: {
-      range: 1,
+      range: 2,
       stat: 'attack',
+      projectile: {
+        key: 'seed',
+        speed: 500,
+      },
     },
     move: razorWind,
   },
@@ -180,11 +189,11 @@ const basePokemonData = {
     specDefense: 80,
     speed: 75,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'attack',
       projectile: {
         key: 'stinger',
-        speed: 400,
+        speed: 500,
       },
     },
     move: twineedle,
@@ -200,8 +209,12 @@ const basePokemonData = {
     specDefense: 135,
     speed: 55,
     basicAttack: {
-      range: 1,
+      range: 2,
       stat: 'attack',
+      projectile: {
+        key: 'egg',
+        speed: 300,
+      },
     },
     move: softboiled,
   },
@@ -266,11 +279,11 @@ const basePokemonData = {
     specDefense: 75,
     speed: 90,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'specAttack',
       projectile: {
         key: 'tri-attack-projectile',
-        speed: 400,
+        speed: 500,
       },
     },
     move: triAttack,
@@ -286,12 +299,8 @@ const basePokemonData = {
     specDefense: 90,
     speed: 60,
     basicAttack: {
-      range: 2,
+      range: 1,
       stat: 'specAttack',
-      projectile: {
-        key: 'electricdart',
-        speed: 250,
-      },
     },
     move: magnetPull,
   },
@@ -306,11 +315,11 @@ const basePokemonData = {
     specDefense: 75,
     speed: 43,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'specAttack',
       projectile: {
         key: 'electricdart',
-        speed: 200,
+        speed: 300,
       },
     },
     move: zapCannon,
@@ -342,8 +351,12 @@ const basePokemonData = {
     specDefense: 105,
     speed: 100,
     basicAttack: {
-      range: 1,
+      range: 3,
       stat: 'specAttack',
+      projectile: {
+        key: 'firedart',
+        speed: 500,
+      },
     },
     move: quiverDance,
   },
@@ -426,7 +439,7 @@ const basePokemonData = {
     specDefense: 90,
     speed: 130,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'specAttack',
     },
     move: clone,
@@ -474,8 +487,12 @@ const basePokemonData = {
     specDefense: 80,
     speed: 130,
     basicAttack: {
-      range: 1,
+      range: 2,
       stat: 'attack',
+      projectile: {
+        key: 'stinger',
+        speed: 700,
+      },
     },
     move: leechLife,
   },
@@ -538,11 +555,11 @@ const basePokemonData = {
     specDefense: 90,
     speed: 125,
     basicAttack: {
-      range: 2,
+      range: 3,
       stat: 'specAttack',
       projectile: {
         key: 'blackhole',
-        speed: 250,
+        speed: 500,
       },
     },
     move: darkVoid,
@@ -562,7 +579,7 @@ const basePokemonData = {
       stat: 'attack',
       projectile: {
         key: 'egg',
-        speed: 200,
+        speed: 300,
       },
     },
     move: eggBarrage,
@@ -1133,7 +1150,7 @@ const rawPokemonData = {
       stat: 'specAttack',
       projectile: {
         key: 'seed',
-        speed: 350,
+        speed: 500,
       },
     },
     // override stage so it doesn't appear in the shop

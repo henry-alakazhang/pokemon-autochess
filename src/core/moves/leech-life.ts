@@ -1,9 +1,4 @@
-import {
-  calculateDamage,
-  getAttackAnimation,
-  getFacing,
-  getTurnDelay,
-} from '../../scenes/game/combat/combat.helpers';
+import { calculateDamage } from '../../scenes/game/combat/combat.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
@@ -21,20 +16,14 @@ const move = {
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
-    return `{{user}} drains a single enemy's blood, dealing ${this.damage.join(
+    return `{{user}} attacks a single enemy and drains their blood, dealing ${this.damage.join(
       '/'
-    )} damage. {{user}}'s HP is restored by half that amount.`;
+    )} bonus damage. {{user}}'s HP is restored by half that amount.`;
   },
-  range: 1,
+  range: 2,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
-    scene.add.tween({
-      targets: [user],
-      duration: getTurnDelay(user.basePokemon) * 0.15,
-      ...getAttackAnimation(user, getFacing(user, target)),
-      yoyo: true,
-      ease: 'Power1',
-      onComplete: () => onComplete(),
-      onYoyo: () => {
+    scene.basicAttack(user, target, {
+      onHit: () => {
         const damage = calculateDamage(user, target, {
           damage: this.damage[user.basePokemon.stage - 1],
           defenseStat: this.defenseStat,
@@ -59,6 +48,7 @@ const move = {
           },
         });
       },
+      onComplete,
     });
   },
 } as const;

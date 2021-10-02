@@ -499,9 +499,11 @@ export class CombatScene extends Scene {
     pokemon.currentTarget = targetPokemon;
 
     // otherwise make a basic attack
-    this.basicAttack(pokemon, targetPokemon, () => {
-      // afterwards, end the turn
-      this.setTurn(pokemon);
+    this.basicAttack(pokemon, targetPokemon, {
+      onComplete: () => {
+        // afterwards, end the turn
+        this.setTurn(pokemon);
+      },
     });
   }
 
@@ -516,7 +518,7 @@ export class CombatScene extends Scene {
   basicAttack(
     attacker: PokemonObject,
     defender: PokemonObject,
-    onComplete?: Function
+    { onComplete, onHit }: { onComplete?: Function; onHit?: Function } = {}
   ) {
     // don't do anything if the attacker can't attack
     if (attacker.basePokemon.basicAttack.unusable) {
@@ -546,17 +548,19 @@ export class CombatScene extends Scene {
         const attack = attacker.basePokemon.basicAttack;
         const damage = calculateDamage(attacker, defender, attack);
 
-        const onHit = () => {
+        const applyDamage = () => {
           this.causeDamage(attacker, defender, damage, { isAttack: true });
         };
 
         if (!attack.projectile) {
           // hit immediately
-          onHit();
+          applyDamage();
+          onHit?.();
         } else {
           // otherwise fire off a projectile
           this.fireProjectile(attacker, defender, attack.projectile, () => {
-            onHit();
+            applyDamage();
+            onHit?.();
           });
         }
       },

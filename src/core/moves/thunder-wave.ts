@@ -8,7 +8,7 @@ const move = {
   startingPP: 6,
   description:
     '{{user}} sends a jolt of electricity at a single enemy, paralysing it for 4 seconds.',
-  range: 2,
+  range: 3,
   targetting: 'unit',
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     // hopping animation
