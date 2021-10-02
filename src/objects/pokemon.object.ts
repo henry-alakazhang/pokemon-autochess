@@ -317,10 +317,15 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    * Cause this pokemon to deal damage
    * Triggers effects that happen on attack, such as mana generation
    */
-  public dealDamage(amount: number) {
-    // 5% of damage, capped at 2
-    this.addPP(Math.min(2, amount * 0.05));
-    this.redrawBars();
+  public dealDamage(
+    amount: number,
+    { isAttack = false }: { isAttack?: boolean } = {}
+  ) {
+    if (isAttack) {
+      // 5% of damage, capped at 2
+      this.addPP(Math.min(2, amount * 0.05));
+      this.redrawBars();
+    }
   }
 
   /**

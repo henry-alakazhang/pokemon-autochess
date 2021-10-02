@@ -4,6 +4,7 @@ export * from './cotton-guard';
 export * from './dark-void';
 export * from './darkest-lariat';
 export * from './dragon-dance';
+export * from './dragon-darts';
 export * from './dragon-rush';
 export * from './egg-barrage';
 export * from './frenzy-plant';
