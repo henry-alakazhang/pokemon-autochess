@@ -7,6 +7,7 @@ import {
   getDamageReduction,
   getGridDistance,
   getNearestEmpty,
+  getOppositeSide,
   inBounds,
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
@@ -428,8 +429,62 @@ it boosts the Speed of the whole party.
   ground: {
     category: 'ground',
     displayName: 'Ground',
-    description: 'Does nothing.',
-    thresholds: [2, 4, 6],
+    description: `Ground-type Pokemon deal splash damage on hit.
+33% effective for area attacks.
+
+ (2) - 25% of hit
+ (3) - 35% of hit
+ (4) - 45% of hit`,
+    thresholds: [2, 4],
+    onHit({
+      scene,
+      board,
+      attacker,
+      defender,
+      damage,
+      count,
+      flags: { isAOE },
+    }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      if (!attacker.basePokemon.categories.includes('ground')) {
+        return;
+      }
+
+      const targetPos = scene.getBoardLocationForPokemon(defender);
+      if (!targetPos) {
+        // couldn't find Pokemon: return
+        // FIXME: this means last hits don't splash
+        return;
+      }
+
+      let splashPerc = tier === 1 ? 0.25 : tier === 2 ? 0.35 : 0.45;
+      if (isAOE) {
+        splashPerc *= 0.33;
+      }
+
+      [
+        // adjacent coordinates
+        { x: targetPos.x + 1, y: targetPos.y },
+        { x: targetPos.x - 1, y: targetPos.y },
+        { x: targetPos.x, y: targetPos.y + 1 },
+        { x: targetPos.x, y: targetPos.y - 1 },
+      ]
+        // that are in bounds
+        .filter(coords => inBounds(board, coords))
+        // and have Pokemon on them
+        .map(coords => board[coords.x][coords.y])
+        .filter(isDefined)
+        .forEach(adjacentPokemon => {
+          if (adjacentPokemon?.side === getOppositeSide(attacker.side)) {
+            // apply damage directly; no defense calcs, no synergy modifiers.
+            adjacentPokemon.takeDamage(Math.round(damage * splashPerc));
+          }
+        });
+    },
   },
   psychic: {
     category: 'psychic',
