@@ -151,19 +151,7 @@ to Pick Up a Pokeball at end of round.
  (3) - After winning rounds.
  (6) - After all rounds.`,
     thresholds: [3, 6],
-    onRoundEnd({
-      scene,
-      board,
-      player,
-      won,
-      count,
-    }: {
-      scene: GameScene;
-      board: CombatScene['board'];
-      player: Player;
-      won: boolean;
-      count: number;
-    }) {
+    onRoundEnd({ scene, board, player, won, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -198,17 +186,7 @@ when low on health.
  (4) - Activates below 50% health.
  (6) - Activates below 66% health.`,
     thresholds: [2, 4, 6],
-    calculateDamage({
-      attacker,
-      baseAmount,
-      side,
-      count,
-    }: {
-      attacker: PokemonObject;
-      baseAmount: number;
-      side: 'player' | 'enemy';
-      count: number;
-    }): number {
+    calculateDamage({ attacker, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
@@ -242,15 +220,7 @@ when low on health.
 (4) - 2 extra PP
 (6) - 3 extra PP`,
     thresholds: [2, 4, 6],
-    onHit({
-      attacker,
-      flags: { isAttack },
-      count,
-    }: {
-      attacker: PokemonObject;
-      flags: { isAttack?: boolean };
-      count: number;
-    }) {
+    onHit({ attacker, flags: { isAttack }, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -280,12 +250,6 @@ moves and attacks which hit an area.
       side,
       count,
       flags: { isAOE },
-    }: {
-      defender: PokemonObject;
-      baseAmount: number;
-      side: 'player' | 'enemy';
-      count: number;
-      flags: { isAOE?: boolean };
     }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
@@ -314,15 +278,7 @@ moves and attacks which hit an area.
  (4) - 30% of damage
  (6) - 65% of damage`,
     thresholds: [2, 4, 6],
-    onHit({
-      attacker,
-      damage,
-      count,
-    }: {
-      attacker: PokemonObject;
-      damage: number;
-      count: number;
-    }) {
+    onHit({ attacker, damage, count }) {
       // TODO add animation for healing?
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
@@ -351,15 +307,7 @@ at the end of each of their turns.
 (3) - 1 stack on hit, max 6 stacks
 (6) - 2 stacks on hit, max 12 stacks`,
     thresholds: [3, 6],
-    onHit({
-      attacker,
-      defender,
-      count,
-    }: {
-      attacker: PokemonObject;
-      defender: PokemonObject;
-      count: number;
-    }) {
+    onHit({ attacker, defender, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -393,17 +341,7 @@ it boosts the Speed of the whole party.
 (4) - 20% boost
 (6) - 35% boost`,
     thresholds: [2, 4, 6],
-    onMoveUse({
-      scene,
-      board,
-      user,
-      count,
-    }: {
-      scene: CombatScene;
-      board: CombatScene['board'];
-      user: PokemonObject;
-      count: number;
-    }) {
+    onMoveUse({ scene, board, user, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -495,19 +433,7 @@ the further they are from their target.
 (2) - 8% damage per square
 (4) - 15% damage per square`,
     thresholds: [2, 4],
-    calculateDamage({
-      attacker,
-      defender,
-      baseAmount,
-      side,
-      count,
-    }: {
-      attacker: PokemonObject;
-      defender: PokemonObject;
-      baseAmount: number;
-      side: 'player' | 'enemy';
-      count: number;
-    }): number {
+    calculateDamage({ attacker, defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
@@ -535,18 +461,7 @@ the further they are from their target.
 (4) - 35 less damage
 (6) - 65 less damage`,
     thresholds: [2, 4, 6],
-    calculateDamage({
-      defender,
-      baseAmount,
-      side,
-      count,
-    }: {
-      attacker: PokemonObject;
-      defender: PokemonObject;
-      baseAmount: number;
-      side: 'player' | 'enemy';
-      count: number;
-    }): number {
+    calculateDamage({ defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
@@ -570,15 +485,7 @@ the further they are from their target.
 (2) - 5% slower
 (3) - 10% slower`,
     thresholds: [2, 3],
-    onRoundStart({
-      board,
-      side,
-      count,
-    }: {
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -602,17 +509,7 @@ Pokemon at the start of the round.
 
 (3) - One copy`,
     thresholds: [3],
-    onRoundStart({
-      scene,
-      board,
-      side,
-      count,
-    }: {
-      scene: CombatScene;
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ scene, board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -648,20 +545,7 @@ Pokemon at the start of the round.
 
 (3) - 50% more damage.`,
     thresholds: [3],
-    calculateDamage({
-      attacker,
-      baseAmount,
-      side,
-      count,
-      flags,
-    }: {
-      attacker: PokemonObject;
-      defender: PokemonObject;
-      baseAmount: number;
-      flags: { isAttack?: boolean };
-      side: 'player' | 'enemy';
-      count: number;
-    }): number {
+    calculateDamage({ attacker, baseAmount, side, count, flags }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
@@ -690,15 +574,7 @@ Pokemon at the start of the round.
  (4) - 40% chance
  (6) - 60% chance`,
     thresholds: [2, 4, 6],
-    onRoundStart({
-      board,
-      side,
-      count,
-    }: {
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -730,17 +606,7 @@ Synergy: Dark-type Pokemon gain a critical hit ratio.
  (4) - 30% chance to deal 250% damage.
  (6) - 45% chance to deal 300% damage.`,
     thresholds: [2, 4, 6],
-    onRoundStart({
-      scene,
-      board,
-      side,
-      count,
-    }: {
-      scene: CombatScene;
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ scene, board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       // note: we don't skip tier 0 here because Dark-types
       // have an innate ability which is always active.
@@ -788,15 +654,7 @@ effects at the start of the round.
  (2) - lasts 5 seconds
  (4) - lasts 10 seconds`,
     thresholds: [2, 4],
-    onRoundStart({
-      board,
-      side,
-      count,
-    }: {
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -824,18 +682,7 @@ damage they can take from one hit.
 (4) - 10% of their max HP
 `,
     thresholds: [2, 4],
-    calculateDamage({
-      defender,
-      baseAmount,
-      side,
-      count,
-    }: {
-      attacker: PokemonObject;
-      defender: PokemonObject;
-      baseAmount: number;
-      side: 'player' | 'enemy';
-      count: number;
-    }): number {
+    calculateDamage({ defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
@@ -860,7 +707,7 @@ Max 4 stacks.
 (4) - 10% Speed per stack
 (6) - 20% Speed per stack`,
     thresholds: [2, 4, 6],
-    onHit({ attacker, count }: { attacker: PokemonObject; count: number }) {
+    onHit({ attacker, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -890,19 +737,7 @@ all Revenge Kilers get an Attack boost.
 (2) - 50% Attack once
 (4) - Stacks up to three times`,
     thresholds: [2, 4],
-    onDeath({
-      scene,
-      board,
-      pokemon,
-      side,
-      count,
-    }: {
-      scene: CombatScene;
-      board: CombatScene['board'];
-      pokemon: PokemonObject;
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onDeath({ scene, board, pokemon, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -964,13 +799,6 @@ when they deal damage.
       side,
       count,
       flags: { isAttack },
-    }: {
-      attacker: PokemonObject;
-      defender: PokemonObject;
-      baseAmount: number;
-      side: 'player' | 'enemy';
-      count: number;
-      flags: { isAttack?: boolean };
     }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
@@ -1025,15 +853,7 @@ when they deal damage.
 (4) - 800 bonus HP
 (6) - 1800 bonus HP`,
     thresholds: [2, 4, 6],
-    onRoundStart({
-      board,
-      side,
-      count,
-    }: {
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -1063,15 +883,7 @@ at round start.
 (4) - 50 to self
 (6) - 80 to self`,
     thresholds: [2, 4, 6],
-    onRoundStart({
-      board,
-      side,
-      count,
-    }: {
-      board: CombatScene['board'];
-      side: 'player' | 'enemy';
-      count: number;
-    }) {
+    onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
@@ -1123,15 +935,7 @@ it shares PP with non-Support allies.
 (2) - 20% of the move to all
 (3) - 33% of the move to all`,
     thresholds: [2, 3],
-    onMoveUse({
-      board,
-      user,
-      count,
-    }: {
-      board: CombatScene['board'];
-      user: PokemonObject;
-      count: number;
-    }) {
+    onMoveUse({ board, user, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
