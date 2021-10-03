@@ -31,17 +31,6 @@ const move = {
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {
-    console.log(
-      'Optimising',
-      optimiseAOE({
-        board,
-        user,
-        range: 99,
-        getAOE: this.getAOE,
-        targetting: 'ground',
-        needsEmpty: true,
-      })
-    );
     return optimiseAOE({
       board,
       user,
