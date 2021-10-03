@@ -27,6 +27,7 @@ import {
   stoneEdge,
   surf,
   teleport,
+  therianQuake,
   thunderWave,
   triAttack,
   twineedle,
@@ -665,6 +666,22 @@ const basePokemonData = {
     },
     move: magmaStorm,
   },
+  landorus: {
+    base: 'landorus',
+    categories: ['ground', 'flying', 'bulky attacker'],
+    tier: 5,
+    maxHP: 89,
+    attack: 125,
+    defense: 90,
+    specAttack: 115,
+    specDefense: 80,
+    speed: 101,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: therianQuake,
+  },
 } as const;
 
 /**
@@ -1280,6 +1297,29 @@ const rawPokemonData = {
     ...getEvolution('heatran', 3),
     name: 'heatran-3',
     displayName: 'Heatran',
+  },
+  landorus: {
+    ...getEvolution('landorus', 1),
+    name: 'landorus',
+    displayName: 'Landorus',
+    evolution: 'landorus-2',
+  },
+  'landorus-2': {
+    ...getEvolution('landorus', 2),
+    name: 'landorus-2',
+    displayName: 'Landorus',
+    evolution: 'landorus-3',
+  },
+  'landorus-3': {
+    ...getEvolution('landorus', 3),
+    name: 'landorus-3',
+    displayName: 'Landorus',
+  },
+  // not actually used - just here so the landorustherian texture gets loaded properly.
+  landorustherian: {
+    ...getEvolution('landorus', 3),
+    name: 'landorustherian',
+    displayName: 'Landorus-Therian',
   },
 } as const;
 

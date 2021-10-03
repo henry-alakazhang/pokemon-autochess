@@ -24,6 +24,7 @@ export * from './softboiled';
 export * from './stone-edge';
 export * from './surf';
 export * from './teleport';
+export * from './therian-quake';
 export * from './thunder-wave';
 export * from './tri-attack';
 export * from './twineedle';

@@ -120,6 +120,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "rock-hit",
+        "url": "assets/animations/rock-hit.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "shadow-ball",
         "url": "assets/animations/shadow-ball.png",
         "frameConfig": {
