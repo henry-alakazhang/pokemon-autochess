@@ -28,5 +28,6 @@ export * from './therian-quake';
 export * from './thunder-wave';
 export * from './tri-attack';
 export * from './twineedle';
+export * from './venom-drench';
 export * from './volt-tackle';
 export * from './zap-cannon';

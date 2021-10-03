@@ -173,4 +173,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 11,
     duration: (1000 * 11) / 30,
   },
+  'poison-hit': {
+    texture: 'poison-hit',
+    frames: 6,
+    duration: 400,
+  },
 };

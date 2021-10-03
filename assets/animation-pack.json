@@ -93,6 +93,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "poison-hit",
+        "url": "assets/animations/poison-hit.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "quiver-dance",
         "url":"assets/animations/quiver-dance.png",
         "frameConfig": {

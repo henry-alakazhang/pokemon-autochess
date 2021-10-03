@@ -31,6 +31,7 @@ import {
   thunderWave,
   triAttack,
   twineedle,
+  venomDrench,
   voltTackle,
   zapCannon,
 } from './moves';
@@ -682,6 +683,22 @@ const basePokemonData = {
     },
     move: therianQuake,
   },
+  nihilego: {
+    base: 'nihilego',
+    categories: ['rock', 'poison', 'wall'],
+    tier: 5,
+    maxHP: 109,
+    attack: 53,
+    defense: 47,
+    specAttack: 127,
+    specDefense: 131,
+    speed: 103,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: venomDrench,
+  },
 } as const;
 
 /**
@@ -1320,6 +1337,23 @@ const rawPokemonData = {
     ...getEvolution('landorus', 3),
     name: 'landorustherian',
     displayName: 'Landorus-Therian',
+  },
+  nihilego: {
+    ...getEvolution('nihilego', 1),
+    name: 'nihilego',
+    displayName: 'Nihilego',
+    evolution: 'nihilego-2',
+  },
+  'nihilego-2': {
+    ...getEvolution('nihilego', 2),
+    name: 'nihilego-2',
+    displayName: 'Nihilego',
+    evolution: 'nihilego-3',
+  },
+  'nihilego-3': {
+    ...getEvolution('nihilego', 3),
+    name: 'nihilego-3',
+    displayName: 'Nihilego',
   },
 } as const;
 
