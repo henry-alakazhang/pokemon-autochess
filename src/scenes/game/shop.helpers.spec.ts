@@ -15,7 +15,7 @@ function customRng(results: number[]) {
   };
 }
 
-describe.only('shop rerolling', () => {
+describe('shop rerolling', () => {
   const origRandom = Math.random;
 
   afterEach(() => {

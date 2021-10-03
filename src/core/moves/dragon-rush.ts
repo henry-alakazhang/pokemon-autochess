@@ -4,8 +4,8 @@ import {
   Coords,
   getAngle,
   getFacing,
-  getFurthestTarget,
   getOppositeSide,
+  inBounds,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
@@ -31,34 +31,20 @@ const move = {
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {
-    const furthestPokemonCoords = getFurthestTarget({
-      board,
-      user,
-    });
-    if (!furthestPokemonCoords) {
-      return undefined;
-    }
-    const { x, y } = furthestPokemonCoords;
     return optimiseAOE({
       board,
       user,
       range: 99,
       getAOE: this.getAOE,
       targetting: 'ground',
-      pool: [
-        { x: x - 1, y },
-        { x: x + 1, y },
-        { x, y: y - 1 },
-        { x, y: y + 1 },
-      ],
+      needsEmpty: true,
     });
   },
   /**
-   * A line from user to target.
+   * A wide line from user to target
    */
   getAOE(targetCoords: Coords, myCoords: Coords) {
-    // TODO: support width and make this 2-width
-    return interpolateLineAOE(myCoords, targetCoords);
+    return interpolateLineAOE(myCoords, targetCoords, { width: 3 });
   },
   use({
     scene,
@@ -92,23 +78,28 @@ const move = {
     // wait through the first bit of the dragon rush animation
     scene.time.addEvent({
       callback: () => {
-        // if target coord is somehow occupied now, don't move
-        // TODO: retarget
-        if (board[targetCoords.x][targetCoords.y] !== undefined) {
-          onComplete();
-          return;
-        }
-        scene.movePokemon(userCoords, targetCoords, onComplete);
-        this.getAOE(targetCoords, userCoords).forEach(({ x, y }) => {
-          const thisTarget = board[x][y];
-          if (thisTarget?.side === getOppositeSide(user.side)) {
-            const damage = calculateDamage(user, thisTarget, {
-              damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: this.defenseStat,
-            });
-            scene.causeDamage(user, thisTarget, damage, { isAOE: true });
+        let realTarget: Coords | undefined = targetCoords;
+        // if target is occupied, find another target
+        if (board[realTarget.x][realTarget.y] !== undefined) {
+          realTarget = this.getTarget(board, user);
+          if (!realTarget) {
+            onComplete();
+            return;
           }
-        });
+        }
+        scene.movePokemon(userCoords, realTarget, onComplete);
+        this.getAOE(realTarget, userCoords)
+          .filter(coords => inBounds(board, coords))
+          .forEach(({ x, y }) => {
+            const thisTarget = board[x][y];
+            if (thisTarget?.side === getOppositeSide(user.side)) {
+              const damage = calculateDamage(user, thisTarget, {
+                damage: this.damage[user.basePokemon.stage - 1],
+                defenseStat: this.defenseStat,
+              });
+              scene.causeDamage(user, thisTarget, damage, { isAOE: true });
+            }
+          });
         // reset target after movement
         user.currentTarget = undefined;
       },
