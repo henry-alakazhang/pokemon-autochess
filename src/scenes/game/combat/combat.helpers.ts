@@ -247,6 +247,7 @@ export function optimiseAOE({
   targetAllies = false,
   targetting = 'ground',
   pool,
+  needsEmpty,
 }: {
   board: CombatScene['board'];
   user: Coords;
@@ -256,6 +257,8 @@ export function optimiseAOE({
   targetting?: Targetting;
   /** Specific tiles to optimise from (ignoring others) */
   pool?: Coords[];
+  /** Whether the tile needs to be empty */
+  needsEmpty?: boolean;
 }): Coords | undefined {
   const userSide = board[user.x][user.y]?.side;
   if (!userSide) {
@@ -279,6 +282,10 @@ export function optimiseAOE({
     }
     // ignore squares without targettable units if we need to target one
     if (targetting === 'unit' && unitAtCoords?.side !== targetSide) {
+      return;
+    }
+    // ignore squares with units if we need an empty space
+    if (needsEmpty && isDefined(unitAtCoords)) {
       return;
     }
 

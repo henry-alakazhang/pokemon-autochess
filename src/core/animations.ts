@@ -168,4 +168,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 50,
     duration: (1000 * 5) / 6,
   },
+  'rock-hit': {
+    texture: 'rock-hit',
+    frames: 11,
+    duration: (1000 * 11) / 30,
+  },
 };
