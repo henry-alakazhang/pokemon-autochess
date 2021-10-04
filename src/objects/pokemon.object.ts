@@ -101,6 +101,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       .setDisplaySize(this.width + 8, this.height + 8)
       .setTintFill(0xffffff)
       .setVisible(false);
+    this.attach(this.outlineSprite);
     this.blindIcon = this.scene.add
       .image(this.x, this.y - 20, 'blind')
       .setDepth(2)

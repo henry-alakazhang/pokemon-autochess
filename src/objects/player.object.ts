@@ -170,16 +170,29 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   buyPokemon(pokemonName: PokemonName): boolean {
-    console.log('player', this.playerName, 'bought', pokemonName);
     const price = pokemonData[pokemonName].tier;
     if (this.gold < price) {
+      console.log('not enough gold to buy');
       return false;
     }
 
+    // if the board is full
     if (!this.canAddPokemonToSideboard()) {
+      // if there are 2 units on the board we can evolve now, do it
+      // note: this is a bit dangerous because if it returns true,
+      // it will have mutated the board...
+      if (this.applyEvolutions(pokemonName, 2)) {
+        console.log('player', this.playerName, 'bought', pokemonName);
+        this.gold -= pokemonData[pokemonName].tier;
+        return true;
+      }
+
+      // otherwise unit won't fit
+      console.log('not enough room to buy');
       return false;
     }
 
+    console.log('player', this.playerName, 'bought', pokemonName);
     this.gold -= pokemonData[pokemonName].tier;
     this.addPokemonToSideboard(pokemonName);
     return true;
@@ -216,9 +229,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     this.sideboard[empty] = newPokemon;
 
     /* check evolutions */
-    if (newPokemon.basePokemon.evolution) {
-      this.applyEvolutions(newPokemon);
-    }
+    this.applyEvolutions(newPokemon.name);
   }
 
   movePokemon(pokemon: PokemonObject, newLocation: PokemonLocation) {
@@ -253,11 +264,20 @@ export class Player extends Phaser.GameObjects.GameObject {
    *
    * For optimisation purposes, only checks one Pokemon.
    * This should be fine if it's called every time a new Pokemon is added.
+   *
+   * Returns whether or not the Pokemon evolved
    */
-  applyEvolutions(newPokemon: PokemonObject): void {
-    const evolutionName = newPokemon.basePokemon.evolution;
+  applyEvolutions(
+    speciesToCheck: PokemonName,
+    /**
+     * The amount of Pokemon needed on board to evolve.
+     * DO NOT MODIFY unless you have a good reason
+     */
+    threshold = 3
+  ): boolean {
+    const evolutionName = pokemonData[speciesToCheck].evolution;
     if (!evolutionName) {
-      return;
+      return false;
     }
 
     // TODO: make this more imperative if the performance is bad
@@ -267,13 +287,11 @@ export class Player extends Phaser.GameObjects.GameObject {
       [...flatten(this.mainboard), ...this.sideboard]
         .filter(isDefined)
         // that are have the same Name as this one
-        .filter(pokemon => pokemon.name === newPokemon.name)
-        // that aren't already evolving
-        .filter(pokemon => !this.markedForEvolution[pokemon.id])
+        .filter(pokemon => pokemon.name === speciesToCheck)
         // and pick the first three
         .slice(0, 3);
-    if (samePokemon.length < 3) {
-      return;
+    if (samePokemon.length < threshold) {
+      return false;
     }
     const evoLocation =
       getMainboardLocationForCoordinates(samePokemon[0]) ||
@@ -281,75 +299,74 @@ export class Player extends Phaser.GameObjects.GameObject {
     if (!evoLocation) {
       // should always be defined, but sure
       console.error('Could not find place to put evolution');
-      return;
+      return false;
     }
 
-    // mark these pokemon as evolving
+    // remove existing Pokemon (without destroying)
     samePokemon.forEach(pokemon => {
-      this.markedForEvolution[pokemon.id] = true;
+      this.removePokemon(pokemon, false);
     });
 
-    const addEvolution = () => {
-      // delete old Pokemon
-      samePokemon.forEach(pokemon => {
-        this.markedForEvolution[pokemon.id] = false;
-        this.removePokemon(pokemon);
-      });
-      // add new one
-      const evo = new PokemonObject({
-        scene: this.scene,
-        x: 0,
-        y: 0,
-        name: evolutionName,
-        side: this.isHumanPlayer ? 'player' : 'enemy',
-      }).setVisible(this.visible);
-      this.scene.add.existing(evo);
-      this.setPokemonAtLocation(evoLocation, evo);
-      return evo;
-    };
+    // add (hidden) evolution to board
+    const evo = new PokemonObject({
+      scene: this.scene,
+      x: 0,
+      y: 0,
+      name: evolutionName,
+      side: this.isHumanPlayer ? 'player' : 'enemy',
+    }).setVisible(false);
+    this.scene.add.existing(evo);
+    this.setPokemonAtLocation(evoLocation, evo);
 
-    // if not visible, just immediately evolve
-    if (!this.visible) {
-      const evo = addEvolution();
-      return this.applyEvolutions(evo);
-    }
-
-    // otherwise play a flashing animation for a bit
-    // not sure how to use tweens to get a flashing trigger of the outline
-    // so this just manually creates one using timers
-    const flashTimer = this.scene.time.addEvent({
-      callback: () => {
-        samePokemon.forEach(pokemon => pokemon.toggleOutline());
-        // and make it faster
-        flashTimer.timeScale *= 1.5;
-      },
-      delay: 350,
-      loop: true,
-    });
-
-    this.scene.time.addEvent({
-      callback: () => {
-        // end animation
-        flashTimer.remove();
-        const evo = addEvolution();
-        // play animation to make it super clear
-        evo.setScale(1.5, 1.5);
+    // play animations
+    samePokemon.forEach(pokemon => {
+      if (this.visible) {
+        // if visible, play animation
+        // move towards Pokemon, grow, merge
+        pokemon.outlineSprite.setVisible(true);
         this.scene.add.tween({
-          targets: [evo],
-          scaleX: 1,
-          scaleY: 1,
-          ease: Phaser.Math.Easing.Expo.InOut,
-          duration: 500,
+          targets: [pokemon],
+          scale: 1,
+          duration: 400,
+        });
+        pokemon.move(samePokemon[0], {
+          duration: 400,
           onComplete: () => {
-            this.applyEvolutions(evo);
+            pokemon.destroy();
           },
         });
-      },
-      delay: 1000,
+      } else {
+        // otherwise just destroy
+        pokemon.destroy();
+      }
     });
+
+    // after animation plays, set visibility
+    if (this.visible) {
+      this.scene.time.addEvent({
+        delay: 400,
+        callback: () => {
+          evo.setVisible(true);
+
+          if (!this.applyEvolutions(evo.name)) {
+            // if this is the last evo, make it obvious
+            evo.setScale(1.5);
+            this.scene.add.tween({
+              targets: [evo],
+              scale: 1,
+              duration: 400,
+            });
+          }
+        },
+      });
+    } else {
+      // if not visible, just check for evolutions immediately
+      this.applyEvolutions(evo.name);
+    }
+    return true;
   }
 
-  removePokemon(pokemon: PokemonObject) {
+  removePokemon(pokemon: PokemonObject, destroy = true) {
     const location =
       getMainboardLocationForCoordinates(pokemon) ||
       getSideboardLocationForCoordinates(pokemon);
@@ -364,7 +381,10 @@ export class Player extends Phaser.GameObjects.GameObject {
     } else {
       this.sideboard[location.index] = undefined;
     }
-    pokemon.destroy();
+
+    if (destroy) {
+      pokemon.destroy();
+    }
   }
 
   updateSynergies() {

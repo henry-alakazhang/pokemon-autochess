@@ -65,9 +65,7 @@ export class ShopScene extends Phaser.Scene {
               return;
             }
 
-            if (!this.buyPokemon(i)) {
-              console.log('Not enough gold to buy this pokemon');
-            }
+            this.buyPokemon(i);
           }
         }
       }
