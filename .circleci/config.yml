@@ -23,8 +23,8 @@ executors:
       - image: circleci/node:14.17
 
 jobs:
-  build-validate:
-    executors: docker-executor
+  build:
+    executor: docker-executor
     working_directory: ~/pokemon-autochess
 
     steps:
@@ -33,19 +33,16 @@ jobs:
       - run: yarn prepare
       - run: yarn lint
       - run: yarn test
-      - run: yarn build:dev
+      - run: yarn build
 
-  build-deploy:
-    requires: build-validate
+  deploy:
+    requires: build
     filters:
       branches:
         only: master
 
-    executors: docker-executor
+    executor: docker-executor
     working_directory: ~/pokemon-autochess
 
     steps:
-      - checkout
-      - install_deps
-      - run: yarn prepare
       - run: yarn deploy
