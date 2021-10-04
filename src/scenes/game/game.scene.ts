@@ -23,7 +23,7 @@ import {
   shuffle,
 } from './game.helpers';
 import { ShopPool } from './shop.helpers';
-import { ShopScene } from './shop.scene';
+import { ShopScene, ShopSceneData } from './shop.scene';
 
 // FIXME: scale this off the canvas width
 /** X-coordinate of the center of the sideboard */
@@ -250,9 +250,10 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.scene.launch(ShopScene.KEY, {
+      gameMode: this.gameMode,
       player: this.humanPlayer,
       pool: this.pool,
-    });
+    } as ShopSceneData);
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
 

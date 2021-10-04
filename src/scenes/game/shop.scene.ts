@@ -1,17 +1,20 @@
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
+import { defaultStyle } from '../../objects/text.helpers';
 import { Coords } from './combat/combat.helpers';
+import { GameMode } from './game.helpers';
 import { ShopPool } from './shop.helpers';
 
 const CELL_WIDTH = 140;
 const CELL_HEIGHT = 90;
 const CELL_COUNT = 5;
-const POKEMON_OFFSET = 20;
+const POKEMON_OFFSET = 10;
 const REROLL_COST = 2;
 const BORDER_SIZE = 50;
 
 export interface ShopSceneData {
+  readonly gameMode: GameMode;
   readonly player: Player;
   readonly pool: ShopPool;
 }
@@ -21,8 +24,11 @@ export class ShopScene extends Phaser.Scene {
   private centre: Coords = { x: 0, y: 0 };
   private pokemonForSale: PokemonForSaleObject[] = Array(CELL_COUNT);
 
+  private gameMode: GameMode;
   private player: Player; // hacky temporary solution
   private pool: ShopPool;
+
+  private oddsText: Phaser.GameObjects.Text;
 
   constructor() {
     super({
@@ -31,6 +37,7 @@ export class ShopScene extends Phaser.Scene {
   }
 
   create(data: ShopSceneData): void {
+    this.gameMode = data.gameMode;
     this.player = data.player;
     this.pool = data.pool;
 
@@ -38,7 +45,7 @@ export class ShopScene extends Phaser.Scene {
     this.reroll();
 
     const rerollButton = this.add.existing(
-      new Button(this, this.centre.x, this.centre.y + 60, 'Reroll')
+      new Button(this, this.centre.x, this.centre.y + 70, 'Reroll')
     );
 
     rerollButton.on(Button.Events.CLICK, () => {
@@ -84,6 +91,13 @@ export class ShopScene extends Phaser.Scene {
     const height = CELL_HEIGHT + BORDER_SIZE * 2;
     this.add.rectangle(this.centre.x, this.centre.y, width, height, 0x2f4858);
 
+    this.oddsText = this.add.text(
+      this.centre.x - width / 2 + 10,
+      this.centre.y - height / 2 + 10,
+      '',
+      defaultStyle
+    );
+
     this.add.grid(
       this.centre.x, // center x
       this.centre.y - POKEMON_OFFSET, // center y
@@ -102,6 +116,16 @@ export class ShopScene extends Phaser.Scene {
    * Refreshes the shop with new pokemon.
    */
   reroll(): void {
+    // update this here; it gets called on round start anyway so it should always be up-to-date
+    this.oddsText.setText(
+      `Shop odds: [${this.gameMode.shopRates[this.player.level]
+        .map((rate, index) => `${index}: ${rate}%`)
+        // shop rates are 1-indexed for easier tier -> rate indexing
+        // so strip out the fake tier 0
+        .slice(1)
+        .join('] [')}]`
+    );
+
     // Remove the old pokemon
     this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();
