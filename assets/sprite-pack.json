@@ -534,6 +534,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "neutral_only_rattata",
+        "url": "assets/pokemon/neutral_only_rattata.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "nihilego",
         "url": "assets/pokemon/nihilego.png",
         "frameConfig": {
