@@ -28,7 +28,7 @@ jobs:
       - run: yarn build
       
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: .
           paths:
             - build
             - node_modules
@@ -41,8 +41,8 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: /tmp/workspace
-      - run: yarn gh-pages -d /tmp/workspace/build
+          at: .
+      - run: yarn gh-pages -d build
 
 workflows:
   version: 2
