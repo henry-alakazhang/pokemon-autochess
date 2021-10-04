@@ -30,9 +30,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - build
             - node_modules
-            - package.json
+            - build
 
   deploy:
     docker:
@@ -40,6 +39,7 @@ jobs:
     working_directory: ~/pokemon-autochess
 
     steps:
+      - checkout
       - attach_workspace:
           at: .
       - run: yarn gh-pages -d build
