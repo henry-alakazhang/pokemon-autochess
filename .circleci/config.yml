@@ -36,6 +36,7 @@ jobs:
       - run: yarn deploy
 
 workflows:
+  version: 2
   workflow:
     jobs:
       - build
