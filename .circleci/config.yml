@@ -1,13 +1,8 @@
 version: 2
-jobs:
-  build:
-    docker:
-      - image: circleci/node:14.17
-    working_directory: ~/pokemon-autochess
-
+commands:
+  # Install latest yarn dependencies
+  install_deps:
     steps:
-      - checkout
-
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -22,7 +17,35 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+executors:
+  docker-executor:
+    docker:
+      - image: circleci/node:14.17
+
+jobs:
+  build-validate:
+    executors: docker-executor
+    working_directory: ~/pokemon-autochess
+
+    steps:
+      - checkout
+      - install_deps
       - run: yarn prepare
       - run: yarn lint
       - run: yarn test
       - run: yarn build:dev
+
+  build-deploy:
+    requires: build-validate
+    filters:
+      branches:
+        only: master
+
+    executors: docker-executor
+    working_directory: ~/pokemon-autochess
+
+    steps:
+      - checkout
+      - install_deps
+      - run: yarn prepare
+      - run: yarn deploy
