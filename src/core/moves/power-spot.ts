@@ -16,8 +16,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Power Spot',
   type: 'active',
-  cost: 18,
-  startingPP: 18,
+  cost: 24,
+  startingPP: 16,
   range: 1,
   targetting: 'ground',
   damage: [300, 450, 600],
