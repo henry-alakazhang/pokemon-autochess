@@ -125,11 +125,11 @@ export class Player extends Phaser.GameObjects.GameObject {
   battleResult(won: boolean, gameStage: Stage): void {
     if (won) {
       this.streak = Math.max(1, this.streak + 1);
-      this.gold += gameStage.gold(this, won, Math.abs(this.streak));
     } else {
       this.streak = Math.min(-1, this.streak - 1);
       this.hp -= gameStage.damage();
     }
+    this.gold += gameStage.gold(this, won, Math.abs(this.streak));
   }
 
   /**
