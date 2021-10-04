@@ -1,5 +1,6 @@
 import { synergyData } from '../../core/game.model';
 import { buyablePokemon, pokemonData } from '../../core/pokemon.model';
+import { flatten } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
@@ -18,6 +19,7 @@ import {
   getRandomNames,
   GRID_X,
   GRID_Y,
+  NeutralRound,
   shuffle,
 } from './game.helpers';
 import { ShopPool } from './shop.helpers';
@@ -354,6 +356,40 @@ export class GameScene extends Phaser.Scene {
       this.scene.pause(ShopScene.KEY);
     }
 
+    const neutralRound = this.gameMode.stages[this.currentStage]
+      .neutralRounds?.[this.currentRound];
+    if (neutralRound) {
+      // if there's a neutral round, create the neutral round.
+      const opponent = this.generateNeutralPlayer(neutralRound);
+      this.scene.launch(CombatScene.KEY, {
+        player: this.humanPlayer,
+        enemy: opponent,
+      });
+      this.scene
+        .get(CombatScene.KEY)
+        .events.once(
+          CombatScene.Events.COMBAT_END,
+          ({ winner }: CombatEndEvent) => {
+            this.handleCombatResult(this.humanPlayer, winner === 'player');
+            this.players.forEach(
+              // all the AIs win 100%
+              player =>
+                player !== this.humanPlayer &&
+                this.handleCombatResult(player, true)
+            );
+          }
+        );
+      this.scene
+        .get(CombatScene.KEY)
+        .events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+          // clean up fake neutral opponent
+          flatten(opponent.mainboard).forEach(pokemon => pokemon?.destroy());
+          opponent.destroy();
+          this.startDowntime();
+        });
+      return;
+    }
+
     const pairings = this.matchmakePairings();
     console.log('PAIRINGS', pairings);
     pairings.forEach(pairing => {
@@ -552,5 +588,23 @@ export class GameScene extends Phaser.Scene {
       [order[4], order[5]],
       [order[6], order[7]],
     ];
+  }
+
+  generateNeutralPlayer(round: NeutralRound): Player {
+    const player = new Player(this, 'Wild Pokemon', -100, -100, {
+      pool: this.pool,
+      isHumanPlayer: false,
+      initialLevel: round.length,
+    });
+    round.forEach(pokemon => {
+      player.addPokemonToSideboard(pokemon.name);
+      player.movePokemon(
+        // whatever lol, we just put it there.
+        // eslint-disable-next-line
+        player.sideboard[0]!,
+        { location: 'mainboard', coords: pokemon.location }
+      );
+    });
+    return player;
   }
 }

@@ -750,6 +750,29 @@ const basePokemonData = {
     },
     move: kingsShield,
   },
+  // NOT A REAL POKEMON
+  // ONLY USED FOR NEUTRAL ROUNDS
+  neutral_only_rattata: {
+    base: 'neutral_only_rattata',
+    categories: ['normal'],
+    tier: 1,
+    maxHP: 20,
+    attack: 56,
+    defense: 35,
+    specAttack: 25,
+    specDefense: 35,
+    speed: 72,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: {
+      displayName: 'Tackle',
+      type: 'passive',
+      description: `{{user}} tackles as a normal attack. It's not special or top percentage.`,
+      flags: {},
+    },
+  },
 } as const;
 
 /**
@@ -1462,6 +1485,12 @@ const rawPokemonData = {
     ...getEvolution('honedge', 3),
     name: 'aegislashshield',
     displayName: 'Aegislash-Shield',
+  },
+  neutral_only_rattata: {
+    ...getEvolution('neutral_only_rattata', 1),
+    name: 'neutral_only_rattata',
+    displayName: 'Rattata',
+    stage: 2,
   },
 } as const;
 

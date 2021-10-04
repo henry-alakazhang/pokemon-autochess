@@ -1,3 +1,4 @@
+import { PokemonName } from '../../core/pokemon.model';
 import { Player } from '../../objects/player.object';
 import { Coords } from './combat/combat.helpers';
 
@@ -36,6 +37,11 @@ export interface GameMode {
   readonly levelCosts?: number[];
 }
 
+export type NeutralRound = ReadonlyArray<{
+  readonly name: PokemonName;
+  readonly location: Coords;
+}>;
+
 export interface Stage {
   /** Number of rounds to play through (1-1, 1-2, etc) */
   readonly rounds: number;
@@ -43,6 +49,9 @@ export interface Stage {
   readonly damage: () => number;
   /** Formula for gold gain at end of round */
   readonly gold: (player: Player, won: boolean, streak: number) => number;
+  readonly neutralRounds?: {
+    [k: number]: NeutralRound;
+  };
   /** Whether to automatically level the player at the start of the stage */
   readonly autolevel?: number;
   // TODO: add only when shop is there
@@ -72,7 +81,17 @@ export function getHyperRollGameMode(): GameMode {
 
   return {
     stages: [
-      { rounds: 1, damage: () => 5, gold: goldGainFunc(3) },
+      {
+        rounds: 1,
+        damage: () => 5,
+        gold: goldGainFunc(3),
+        neutralRounds: {
+          1: [
+            { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
+            { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
+          ],
+        },
+      },
       { rounds: 2, damage: () => 7, autolevel: 2, gold: goldGainFunc(3) },
       { rounds: 3, damage: () => 9, autolevel: 3, gold: goldGainFunc(4) },
       { rounds: 4, damage: () => 11, autolevel: 4, gold: goldGainFunc(4) },
