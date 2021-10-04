@@ -7,7 +7,6 @@ jobs:
 
     steps:
       - checkout
-
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -22,7 +21,44 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      # Run tests
       - run: yarn prepare
       - run: yarn lint
       - run: yarn test
-      - run: yarn build:dev
+
+      # Build
+      - run: yarn build
+      
+      # Persist built assets for deployment
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+            - build
+
+  deploy:
+    docker:
+      - image: circleci/node:14.17
+    working_directory: ~/pokemon-autochess
+
+    steps:
+      - checkout
+      # Get built assets
+      - attach_workspace:
+          at: .
+      # Set git name (needed for gh-pages to push to the branch)
+      - run: git config user.email "henry.alakazhang@gmail.com"
+      - run: git config user.name "Henry Zhang (via CircleCI)"
+      - run: yarn deploy
+
+workflows:
+  version: 2
+  workflow:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
