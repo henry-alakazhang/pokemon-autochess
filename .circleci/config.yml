@@ -26,6 +26,12 @@ jobs:
       - run: yarn lint
       - run: yarn test
       - run: yarn build
+      
+      - persist_to_workspace:
+        root: /tmp/workspace
+         - build
+         - node_modules
+         - package.json
 
   deploy:
     docker:
@@ -33,7 +39,9 @@ jobs:
     working_directory: ~/pokemon-autochess
 
     steps:
-      - run: yarn deploy
+      - attach_workspace:
+        at: /tmp/workspace
+      - run: yarn gh-pages -d /tmp/workspace/build
 
 workflows:
   version: 2
