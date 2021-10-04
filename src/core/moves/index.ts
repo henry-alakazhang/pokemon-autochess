@@ -18,6 +18,7 @@ export * from './night-daze';
 export * from './power-spot';
 export * from './quiver-dance';
 export * from './razor-wind';
+export * from './rollout';
 export * from './shadow-ball';
 export * from './shadow-tag';
 export * from './shell-trap';

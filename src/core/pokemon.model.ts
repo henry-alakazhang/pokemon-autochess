@@ -21,6 +21,7 @@ import {
   powerSpot,
   quiverDance,
   razorWind,
+  rollout,
   shadowBall,
   shadowTag,
   shellTrap,
@@ -34,7 +35,7 @@ import {
   twineedle,
   venomDrench,
   voltTackle,
-  zapCannon,
+  zapCannon
 } from './moves';
 import { leechLife } from './moves/leech-life';
 
@@ -716,6 +717,22 @@ const basePokemonData = {
     },
     move: powerSpot,
   },
+  geodude: {
+    base: 'geodude',
+    categories: ['rock', 'ground', 'wall'],
+    tier: 1,
+    maxHP: 80,
+    attack: 120,
+    defense: 130,
+    specAttack: 55,
+    specDefense: 65,
+    speed: 45,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: rollout,
+  }
 } as const;
 
 /**
@@ -1389,6 +1406,23 @@ const rawPokemonData = {
     name: 'stonjourner-3',
     displayName: 'Stonjourner',
   },
+  geodude: {
+    ...getEvolution('geodude', 1),
+    name: 'geodude',
+    displayName: 'Geodude',
+    evolution: 'graveler',
+  },
+  graveler: {
+    ...getEvolution('geodude', 2),
+    name: 'graveler',
+    displayName: 'Graveler',
+    evolution: 'golem',
+  },
+  golem: {
+    ...getEvolution('geodude', 3),
+    name: 'golem',
+    displayName: 'Golem',
+  }
 } as const;
 
 export type PokemonName = keyof typeof rawPokemonData;
