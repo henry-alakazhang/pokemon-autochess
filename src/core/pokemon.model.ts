@@ -18,6 +18,7 @@ import {
   meteorMash,
   mudBomb,
   nightDaze,
+  powerSpot,
   quiverDance,
   razorWind,
   shadowBall,
@@ -699,6 +700,22 @@ const basePokemonData = {
     },
     move: venomDrench,
   },
+  stonjourner: {
+    base: 'stonjourner',
+    categories: ['rock', 'support'],
+    tier: 4,
+    maxHP: 100,
+    attack: 125,
+    defense: 135,
+    specAttack: 20,
+    specDefense: 20,
+    speed: 70,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: powerSpot,
+  },
 } as const;
 
 /**
@@ -1354,6 +1371,23 @@ const rawPokemonData = {
     ...getEvolution('nihilego', 3),
     name: 'nihilego-3',
     displayName: 'Nihilego',
+  },
+  stonjourner: {
+    ...getEvolution('stonjourner', 1),
+    name: 'stonjourner',
+    displayName: 'Stonjourner',
+    evolution: 'stonjourner-2',
+  },
+  'stonjourner-2': {
+    ...getEvolution('stonjourner', 2),
+    name: 'stonjourner-2',
+    displayName: 'Stonjourner',
+    evolution: 'stonjourner-3',
+  },
+  'stonjourner-3': {
+    ...getEvolution('stonjourner', 3),
+    name: 'stonjourner-3',
+    displayName: 'Stonjourner',
   },
 } as const;
 

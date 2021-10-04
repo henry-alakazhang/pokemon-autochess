@@ -178,4 +178,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 6,
     duration: 400,
   },
+  'blue-buff': {
+    texture: 'blue-buff',
+    frames: 17,
+    duration: 600,
+  },
 };

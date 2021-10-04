@@ -15,6 +15,7 @@ export * from './magnet-pull';
 export * from './meteor-mash';
 export * from './mud-bomb';
 export * from './night-daze';
+export * from './power-spot';
 export * from './quiver-dance';
 export * from './razor-wind';
 export * from './shadow-ball';
