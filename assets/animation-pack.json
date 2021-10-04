@@ -1,0 +1,231 @@
+{
+  "sprites": {
+    "files": [
+      {
+        "type": "spritesheet",
+        "key": "blue-buff",
+        "url": "assets/animations/blue-buff.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 88
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "cog",
+        "url": "assets/animations/cog.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 40
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "cotton-guard",
+        "url": "assets/animations/cotton-guard.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "dragon-dance",
+        "url": "assets/animations/dragon-dance.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "dragon-rush",
+        "url": "assets/animations/dragon-rush.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "explosion",
+        "url": "assets/animations/explosion.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "fury-cutter",
+        "url": "assets/animations/fury-cutter.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "leech-life",
+        "url": "assets/animations/leech-life.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "magma-storm",
+        "url": "assets/animations/magma-storm.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 96
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "meteor-mash",
+        "url": "assets/animations/meteor-mash.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 72
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mud-bomb",
+        "url": "assets/animations/mud-bomb.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 36
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "poison-hit",
+        "url": "assets/animations/poison-hit.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "quiver-dance",
+        "url":"assets/animations/quiver-dance.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "razor-wind-base",
+        "url": "assets/animations/razor-wind-base.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 24
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "razor-wind-wind",
+        "url": "assets/animations/razor-wind-wind.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "rock-hit",
+        "url": "assets/animations/rock-hit.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "shadow-ball",
+        "url": "assets/animations/shadow-ball.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 40
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "shell-trap",
+        "url": "assets/animations/shell-trap.png",
+        "frameConfig": {
+          "frameWidth": 96,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "sleep",
+        "url": "assets/animations/sleep.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "softboiled",
+        "url": "assets/animations/softboiled.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type":"spritesheet",
+        "key": "stone-edge",
+        "url": "assets/animations/stone-edge.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "thunder",
+        "url": "assets/animations/thunder.png",
+        "frameConfig": {
+          "frameWidth": 224,
+          "frameHeight": 32
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tri-attack",
+        "url": "assets/animations/tri-attack.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "volt-tackle",
+        "url": "assets/animations/volt-tackle.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "water-hit",
+        "url": "assets/animations/water-hit.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 56
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,816 @@
+{
+  "sprites": {
+    "files": [
+      {
+        "type": "spritesheet",
+        "key": "abra",
+        "url": "assets/pokemon/abra.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "aegislash",
+        "url": "assets/pokemon/aegislash.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "aegislashshield",
+        "url": "assets/pokemon/aegislashshield.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "alakazam",
+        "url": "assets/pokemon/alakazam.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "beedrill",
+        "url": "assets/pokemon/beedrill.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "beldum",
+        "url": "assets/pokemon/beldum.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "blissey",
+        "url": "assets/pokemon/blissey.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "bulbasaur",
+        "url": "assets/pokemon/bulbasaur.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "chandelure",
+        "url": "assets/pokemon/chandelure.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "chansey",
+        "url": "assets/pokemon/chansey.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "charjabug",
+        "url": "assets/pokemon/charjabug.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "crobat",
+        "url": "assets/pokemon/crobat.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "darkrai",
+        "url": "assets/pokemon/darkrai.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "doublade",
+        "url": "assets/pokemon/doublade.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "dragapult",
+        "url": "assets/pokemon/dragapult.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "drakloak",
+        "url": "assets/pokemon/drakloak.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "dreepy",
+        "url": "assets/pokemon/dreepy.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "dubwool",
+        "url": "assets/pokemon/dubwool.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "exeggcute",
+        "url": "assets/pokemon/exeggcute.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "exeggutor",
+        "url": "assets/pokemon/exeggutor.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "fletchinder",
+        "url": "assets/pokemon/fletchinder.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "fletchling",
+        "url": "assets/pokemon/fletchling.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "frenzyplant",
+        "url": "assets/pokemon/frenzyplant.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gabite",
+        "url": "assets/pokemon/gabite.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "garchomp",
+        "url": "assets/pokemon/garchomp.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gastly",
+        "url": "assets/pokemon/gastly.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gengar",
+        "url": "assets/pokemon/gengar.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "geodude",
+        "url": "assets/pokemon/geodude.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gible",
+        "url": "assets/pokemon/gible.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "golbat",
+        "url": "assets/pokemon/golbat.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "golem",
+        "url": "assets/pokemon/golem.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "graveler",
+        "url": "assets/pokemon/graveler.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "grubbin",
+        "url": "assets/pokemon/grubbin.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gyarados",
+        "url": "assets/pokemon/gyarados.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "happiny",
+        "url": "assets/pokemon/happiny.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "haunter",
+        "url": "assets/pokemon/haunter.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "heatran",
+        "url": "assets/pokemon/heatran.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "honedge",
+        "url": "assets/pokemon/honedge.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "incineroar",
+        "url": "assets/pokemon/incineroar.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "ivysaur",
+        "url": "assets/pokemon/ivysaur.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "kadabra",
+        "url": "assets/pokemon/kadabra.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "kakuna",
+        "url": "assets/pokemon/kakuna.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "lampent",
+        "url": "assets/pokemon/lampent.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "landorus",
+        "url": "assets/pokemon/landorus.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "landorustherian",
+        "url": "assets/pokemon/landorustherian.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "lapras",
+        "url": "assets/pokemon/lapras.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "larvesta",
+        "url": "assets/pokemon/larvesta.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "larvitar",
+        "url": "assets/pokemon/larvitar.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "litten",
+        "url": "assets/pokemon/litten.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "litwick",
+        "url": "assets/pokemon/litwick.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "magikarp",
+        "url": "assets/pokemon/magikarp.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "magnemite",
+        "url": "assets/pokemon/magnemite.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "magneton",
+        "url": "assets/pokemon/magneton.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "magnezone",
+        "url": "assets/pokemon/magnezone.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "marshtomp",
+        "url": "assets/pokemon/marshtomp.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "metagross",
+        "url": "assets/pokemon/metagross.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "metang",
+        "url": "assets/pokemon/metang.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mewtwo",
+        "url": "assets/pokemon/mewtwo.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mudkip",
+        "url": "assets/pokemon/mudkip.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "nihilego",
+        "url": "assets/pokemon/nihilego.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "nuzleaf",
+        "url": "assets/pokemon/nuzleaf.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pichu",
+        "url": "assets/pokemon/pichu.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pikachu",
+        "url": "assets/pokemon/pikachu.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "porygon",
+        "url": "assets/pokemon/porygon.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "porygon2",
+        "url": "assets/pokemon/porygon2.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "porygonz",
+        "url": "assets/pokemon/porygonz.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pupitar",
+        "url": "assets/pokemon/pupitar.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "raichu",
+        "url": "assets/pokemon/raichu.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "regigigas",
+        "url": "assets/pokemon/regigigas.png",
+        "frameConfig": {
+          "frameWidth": 128,
+          "frameHeight": 128
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "rotomw",
+        "url": "assets/pokemon/rotomw.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "scizor",
+        "url": "assets/pokemon/scizor.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "scyther",
+        "url": "assets/pokemon/scyther.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "seedot",
+        "url": "assets/pokemon/seedot.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "shiftry",
+        "url": "assets/pokemon/shiftry.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "sneasel",
+        "url": "assets/pokemon/sneasel.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "stonjourner",
+        "url": "assets/pokemon/stonjourner.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "swampert",
+        "url": "assets/pokemon/swampert.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "talonflame",
+        "url": "assets/pokemon/talonflame.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "torracat",
+        "url": "assets/pokemon/torracat.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "turtonator",
+        "url": "assets/pokemon/turtonator.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tyranitar",
+        "url": "assets/pokemon/tyranitar.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "venusaur",
+        "url": "assets/pokemon/venusaur.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "vikavolt",
+        "url": "assets/pokemon/vikavolt.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "volcarona",
+        "url": "assets/pokemon/volcarona.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "weavile",
+        "url": "assets/pokemon/weavile.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "weedle",
+        "url": "assets/pokemon/weedle.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "wooloo",
+        "url": "assets/pokemon/wooloo.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "zoroark",
+        "url": "assets/pokemon/zoroark.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "zorua",
+        "url": "assets/pokemon/zorua.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "zubat",
+        "url": "assets/pokemon/zubat.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      }
+    ]
+  }
+}
