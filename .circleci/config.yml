@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - attach_workspace:
-        at: /tmp/workspace
+          at: /tmp/workspace
       - run: yarn gh-pages -d /tmp/workspace/build
 
 workflows:
