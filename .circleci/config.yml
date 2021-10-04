@@ -17,14 +17,10 @@ commands:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-executors:
-  docker-executor:
-    docker:
-      - image: circleci/node:14.17
-
 jobs:
   build:
-    executor: docker-executor
+    docker:
+      - image: circleci/node:14.17
     working_directory: ~/pokemon-autochess
 
     steps:
@@ -41,7 +37,8 @@ jobs:
       branches:
         only: master
 
-    executor: docker-executor
+    docker:
+      - image: circleci/node:14.17
     working_directory: ~/pokemon-autochess
 
     steps:
