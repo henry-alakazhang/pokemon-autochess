@@ -492,7 +492,15 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     duration: number,
     value?: number | ((prev?: number) => number)
   ): this {
-    if (this.status.statusImmunity) {
+    if (
+      this.status.statusImmunity &&
+      // FIXME: don't hardcode bad statuses
+      (status === 'blind' ||
+        status === 'immobile' ||
+        status === 'paralyse' ||
+        status === 'poison' ||
+        status === 'sleep')
+    ) {
       return this;
     }
     this.status[status] = {
