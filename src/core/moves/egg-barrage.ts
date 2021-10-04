@@ -17,8 +17,8 @@ const move = {
   displayName: 'Egg Barrage',
   type: 'active',
   cost: 10,
-  startingPP: 0,
-  damage: [80, 140, 200],
+  startingPP: 4,
+  damage: [140, 210, 350],
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
@@ -29,7 +29,7 @@ const move = {
   range: 99,
   async use({ scene, user, userCoords, onComplete }: MoveConfig<'unit'>) {
     user.addStatus('moveIsActive', 1000);
-    const baseDamage = this.damage[user.basePokemon.tier - 1];
+    const baseDamage = this.damage[user.basePokemon.stage - 1];
     const shootEgg = () => {
       // fetch latest board to include pokemon that died during attack
       const { board } = scene;
