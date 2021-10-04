@@ -28,14 +28,19 @@ jobs:
       - run: yarn build
 
   deploy:
-    requires: build
-    filters:
-      branches:
-        only: master
-
     docker:
       - image: circleci/node:14.17
     working_directory: ~/pokemon-autochess
 
     steps:
       - run: yarn deploy
+
+workflows:
+  workflow:
+    jobs:
+      - build
+      - deploy:
+          requires: build
+          filters:
+            branches:
+              only: master
