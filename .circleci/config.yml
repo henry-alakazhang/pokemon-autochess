@@ -28,11 +28,11 @@ jobs:
       - run: yarn build
       
       - persist_to_workspace:
-        root: /tmp/workspace
-        paths:
-          - build
-          - node_modules
-          - package.json
+          root: /tmp/workspace
+          paths:
+            - build
+            - node_modules
+            - package.json
 
   deploy:
     docker:
