@@ -392,6 +392,15 @@ export class CombatScene extends Scene {
       return;
     }
 
+    this.players[pokemon.side].synergies.forEach(synergy => {
+      synergyData[synergy.category].onTurnStart?.({
+        scene: this,
+        board: this.board,
+        pokemon,
+        count: synergy.count,
+      });
+    });
+
     // simple targetting logic: either use an existing saved target
     // or use the nearest available Pokemon
     const simpleTargetCoords =

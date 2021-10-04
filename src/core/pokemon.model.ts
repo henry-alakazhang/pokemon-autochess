@@ -127,7 +127,7 @@ const basePokemonData = {
   },
   rotomw: {
     base: 'rotomw',
-    categories: ['water', 'electric', 'support'],
+    categories: ['water', 'electric', 'utility'],
     tier: 4,
     maxHP: 50,
     attack: 65,
@@ -433,7 +433,7 @@ const basePokemonData = {
   },
   mewtwo: {
     base: 'mewtwo',
-    categories: ['psychic', 'disruptor'],
+    categories: ['psychic', 'utility'],
     tier: 5,
     maxHP: 106,
     attack: 110,
@@ -517,7 +517,7 @@ const basePokemonData = {
   },
   gastly: {
     base: 'gastly',
-    categories: ['ghost', 'poison', 'bulky attacker'],
+    categories: ['ghost', 'poison', 'utility'],
     tier: 2,
     maxHP: 60,
     attack: 65,
@@ -549,7 +549,7 @@ const basePokemonData = {
   },
   darkrai: {
     base: 'darkrai',
-    categories: ['dark', 'support'],
+    categories: ['dark', 'disruptor'],
     tier: 5,
     maxHP: 70,
     attack: 90,
@@ -589,7 +589,7 @@ const basePokemonData = {
   },
   lapras: {
     base: 'lapras',
-    categories: ['water', 'ice', 'support'],
+    categories: ['water', 'ice', 'bulky attacker'],
     tier: 4,
     maxHP: 130,
     attack: 85,
@@ -1406,6 +1406,7 @@ const roles: { [k in Role]: number } = {
   disruptor: 0,
   support: 0,
   pivot: 0,
+  utility: 0,
 };
 
 const tiers = {

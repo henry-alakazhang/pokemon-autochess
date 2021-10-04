@@ -54,7 +54,8 @@ export type Role =
   | 'wall'
   | 'disruptor'
   | 'support'
-  | 'pivot';
+  | 'pivot'
+  | 'utility';
 
 export type Category = Type | Role;
 
@@ -99,11 +100,19 @@ export interface Synergy {
     damage: number;
     count: number;
   }) => void;
+  /** Possible effect that occurs on any Pokemon dying */
   readonly onDeath?: (config: {
     scene: CombatScene;
     board: CombatScene['board'];
     pokemon: PokemonObject;
     side: 'player' | 'enemy';
+    count: number;
+  }) => void;
+  /** Possible effect that occurs on an ally's turn */
+  readonly onTurnStart?: (config: {
+    scene: CombatScene;
+    board: CombatScene['board'];
+    pokemon: PokemonObject;
     count: number;
   }) => void;
   /** Possible effect that occurs on start of round */
@@ -1073,6 +1082,38 @@ has all of their types combined together.`,
           scene.setTurn(slot.pokemon);
         });
       });
+    },
+  },
+  utility: {
+    category: 'utility',
+    displayName: 'Utility',
+    description: `Utility Pokemon regenerate HP or PP,
+whichever one is lower.
+
+ (2) - 5% of HP/PP per turn
+ (3) - 7% of HP/PP
+ (4) - 9% of HP/PP`,
+    thresholds: [2, 3, 4],
+    onTurnStart({ pokemon, count }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      if (pokemon.basePokemon.categories.includes('utility')) {
+        const regen = tier === 1 ? 0.05 : tier === 2 ? 0.07 : 0.09;
+
+        if (
+          pokemon.maxPP &&
+          pokemon.currentPP / pokemon.maxPP > pokemon.currentHP / pokemon.maxHP
+        ) {
+          pokemon.addPP(pokemon.maxPP * regen);
+          pokemon.redrawBars();
+        } else {
+          pokemon.heal(Math.round(pokemon.maxHP * regen));
+          // note: `heal` already redraws bars
+        }
+      }
     },
   },
 };
