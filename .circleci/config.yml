@@ -42,7 +42,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: yarn gh-pages -d build
+      - run: git config user.email "henry.alakazhang@gmail.com"
+      - run: git config user.name "Henry Zhang (via CircleCI)"
+      - run: yarn deploy
 
 workflows:
   version: 2
