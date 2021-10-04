@@ -23,10 +23,13 @@ jobs:
 
       # Run tests
       - run: yarn prepare
-      # - run: yarn lint
-      # - run: yarn test
-      - run: yarn build:dev
+      - run: yarn lint
+      - run: yarn test
+
+      # Build
+      - run: yarn build
       
+      # Persist built assets for deployment
       - persist_to_workspace:
           root: .
           paths:
@@ -40,8 +43,10 @@ jobs:
 
     steps:
       - checkout
+      # Get built assets
       - attach_workspace:
           at: .
+      # Set git name (needed for gh-pages to push to the branch)
       - run: git config user.email "henry.alakazhang@gmail.com"
       - run: git config user.name "Henry Zhang (via CircleCI)"
       - run: yarn deploy
@@ -56,4 +61,4 @@ workflows:
             - build
           filters:
             branches:
-              only: add-gh-pages
+              only: master
