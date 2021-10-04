@@ -29,9 +29,10 @@ jobs:
       
       - persist_to_workspace:
         root: /tmp/workspace
-         - build
-         - node_modules
-         - package.json
+        paths:
+          - build
+          - node_modules
+          - package.json
 
   deploy:
     docker:
