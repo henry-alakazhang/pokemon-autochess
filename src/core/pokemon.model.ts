@@ -13,6 +13,7 @@ import {
   frenzyPlant,
   furyCutter,
   iceShard,
+  kingsShield,
   magmaStorm,
   magnetPull,
   meteorMash,
@@ -35,7 +36,7 @@ import {
   twineedle,
   venomDrench,
   voltTackle,
-  zapCannon
+  zapCannon,
 } from './moves';
 import { leechLife } from './moves/leech-life';
 
@@ -732,7 +733,23 @@ const basePokemonData = {
       stat: 'attack',
     },
     move: rollout,
-  }
+  },
+  honedge: {
+    base: 'honedge',
+    categories: ['steel', 'ghost', 'sweeper'],
+    tier: 3,
+    maxHP: 60,
+    attack: 50,
+    defense: 140,
+    specAttack: 50,
+    specDefense: 140,
+    speed: 60,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: kingsShield,
+  },
 } as const;
 
 /**
@@ -1422,7 +1439,30 @@ const rawPokemonData = {
     ...getEvolution('geodude', 3),
     name: 'golem',
     displayName: 'Golem',
-  }
+  },
+  honedge: {
+    ...getEvolution('honedge', 1),
+    name: 'honedge',
+    displayName: 'Honedge',
+    evolution: 'doublade',
+  },
+  doublade: {
+    ...getEvolution('honedge', 2),
+    name: 'doublade',
+    displayName: 'Doublade',
+    evolution: 'aegislash',
+  },
+  aegislash: {
+    ...getEvolution('honedge', 3),
+    name: 'aegislash',
+    displayName: 'Aegislash',
+  },
+  // not actually used - just here so the aegislashshield texture gets loaded properly.
+  aegislashshield: {
+    ...getEvolution('honedge', 3),
+    name: 'aegislashshield',
+    displayName: 'Aegislash-Shield',
+  },
 } as const;
 
 export type PokemonName = keyof typeof rawPokemonData;
