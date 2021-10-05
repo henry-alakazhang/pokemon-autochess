@@ -524,6 +524,191 @@
         }
       },
       {
+        "type": "image",
+        "key": "abra-mini",
+        "url": "assets/pokemon/mini/abra.png"
+      },
+      {
+        "type": "image",
+        "key": "beldum-mini",
+        "url": "assets/pokemon/mini/beldum.png"
+      },
+      {
+        "type": "image",
+        "key": "bulbasaur-mini",
+        "url": "assets/pokemon/mini/bulbasaur.png"
+      },
+      {
+        "type": "image",
+        "key": "darkrai-mini",
+        "url": "assets/pokemon/mini/darkrai.png"
+      },
+      {
+        "type": "image",
+        "key": "dreepy-mini",
+        "url": "assets/pokemon/mini/dreepy.png"
+      },
+      {
+        "type": "image",
+        "key": "exeggcute-mini",
+        "url": "assets/pokemon/mini/exeggcute.png"
+      },
+      {
+        "type": "image",
+        "key": "fletchling-mini",
+        "url": "assets/pokemon/mini/fletchling.png"
+      },
+      {
+        "type": "image",
+        "key": "gastly-mini",
+        "url": "assets/pokemon/mini/gastly.png"
+      },
+      {
+        "type": "image",
+        "key": "geodude-mini",
+        "url": "assets/pokemon/mini/geodude.png"
+      },
+      {
+        "type": "image",
+        "key": "gible-mini",
+        "url": "assets/pokemon/mini/gible.png"
+      },
+      {
+        "type": "image",
+        "key": "grubbin-mini",
+        "url": "assets/pokemon/mini/grubbin.png"
+      },
+      {
+        "type": "image",
+        "key": "happiny-mini",
+        "url": "assets/pokemon/mini/happiny.png"
+      },
+      {
+        "type": "image",
+        "key": "heatran-mini",
+        "url": "assets/pokemon/mini/heatran.png"
+      },
+      {
+        "type": "image",
+        "key": "honedge-mini",
+        "url": "assets/pokemon/mini/honedge.png"
+      },
+      {
+        "type": "image",
+        "key": "landorus-mini",
+        "url": "assets/pokemon/mini/landorus.png"
+      },
+      {
+        "type": "image",
+        "key": "lapras-mini",
+        "url": "assets/pokemon/mini/lapras.png"
+      },
+      {
+        "type": "image",
+        "key": "larvesta-mini",
+        "url": "assets/pokemon/mini/larvesta.png"
+      },
+      {
+        "type": "image",
+        "key": "larvitar-mini",
+        "url": "assets/pokemon/mini/larvitar.png"
+      },
+      {
+        "type": "image",
+        "key": "litten-mini",
+        "url": "assets/pokemon/mini/litten.png"
+      },
+      {
+        "type": "image",
+        "key": "litwick-mini",
+        "url": "assets/pokemon/mini/litwick.png"
+      },
+      {
+        "type": "image",
+        "key": "magikarp-mini",
+        "url": "assets/pokemon/mini/magikarp.png"
+      },
+      {
+        "type": "image",
+        "key": "magnemite-mini",
+        "url": "assets/pokemon/mini/magnemite.png"
+      },
+      {
+        "type": "image",
+        "key": "mewtwo-mini",
+        "url": "assets/pokemon/mini/mewtwo.png"
+      },
+      {
+        "type": "image",
+        "key": "mudkip-mini",
+        "url": "assets/pokemon/mini/mudkip.png"
+      },
+      {
+        "type": "image",
+        "key": "nihilego-mini",
+        "url": "assets/pokemon/mini/nihilego.png"
+      },
+      {
+        "type": "image",
+        "key": "pichu-mini",
+        "url": "assets/pokemon/mini/pichu.png"
+      },
+      {
+        "type": "image",
+        "key": "porygon-mini",
+        "url": "assets/pokemon/mini/porygon.png"
+      },
+      {
+        "type": "image",
+        "key": "rotomw-mini",
+        "url": "assets/pokemon/mini/rotomw.png"
+      },
+      {
+        "type": "image",
+        "key": "scyther-mini",
+        "url": "assets/pokemon/mini/scyther.png"
+      },
+      {
+        "type": "image",
+        "key": "seedot-mini",
+        "url": "assets/pokemon/mini/seedot.png"
+      },
+      {
+        "type": "image",
+        "key": "sneasel-mini",
+        "url": "assets/pokemon/mini/sneasel.png"
+      },
+      {
+        "type": "image",
+        "key": "stonjourner-mini",
+        "url": "assets/pokemon/mini/stonjourner.png"
+      },
+      {
+        "type": "image",
+        "key": "turtonator-mini",
+        "url": "assets/pokemon/mini/turtonator.png"
+      },
+      {
+        "type": "image",
+        "key": "weedle-mini",
+        "url": "assets/pokemon/mini/weedle.png"
+      },
+      {
+        "type": "image",
+        "key": "wooloo-mini",
+        "url": "assets/pokemon/mini/wooloo.png"
+      },
+      {
+        "type": "image",
+        "key": "zorua-mini",
+        "url": "assets/pokemon/mini/zorua.png"
+      },
+      {
+        "type": "image",
+        "key": "zubat-mini",
+        "url": "assets/pokemon/mini/zubat.png"
+      },
+      {
         "type": "spritesheet",
         "key": "mudkip",
         "url": "assets/pokemon/mudkip.png",
