@@ -23,6 +23,21 @@
       },
       {
         "type": "image",
+        "key": "damage-other",
+        "url": "assets/fx/damage-other.png"
+      },
+      {
+        "type": "image",
+        "key": "damage-physical",
+        "url": "assets/fx/damage-physical.png"
+      },
+      {
+        "type": "image",
+        "key": "damage-special",
+        "url": "assets/fx/damage-special.png"
+      },
+      {
+        "type": "image",
         "key": "egg",
         "url": "assets/fx/egg.png"
       },
