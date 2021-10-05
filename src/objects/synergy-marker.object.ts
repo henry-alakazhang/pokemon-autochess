@@ -1,4 +1,5 @@
 import { Category, getSynergyTier, synergyData } from '../core/game.model';
+import { pokemonPerSynergy } from '../core/pokemon.model';
 import { defaultStyle, titleStyle } from './text.helpers';
 
 export class SynergyMarker extends Phaser.GameObjects.Sprite {
@@ -22,7 +23,7 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
 
   private thresholdText: Phaser.GameObjects.Text;
   private background: Phaser.GameObjects.Rectangle;
-  private descriptionText: Phaser.GameObjects.Text;
+  private tooltip: Phaser.GameObjects.Container;
 
   constructor(
     scene: Phaser.Scene,
@@ -50,25 +51,44 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
     this.setCount(count);
 
     // hover text showing the description
-    this.descriptionText = scene.add
-      .text(0, 0, synergyData[category].description, {
+    const tooltipText = new Phaser.GameObjects.Text(
+      scene,
+      0,
+      0,
+      synergyData[category].description,
+      {
         ...defaultStyle,
         color: '#FFF',
         backgroundColor: '#5F7D99',
-        padding: { x: 2, y: 2 },
-      })
-      .setDepth(100)
-      .setVisible(false);
+        padding: { left: 4, top: 4, right: 4, bottom: 48 },
+      }
+    );
+    // the tooltip itself is a container with the tooltip and icons containing all the Pokemon.
+    this.tooltip = scene.add
+      .container(0, 0, [
+        tooltipText,
+        ...pokemonPerSynergy[category].map((name, index) =>
+          this.scene.add
+            .image(index * 40 - 10, tooltipText.height - 44, `${name}-mini`)
+            .setOrigin(0)
+            // the icons sit about the text background
+            .setDepth(1)
+        ),
+      ])
+      .setVisible(false)
+      // tooltip sits above all content
+      .setDepth(100);
+
     // set the background as interactive as it covers more area
     this.background.setInteractive();
     this.background
       .on(Phaser.Input.Events.POINTER_OVER, (pointer: Phaser.Input.Pointer) => {
-        this.descriptionText.setX(Math.round(pointer.worldX + 10));
-        this.descriptionText.setY(Math.round(pointer.worldY + 10));
-        this.descriptionText.setVisible(true);
+        this.tooltip.setX(Math.round(pointer.worldX + 10));
+        this.tooltip.setY(Math.round(pointer.worldY + 10));
+        this.tooltip.setVisible(true);
       })
       .on(Phaser.Input.Events.POINTER_OUT, () => {
-        this.descriptionText.setVisible(false);
+        this.tooltip.setVisible(false);
       });
   }
 
@@ -81,7 +101,7 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
       this.scene.scene.settings.status !== Phaser.Scenes.SHUTDOWN
     ) {
       this.thresholdText.destroy();
-      this.descriptionText.destroy();
+      this.tooltip.destroy();
       this.background.destroy();
     }
     super.destroy();

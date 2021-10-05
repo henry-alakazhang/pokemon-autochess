@@ -1,4 +1,4 @@
-import { Category, Role, Type } from './game.model';
+import { Category } from './game.model';
 import { Move } from './move.model';
 import {
   braveBird,
@@ -1507,45 +1507,53 @@ export const buyablePokemon = allPokemonNames.filter(
  */
 export const pokemonData: { [k in PokemonName]: Pokemon } = rawPokemonData;
 
+export const pokemonPerSynergy: { [k in Category]: PokemonName[] } = {
+  normal: [],
+  fire: [],
+  fighting: [],
+  water: [],
+  flying: [],
+  grass: [],
+  poison: [],
+  electric: [],
+  ground: [],
+  psychic: [],
+  rock: [],
+  ice: [],
+  bug: [],
+  dragon: [],
+  ghost: [],
+  dark: [],
+  steel: [],
+  fairy: [],
+  sweeper: [],
+  'revenge killer': [],
+  'bulky attacker': [],
+  wallbreaker: [],
+  'hazard setter': [],
+  wall: [],
+  disruptor: [],
+  support: [],
+  pivot: [],
+  utility: [],
+};
+
+// add all buyable pokemon of the appropriate synergy
+buyablePokemon.forEach(pokemon => {
+  pokemonData[pokemon].categories.forEach(category => {
+    pokemonPerSynergy[category].push(pokemon);
+  });
+});
+
+// and sort by tier (ascending)
+Object.values(pokemonPerSynergy).forEach(list => {
+  list.sort((a, b) => pokemonData[a].tier - pokemonData[b].tier);
+});
+
 /**
  * some logging stuff
  * todo: remove in prod
  */
-
-const types: { [k in Type]: number } = {
-  normal: 0,
-  fire: 0,
-  fighting: 0,
-  water: 0,
-  flying: 0,
-  grass: 0,
-  poison: 0,
-  electric: 0,
-  ground: 0,
-  psychic: 0,
-  rock: 0,
-  ice: 0,
-  bug: 0,
-  dragon: 0,
-  ghost: 0,
-  dark: 0,
-  steel: 0,
-  fairy: 0,
-};
-
-const roles: { [k in Role]: number } = {
-  sweeper: 0,
-  'revenge killer': 0,
-  'bulky attacker': 0,
-  wallbreaker: 0,
-  'hazard setter': 0,
-  wall: 0,
-  disruptor: 0,
-  support: 0,
-  pivot: 0,
-  utility: 0,
-};
-
 const tiers = {
   1: 0,
   2: 0,
@@ -1567,16 +1575,6 @@ const defenseTargetting = {
 };
 
 Object.values(basePokemonData).forEach(pokemon => {
-  // sum up the types/categories
-  pokemon.categories.forEach((category: Category) => {
-    if (category in types) {
-      types[category as Type]++;
-    }
-    if (category in roles) {
-      roles[category as Role]++;
-    }
-  });
-
   if (
     'move' in pokemon &&
     'defenseStat' in pokemon.move &&
@@ -1594,8 +1592,7 @@ Object.values(basePokemonData).forEach(pokemon => {
   tiers[pokemon.tier]++;
 });
 
-console.log('Types:', types);
-console.log('Roles:', roles);
+console.log('Synergies:', pokemonPerSynergy);
 console.log('Stages:', tiers);
 console.log('Basic attack ranges:', ranges);
 console.log('Basic attack stats', attackStats);

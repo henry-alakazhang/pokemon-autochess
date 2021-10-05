@@ -8,7 +8,7 @@ const sizeOverrides: { [k: string]: number } = {
 const spriteOutputFile = 'assets/sprite-pack.json';
 const fxOutputFile = 'assets/fx-pack.json';
 
-glob('assets/pokemon/*.png', (err, matches) => {
+glob('assets/pokemon/**/*.png', (err, matches) => {
   if (err) {
     throw err;
   }
@@ -18,6 +18,16 @@ glob('assets/pokemon/*.png', (err, matches) => {
       files: matches.map(url => {
         const filename = url.split('/').pop();
         const key = filename && filename.split('.')[0];
+
+        // static mini sprites
+        if (url.includes('mini/')) {
+          return {
+            type: 'image',
+            key: `${key}-mini`,
+            url,
+          };
+        }
+
         const size = (key && sizeOverrides[key]) ?? 64;
         return {
           type: 'spritesheet',
