@@ -23,7 +23,7 @@ const move = {
   get description() {
     return `{{user}} guards for 3 seconds, reducing incoming damage by ${this.damage.join(
       '/'
-    )}. Afterwards, it lashes out, lowering Attack of nearby enemies by 25% and raising its own Attack and Speed by 25% for each enemy hit.`;
+    )}%. Afterwards, it lashes out, lowering Attack of nearby enemies by 25% and raising its own Attack and Speed by 25% for each enemy hit.`;
   },
   getAOE({ x, y }: Coords) {
     return [

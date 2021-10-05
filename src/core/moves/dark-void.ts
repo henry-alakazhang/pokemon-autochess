@@ -56,7 +56,7 @@ const move = {
             targets.forEach(target => {
               const damage = calculateDamage(user, target, {
                 damage: target.maxHP / 10,
-                defenseStat: 'specDefense',
+                defenseStat: this.defenseStat,
               });
               scene.causeDamage(user, target, damage, { isAOE: true });
               user.heal(damage / 2);

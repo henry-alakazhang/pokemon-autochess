@@ -57,7 +57,7 @@ export class MenuScene extends Scene {
       .on(
         Input.Events.GAMEOBJECT_POINTER_DOWN,
         () => {
-          this.titlePokemon.takeDamage(Math.ceil(Math.random() * 3));
+          this.titlePokemon.takeDamage(Math.ceil(Math.random() * 500));
         },
         this
       )

@@ -59,7 +59,7 @@ const move = {
             img.destroy();
             const damage = calculateDamage(user, target, {
               damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: 'defense',
+              defenseStat: this.defenseStat,
             });
             scene.causeDamage(user, target, damage);
             user.takeDamage(Math.floor(damage / 4), { triggerEvents: false });

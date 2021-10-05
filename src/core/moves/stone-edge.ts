@@ -21,6 +21,7 @@ const move = {
   range: 1,
   targetting: 'unit',
   damage: [400, 700, 1400],
+  defenseStat: 'defense',
   get description() {
     return `{{user}} pierces a single enemy with shards of stone, dealing ${this.damage.join(
       '/'
@@ -75,7 +76,7 @@ const move = {
             targets.forEach(pokemon => {
               const damage = calculateDamage(user, pokemon, {
                 damage: realBaseDamage,
-                defenseStat: 'defense',
+                defenseStat: this.defenseStat,
               });
               scene.causeDamage(user, pokemon, damage, { isAOE: true });
             });

@@ -19,6 +19,7 @@ const move = {
   range: 1,
   targetting: 'unit',
   damage: [400, 750, 1400],
+  defenseStat: 'defense',
   get description() {
     return `{{user}} winds up for a huge punch to a single enemy. It deals ${this.damage.join(
       '/'
@@ -77,7 +78,7 @@ const move = {
 
             const damage = calculateDamage(user, target, {
               damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: 'defense',
+              defenseStat: this.defenseStat,
             });
             scene.causeDamage(user, target, damage);
 
@@ -92,7 +93,7 @@ const move = {
               if (otherTarget) {
                 const otherDamage = calculateDamage(user, otherTarget, {
                   damage: this.damage[user.basePokemon.stage - 1],
-                  defenseStat: 'defense',
+                  defenseStat: this.defenseStat,
                 });
                 scene.causeDamage(user, otherTarget, otherDamage, {
                   isAOE: true,

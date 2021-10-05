@@ -19,6 +19,7 @@ const move = {
   range: 1,
   targetting: 'unit',
   damage: [350, 600, 1200],
+  defenseStat: 'defense',
   get description() {
     return `{{user}} hits a single enemy with a pitch-black blast, dealing ${this.damage.join(
       '/'
@@ -34,7 +35,7 @@ const move = {
       onYoyo: () => {
         const damage = calculateDamage(user, target, {
           damage: this.damage[user.basePokemon.stage - 1],
-          defenseStat: 'defense',
+          defenseStat: this.defenseStat,
         });
         scene.causeDamage(user, target, damage, { isAOE: true });
         target.addStatus('blind', 3000);

@@ -1,8 +1,27 @@
+import { Move } from '../core/move.model';
 import { Pokemon } from '../core/pokemon.model';
+import { getBaseTexture } from '../helpers';
 import {
   getDamageReduction,
   getTurnDelay,
 } from '../scenes/game/combat/combat.helpers';
+
+/**
+ * Returns whether the move does physical damage, special damage or neither
+ */
+function getMoveType(move?: Move): 'physical' | 'special' | 'other' {
+  if (move?.type === 'active') {
+    if (move?.defenseStat === 'defense') {
+      return 'physical';
+    }
+
+    if (move?.defenseStat === 'specDefense') {
+      return 'special';
+    }
+  }
+
+  return 'other';
+}
 
 /**
  * A game object for displaying Pokemon info.
@@ -21,13 +40,15 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
     private pokemon: Pokemon
   ) {
     super(scene, x, y, 'div');
+    this.setOrigin(0, 1);
 
+    // DIY react LMAO
     const background = '#ddeedd';
     const highlight = '#bbccbb';
     const border = '2px solid green';
 
-    this.setOrigin(0, 1);
-    // DIY react LMAO
+    const moveType = getMoveType(pokemon.move);
+
     this.createFromHTML(
       `
       <style>
@@ -52,8 +73,10 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           display: grid;
           grid-template:
             "name name stage" 20px
-            "types . ." 10px
-            "types sprite sprite" 80px
+            "attack . ." 5px
+            "attack sprite sprite" 10px
+            "types sprite sprite" 70px
+            "types . ." 5px
             / 75px 12fr 4fr;
           padding: 5px;
         }
@@ -85,6 +108,15 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           display: flex;
           flex-direction: column;
           justify-content: end;
+        }
+
+        .PokemonAttackDetails {
+          grid-area: attack;
+        }
+
+        .DamageTypeIcon {
+          vertical-align: text-top;
+          height: 15px;
         }
         
         .VerticalDivider {
@@ -153,7 +185,9 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           <div class="PokemonName">${this.pokemon.displayName}</div>
           <div class="PokemonStage">${this.pokemon.stage}*</div>
           <div class="PokemonSprite">
-            <img src="assets/pokemon/${this.pokemon.name}.png" />
+            <img src="assets/pokemon/${getBaseTexture(
+              this.pokemon.name
+            )}.png" />
           </div>
           <div class="PokemonTypes">
             ${this.pokemon.categories
@@ -162,6 +196,15 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
                   `<img width="75px" src="assets/fx/types/${category}.png"></img>`
               )
               .join('')}
+          </div>
+          <div class="PokemonAttackDetails" title="Basic attack uses ${
+            this.pokemon.basicAttack.stat
+          } stat and has range ${this.pokemon.basicAttack.range}">
+            <img class="DamageTypeIcon" src="assets/fx/${
+              this.pokemon.basicAttack.stat === 'attack'
+                ? 'damage-physical'
+                : 'damage-special'
+            }.png" />${this.pokemon.basicAttack.range}
           </div>
           <br />
         </div>
@@ -223,8 +266,8 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
         </table>
         <div class="MoveTitle">
           <span class="MoveTitleText">
-            Move:
             <strong>${this.pokemon.move?.displayName}</strong>
+            <img class="DamageTypeIcon" src="assets/fx/damage-${moveType}.png" />
           </span>
         </div>
         <div class="MoveDetails">

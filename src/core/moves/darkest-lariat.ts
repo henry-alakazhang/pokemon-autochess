@@ -20,6 +20,8 @@ const move = {
   range: 1,
   targetting: 'unit',
   damage: [150, 200, 350],
+  // not used, just here to change the icon displayed in the card
+  defenseStat: 'defense',
   get description() {
     return `{{user}} spins with both arms, hitting all adjacent enemies for ${this.damage.join(
       '/'

@@ -22,6 +22,7 @@ const move = {
   range: 1,
   targetting: 'ground',
   damage: [100, 125, 200],
+  defenseStat: 'specDefense',
   get description() {
     return `{{user}} shields itself, reducing all incoming damage by 40% for 4 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
       '/'
@@ -84,7 +85,7 @@ const move = {
             if (target?.side === getOppositeSide(user.side)) {
               const damage = calculateDamage(user, target, {
                 damage: this.damage[user.basePokemon.stage - 1],
-                defenseStat: 'specDefense',
+                defenseStat: this.defenseStat,
               });
               scene.causeDamage(user, target, damage, { isAOE: true });
             }

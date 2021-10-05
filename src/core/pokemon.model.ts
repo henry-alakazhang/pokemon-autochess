@@ -1561,6 +1561,11 @@ const attackStats = {
   specAttack: 0,
 };
 
+const defenseTargetting = {
+  defense: 0,
+  specDefense: 0,
+};
+
 Object.values(basePokemonData).forEach(pokemon => {
   // sum up the types/categories
   pokemon.categories.forEach((category: Category) => {
@@ -1571,6 +1576,14 @@ Object.values(basePokemonData).forEach(pokemon => {
       roles[category as Role]++;
     }
   });
+
+  if (
+    'move' in pokemon &&
+    'defenseStat' in pokemon.move &&
+    pokemon.move.defenseStat
+  ) {
+    defenseTargetting[pokemon.move.defenseStat]++;
+  }
 
   if (!ranges[pokemon.basicAttack.range]) {
     ranges[pokemon.basicAttack.range] = 0;
@@ -1586,3 +1599,4 @@ console.log('Roles:', roles);
 console.log('Stages:', tiers);
 console.log('Basic attack ranges:', ranges);
 console.log('Basic attack stats', attackStats);
+console.log('Move damage targetting', defenseTargetting);

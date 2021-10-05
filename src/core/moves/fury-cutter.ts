@@ -65,7 +65,7 @@ const move = {
               damage:
                 this.damage[user.basePokemon.stage - 1] *
                 1.5 ** user.consecutiveAttacks,
-              defenseStat: 'defense',
+              defenseStat: this.defenseStat,
             });
             scene.causeDamage(user, target, damage);
           },
