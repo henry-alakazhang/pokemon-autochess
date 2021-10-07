@@ -256,15 +256,15 @@ describe('pathfind', () => {
           [playerMock, undefined, undefined],
         ],
         { x: 0, y: 0 },
-        { x: 2, y: 0 },
+        [{ x: 2, y: 0 }],
         1
-      )
-    ).toEqual({ x: 1, y: 0 });
+      )?.path
+    ).toEqual([{ x: 1, y: 0 }]);
   });
 
   it(`should find a path between distant points
-    A>.
-    ...
+    A>v
+    ..v
     ..B`, () => {
     expect(
       pathfind(
@@ -274,15 +274,21 @@ describe('pathfind', () => {
           [undefined, undefined, playerMock],
         ],
         { x: 0, y: 0 },
-        { x: 2, y: 2 },
+        [{ x: 2, y: 2 }],
         1
-      )
-    ).toEqual({ x: 1, y: 0 });
+      )?.path
+    ).toEqual(
+      [
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+        { x: 2, y: 1 },
+      ].reverse()
+    );
   });
 
   it(`should go around obstacles
     AX.
-    v..
+    >>v
     ..B`, () => {
     expect(
       pathfind(
@@ -292,10 +298,16 @@ describe('pathfind', () => {
           [undefined, undefined, playerMock],
         ],
         { x: 0, y: 0 },
-        { x: 2, y: 2 },
+        [{ x: 2, y: 2 }],
         1
-      )
-    ).toEqual({ x: 0, y: 1 });
+      )?.path
+    ).toEqual(
+      [
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+      ].reverse()
+    );
   });
 
   it(`should return cleanly if there's no path
@@ -310,10 +322,124 @@ describe('pathfind', () => {
           [playerMock, undefined, playerMock],
         ],
         { x: 0, y: 0 },
-        { x: 2, y: 2 },
+        [{ x: 2, y: 2 }],
         1
       )
     ).toEqual(undefined);
+  });
+
+  it(`should pick a closer target between multiple
+    A>B
+    ...
+    ..C`, () => {
+    const pathFound = pathfind(
+      [
+        [enemyMock, undefined, undefined],
+        [undefined, undefined, undefined],
+        [playerMock, undefined, playerMock],
+      ],
+      { x: 0, y: 0 },
+      [
+        { x: 2, y: 2 },
+        { x: 2, y: 0 },
+      ],
+      1
+    );
+    expect(pathFound?.target).toEqual({ x: 2, y: 0 });
+    expect(pathFound?.path).toEqual([{ x: 1, y: 0 }]);
+  });
+
+  it(`should pick a closer target through obstacles
+    AXB
+    >v.
+    .C.`, () => {
+    const pathFound = pathfind(
+      [
+        [enemyMock, undefined, undefined],
+        [enemyMock, undefined, playerMock],
+        [playerMock, undefined, undefined],
+      ],
+      { x: 0, y: 0 },
+      [
+        { x: 1, y: 2 },
+        { x: 2, y: 0 },
+      ],
+      1
+    );
+    expect(pathFound?.target).toEqual({ x: 1, y: 2 });
+    expect(pathFound?.path).toEqual(
+      [
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+      ].reverse()
+    );
+  });
+
+  it(`should only path up to within range
+    A>O
+    ...
+    ..B`, () => {
+    expect(
+      pathfind(
+        [
+          [enemyMock, undefined, undefined],
+          [undefined, undefined, undefined],
+          [undefined, undefined, playerMock],
+        ],
+        { x: 0, y: 0 },
+        [{ x: 2, y: 2 }],
+        2
+      )?.path
+    ).toEqual(
+      [
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+      ].reverse()
+    );
+  });
+
+  it(`should allow range to ignore blockers
+    A>O
+    XXX
+    ..B`, () => {
+    expect(
+      pathfind(
+        [
+          [enemyMock, enemyMock, undefined],
+          [undefined, enemyMock, undefined],
+          [undefined, enemyMock, playerMock],
+        ],
+        { x: 0, y: 0 },
+        [{ x: 2, y: 2 }],
+        2
+      )?.path
+    ).toEqual(
+      [
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+      ].reverse()
+    );
+  });
+
+  it(`should pick closest target even if that target is through blockers
+    Av.
+    XX.
+    .BC`, () => {
+    const pathFound = pathfind(
+      [
+        [enemyMock, enemyMock, undefined],
+        [undefined, enemyMock, playerMock],
+        [undefined, undefined, playerMock],
+      ],
+      { x: 0, y: 0 },
+      [
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+      ],
+      2
+    );
+    expect(pathFound?.target).toEqual({ x: 1, y: 2 });
+    expect(pathFound?.path).toEqual([{ x: 1, y: 0 }]);
   });
 
   it(`should work for larger boards (7x7)`, () => {
@@ -385,10 +511,24 @@ describe('pathfind', () => {
           ],
         ],
         { x: 0, y: 0 },
-        { x: 6, y: 6 },
+        [{ x: 6, y: 6 }],
         1
-      )
-    ).toEqual({ x: 1, y: 0 });
+      )?.path
+    ).toEqual(
+      [
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+        { x: 3, y: 0 },
+        { x: 4, y: 0 },
+        { x: 5, y: 0 },
+        { x: 6, y: 0 },
+        { x: 6, y: 1 },
+        { x: 6, y: 2 },
+        { x: 6, y: 3 },
+        { x: 6, y: 4 },
+        { x: 6, y: 5 },
+      ].reverse()
+    );
   });
 
   it(`should work in the edges of larger boards (7x7)`, () => {
@@ -460,10 +600,10 @@ describe('pathfind', () => {
           ],
         ],
         { x: 5, y: 5 },
-        { x: 6, y: 6 },
+        [{ x: 6, y: 6 }],
         1
-      )
-    ).toEqual({ x: 6, y: 5 });
+      )?.path
+    ).toEqual([{ x: 6, y: 5 }]);
   });
 });
 

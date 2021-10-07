@@ -26,7 +26,7 @@ import {
   getAttackAnimation,
   getFacing,
   getGridDistance,
-  getNearestTarget,
+  getOppositeSide,
   getTurnDelay,
   pathfind,
 } from './combat.helpers';
@@ -401,46 +401,99 @@ export class CombatScene extends Scene {
       });
     });
 
-    // simple targetting logic: either use an existing saved target
-    // or use the nearest available Pokemon
-    const simpleTargetCoords =
-      this.getBoardLocationForPokemon(pokemon.currentTarget) ??
-      getNearestTarget(this.board, myCoords);
-
     // use move if available, otherwise use basic attack
-    let selectedAttack =
-      pokemon.currentPP === pokemon.maxPP &&
-      pokemon.basePokemon.move &&
-      pokemon.basePokemon.move.type === 'active'
+    const { basicAttack } = pokemon.basePokemon;
+    const move =
+      pokemon.basePokemon.move?.type === 'active'
         ? pokemon.basePokemon.move
-        : pokemon.basePokemon.basicAttack;
-    // use move-specific targetting, or default to prepicked target
-    let selectedCoords =
-      'getTarget' in selectedAttack && selectedAttack.getTarget
-        ? selectedAttack.getTarget(this.board, myCoords)
-        : simpleTargetCoords;
+        : undefined;
+    /**
+     * The attack the Pokeon is trying to use
+     * If the Pokemon has an active move and enough PP, use it.
+     */
+    let selectedAttack =
+      pokemon.currentPP === pokemon.maxPP && move ? move : basicAttack;
+    /** The target being picked for the attack */
+    let selectedCoords: Coords | undefined;
+    /** The route to path through to reach the selected target */
+    let selectedPath: Coords[] | undefined;
 
-    if (!selectedCoords) {
-      // if move has no valid target, fall back to basic attack
-      selectedAttack = pokemon.basePokemon.basicAttack;
-      selectedCoords = simpleTargetCoords;
+    // if the move has special targetting logic, check it
+    if ('getTarget' in selectedAttack && isDefined(selectedAttack.getTarget)) {
+      selectedCoords = selectedAttack.getTarget(this.board, myCoords);
+      if (selectedCoords) {
+        // if move has a valid target, calculate path
+        // generally this code should be unnecessary,
+        // as moves with getTarget() should only return targets that are in range
+        selectedPath = pathfind(
+          this.board,
+          myCoords,
+          [selectedCoords],
+          selectedAttack.range
+        )?.path;
+        // FIXME: if there's no valid path, handle or something
+      } else {
+        // if move has no valid target, fall back to basic attack
+        selectedAttack = pokemon.basePokemon.basicAttack;
+      }
     }
 
-    // use const variables to make type inferencing neater below
-    const attack = selectedAttack;
-    const targetCoords = selectedCoords;
+    // if we didn't pick a specific target for the move, we need to pick a generic target
+    if (!selectedCoords) {
+      // check the Pokemon's current target
+      const currentTargetCoords = this.getBoardLocationForPokemon(
+        pokemon.currentTarget
+      );
+      // if it's in reasonable range (ie. only one move to reach), use the current target
+      if (
+        currentTargetCoords &&
+        getGridDistance(myCoords, currentTargetCoords) <=
+          selectedAttack.range + 1
+      ) {
+        selectedCoords = currentTargetCoords;
+      } else {
+        // get all possible enemy targets
+        const allEnemyCoords =
+          // first, map the board to Pokemon + coords and flatten it
+          flatten(
+            this.board.map((col, x) =>
+              col.map((pokemonAt, y) => ({ pokemonAt, boardCoords: { x, y } }))
+            )
+          )
+            .filter(
+              // filter for opposing Poekmon
+              ({ pokemonAt }) =>
+                pokemonAt?.side === getOppositeSide(pokemon.side)
+            )
+            .map(({ boardCoords }) => boardCoords);
 
-    if (!targetCoords) {
-      // if basic attack has no valid target, do nothing and never do anything agian
+        // and use pathfind to get path to closest one
+        const pathfound = pathfind(
+          this.board,
+          myCoords,
+          allEnemyCoords,
+          selectedAttack.range
+        );
+        selectedCoords = pathfound?.target;
+        selectedPath = pathfound?.path;
+      }
+    }
+
+    if (!selectedCoords) {
+      // no valid target: wait until next turn
+      // hopefully we can get unblocked eventually
+      // FIXME: If there are no reachable enemies for a Pokemon,
+      // they should ideally still walk closer (even if out of range)
+      this.setTurn(pokemon);
       return;
     }
 
     // face target
-    const facing = getFacing(myCoords, targetCoords);
+    const facing = getFacing(myCoords, selectedCoords);
     pokemon.playAnimation(facing);
 
-    // move if out of range
-    if (getGridDistance(myCoords, targetCoords) > attack.range) {
+    // if out of range, move into range
+    if (getGridDistance(myCoords, selectedCoords) > selectedAttack.range) {
       if (pokemon.status.immobile) {
         // can't move: reset target and end turn
         pokemon.currentTarget = undefined;
@@ -448,12 +501,22 @@ export class CombatScene extends Scene {
         return;
       }
 
-      const step = pathfind(this.board, myCoords, targetCoords, attack.range);
+      // access current path, or fallback to running pathfinding again
+      // the pathfind here shouldn't really be called, but better safe than sorry I guess
+      // note: pathfinding returns the path backwards so use .pop() to get the first step
+      const step =
+        selectedPath?.pop() ??
+        pathfind(
+          this.board,
+          myCoords,
+          [selectedCoords],
+          selectedAttack.range
+        )?.path.pop();
       if (!step) {
         console.log('no valid step');
         // can't reach: just reset targetting and wait for next turn
-        // FIXME: I'm pretty sure this will result in times when the Pokemon
-        // will tunnel-vision and freeze up even if there are other valid targets
+        // this should basically never happen since we check pathfinding to all targets
+        // before actually picking one
         pokemon.currentTarget = undefined;
         this.setTurn(pokemon);
         return;
@@ -464,21 +527,21 @@ export class CombatScene extends Scene {
       return;
     }
 
-    const targetPokemon = this.board[targetCoords.x][targetCoords.y];
+    const targetPokemon = this.board[selectedCoords.x][selectedCoords.y];
 
     // if it's a move, use it
-    if ('use' in attack) {
+    if ('use' in selectedAttack) {
       pokemon.currentPP = 0;
-      if (attack.targetting === 'unit' && !targetPokemon) {
+      if (selectedAttack.targetting === 'unit' && !targetPokemon) {
         // end turn since there's no valid target
         return this.setTurn(pokemon);
       }
-      attack.use({
+      selectedAttack.use({
         scene: this,
         board: this.board,
         user: pokemon,
         userCoords: myCoords,
-        targetCoords,
+        targetCoords: selectedCoords,
         // cast here because it's always PokemonObject when we need it to be
         // we know because we just checkked `targetted && !targetPokemon`.
         target: targetPokemon as PokemonObject,
