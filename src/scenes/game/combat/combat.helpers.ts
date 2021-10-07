@@ -32,6 +32,10 @@ export function inBounds(board: unknown[][], coords: Coords) {
   );
 }
 
+export function getOppositeSide(side: 'player' | 'enemy') {
+  return side === 'player' ? 'enemy' : 'player';
+}
+
 /*
   This file has a `getNearestTarget` and a `pathfind` function,
   which are both implementations of breadth-first search.
@@ -116,6 +120,10 @@ export function getNearest(
   }
 }
 
+/**
+ * Returns the Pokemon nearest to a Pokemon at a given Coords.
+ * Ignores collision/pathing; just finds the nearest enemy
+ */
 export function getNearestTarget(
   board: CombatScene['board'],
   { x, y }: Coords
@@ -163,18 +171,19 @@ export function getCenter(coords: Coords[]): Coords {
 }
 
 /**
- * Builds a path from start to somewhere in range of the target
- * Returns the first step in the path.
+ * Builds a path from start to somewhere in range of any number of targets
+ *
+ * Returns the path to the closest target, in reverse order
  */
 export function pathfind(
   board: CombatScene['board'],
   /** Self X and Y coordinates */
   start: Coords,
-  /** Target's X and Y coordinates */
-  target: Coords,
+  /** All target's X and Y coordinates */
+  targets: Coords[],
   /** Attack range to count as "reached" */
   range: number
-): Coords | undefined {
+): { target: Coords; path: Coords[] } | undefined {
   // uses BFS
   // TODO: if the AI ends up being super stupid, use an optimal-path algorithm instead
 
@@ -196,9 +205,10 @@ export function pathfind(
     // lazy cast because the loop condition already checks there'll be an element
     const check = queue.shift() as Coords;
 
-    // reached a goal state, end
-    if (getGridDistance(check, target) <= range) {
-      prev[target.x][target.y] = check;
+    // check all targets to see if one is reachable
+    const reachedTarget = targets.find(t => getGridDistance(check, t) <= range);
+    if (reachedTarget) {
+      prev[reachedTarget.x][reachedTarget.y] = check;
       break;
     }
 
@@ -221,18 +231,23 @@ export function pathfind(
     });
   }
 
-  // trace back along the `prev` map to find the first step
-  let curr = target;
+  // find the target which we ended up reaching
+  const foundTarget = targets.find(t => isDefined(prev[t.x][t.y]));
+  if (!foundTarget) {
+    // if there wasn't one, then no targets are in range
+    return undefined;
+  }
+
+  // reverse back through the prev grid to build the path
+  let curr = foundTarget;
+  const path: Coords[] = [];
   while (prev[curr.x][curr.y]) {
     if (coordsEqual(prev[curr.x][curr.y], start)) {
-      return curr;
+      return { target: foundTarget, path };
     }
     curr = prev[curr.x][curr.y];
+    path.push(curr);
   }
-}
-
-export function getOppositeSide(side: 'player' | 'enemy') {
-  return side === 'player' ? 'enemy' : 'player';
 }
 
 /**
