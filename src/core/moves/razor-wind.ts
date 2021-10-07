@@ -78,13 +78,14 @@ const move = {
           .play('razor-wind-wind');
         scene.add.tween({
           targets: [wind],
-          duration: 1000,
+          duration: 500,
           scaleX: 2,
           scaleY: 2,
         });
         // the code below has a delay, so the first tick will occur after the tween ends
-        const dph = this.damage[user.basePokemon.stage - 1] / 2;
-        scene.time.addEvent({
+        const ticks = 4;
+        const dph = this.damage[user.basePokemon.stage - 1] / ticks;
+        const timer = scene.time.addEvent({
           callback: () => {
             // deal damage to each person in range (2 x 2 square)
             this.getAOE(targetCoords).forEach(coord => {
@@ -97,9 +98,12 @@ const move = {
                 scene.causeDamage(user, pokemon, damage, { isAOE: true });
               }
             });
+            if (timer.repeatCount === 0) {
+              wind.destroy();
+            }
           },
-          delay: 1000,
-          repeat: 2,
+          delay: 2000 / ticks,
+          repeat: ticks,
         });
       },
       delay: 1000,
