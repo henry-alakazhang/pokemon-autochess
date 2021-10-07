@@ -423,6 +423,8 @@ export class CombatScene extends Scene {
       selectedCoords = selectedAttack.getTarget(this.board, myCoords);
       if (selectedCoords) {
         // if move has a valid target, calculate path
+        // generally this code should be unnecessary,
+        // as moves with getTarget() should only return targets that are in range
         selectedPath = pathfind(
           this.board,
           myCoords,
@@ -463,10 +465,7 @@ export class CombatScene extends Scene {
               ({ pokemonAt }) =>
                 pokemonAt?.side === getOppositeSide(pokemon.side)
             )
-            .map(
-              // pathfind to that Pokemon
-              ({ boardCoords }) => boardCoords
-            );
+            .map(({ boardCoords }) => boardCoords);
 
         // and use pathfind to get path to closest one
         const pathfound = pathfind(
@@ -483,6 +482,8 @@ export class CombatScene extends Scene {
     if (!selectedCoords) {
       // no valid target: wait until next turn
       // hopefully we can get unblocked eventually
+      // FIXME: If there are no reachable enemies for a Pokemon,
+      // they should ideally still walk closer (even if out of range)
       this.setTurn(pokemon);
       return;
     }
@@ -514,7 +515,7 @@ export class CombatScene extends Scene {
       if (!step) {
         console.log('no valid step');
         // can't reach: just reset targetting and wait for next turn
-        // this should happen very rarely now since we check pathfinding to all targets
+        // this should basically never happen since we check pathfinding to all targets
         // before actually picking one
         pokemon.currentTarget = undefined;
         this.setTurn(pokemon);
