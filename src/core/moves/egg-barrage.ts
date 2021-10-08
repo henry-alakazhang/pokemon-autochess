@@ -90,10 +90,12 @@ const move = {
       );
     };
 
-    scene.time.addEvent({
-      callback: () => shootEgg(),
-      delay: 200,
-      repeat: 5,
+    user.addCancellableEvent({
+      timer: scene.time.addEvent({
+        callback: () => shootEgg(),
+        delay: 200,
+        repeat: 5,
+      }),
     });
     Tweens.spin(scene, {
       targets: [user],

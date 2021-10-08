@@ -70,6 +70,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   attachments: Phaser.GameObjects.GameObject[] = [];
 
+  /** Active things the Pokemon is doing that can be cancelled by CC or death */
+  cancellableEvents: {
+    timer: Phaser.Time.TimerEvent;
+    onCancel?: Function;
+  }[] = [];
+
   // TODO: clean up messiness in model
   constructor(params: SpriteParams) {
     super(
@@ -190,6 +196,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /** Detaches an attached GameObject */
   detach(object: Phaser.GameObjects.GameObject) {
     this.attachments = this.attachments.filter(item => item === object);
+  }
+
+  addCancellableEvent(event: {
+    timer: Phaser.Time.TimerEvent;
+    onCancel?: Function;
+  }) {
+    this.cancellableEvents.push(event);
   }
 
   destroy() {
@@ -386,16 +399,29 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       this.bars.destroy();
       this.blindIcon.destroy();
       this.sleepIcon.destroy();
-      // TODO: destroy attachments?
       this.emit(PokemonObject.Events.Dead);
       // add fade-out animation
       this.scene.add.tween({
-        targets: this,
+        targets: [this, this.attachments],
         duration: 600,
         ease: 'Exponential.Out',
         alpha: 0,
         onComplete: () => {
-          this.destroy();
+          // disable and hide
+          // don't destroy because if any leftover events
+          // try to manipulate the Pokemon or object,
+          // they might crash the game
+          this.setActive(false);
+          this.setVisible(false);
+
+          // destroy all attachments
+          this.attachments.forEach(object => object.destroy());
+          // and all active timers
+          this.cancellableEvents.forEach(event => event.timer.remove());
+          // and any tweens that are running on this
+          this.scene.tweens
+            .getTweensOf(this, true)
+            .forEach(tween => tween.stop());
         },
         callbackScope: this,
       });
@@ -494,16 +520,25 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     value?: number | ((prev?: number) => number)
   ): this {
     if (
-      this.status.statusImmunity &&
       // FIXME: don't hardcode bad statuses
       (status === 'blind' ||
         status === 'immobile' ||
         status === 'paralyse' ||
         status === 'poison' ||
-        status === 'sleep')
+        status === 'sleep') &&
+      this.status.statusImmunity
     ) {
       return this;
     }
+
+    // disabling statuses can interrupt stuff
+    if (status === 'paralyse' || status === 'sleep') {
+      this.cancellableEvents.forEach(event => {
+        event.timer.remove();
+        event.onCancel?.();
+      });
+    }
+
     this.status[status] = {
       value:
         typeof value === 'number' ? value : value?.(this.status[status]?.value),

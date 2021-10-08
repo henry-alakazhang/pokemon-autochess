@@ -73,6 +73,15 @@ const move = {
         }
       },
     });
+    // cancels on death / cc
+    user.addCancellableEvent({
+      timer: spinTimer,
+      onCancel: () => {
+        user.setAngle(0);
+        user.setAngularVelocity(0);
+        onComplete();
+      },
+    });
   },
 } as const;
 

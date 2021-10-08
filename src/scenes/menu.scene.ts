@@ -62,7 +62,7 @@ export class MenuScene extends Scene {
         this
       )
       .on(
-        Phaser.GameObjects.Events.DESTROY,
+        PokemonObject.Events.Dead,
         () => {
           this.time.addEvent({
             callback: () => {
