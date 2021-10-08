@@ -48,7 +48,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /* some combat specific stuff */
   id: string;
   side: 'player' | 'enemy';
+  // todo: remove and just use moveState for everything
   consecutiveAttacks = 0;
+  moveState: string | number;
   currentTarget?: PokemonObject;
 
   status: {

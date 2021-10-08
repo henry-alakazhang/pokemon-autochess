@@ -173,7 +173,15 @@ export class CombatScene extends Scene {
 
     flatten(this.board)
       .filter(isDefined)
-      .forEach(pokemon => this.setTurn(pokemon));
+      .forEach(pokemon => {
+        if (pokemon.basePokemon.move?.type === 'passive') {
+          pokemon.basePokemon.move.onRoundStart?.({
+            scene: this,
+            self: pokemon,
+          });
+        }
+        this.setTurn(pokemon);
+      });
   }
 
   update(time: number, delta: number) {
@@ -728,6 +736,22 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
+    if (attacker.basePokemon.move?.type === 'passive') {
+      attacker.basePokemon.move.onHit?.({
+        scene: this,
+        attacker,
+        defender,
+        damage: totalDamage,
+      });
+    }
+    if (defender.basePokemon.move?.type === 'passive') {
+      defender.basePokemon.move.onBeingHit?.({
+        scene: this,
+        attacker,
+        defender,
+        damage: totalDamage,
+      });
+    }
 
     this.damageGraph[attacker.side].dealt[
       `${attacker.basePokemon.displayName}-${attacker.id}`

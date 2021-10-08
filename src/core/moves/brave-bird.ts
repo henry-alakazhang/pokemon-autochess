@@ -1,73 +1,48 @@
-import {
-  calculateDamage,
-  getAngle,
-  getAttackAnimation,
-  getFacing,
-  getTurnDelay,
-} from '../../scenes/game/combat/combat.helpers';
-import { Move, MoveConfig } from '../move.model';
+import { PokemonObject } from '../../objects/pokemon.object';
+import { Move } from '../move.model';
 
 /**
- * Brave Bird - Talonflame line's move
+ * Gale Wings - Talonflame line's move
  *
- * Deals heavy damage to a single target with some recoil to the user.
- * 250ms cast time
- *
- * TODO: differentiate this from Volt Tackle
+ * Passive that grants increased attack speed / attack based on HP
  */
 const move = {
-  displayName: 'Brave Bird',
-  type: 'active',
-  cost: 10,
-  startingPP: 4,
-  damage: [200, 350, 500],
-  defenseStat: 'defense',
-  targetting: 'unit',
+  displayName: 'Gale Wings',
+  type: 'passive',
+  flags: {},
+  damage: [30, 55, 90],
   get description() {
-    return `{{user}} bravely strikes a single target, dealing ${this.damage.join(
+    return `While above 50% health, {{user}} gets a 50% Speed boost. While below 50% health, it becomes brave, getting a 50% Attack boost and recovers ${this.damage.join(
       '/'
-    )} damage. {{user}} can hurt itself.`;
+    )} HP on hit.`;
   },
-  range: 1,
-  use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
-    // animation: bird overlaying on top of Pokemon that grows
-    const img = scene.add
-      .image(user.x, user.y, 'brave-bird')
-      .setScale(0.6, 0.6)
-      .setRotation(getAngle(user, target));
-    // grow bird
-    scene.add.tween({
-      targets: [img],
-      duration: 250,
-      scaleX: 1.2,
-      scaleY: 1.2,
-      onComplete: () => {
-        // do attack animation
-        scene.add.tween({
-          targets: [user, img],
-          duration: getTurnDelay(user.basePokemon) * 0.15,
-          ...getAttackAnimation(user, getFacing(user, target)),
-          yoyo: true,
-          ease: 'Power1',
-          onYoyo: (_, tweenTarget) => {
-            // yoyo is called twice since we're moving both user and img
-            // this makes sure the onhit effect is only run once
-            if (tweenTarget !== user) {
-              return;
-            }
+  onRoundStart({ self }: { self: PokemonObject }) {
+    self.moveState = 'fast';
+    self.changeStats({ speed: 1.5 });
+  },
+  onBeingHit({ defender }: { defender: PokemonObject }) {
+    // bit cheesy: toggle the buff state based on hp after being hit
 
-            img.destroy();
-            const damage = calculateDamage(user, target, {
-              damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: this.defenseStat,
-            });
-            scene.causeDamage(user, target, damage);
-            user.takeDamage(Math.floor(damage / 4), { triggerEvents: false });
-            onComplete();
-          },
-        });
-      },
-    });
+    if (
+      defender.moveState === 'fast' &&
+      defender.currentHP / defender.maxHP < 0.5
+    ) {
+      defender.moveState = 'slow';
+      defender.changeStats({ attack: 1.5, speed: 1 / 1.5 });
+    }
+
+    if (
+      defender.moveState === 'slow' &&
+      defender.currentHP / defender.maxHP > 0.5
+    ) {
+      defender.moveState = 'fast';
+      defender.changeStats({ attack: 1 / 1.5, speed: 1.5 });
+    }
+  },
+  onHit({ attacker }: { attacker: PokemonObject }) {
+    if (attacker.moveState === 'slow') {
+      attacker.heal(this.damage[attacker.basePokemon.stage - 1]);
+    }
   },
 } as const;
 

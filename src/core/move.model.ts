@@ -78,9 +78,20 @@ export interface PassiveMove {
   displayName: string;
   type: 'passive';
   description: string;
-  onAttack?: () => void;
-  onBeingHit?: () => void;
-  onTurn?: () => void;
+  onRoundStart?: (config: { scene: CombatScene; self: PokemonObject }) => void;
+  onHit?: (config: {
+    scene: CombatScene;
+    attacker: PokemonObject;
+    defender: PokemonObject;
+    damage: number;
+  }) => void;
+  onBeingHit?: (config: {
+    scene: CombatScene;
+    attacker: PokemonObject;
+    defender: PokemonObject;
+    damage: number;
+  }) => void;
+  onTurn?: (config: { scene: CombatScene; self: PokemonObject }) => void;
   flags: {
     undodgable?: true;
   };
