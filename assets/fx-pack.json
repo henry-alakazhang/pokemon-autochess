@@ -53,6 +53,31 @@
       },
       {
         "type": "image",
+        "key": "pokeball-1",
+        "url": "assets/fx/pokeball-1.png"
+      },
+      {
+        "type": "image",
+        "key": "pokeball-2",
+        "url": "assets/fx/pokeball-2.png"
+      },
+      {
+        "type": "image",
+        "key": "pokeball-3",
+        "url": "assets/fx/pokeball-3.png"
+      },
+      {
+        "type": "image",
+        "key": "pokeball-4",
+        "url": "assets/fx/pokeball-4.png"
+      },
+      {
+        "type": "image",
+        "key": "pokeball-5",
+        "url": "assets/fx/pokeball-5.png"
+      },
+      {
+        "type": "image",
         "key": "seed",
         "url": "assets/fx/seed.png"
       },
