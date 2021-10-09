@@ -1,7 +1,7 @@
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
-import { defaultStyle } from '../../objects/text.helpers';
+import { defaultStyle, titleStyle } from '../../objects/text.helpers';
 import { Coords } from './combat/combat.helpers';
 import { GameMode } from './game.helpers';
 import { ShopPool } from './shop.helpers';
@@ -25,10 +25,15 @@ export class ShopScene extends Phaser.Scene {
   private pokemonForSale: PokemonForSaleObject[] = Array(CELL_COUNT);
 
   private gameMode: GameMode;
-  private player: Player; // hacky temporary solution
+  private player: Player;
   private pool: ShopPool;
 
-  private oddsText: Phaser.GameObjects.Text;
+  private oddsTitle: Phaser.GameObjects.Text;
+  private oddsTexts: Phaser.GameObjects.Text[];
+  private oddsIcons: Phaser.GameObjects.Image[];
+
+  private playerGoldText: Phaser.GameObjects.Text;
+  private playerGoldIcon: Phaser.GameObjects.Image;
 
   constructor() {
     super({
@@ -89,14 +94,22 @@ export class ShopScene extends Phaser.Scene {
   drawBase(): void {
     const width = CELL_WIDTH * CELL_COUNT;
     const height = CELL_HEIGHT + BORDER_SIZE * 2;
+    // main area
     this.add.rectangle(this.centre.x, this.centre.y, width, height, 0x2f4858);
-
-    this.oddsText = this.add.text(
-      this.centre.x - width / 2 + 10,
-      this.centre.y - height / 2 + 10,
-      '',
-      defaultStyle
-    );
+    // little trapezoidal chunk at the bottom for player gold
+    this.add
+      .polygon(
+        this.centre.x,
+        this.centre.y + height / 2,
+        [
+          { x: -50, y: 0 },
+          { x: 50, y: 0 },
+          { x: 40, y: 20 },
+          { x: -40, y: 20 },
+        ],
+        0x2f4858
+      )
+      .setOrigin(0);
 
     this.add.grid(
       this.centre.x, // center x
@@ -110,22 +123,57 @@ export class ShopScene extends Phaser.Scene {
       0xffaa00, // lines: yellow
       1 // line alpha: solid
     );
+
+    const oddsX = this.centre.x - width / 2 + 80;
+    const oddsY = this.centre.y - height / 2 + 10;
+
+    this.oddsTitle = this.add.text(
+      oddsX - 70,
+      oddsY,
+      'Shop odds:',
+      defaultStyle
+    );
+
+    this.oddsTexts = [];
+    this.oddsIcons = [];
+    for (let i = 0; i <= 5; i++) {
+      this.oddsTexts.push(this.add.text(oddsX + i * 60, oddsY, '', titleStyle));
+      if (i > 0) {
+        this.oddsIcons.push(
+          this.add
+            .image(oddsX + i * 60 - 20, oddsY, `pokeball-${i}`)
+            .setOrigin(0)
+        );
+      }
+    }
+
+    this.playerGoldIcon = this.add
+      .image(this.centre.x - 20, this.centre.y + height / 2 - 5, 'pokeball-1')
+      .setOrigin(0);
+    this.playerGoldText = this.add
+      .text(
+        this.centre.x,
+        this.centre.y + height / 2 - 5,
+        `${this.player.gold}`
+      )
+      .setOrigin(0);
+  }
+
+  update() {
+    this.playerGoldText.setText(`${this.player.gold}`);
+
+    // update this here; it gets called on round start anyway so it should always be up-to-date
+    this.gameMode.shopRates[this.player.level].forEach((rate, i) => {
+      if (i > 0) {
+        this.oddsTexts[i].setText(`${rate}%`);
+      }
+    });
   }
 
   /**
    * Refreshes the shop with new pokemon.
    */
   reroll(): void {
-    // update this here; it gets called on round start anyway so it should always be up-to-date
-    this.oddsText.setText(
-      `Shop odds: [${this.gameMode.shopRates[this.player.level]
-        .map((rate, index) => `${index}: ${rate}%`)
-        // shop rates are 1-indexed for easier tier -> rate indexing
-        // so strip out the fake tier 0
-        .slice(1)
-        .join('] [')}]`
-    );
-
     // Remove the old pokemon
     this.pokemonForSale.forEach(pokemon => {
       pokemon.destroy();

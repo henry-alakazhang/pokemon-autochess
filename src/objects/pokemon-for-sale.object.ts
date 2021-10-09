@@ -12,7 +12,8 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
   public centre: Coords;
 
   private pokemonSprite: Phaser.GameObjects.Sprite;
-  private goldCostText: Phaser.GameObjects.Text;
+  private costText: Phaser.GameObjects.Text;
+  private costIcon: Phaser.GameObjects.Image;
   private typeSprites: Phaser.GameObjects.Sprite[];
 
   constructor(
@@ -35,7 +36,7 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
     this.centre = coordinates;
 
     this.drawPokemon();
-    this.drawGoldCostText();
+    this.drawCost();
   }
 
   drawPokemon(): void {
@@ -59,16 +60,19 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
     );
   }
 
-  drawGoldCostText(): void {
-    this.goldCostText = this.scene.add
+  drawCost(): void {
+    this.costText = this.scene.add
       .text(
-        this.centre.x - 25,
-        this.centre.y + 25,
+        this.centre.x - 38,
+        this.centre.y + 28,
         this.cost.toString(),
         titleStyle
       )
       .setFontSize(20)
-      .setOrigin(0.5);
+      .setOrigin(0);
+    this.costIcon = this.scene.add
+      .image(this.centre.x - 22, this.centre.y + 30, `pokeball-${this.cost}`)
+      .setOrigin(0);
   }
 
   destroy(): void {
@@ -80,7 +84,8 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
       this.scene.scene.settings.status !== Phaser.Scenes.SHUTDOWN
     ) {
       this.pokemonSprite.destroy();
-      this.goldCostText.destroy();
+      this.costText.destroy();
+      this.costIcon.destroy();
       this.typeSprites.forEach(sprite => sprite.destroy());
     }
   }

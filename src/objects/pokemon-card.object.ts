@@ -114,8 +114,8 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           grid-area: attack;
         }
 
-        .DamageTypeIcon {
-          vertical-align: text-top;
+        .InlineIcon {
+          vertical-align: text-bottom;
           height: 15px;
         }
         
@@ -182,7 +182,11 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
         onclick="event.stopPropagation()"
       >
         <div class="PokemonDetails">
-          <div class="PokemonName">${this.pokemon.displayName}</div>
+          <div class="PokemonName">${this.pokemon.displayName}
+          <img class="InlineIcon" src="assets/fx/pokeball-${
+            this.pokemon.tier
+          }.png">
+          </div>
           <div class="PokemonStage">${this.pokemon.stage}*</div>
           <div class="PokemonSprite">
             <img src="assets/pokemon/${getBaseTexture(
@@ -200,7 +204,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           <div class="PokemonAttackDetails" title="Basic attack uses ${
             this.pokemon.basicAttack.stat
           } stat and has range ${this.pokemon.basicAttack.range}">
-            <img class="DamageTypeIcon" src="assets/fx/${
+            <img class="InlineIcon" src="assets/fx/${
               this.pokemon.basicAttack.stat === 'attack'
                 ? 'damage-physical'
                 : 'damage-special'
@@ -267,7 +271,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
         <div class="MoveTitle">
           <span class="MoveTitleText">
             <strong>${this.pokemon.move?.displayName}</strong>
-            <img class="DamageTypeIcon" src="assets/fx/damage-${moveType}.png" />
+            <img class="InlineIcon" src="assets/fx/damage-${moveType}.png" />
           </span>
         </div>
         <div class="MoveDetails">
