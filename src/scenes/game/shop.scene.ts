@@ -198,7 +198,6 @@ export class ShopScene extends Phaser.Scene {
       this.pokemonForSale[index].destroy();
       delete this.pokemonForSale[index];
     }
-
     return bought;
   }
 
