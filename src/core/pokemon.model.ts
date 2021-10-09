@@ -1,3 +1,4 @@
+import { getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { Category } from './game.model';
 import { Move } from './move.model';
 import {
@@ -216,7 +217,7 @@ const basePokemonData = {
     speed: 55,
     basicAttack: {
       range: 2,
-      stat: 'attack',
+      stat: 'specAttack',
       projectile: {
         key: 'egg',
         speed: 300,
@@ -792,8 +793,11 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
 
   return {
     ...basePokemon,
-    // effectively sqrt(baseHP) * 100, but rounded down to nearest 50
-    maxHP: Math.floor(2 * Math.sqrt(basePokemon.maxHP) - 1) * 50 * multi,
+    // effectively sqrt(baseHP) * 100, but rounded to nearest 50
+    // most pokemon max HP will range from 700 (50 base HP) to 1000 (100 base HP)
+    maxHP: Math.ceil(2 * Math.sqrt(basePokemon.maxHP) - 1) * 50 * multi,
+    // just the raw base attack / specAttack stats
+    // most range from 70 to 120
     attack: basePokemon.attack * multi,
     specAttack: basePokemon.specAttack * multi,
     stage,
@@ -1564,9 +1568,11 @@ const tiers = {
 
 const ranges: { [k: number]: number } = {};
 
-const attackStats = {
-  attack: 0,
-  specAttack: 0,
+const stats = {
+  attack: [] as number[],
+  specAttack: [] as number[],
+  dps: [] as number[],
+  maxHP: [] as number[],
 };
 
 const defenseTargetting = {
@@ -1587,7 +1593,13 @@ Object.values(basePokemonData).forEach(pokemon => {
     ranges[pokemon.basicAttack.range] = 0;
   }
   ranges[pokemon.basicAttack.range]++;
-  attackStats[pokemon.basicAttack.stat]++;
+  stats[pokemon.basicAttack.stat].push(pokemon[pokemon.basicAttack.stat]);
+  stats.dps.push(
+    pokemon[pokemon.basicAttack.stat] *
+      (1000 / getTurnDelay((pokemon as unknown) as Pokemon))
+  );
+  // copied from getEvolution... whatever
+  stats.maxHP.push(Math.round(2 * Math.sqrt(pokemon.maxHP) - 1) * 50 + 200);
 
   tiers[pokemon.tier]++;
 });
@@ -1595,5 +1607,17 @@ Object.values(basePokemonData).forEach(pokemon => {
 console.log('Synergies:', pokemonPerSynergy);
 console.log('Stages:', tiers);
 console.log('Basic attack ranges:', ranges);
-console.log('Basic attack stats', attackStats);
+console.log('Basic attack stats', {
+  attack: stats.attack.length,
+  specAttack: stats.specAttack.length,
+  averageDamage:
+    [...stats.attack, ...stats.specAttack].reduce((acc, n) => acc + n, 0) /
+    (stats.attack.length + stats.specAttack.length),
+  averageDps: stats.dps.reduce((acc, n) => acc + n, 0) / stats.dps.length,
+});
+
+console.log('hp', {
+  average: stats.maxHP.reduce((acc, n) => acc + n, 0) / stats.maxHP.length,
+});
+
 console.log('Move damage targetting', defenseTargetting);
