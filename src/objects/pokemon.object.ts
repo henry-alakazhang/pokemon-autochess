@@ -252,6 +252,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // add little pips in the HP bar every 333 HP
     this.bars.lineStyle(1, 0x000000, 1);
     const width = Math.round((333 / this.maxHP) * (this.width - 2));
+    if (width <= 0) {
+      // if we accidentally end up with a negative HP or a 0 width for each bar,
+      // the for loop below is going to go infinite. throw instead
+      throw new Error(
+        `Cannot draw HP bars for Pokemon ${this.name}, expected width of bars is ${width}`
+      );
+    }
     for (let x = width; x < this.width - 2; x += width) {
       // full height bars for 1000 increments
       const y = (x / width) % 3 === 0 ? 6 : 4;

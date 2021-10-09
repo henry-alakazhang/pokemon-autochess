@@ -628,7 +628,7 @@ const basePokemonData = {
     categories: [],
     tier: 5,
     // hp, attack, defense, specattack, specdefense get overwritten
-    maxHP: 0,
+    maxHP: 100,
     attack: 0,
     defense: 0,
     specAttack: 0,
