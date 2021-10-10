@@ -50,26 +50,43 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
       .setDepth(-1);
     this.setCount(count);
 
-    // hover text showing the description
-    const tooltipText = new Phaser.GameObjects.Text(
+    // hover text showing the synergy name
+    const tooltipTitleText = new Phaser.GameObjects.Text(
       scene,
       0,
       0,
-      synergyData[category].description,
-      {
-        ...defaultStyle,
-        color: '#FFF',
-        backgroundColor: '#5F7D99',
-        padding: { left: 4, top: 4, right: 4, bottom: 48 },
-      }
+      synergyData[category].displayName,
+      { ...defaultStyle, color: '#FFF', fontStyle: 'bold' }
     );
-    // the tooltip itself is a container with the tooltip and icons containing all the Pokemon.
+    const tooltipText = new Phaser.GameObjects.Text(
+      scene,
+      0,
+      tooltipTitleText.height,
+      synergyData[category].description,
+      { ...defaultStyle, color: '#FFF' }
+    );
+    const tooltipBackground = new Phaser.GameObjects.Rectangle(
+      scene,
+      -4,
+      -4,
+      // fit all the text and images in the background
+      tooltipText.width + 8,
+      tooltipText.height + tooltipTitleText.height + 52,
+      0x5f7d99
+    ).setOrigin(0);
+    // the tooltip itself is a Container with the bg + text + icons containing all the Pokemon.
     this.tooltip = scene.add
       .container(0, 0, [
+        tooltipBackground,
+        tooltipTitleText,
         tooltipText,
         ...pokemonPerSynergy[category].map((name, index) =>
           this.scene.add
-            .image(index * 40 - 10, tooltipText.height - 44, `${name}-mini`)
+            .image(
+              index * 40 - 10,
+              tooltipTitleText.height + tooltipText.height + 2,
+              `${name}-mini`
+            )
             .setOrigin(0)
             // the icons sit about the text background
             .setDepth(1)
@@ -83,7 +100,7 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
     this.background.setInteractive();
     this.background
       .on(Phaser.Input.Events.POINTER_OVER, (pointer: Phaser.Input.Pointer) => {
-        this.tooltip.setX(Math.round(pointer.worldX + 10));
+        this.tooltip.setX(Math.round(pointer.worldX + 20));
         this.tooltip.setY(Math.round(pointer.worldY + 10));
         this.tooltip.setVisible(true);
       })

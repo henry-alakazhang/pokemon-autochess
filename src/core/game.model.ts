@@ -156,7 +156,7 @@ export function getSynergyTier(thresholds: number[], count: number) {
 export const synergyData: { [k in Category]: Synergy } = {
   normal: {
     category: 'normal',
-    displayName: 'Normal',
+    displayName: 'Normal: Pick Up',
     description: `Each Normal-type Pokemon has a 50% chance
 to Pick Up a Pokeball at end of round.
 
@@ -190,7 +190,7 @@ to Pick Up a Pokeball at end of round.
   },
   fire: {
     category: 'fire',
-    displayName: 'Fire',
+    displayName: 'Fire: Blaze',
     description: `Fire-type Pokemon do 50% more damage
 when low on health.
 
@@ -225,12 +225,12 @@ when low on health.
   },
   water: {
     category: 'water',
-    displayName: 'Water',
+    displayName: 'Water: Aqua Ring',
     description: `All Pokemon gain extra PP on hit.
 
-(2) - 1 extra PP
-(4) - 2 extra PP
-(6) - 3 extra PP`,
+ (2) - 1 extra PP
+ (4) - 2 extra PP
+ (6) - 3 extra PP`,
     thresholds: [2, 4, 6],
     onHit({ attacker, flags: { isAttack }, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -248,7 +248,7 @@ when low on health.
   },
   flying: {
     category: 'flying',
-    displayName: 'Flying',
+    displayName: 'Flying: Sky Attack',
     description: `Flying-type Pokemon take less damage from
 moves and attacks which hit an area.
 
@@ -283,7 +283,7 @@ moves and attacks which hit an area.
   },
   grass: {
     category: 'grass',
-    displayName: 'Grass',
+    displayName: 'Grass: Absorb',
     description: `All party members drain life when dealing damage.
 
  (2) - 15% of damage
@@ -309,15 +309,15 @@ moves and attacks which hit an area.
   },
   poison: {
     category: 'poison',
-    displayName: 'Poison',
+    displayName: 'Poison: Poison Point',
     description: `Poison-type Pokemon apply stacks of Poison
 every time they hit or are hit with an attack.
 
 Poison stacks deal 1% of the target's HP
 at the end of each of their turns.
 
-(3) - 1 stack on hit, max 6 stacks
-(6) - 2 stacks on hit, max 12 stacks`,
+ (3) - 1 stack on hit, max 6 stacks
+ (6) - 2 stacks on hit, max 12 stacks`,
     thresholds: [3, 6],
     onHit({ attacker, defender, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -345,13 +345,13 @@ at the end of each of their turns.
   },
   electric: {
     category: 'electric',
-    displayName: 'Electric',
+    displayName: 'Electric: Motor Drive',
     description: `Whenever an Electric-type pokemon uses its move,
-it boosts the Speed of the whole party.
+it raises the Speed of the whole party.
 
-(2) - 10% boost
-(4) - 20% boost
-(6) - 35% boost`,
+ (2) - 10% boost
+ (4) - 20% boost
+ (6) - 35% boost`,
     thresholds: [2, 4, 6],
     onMoveUse({ scene, board, user, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -383,7 +383,7 @@ it boosts the Speed of the whole party.
   },
   ground: {
     category: 'ground',
-    displayName: 'Ground',
+    displayName: 'Ground: Magnitude',
     description: `Ground-type Pokemon deal splash damage on hit.
 33% effective for area attacks.
 
@@ -443,12 +443,12 @@ it boosts the Speed of the whole party.
   },
   psychic: {
     category: 'psychic',
-    displayName: 'Psychic',
+    displayName: 'Psychic: Sniper',
     description: `Psychic-type Pokemon deal more damage
 the further they are from their target.
 
-(2) - 8% damage per square
-(4) - 15% damage per square`,
+ (2) - 8% damage per square
+ (4) - 15% damage per square`,
     thresholds: [2, 4],
     calculateDamage({ attacker, defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
@@ -471,12 +471,12 @@ the further they are from their target.
   },
   rock: {
     category: 'rock',
-    displayName: 'Rock',
+    displayName: 'Rock: Sturdy',
     description: `All Rock-type Pokemon take less damage.
 
-(2) - 20 less damage
-(4) - 35 less damage
-(6) - 65 less damage`,
+ (2) - 20 less damage
+ (4) - 35 less damage
+ (6) - 65 less damage`,
     thresholds: [2, 4, 6],
     calculateDamage({ defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
@@ -496,11 +496,11 @@ the further they are from their target.
   },
   ice: {
     category: 'ice',
-    displayName: 'Ice',
+    displayName: 'Ice: Glaciate',
     description: `All enemy Pokemon are slowed.
 
-(2) - 5% slower
-(3) - 10% slower`,
+ (2) - 5% slower
+ (3) - 10% slower`,
     thresholds: [2, 3],
     onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -520,11 +520,11 @@ the further they are from their target.
   },
   bug: {
     category: 'bug',
-    displayName: 'Bug',
+    displayName: 'Bug: Swarm',
     description: `Makes a copy of the least-evolved Bug-type
 Pokemon at the start of the round.
 
-(3) - One copy`,
+ (3) - One copy`,
     thresholds: [3],
     onRoundStart({ scene, board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -557,10 +557,10 @@ Pokemon at the start of the round.
   },
   dragon: {
     category: 'dragon',
-    displayName: 'Dragon',
+    displayName: 'Dragon: Sheer Force',
     description: `Boosts the power of Dragon-type moves.
 
-(3) - 50% more damage.`,
+ (3) - 50% more damage.`,
     thresholds: [3],
     calculateDamage({ attacker, baseAmount, side, count, flags }): number {
       const tier = getSynergyTier(this.thresholds, count);
@@ -581,7 +581,7 @@ Pokemon at the start of the round.
   },
   ghost: {
     category: 'ghost',
-    displayName: 'Ghost',
+    displayName: 'Ghost: Night Shade',
     // TODO: if this is bullshit, make it deterministic
     // eg. every 4th / 3rd / 2nd attack
     // eg. for X seconds after using a move / critting / being crit
@@ -613,7 +613,7 @@ Pokemon at the start of the round.
   },
   dark: {
     category: 'dark',
-    displayName: 'Dark',
+    displayName: 'Dark: Nasty Plot',
     description: `Innate: ALL Dark-type Pokemon teleport to the opposite
 side of the battlefield at the start of each round.
 
@@ -664,7 +664,7 @@ Synergy: Dark-type Pokemon gain a critical hit ratio.
   },
   steel: {
     category: 'steel',
-    displayName: 'Steel',
+    displayName: 'Steel: Clear Body',
     description: `Makes party members immune to status
 effects at the start of the round.
 
@@ -690,14 +690,13 @@ effects at the start of the round.
   },
   fairy: {
     category: 'fairy',
-    displayName: 'Fairy',
+    displayName: 'Fairy: Crafty Shield',
     description: `All Pokemon have a maximum amount of
 damage they can take from one hit.
 
-(2) - 30% of their max HP
-(3) - 20% of their max HP
-(4) - 10% of their max HP
-`,
+ (2) - 30% of their max HP
+ (3) - 20% of their max HP
+ (4) - 10% of their max HP`,
     thresholds: [2, 4],
     calculateDamage({ defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
@@ -714,15 +713,15 @@ damage they can take from one hit.
   },
   sweeper: {
     category: 'sweeper',
-    displayName: 'Sweeper',
+    displayName: 'Sweeper: Speed Boost',
     description: `Sweepers gain a stack of increasing
 Speed every time they hit with an attack.
 
 Max 4 stacks.
 
-(2) - 5% Speed per stack
-(4) - 10% Speed per stack
-(6) - 20% Speed per stack`,
+ (2) - 5% Speed per stack
+ (4) - 10% Speed per stack
+ (6) - 20% Speed per stack`,
     thresholds: [2, 4, 6],
     onHit({ attacker, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -747,12 +746,12 @@ Max 4 stacks.
   },
   'revenge killer': {
     category: 'revenge killer',
-    displayName: 'Revenge Killer',
+    displayName: 'Revenge Killer: Retaliate',
     description: `Whenever an ally Pokemon faints,
 all Revenge Kilers get an Attack boost.
 
-(2) - 50% Attack once
-(4) - Stacks up to three times`,
+ (2) - 50% Attack once
+ (4) - Stacks up to three times`,
     thresholds: [2, 4],
     onDeath({ scene, board, pokemon, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -802,12 +801,12 @@ all Revenge Kilers get an Attack boost.
   },
   wallbreaker: {
     category: 'wallbreaker',
-    displayName: 'Wallbreaker',
+    displayName: 'Wallbreaker: Infiltrator',
     description: `Wallbreakers ignore some Defenses
 when they deal damage.
 
-(2) - Ignore 40% of Defenses
-(4) - Ignore 70% of Defenses`,
+ (2) - Ignore 40% of Defenses
+ (4) - Ignore 70% of Defenses`,
     thresholds: [2, 4],
     calculateDamage({
       attacker,
@@ -863,12 +862,12 @@ when they deal damage.
   },
   'bulky attacker': {
     category: 'bulky attacker',
-    displayName: 'Bulky Attacker',
+    displayName: 'Bulky Attacker: Thick Fat',
     description: `Bulky Attackers have more HP.
 
-(2) - 300 bonus HP
-(4) - 800 bonus HP
-(6) - 1800 bonus HP`,
+ (2) - 300 bonus HP
+ (4) - 800 bonus HP
+ (6) - 1800 bonus HP`,
     thresholds: [2, 4, 6],
     onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -891,14 +890,14 @@ when they deal damage.
   },
   wall: {
     category: 'wall',
-    displayName: 'Wall',
+    displayName: 'Wall: Wide Guard',
     description: `Walls have more of their better Defense.
 Half the bonus is shared with adjacent allies
 at round start.
 
-(2) - 20 to self, half to allies
-(4) - 50 to self
-(6) - 80 to self`,
+ (2) - 20 to self, half to allies
+ (4) - 50 to self
+ (6) - 80 to self`,
     thresholds: [2, 4, 6],
     onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -939,7 +938,7 @@ at round start.
   },
   disruptor: {
     category: 'disruptor',
-    displayName: 'Disruptor',
+    displayName: 'Disruptor: Prankster',
     description: `Disruptors reduce PP gain and healing
 for 3 seconds when they hit with their move.
 
@@ -966,12 +965,12 @@ for 3 seconds when they hit with their move.
   },
   support: {
     category: 'support',
-    displayName: 'Support',
+    displayName: 'Support: Skill Swap',
     description: `Whenever a Support uses its move,
 it shares PP with non-Support allies.
 
-(2) - 20% of the move to all
-(3) - 33% of the move to all`,
+ (2) - 20% of the move to all
+ (3) - 33% of the move to all`,
     thresholds: [2, 3],
     onMoveUse({ board, user, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -997,9 +996,9 @@ it shares PP with non-Support allies.
   },
   pivot: {
     category: 'pivot',
-    displayName: 'Pivot',
+    displayName: 'Pivot: U-Turn',
     description: `
-(3) - At the start of combat, all Pivots
+ (3) - At the start of combat, all Pivots
 switch out to the Regigigas Mech.
 They switch back in when it faints.
 
@@ -1115,7 +1114,7 @@ has all of their types combined together.`,
   },
   utility: {
     category: 'utility',
-    displayName: 'Utility',
+    displayName: 'Utility - Stockpile',
     description: `Utility Pokemon regenerate HP or PP,
 whichever one is lower.
 
