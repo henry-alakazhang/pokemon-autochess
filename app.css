@@ -5,10 +5,25 @@
 .body {
   background-color: black;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
   width: 100%;
+}
+
+.description {
+  font-family: 'Anonymous Pro';
+  color: #dddddd;
+  max-width: 800px;
+}
+
+a:link {
+  color: #78d1fa;
+}
+
+a:visited {
+  color: #c678fa;
 }
 
 canvas {
