@@ -23,6 +23,8 @@ export type Status =
   | 'statusImmunity'
   | 'immobile'
   | 'movePowerBoost'
+  | 'ppReduction'
+  | 'healReduction'
   /** the user can't gain PP because their move is active right now */
   | 'moveIsActive';
 
@@ -938,8 +940,29 @@ at round start.
   disruptor: {
     category: 'disruptor',
     displayName: 'Disruptor',
-    description: 'Does nothing.',
-    thresholds: [3],
+    description: `Disruptors reduce PP gain and healing
+for 3 seconds when they hit with their move.
+
+ (2) - 30% less PP gain
+ (3) - and 50% less healing
+ (4) - 50% for both`,
+    thresholds: [2, 4],
+    onHit({ attacker, defender, flags: { isAttack }, count }) {
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      if (!attacker.basePokemon.categories.includes('disruptor') || isAttack) {
+        return;
+      }
+
+      const ppReduction = tier === 3 ? 0.5 : 0.3;
+      const healReduction = tier >= 2 ? 0.5 : 0;
+
+      defender.addStatus('ppReduction', 3000, ppReduction);
+      defender.addStatus('healReduction', 3000, healReduction);
+    },
   },
   support: {
     category: 'support',

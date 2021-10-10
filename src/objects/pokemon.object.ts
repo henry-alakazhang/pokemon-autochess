@@ -335,7 +335,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       return;
     }
 
-    this.currentHP = Math.min(this.maxHP, this.currentHP + amount);
+    const mult = 1 - (this.status.healReduction?.value ?? 0);
+
+    this.currentHP = Math.min(
+      this.maxHP,
+      Math.round(this.currentHP + amount * mult)
+    );
     this.redrawBars();
   }
 
@@ -444,7 +449,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (this.maxPP && this.currentPP < this.maxPP) {
-      this.currentPP = Math.min(this.maxPP, this.currentPP + amount);
+      const mult = 1 - (this.status.ppReduction?.value ?? 0);
+      this.currentPP = Math.min(this.maxPP, this.currentPP + amount * mult);
     }
     return this;
   }
