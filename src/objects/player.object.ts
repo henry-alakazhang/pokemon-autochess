@@ -56,6 +56,9 @@ export class Player extends Phaser.GameObjects.GameObject {
   synergies: { category: Category; count: number }[] = [];
   synergyMarkers: { [k in Category]?: SynergyMarker } = {};
 
+  /** Used mostly for AI to quickly determine if a synergy exists or not */
+  synergyMap: { [k in Category]?: number } = {};
+
   readonly pool: ShopPool;
   currentShop: PokemonName[];
 
@@ -199,6 +202,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   sellPokemon(pokemon: PokemonObject) {
+    console.log('player', this.playerName, 'sold', pokemon.basePokemon.name);
     if (pokemon.basePokemon.stage === 1) {
       this.gold += pokemon.basePokemon.tier;
     } else if (pokemon.basePokemon.stage === 2) {
@@ -405,6 +409,7 @@ export class Player extends Phaser.GameObjects.GameObject {
           synergyMap[category] = newValue;
         });
       });
+    this.synergyMap = synergyMap;
     // convert to an array of existing synergies
     this.synergies = Object.entries(synergyMap)
       .map(([category, count]) =>
@@ -467,6 +472,8 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   takeEnemyTurn() {
+    console.log(`${this.playerName}'s turn: ${this.aiStrategy.name}`);
+
     this.currentShop = this.pool.reroll(this, this.currentShop);
 
     this.aiStrategy.decideBuys(this).forEach(pokemon => {
@@ -535,5 +542,10 @@ export class Player extends Phaser.GameObjects.GameObject {
         selectedPokemon
       );
     });
+
+    // sell any pokemon (if relevant)
+    this.aiStrategy
+      .decideSells?.(this)
+      .forEach(toSell => this.sellPokemon(toSell));
   }
 }

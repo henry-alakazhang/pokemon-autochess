@@ -14,6 +14,7 @@ import {
 } from './combat/combat.scene';
 import {
   BOARD_WIDTH,
+  calculateBoardStrength,
   CELL_WIDTH,
   GameMode,
   getRandomNames,
@@ -421,11 +422,12 @@ export class GameScene extends Phaser.Scene {
             this.startDowntime();
           });
       } else {
-        // AI players: after combat ends, randomly determine a winner
+        // AI players: after combat ends, determine a winner based on how good their board
         this.scene
           .get(CombatScene.KEY)
           .events.once(CombatScene.Events.COMBAT_END, () => {
-            const won = Math.random() < 0.5;
+            const won =
+              calculateBoardStrength(player1) > calculateBoardStrength(player2);
             this.handleCombatResult(player1, won);
             this.handleCombatResult(player2, !won);
           });
