@@ -1,4 +1,7 @@
+import { getSynergyTier, synergyData } from '../../core/game.model';
+import { getPokemonStrength } from '../../core/pokemon.helpers';
 import { PokemonName } from '../../core/pokemon.model';
+import { flatten, isDefined } from '../../helpers';
 import { Player } from '../../objects/player.object';
 import { Coords } from './combat/combat.helpers';
 
@@ -184,4 +187,18 @@ export function getRandomNames(amount: number): string[] {
   ];
 
   return shuffle(names, amount).slice(0, amount);
+}
+
+export function calculateBoardStrength(player: Player): number {
+  const totalStrength = flatten(player.mainboard)
+    .filter(isDefined)
+    .map(pokemon => getPokemonStrength(pokemon.basePokemon))
+    .reduce((a, b) => a + b, 0);
+  const totalSynergyTiers = player.synergies
+    .map(synergy =>
+      getSynergyTier(synergyData[synergy.category].thresholds, synergy.count)
+    )
+    .reduce((a, b) => a + 2 ** (b - 1), 0);
+
+  return totalStrength + totalSynergyTiers;
 }
