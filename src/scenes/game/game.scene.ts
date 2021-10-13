@@ -1,6 +1,6 @@
 import { synergyData } from '../../core/game.model';
 import { buyablePokemon, pokemonData } from '../../core/pokemon.model';
-import { flatten } from '../../helpers';
+import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
@@ -396,24 +396,48 @@ export class GameScene extends Phaser.Scene {
     console.log('PAIRINGS', pairings);
     pairings.forEach(pairing => {
       let [player1, player2] = [pairing[0], pairing[1]];
+      // neither is a real player: skip
+      if (!isDefined(player1) && !isDefined(player2)) {
+        return;
+      }
+
       // force human player to be player 1
       if (player2 === this.humanPlayer) {
         [player1, player2] = [player2, player1];
       }
 
-      if (player1 === this.humanPlayer) {
+      // if either are undefined, set them to random ghost players
+      // Ghost players use another player's board and name,
+      // but don't cause that player to take damage if they lose.
+      const pair1 = {
+        isReal: isDefined(player1),
+        player: isDefined(player1)
+          ? player1
+          : this.players[Math.floor(Math.random() * this.players.length)],
+      };
+      const pair2 = {
+        isReal: isDefined(player2),
+        player: isDefined(player2)
+          ? player2
+          : this.players[Math.floor(Math.random() * this.players.length)],
+      };
+
+      if (pair1.player === this.humanPlayer) {
         // human player: show combat
         this.scene.launch(CombatScene.KEY, {
-          player: player1,
-          enemy: player2,
+          player: pair1.player,
+          enemy: pair2.player,
         } as CombatSceneData);
         this.scene
           .get(CombatScene.KEY)
           .events.once(
             CombatScene.Events.COMBAT_END,
             ({ winner }: CombatEndEvent) => {
-              this.handleCombatResult(player1, winner === 'player');
-              this.handleCombatResult(player2, winner === 'enemy');
+              this.handleCombatResult(pair1.player, winner === 'player');
+              // apply state to player 2 if they're a real player
+              if (pair2.isReal) {
+                this.handleCombatResult(pair2.player, winner === 'enemy');
+              }
             }
           );
         this.scene
@@ -427,9 +451,15 @@ export class GameScene extends Phaser.Scene {
           .get(CombatScene.KEY)
           .events.once(CombatScene.Events.COMBAT_END, () => {
             const won =
-              calculateBoardStrength(player1) > calculateBoardStrength(player2);
-            this.handleCombatResult(player1, won);
-            this.handleCombatResult(player2, !won);
+              calculateBoardStrength(pair1.player) >
+              calculateBoardStrength(pair2.player);
+            // apply to whichever players are real
+            if (pair1.isReal) {
+              this.handleCombatResult(pair1.player, won);
+            }
+            if (pair2.isReal) {
+              this.handleCombatResult(pair2.player, !won);
+            }
           });
       }
     });
@@ -450,10 +480,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDowntime() {
-    // TODO: handle other players losing
     if (this.humanPlayer.hp <= 0) {
       this.add
-        .text(GRID_X, GRID_Y, `YOU LOSE`, {
+        .text(GRID_X, GRID_Y, `YOU PLACED #${this.players.length}`, {
           ...defaultStyle,
           backgroundColor: '#000',
           fontSize: '40px',
@@ -469,11 +498,10 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
-    // other players that are still alive
-    const remainingPlayers = this.players.filter(
-      player => player !== this.humanPlayer && player.hp > 0
-    );
-    if (remainingPlayers.length <= 0) {
+    // remove any dead players
+    // note: disabling the player is handled by the player object
+    this.players = this.players.filter(player => player.hp > 0);
+    if (this.players.length <= 1) {
       this.add
         .text(GRID_X, GRID_Y, `YOU WIN!!`, {
           ...defaultStyle,
@@ -576,9 +604,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
-   * Randomise pairings and return an index -> index mapping
+   * Randomise pairings and return a list of pairs [index, index]
+   *
+   * If there aren't enough players, some of them will be undefined
    */
-  matchmakePairings(): [Player, Player][] {
+  matchmakePairings(): [Player | undefined, Player | undefined][] {
     // literally just shuffle it and return pairs
     // TODO: prevent the same players playing too often.
     const order = shuffle(this.players.map((_, index) => index)).map(

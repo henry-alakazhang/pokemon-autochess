@@ -104,7 +104,9 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   update() {
     this.nameInList.setText(
-      `${this.playerName} - ${this.hp} ${this.visible ? '👁️' : ''}`
+      `${this.playerName} - ${this.hp} ${this.visible ? '👁️' : ''} ${
+        this.hp <= 0 ? '❌' : ''
+      }`
     );
   }
 
@@ -133,6 +135,13 @@ export class Player extends Phaser.GameObjects.GameObject {
       this.hp -= gameStage.damage();
     }
     this.gold += gameStage.gold(this, won, Math.abs(this.streak));
+
+    // if player lost, disable them
+    if (this.hp <= 0) {
+      this.hp = 0;
+      // grey the name out and prevent viewing board
+      this.nameInList.setColor('#aaaaaa').disableInteractive();
+    }
   }
 
   /**
