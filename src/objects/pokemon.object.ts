@@ -1,6 +1,7 @@
 import { Status } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';
+import { boundRange } from '../math.helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { FloatingText } from './floating-text.object';
 import { PokemonCard } from './pokemon-card.object';
@@ -13,6 +14,45 @@ interface SpriteParams {
   readonly frame?: string | number;
   readonly side: 'player' | 'enemy';
 }
+
+/**
+ * Stat changes, calculated as stages like Pokemon
+ * Each stage is worth 25% more/less
+ *
+ * ```
+ * 8 = 12/4 (300%)
+ * 4 = 8/4 (200%)
+ * 2 = 6/4 (150%)
+ * 0 = 4/4 (100%)
+ * -2 = 4/6 (66%)
+ * -4 = 4/8 (50%)
+ * -8 = 4/12 (33%)
+ * ```
+ */
+type StatChange =
+  | -8
+  | -7
+  | -6
+  | -5
+  | -4
+  | -3
+  | -2
+  | -1
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8;
+type ModifiableStat =
+  | 'attack'
+  | 'defense'
+  | 'specAttack'
+  | 'specDefense'
+  | 'speed';
 
 export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
@@ -30,7 +70,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   isOutlined = false;
 
   name: PokemonName;
+  /**
+   * The "base" Pokemon for an object.
+   * Used for external access to combat stats, move, and other things.
+   */
   basePokemon: Pokemon;
+  /**
+   * The original basePokemon object, reffed straight from the Pokemon data.
+   * Used alongside stat changes to calculate the actual basePokemon stats.
+   */
+  private rawBasePokemon: Pokemon;
 
   /** HP and PP bars above the Pokemon */
   bars: Phaser.GameObjects.Graphics;
@@ -59,6 +108,27 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       duration: number;
     };
   } = {};
+
+  /**
+   * Stat changes, calculated as stages like Pokemon (see: StatChanges type def)
+   */
+  statChanges: { [k in ModifiableStat]: StatChange } = {
+    attack: 0,
+    defense: 0,
+    specAttack: 0,
+    specDefense: 0,
+    speed: 0,
+  };
+  /**
+   * Stat changes, calcualted as flat additions before stage multiplication
+   */
+  flatStatChanges: { [k in ModifiableStat]: number } = {
+    attack: 0,
+    defense: 0,
+    specAttack: 0,
+    specDefense: 0,
+    speed: 0,
+  };
 
   /**
    * State stored for synergies. Each synergy stores whatever it needs to track.
@@ -91,7 +161,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // generate a random ID
     this.id = generateId();
     this.name = params.name;
-    this.basePokemon = pokemonData[params.name];
+    this.rawBasePokemon = pokemonData[params.name];
+    this.basePokemon = this.rawBasePokemon;
 
     // load data from Pokemon data
     this.maxHP = this.basePokemon.maxHP;
@@ -464,29 +535,44 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /**
    * Adjust any of a Pokemon's stats by a provided %
    */
-  public changeStats({
-    attack = 1,
-    defense = 1,
-    specAttack = 1,
-    specDefense = 1,
-    speed = 1,
-  }: {
-    attack?: number;
-    defense?: number;
-    specAttack?: number;
-    specDefense?: number;
-    speed?: number;
-  }) {
-    // this is a bit hacky, but we just override the base Pokemon with a new object.
-    // TODO (if needed?) implement some proper stat-stage tracking thing
-    this.basePokemon = {
-      ...this.basePokemon,
-      attack: this.basePokemon.attack * attack,
-      defense: this.basePokemon.defense * defense,
-      specAttack: this.basePokemon.specAttack * specAttack,
-      specDefense: this.basePokemon.specDefense * specDefense,
-      speed: this.basePokemon.speed * speed,
-    };
+  public changeStats(
+    changes: {
+      [k in ModifiableStat]?: StatChange;
+    },
+    duration?: number
+  ) {
+    // apply any changes that are provided
+    (Object.entries(changes) as [ModifiableStat, StatChange][]).forEach(
+      ([stat, change]) => {
+        this.statChanges[stat] = boundRange(
+          this.statChanges[stat] + change,
+          -8,
+          8
+        ) as StatChange;
+      }
+    );
+
+    this.recalculateStats();
+
+    // if doesn't last forever, set the inverse after some time
+    if (duration) {
+      this.scene.time.addEvent({
+        delay: duration,
+        callback: () => {
+          this.changeStats({
+            attack: (changes.attack ? -changes.attack : 0) as StatChange,
+            defense: (changes.defense ? -changes.defense : 0) as StatChange,
+            specAttack: (changes.specAttack
+              ? -changes.specAttack
+              : 0) as StatChange,
+            specDefense: (changes.specDefense
+              ? -changes.specDefense
+              : 0) as StatChange,
+            speed: (changes.speed ? -changes.speed : 0) as StatChange,
+          });
+        },
+      });
+    }
   }
 
   /**
@@ -507,17 +593,56 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     specDefense?: number;
     speed?: number;
   }) {
-    // this is a bit hacky, but we just override the base Pokemon with a new object.
-    // TODO (if needed?) implement some proper stat-stage tracking thing
+    this.flatStatChanges.attack += attack;
+    this.flatStatChanges.defense += defense;
+    this.flatStatChanges.specAttack += specAttack;
+    this.flatStatChanges.specDefense += specDefense;
+    this.flatStatChanges.speed += speed;
+
+    // update max and current HP immediately
     this.maxHP += maxHP;
     this.currentHP += maxHP;
+
+    this.recalculateStats();
+  }
+
+  /**
+   * Recalculates the Pokemon's base stats based on their raw base stats,
+   * flat stat adjustments and stat multiplier stages
+   */
+  private recalculateStats() {
+    /**
+     * Returns % change for a given stat stage
+     *
+     * stage + 4 / 4 for positive (ie. each boost gives a flat 25% increase)
+     * 4 / stage - 4 for negative (ie. each drop gives a 1/1.25 decrease)
+     */
+    const getChange = (stage: StatChange) => {
+      // unaffected by stat reductions if immune to negative statuses
+      if (this.status.statusImmunity && stage < 0) {
+        return 1;
+      }
+
+      return stage > 0 ? (stage + 4) / 4 : 4 / Math.abs(stage - 4);
+    };
+
     this.basePokemon = {
       ...this.basePokemon,
-      attack: this.basePokemon.attack + attack,
-      defense: this.basePokemon.defense + defense,
-      specAttack: this.basePokemon.specAttack + specAttack,
-      specDefense: this.basePokemon.specDefense + specDefense,
-      speed: this.basePokemon.speed + speed,
+      attack:
+        (this.rawBasePokemon.attack + this.flatStatChanges.attack) *
+        getChange(this.statChanges.attack),
+      defense:
+        (this.rawBasePokemon.defense + this.flatStatChanges.defense) *
+        getChange(this.statChanges.defense),
+      specAttack:
+        (this.rawBasePokemon.specAttack + this.flatStatChanges.specAttack) *
+        getChange(this.statChanges.specAttack),
+      specDefense:
+        (this.rawBasePokemon.specDefense + this.flatStatChanges.specDefense) *
+        getChange(this.statChanges.specDefense),
+      speed:
+        (this.rawBasePokemon.speed + this.flatStatChanges.speed) *
+        getChange(this.statChanges.speed),
     };
   }
 

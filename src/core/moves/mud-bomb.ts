@@ -23,7 +23,7 @@ const move = {
   get description() {
     return `{{user}} launches a hard-packed mud ball at single enemy, dealing ${this.damage.join(
       '/'
-    )} damage and slowing its Speed for 4 seconds. Adjacent enemies take half damage and aren't slowed.`;
+    )} damage and slowing its Speed for 5 seconds. Adjacent enemies take half damage and aren't slowed.`;
   },
   async use({
     board,
@@ -58,16 +58,13 @@ const move = {
           defenseStat: this.defenseStat,
         });
         scene.causeDamage(user, target, damage, { isAOE: true });
-        // fixme: make this a proper status
-        // reduce speed now, then restore speed after 5 seconds
-        target.changeStats({ speed: 0.5 });
+        target.changeStats({ speed: -1 }, 5000);
         scene.time.addEvent({
           callback: () => {
-            // clean up ground effect after slow wears off
+            // clean up ground effect when slow wears off
             bomb.destroy();
-            target.changeStats({ speed: 2 });
           },
-          delay: 4000,
+          delay: 5000,
         });
 
         // deal damage to possible adjacent targets

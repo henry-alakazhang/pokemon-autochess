@@ -22,7 +22,7 @@ const move = {
   get description() {
     return `{{user}} hurls a shadowy blob in a straight line, dealing ${this.damage.join(
       '/'
-    )} damage to every enemy hit and lowering their Sp. Defense by 50% until end of combat.`;
+    )} damage to every enemy hit and lowering their Sp. Defense for 10 seconds.`;
   },
   range: 1,
   use({
@@ -76,9 +76,12 @@ const move = {
               });
               scene.causeDamage(user, target, damage, { isAOE: true });
               // TODO: don't apply this more than once ever
-              target.changeStats({
-                specDefense: 0.5,
-              });
+              target.changeStats(
+                {
+                  specDefense: -1,
+                },
+                10000
+              );
               hasBeenHit[target.id] = true;
             });
           },

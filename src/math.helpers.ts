@@ -93,3 +93,7 @@ export function interpolateLineAOE(
     ? interpolateVertical(p1, p2, width)
     : interpolateVertical(p2, p1, width);
 }
+
+export function boundRange(value: number, min: number, max: number) {
+  return Math.max(Math.min(value, max), min);
+}

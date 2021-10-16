@@ -24,7 +24,7 @@ const move = {
   get description() {
     return `{{user}} drenches all status-afflicted enemies in poison, dealing ${this.damage.join(
       '/'
-    )} damage and lowering a random stat by 25%. Poisoned enemies take double damage.`;
+    )} damage and PERMANENTLY lowering a random stat. Poisoned enemies take double damage.`;
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {
@@ -53,7 +53,14 @@ const move = {
           (pokemon.status.paralyse ||
             pokemon.status.poison ||
             pokemon.status.blind ||
-            pokemon.status.sleep)
+            pokemon.status.sleep ||
+            pokemon.status.ppReduction ||
+            pokemon.status.healReduction ||
+            pokemon.statChanges.attack < 0 ||
+            pokemon.statChanges.defense < 0 ||
+            pokemon.statChanges.specAttack < 0 ||
+            pokemon.statChanges.specDefense < 0 ||
+            pokemon.statChanges.speed < 0)
       );
 
     targets.forEach(target => {
@@ -65,7 +72,7 @@ const move = {
         });
       const statToLower = stats[Math.floor(Math.random() * stats.length)];
       target.changeStats({
-        [statToLower]: 0.75,
+        [statToLower]: -1,
       });
 
       const damage = calculateDamage(user, target, {

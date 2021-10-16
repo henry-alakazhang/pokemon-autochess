@@ -347,12 +347,11 @@ at the end of each of their turns.
     category: 'electric',
     displayName: 'Electric: Motor Drive',
     description: `Whenever an Electric-type pokemon uses its move,
-it raises the Speed of the whole party.
+it raises the Speed of other nearby allies.
 
- (2) - 10% boost
- (4) - 20% boost
- (6) - 35% boost`,
-    thresholds: [2, 4, 6],
+ (2) - within 1 tile
+ (4) - within 2 tiles`,
+    thresholds: [2, 4],
     onMoveUse({ scene, board, user, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
@@ -363,11 +362,17 @@ it raises the Speed of the whole party.
         return;
       }
 
-      const boost = tier === 1 ? 1.05 : tier === 2 ? 1.15 : 1.25;
+      const range = tier === 1 ? 1 : 2;
 
       flatten(board)
         .filter(pokemon => pokemon?.side === user.side)
         .filter(isDefined)
+        // FIXME: a visual distance is a bit hacky
+        .filter(
+          pokemon =>
+            pokemon !== user &&
+            Math.round(getGridDistance(pokemon, user) / 70) <= range
+        )
         .forEach(pokemon => {
           const cog = scene.add
             .sprite(pokemon.x, pokemon.y, 'cog')
@@ -376,7 +381,7 @@ it raises the Speed of the whole party.
               cog.destroy();
             });
           pokemon.changeStats({
-            speed: boost,
+            speed: +1,
           });
         });
     },
@@ -497,23 +502,27 @@ the further they are from their target.
   ice: {
     category: 'ice',
     displayName: 'Ice: Glaciate',
-    description: `All enemy Pokemon are slowed.
+    description: `At the start of the round, all enemy Pokemon
+have their Speed lowered for a duration.
 
- (2) - 5% slower
- (3) - 10% slower`,
+ (2) - 4 seconds
+ (3) - 6 seconds`,
     thresholds: [2, 3],
     onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
       }
-      const slow = tier === 1 ? 0.95 : 0.9;
+      const duration = tier === 1 ? 4000 : 6000;
 
       flatten(board).forEach(pokemon => {
         if (pokemon && pokemon.side !== side) {
-          pokemon.changeStats({
-            speed: slow,
-          });
+          pokemon.changeStats(
+            {
+              speed: -1,
+            },
+            duration
+          );
         }
       });
     },
@@ -714,14 +723,12 @@ damage they can take from one hit.
   sweeper: {
     category: 'sweeper',
     displayName: 'Sweeper: Speed Boost',
-    description: `Sweepers gain a stack of increasing
-Speed every time they hit with an attack.
+    description: `Sweepers raise their Speed every other
+time they hit an opponent.
 
-Max 4 stacks.
-
- (2) - 5% Speed per stack
- (4) - 10% Speed per stack
- (6) - 20% Speed per stack`,
+ (2) - up to 2 times
+ (4) - up to 3 times
+ (6) - up to 4 times`,
     thresholds: [2, 4, 6],
     onHit({ attacker, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -729,28 +736,28 @@ Max 4 stacks.
         return;
       }
 
-      const perStack = tier === 1 ? 0.05 : tier === 2 ? 0.1 : 0.2;
+      const maxStacks = tier === 1 ? 2 : tier === 2 ? 3 : 4;
 
       if (
         attacker.basePokemon.categories.includes('sweeper') &&
-        // up to 4 stacks
-        attacker.synergyState.sweeper < 4
+        attacker.synergyState.sweeper < maxStacks * 2
       ) {
-        // bonus is additive, so calculate relative to previous increase
-        const currentBonus = 1 + perStack * attacker.synergyState.sweeper;
-        const newBonus = 1 + perStack * (attacker.synergyState.sweeper + 1);
-        attacker.changeStats({ speed: newBonus / currentBonus });
+        // count each hit,
         attacker.synergyState.sweeper++;
+        // buff every second hit
+        if (attacker.synergyState.sweeper % 2 === 0) {
+          attacker.changeStats({ speed: +1 });
+        }
       }
     },
   },
   'revenge killer': {
     category: 'revenge killer',
     displayName: 'Revenge Killer: Retaliate',
-    description: `Whenever an ally Pokemon faints,
-all Revenge Kilers get an Attack boost.
+    description: `Whenever an ally Pokemon faints, all Revenge Kilers
+boost their Attack, Special Attack and Speed.
 
- (2) - 50% Attack once
+ (2) - Stacks once
  (4) - Stacks up to three times`,
     thresholds: [2, 4],
     onDeath({ scene, board, pokemon, side, count }) {
@@ -792,7 +799,7 @@ all Revenge Kilers get an Attack boost.
               duration: 250,
               yoyo: true,
             });
-            boardPokemon.changeStats({ attack: 1.5 });
+            boardPokemon.changeStats({ attack: +1, specAttack: +1, speed: +1 });
             boardPokemon.synergyState.revengeKiller++;
           }
         });
