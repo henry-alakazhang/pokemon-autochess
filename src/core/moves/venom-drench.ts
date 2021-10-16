@@ -24,7 +24,7 @@ const move = {
   get description() {
     return `{{user}} drenches all status-afflicted enemies in poison, dealing ${this.damage.join(
       '/'
-    )} damage and lowering a random stat by 25%. Poisoned enemies take double damage.`;
+    )} damage and PERMANENTLY lowering a random stat. Poisoned enemies take double damage.`;
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {
@@ -65,7 +65,7 @@ const move = {
         });
       const statToLower = stats[Math.floor(Math.random() * stats.length)];
       target.changeStats({
-        [statToLower]: 0.75,
+        [statToLower]: -1,
       });
 
       const damage = calculateDamage(user, target, {

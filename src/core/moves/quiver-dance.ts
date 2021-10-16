@@ -16,7 +16,7 @@ const move = {
   range: 1,
   targetting: 'ground',
   get description() {
-    return `{{user}} dances to boost its Sp. Attack, Sp. Defense and Speed by 50% for the rest of the battle.`;
+    return `{{user}} dances to sharply raise its Sp. Attack, Sp. Defense and Speed PERMANENTLY.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;
@@ -46,9 +46,9 @@ const move = {
         yoyo: true,
         onComplete: () => {
           user.changeStats({
-            specAttack: 1.5,
-            specDefense: 1.5,
-            speed: 1.5,
+            specAttack: +2,
+            specDefense: +2,
+            speed: +2,
           });
           onComplete();
         },

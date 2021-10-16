@@ -28,7 +28,7 @@ const move = {
   get description() {
     return `{{user}} leaps into the air and transforms into its Therian Forme. Then it slams down, dealing ${this.damage.join(
       '/'
-    )} damage to a large area and Intimidating them, lowering their Attack by 25%. Does more damage when used in Therian Forme.`;
+    )} damage to a large area and Intimidating them, lowering their Attack for 8 seconds. Does more damage when used in Therian Forme.`;
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {
@@ -104,8 +104,8 @@ const move = {
             user.setTexture('landorustherian');
             user.play('landorustherian--down');
             user.changeStats({
-              attack: 1.25,
-              speed: 0.9,
+              attack: +1,
+              speed: -1,
             });
           } else {
             // if transformed, deal more damage
@@ -144,7 +144,7 @@ const move = {
                   scene.causeDamage(user, possibleTarget, damage, {
                     isAOE: true,
                   });
-                  possibleTarget.changeStats({ attack: 0.75 });
+                  possibleTarget.changeStats({ attack: -1 }, 8000);
                 }
               };
 

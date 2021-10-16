@@ -23,7 +23,7 @@ const move = {
   get description() {
     return `{{user}} guards for 3 seconds, reducing incoming damage by ${this.damage.join(
       '/'
-    )}%. Afterwards, it lashes out, lowering Attack of nearby enemies by 25% and raising its own Attack and Speed by 25% for each enemy hit.`;
+    )}%. Afterwards, it lashes out, lowering Attack of nearby enemies for 8 seconds and raising its own Attack and Speed for each enemy hit.`;
   },
   getAOE({ x, y }: Coords) {
     return [
@@ -126,16 +126,22 @@ const move = {
 
         targets.forEach(target => {
           // reduce their attack
-          target.changeStats({
-            attack: 0.75,
-          });
+          target.changeStats(
+            {
+              attack: -1,
+            },
+            8000
+          );
         });
-        // increase self attack/speed based on targets hit, minimum 25%.
-        const targetsHit = Math.max(targets.length, 1);
-        user.changeStats({
-          attack: 1 + targetsHit * 0.25,
-          speed: 1 + targetsHit * 0.25,
-        });
+        // increase self attack/speed by one stack, or 2 if it hit 2+ targets
+        const targetsHit = targets.length >= 2 ? 2 : 1;
+        user.changeStats(
+          {
+            attack: targetsHit,
+            speed: targetsHit,
+          },
+          8000
+        );
       },
     });
   },

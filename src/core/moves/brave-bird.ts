@@ -12,13 +12,13 @@ const move = {
   flags: {},
   damage: [30, 55, 90],
   get description() {
-    return `While above 50% health, {{user}} gets a 50% Speed boost. While below 50% health, it becomes brave, getting a 50% Attack boost and recovers ${this.damage.join(
+    return `{{user}} raises its speed while above 50% health. While below 50% health, raises its Attack instead, and recovers ${this.damage.join(
       '/'
     )} HP on hit.`;
   },
   onRoundStart({ self }: { self: PokemonObject }) {
     self.moveState = 'fast';
-    self.changeStats({ speed: 1.5 });
+    self.changeStats({ speed: +1 });
   },
   onBeingHit({ defender }: { defender: PokemonObject }) {
     // bit cheesy: toggle the buff state based on hp after being hit
@@ -28,7 +28,7 @@ const move = {
       defender.currentHP / defender.maxHP < 0.5
     ) {
       defender.moveState = 'slow';
-      defender.changeStats({ attack: 1.5, speed: 1 / 1.5 });
+      defender.changeStats({ attack: +1, speed: -1 });
     }
 
     if (
@@ -36,7 +36,7 @@ const move = {
       defender.currentHP / defender.maxHP > 0.5
     ) {
       defender.moveState = 'fast';
-      defender.changeStats({ attack: 1 / 1.5, speed: 1.5 });
+      defender.changeStats({ attack: -1, speed: +1 });
     }
   },
   onHit({ attacker }: { attacker: PokemonObject }) {
