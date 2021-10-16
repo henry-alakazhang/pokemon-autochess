@@ -61,7 +61,7 @@ const move = {
           // adding moveIsActive here will refresh the duration
           // so it lasts the same as everything else
           .addStatus('moveIsActive', DURATION)
-          .addStatus('percentDamageReduction', DURATION, 40);
+          .addStatus('percentDamageReduction', DURATION, 50);
 
         const damageProc = () => {
           const userCoords = scene.getBoardLocationForPokemon(user);
