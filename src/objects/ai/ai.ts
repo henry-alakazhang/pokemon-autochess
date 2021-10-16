@@ -79,62 +79,64 @@ function genericDecideSells(player: Player) {
     if (
       (totalCopies[pokemonName] ?? 0) > (totalCopies[rerollTarget] ?? 0) &&
       // if we already capped them, they're not a reroll target anymore
-      (totalCopies[pokemonName] ?? 0) < 9
+      (totalCopies[pokemonName] ?? 0) < 9 &&
+      // don't bother trying to 3* a 4- or 5-cost; it's not gonna happen
+      pokemonData[pokemonName].tier >= 4
     ) {
       rerollTarget = pokemonName;
     }
   });
 
-  return player.sideboard.filter(isDefined).filter(pokemon => {
-    // if already have a 3* version, sell
-    if ((totalCopies[pokemon.basePokemon.base] ?? 0) >= 9) {
-      return true;
-    }
+  return (
+    player.sideboard
+      .filter(isDefined)
+      .filter(pokemon => {
+        // if already have a 3* version, sell
+        if ((totalCopies[pokemon.basePokemon.base] ?? 0) >= 9) {
+          return true;
+        }
 
-    // if not rerolling for that Pokemon and have excess copies, sell
-    if (
-      (totalCopies[pokemon.basePokemon.base] ?? 0) > 3 &&
-      pokemon.basePokemon.base !== rerollTarget
-    ) {
-      return true;
-    }
+        // if not rerolling for that Pokemon and have excess copies, sell
+        if (
+          (totalCopies[pokemon.basePokemon.base] ?? 0) > 3 &&
+          pokemon.basePokemon.base !== rerollTarget
+        ) {
+          return true;
+        }
 
-    // if doesn't contribute to ANY on-board synergies, sell
-    if (
-      !pokemon.basePokemon.categories.some(
-        category => player.synergyMap[category]
-      )
-    ) {
-      return true;
-    }
+        // if doesn't contribute to ANY on-board synergies, sell
+        if (
+          !pokemon.basePokemon.categories.some(
+            category => player.synergyMap[category]
+          )
+        ) {
+          return true;
+        }
 
-    // at higher levels, sell random weaker units
-    // level 3 start selling 1* 1-costs, ramping up to selling excess 2/3 costs
-    if (getPokemonStrength(pokemon.basePokemon) <= player.level + 1) {
-      return true;
-    }
+        // at higher levels, sell random weaker units
+        // level 3 start selling 1* 1-costs, ramping up to selling excess 2/3 costs
+        if (getPokemonStrength(pokemon.basePokemon) <= player.level + 1) {
+          return true;
+        }
 
-    return false;
-  });
+        return false;
+      })
+      // don't go overboard and sell more than half the board at once
+      // slice from the back because the array should be sorted by power
+      .slice(-4)
+  );
 }
 
-/** Simple flexible AI which donkey rolls, prioritising units with categories that match its current Pokemon */
+/** Simple flexible AI which donkey rolls, prioritising units with categories that match its active board */
 const basicFlexAI: AIStrategy = {
   name: 'Basic Flex',
   decideBuys: (player: Player) => {
-    const hasType: { [k in Category]?: boolean } = {};
-    // build a map of all the types that are in the player's board and sideboard
-    [...flatten(player.mainboard), ...player.sideboard]
-      .filter(isDefined)
-      .forEach(pokemon =>
-        pokemon.basePokemon.categories.forEach(category => {
-          hasType[category] = true;
-        })
-      );
     return player.currentShop.filter(
       pokemon =>
-        Object.keys(hasType).length < 5 ||
-        pokemonData[pokemon].categories.some(category => hasType[category])
+        Object.keys(player.synergyMap).length < 4 ||
+        pokemonData[pokemon].categories.some(
+          category => player.synergyMap[category]
+        )
     );
   },
   prioritiseBoard: genericPrioritiseBoard,
