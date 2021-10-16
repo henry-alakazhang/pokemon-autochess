@@ -20,7 +20,7 @@ const move = {
   targetting: 'unit',
   range: 100,
   defenseStat: 'specDefense',
-  damage: [200, 350, 500],
+  damage: [300, 450, 700],
   get description() {
     return `{{user}} magnetizes the furthest enemy, dealing ${this.damage.join(
       '/'

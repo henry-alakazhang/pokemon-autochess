@@ -252,9 +252,9 @@ when low on health.
     description: `Flying-type Pokemon take less damage from
 moves and attacks which hit an area.
 
- (2) - 15% less damage
- (4) - 30% less damage
- (6) - 45% less damage`,
+ (2) - 20% less damage
+ (4) - 35% less damage
+ (6) - 50% less damage`,
     thresholds: [2, 4, 6],
     calculateDamage({
       defender,
@@ -268,7 +268,7 @@ moves and attacks which hit an area.
         return baseAmount;
       }
 
-      const multiplier = tier === 1 ? 0.85 : tier === 2 ? 0.7 : 0.55;
+      const multiplier = tier === 1 ? 0.8 : tier === 2 ? 0.65 : 0.5;
 
       if (
         isAOE &&
@@ -287,9 +287,9 @@ moves and attacks which hit an area.
     description: `All party members drain life when dealing damage.
 
  (2) - 15% of damage
- (4) - 30% of damage
- (6) - 65% of damage`,
-    thresholds: [2, 4, 6],
+ (3) - 25% of damage
+ (4) - 40% of damage`,
+    thresholds: [2, 3, 4],
     onHit({ attacker, damage, count }) {
       // TODO add animation for healing?
       const tier = getSynergyTier(this.thresholds, count);
@@ -300,9 +300,9 @@ moves and attacks which hit an area.
         case 1:
           return attacker.heal(damage * 0.15);
         case 2:
-          return attacker.heal(damage * 0.3);
+          return attacker.heal(damage * 0.25);
         case 3:
-          return attacker.heal(damage * 0.65);
+          return attacker.heal(damage * 0.4);
         default: // nothing
       }
     },
@@ -317,8 +317,8 @@ Poison stacks deal 1% of the target's HP
 at the end of each of their turns.
 
  (3) - 1 stack on hit, max 6 stacks
- (6) - 2 stacks on hit, max 12 stacks`,
-    thresholds: [3, 6],
+ (5) - 2 stacks on hit, max 12 stacks`,
+    thresholds: [3, 5],
     onHit({ attacker, defender, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
@@ -479,16 +479,16 @@ the further they are from their target.
     displayName: 'Rock: Sturdy',
     description: `All Rock-type Pokemon take less damage.
 
- (2) - 20 less damage
- (4) - 35 less damage
- (6) - 65 less damage`,
+ (2) - 25 less damage
+ (4) - 50 less damage
+ (6) - 70 less damage`,
     thresholds: [2, 4, 6],
     calculateDamage({ defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
       }
-      const reduction = tier === 1 ? 20 : tier === 2 ? 35 : 65;
+      const reduction = tier === 1 ? 25 : tier === 2 ? 50 : 70;
 
       if (
         defender.side === side &&
@@ -569,7 +569,7 @@ Pokemon at the start of the round.
     displayName: 'Dragon: Sheer Force',
     description: `Boosts the power of Dragon-type moves.
 
- (3) - 50% more damage.`,
+ (3) - 75% more damage.`,
     thresholds: [3],
     calculateDamage({ attacker, baseAmount, side, count, flags }): number {
       const tier = getSynergyTier(this.thresholds, count);
@@ -813,7 +813,7 @@ boost their Attack, Special Attack and Speed.
 when they deal damage.
 
  (2) - Ignore 40% of Defenses
- (4) - Ignore 70% of Defenses`,
+ (4) - Ignore 80% of Defenses`,
     thresholds: [2, 4],
     calculateDamage({
       attacker,
@@ -836,7 +836,7 @@ when they deal damage.
       }
 
       // actual defense stat used after ignoring some
-      const useDefense = tier === 1 ? 0.6 : 0.3;
+      const useDefense = tier === 1 ? 0.6 : 0.2;
 
       // FIXME: This needs to know which defense stat was targetted
       // For now we guess based on attacker and attack type.
@@ -872,9 +872,9 @@ when they deal damage.
     displayName: 'Bulky Attacker: Thick Fat',
     description: `Bulky Attackers have more HP.
 
- (2) - 300 bonus HP
+ (2) - 400 bonus HP
  (4) - 800 bonus HP
- (6) - 1800 bonus HP`,
+ (6) - 1500 bonus HP`,
     thresholds: [2, 4, 6],
     onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -882,7 +882,7 @@ when they deal damage.
         return;
       }
 
-      const boost = tier === 1 ? 300 : tier === 2 ? 800 : 1800;
+      const boost = tier === 1 ? 400 : tier === 2 ? 800 : 1500;
       flatten(board)
         .filter(isDefined)
         .forEach(pokemon => {
@@ -1004,8 +1004,7 @@ it shares PP with non-Support allies.
   pivot: {
     category: 'pivot',
     displayName: 'Pivot: U-Turn',
-    description: `
- (3) - At the start of combat, all Pivots
+    description: ` (3) - At the start of combat, all Pivots
 switch out to the Regigigas Mech.
 They switch back in when it faints.
 
@@ -1082,11 +1081,11 @@ has all of their types combined together.`,
             ],
           };
           mech.addStats({
-            maxHP: pokemon.basePokemon.maxHP,
-            attack: pokemon.basePokemon.attack,
-            defense: pokemon.basePokemon.defense,
-            specAttack: pokemon.basePokemon.specAttack,
-            specDefense: pokemon.basePokemon.specDefense,
+            maxHP: pokemon.basePokemon.maxHP * 0.6,
+            attack: pokemon.basePokemon.attack * 0.6,
+            defense: pokemon.basePokemon.defense * 0.6,
+            specAttack: pokemon.basePokemon.specAttack * 0.6,
+            specDefense: pokemon.basePokemon.specDefense * 0.6,
           });
 
           // remove each of them from being tracked by the CombatScene

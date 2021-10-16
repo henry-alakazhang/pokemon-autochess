@@ -12,7 +12,7 @@ const move = {
   displayName: 'Quiver Dance',
   type: 'active',
   cost: 100,
-  startingPP: 94,
+  startingPP: 90,
   range: 1,
   targetting: 'ground',
   get description() {

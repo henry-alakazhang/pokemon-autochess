@@ -16,12 +16,12 @@ const move = {
   type: 'active',
   cost: 14,
   startingPP: 4,
-  damage: [300, 500, 700],
+  damage: [200, 350, 550],
   targetting: 'unit',
   get description() {
-    return `{{user}} throws an egg to the lowest-health ally that that heals it for ${this.damage.join(
+    return `{{user}} throws an egg to the lowest-health ally that that heals it for 20% of their missing HP plus ${this.damage.join(
       '/'
-    )} HP.`;
+    )}`;
   },
   range: 100,
   /**
@@ -51,7 +51,12 @@ const move = {
             .sprite(target.x, target.y, 'softboiled')
             .play('softboiled')
             .on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-              target.heal(this.damage[user.basePokemon.stage - 1]);
+              target.heal(
+                // move flat healing
+                this.damage[user.basePokemon.stage - 1] +
+                  // plus 20% missing health
+                  (target.maxHP - target.currentHP) * 0.2
+              );
               eggCrack.destroy();
             });
         });

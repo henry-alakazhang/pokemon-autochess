@@ -39,12 +39,16 @@ const move = {
 
     await Tweens.hop(scene, { targets: [user] });
 
-    // targets: X random different enemies, with X increasing each cast.
+    // targets: X randomenemies, with X increasing each cast.
     user.consecutiveAttacks++;
     const enemies = flatten(board)
       .filter(isDefined)
       .filter(pokemon => pokemon.side !== user.side);
-    const targets = shuffle(enemies).slice(0, user.consecutiveAttacks);
+    // each enemy can be hit up to twice
+    const targets = shuffle([...enemies, ...enemies]).slice(
+      0,
+      user.consecutiveAttacks
+    );
 
     targets.forEach(target => {
       scene.fireProjectile(

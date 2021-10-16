@@ -18,15 +18,18 @@ const move = {
   displayName: 'Shell Trap',
   type: 'active',
   cost: 20,
-  startingPP: 14,
+  startingPP: 16,
   range: 1,
   targetting: 'ground',
-  damage: [100, 125, 200],
+  damage: [100, 175, 300],
+  percentReflect: [10, 25, 776],
   defenseStat: 'specDefense',
   get description() {
-    return `{{user}} shields itself, reducing all incoming damage by 40% for 4 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
+    return `{{user}} shields itself, reducing all incoming damage by 50% for 4 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
       '/'
-    )} damage to all adjacent enemies.`;
+    )} damage plus ${this.percentReflect.join(
+      '/'
+    )}% of the damage taken to all adjacent enemies.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;

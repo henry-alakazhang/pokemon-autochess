@@ -19,7 +19,7 @@ const move = {
   startingPP: 2,
   range: 1,
   targetting: 'unit',
-  damage: [150, 200, 350],
+  damage: [200, 350, 550],
   // not used, just here to change the icon displayed in the card
   defenseStat: 'defense',
   get description() {

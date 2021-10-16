@@ -23,13 +23,13 @@ const move = {
   type: 'active',
   cost: 24,
   startingPP: 20,
-  damage: [200, 350, 600],
+  damage: [400, 750, 1200],
   defenseStat: 'specDefense',
   targetting: 'ground',
   get description() {
     return `{{user}} flings a bomb at a single enemy that deals ${this.damage.join(
       '/'
-    )} damage three times. Repeated explosions hit more enemies.`;
+    )} damage three times. The repeat explosions hit more enemies.`;
   },
   range: 5,
   getTarget(board: CombatBoard, user: Coords) {

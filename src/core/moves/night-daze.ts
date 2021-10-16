@@ -18,7 +18,7 @@ const move = {
   startingPP: 10,
   range: 1,
   targetting: 'unit',
-  damage: [350, 600, 1200],
+  damage: [450, 650, 1200],
   defenseStat: 'defense',
   get description() {
     return `{{user}} hits a single enemy with a pitch-black blast, dealing ${this.damage.join(

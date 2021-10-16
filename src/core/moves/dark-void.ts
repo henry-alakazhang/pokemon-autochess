@@ -17,7 +17,7 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Dark Void',
   type: 'active',
-  cost: 20,
+  cost: 32,
   startingPP: 10,
   defenseStat: 'specDefense',
   targetting: 'unit',
