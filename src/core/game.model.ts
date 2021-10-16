@@ -374,11 +374,6 @@ it raises the Speed of other nearby allies.
             Math.round(getGridDistance(pokemon, user) / 70) <= range
         )
         .forEach(pokemon => {
-          console.log(
-            'buffing X',
-            pokemon.name,
-            getGridDistance(pokemon, user)
-          );
           const cog = scene.add
             .sprite(pokemon.x, pokemon.y, 'cog')
             .play('cog')

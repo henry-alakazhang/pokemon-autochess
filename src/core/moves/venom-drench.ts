@@ -53,7 +53,14 @@ const move = {
           (pokemon.status.paralyse ||
             pokemon.status.poison ||
             pokemon.status.blind ||
-            pokemon.status.sleep)
+            pokemon.status.sleep ||
+            pokemon.status.ppReduction ||
+            pokemon.status.healReduction ||
+            pokemon.statChanges.attack < 0 ||
+            pokemon.statChanges.defense < 0 ||
+            pokemon.statChanges.specAttack < 0 ||
+            pokemon.statChanges.specDefense < 0 ||
+            pokemon.statChanges.speed < 0)
       );
 
     targets.forEach(target => {
