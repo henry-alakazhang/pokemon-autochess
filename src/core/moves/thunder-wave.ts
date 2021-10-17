@@ -7,7 +7,7 @@ const move = {
   cost: 16,
   startingPP: 6,
   description:
-    '{{user}} sends a jolt of electricity at a single enemy, paralysing it for 4 seconds.',
+    '{{user}} sends a jolt of electricity at a single enemy, paralysing it for 4 seconds and lowering all stats for 4 more seconds.',
   range: 3,
   targetting: 'unit',
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
@@ -24,6 +24,16 @@ const move = {
             // if this is the end of the animation, apply status
             if (timer.repeatCount === 0) {
               target.addStatus('paralyse', 4000);
+              target.changeStats(
+                {
+                  attack: -1,
+                  defense: -1,
+                  specAttack: -1,
+                  specDefense: -1,
+                  speed: -1,
+                },
+                8000
+              );
             }
           },
           delay: 200,

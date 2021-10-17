@@ -1,3 +1,4 @@
+import { flatten } from '../../helpers';
 import {
   calculateDamage,
   Coords,
@@ -21,21 +22,46 @@ const move = {
   type: 'active',
   cost: 24,
   startingPP: 12,
-  damage: [400, 700, 1200],
+  damage: [400, 750, 100],
   defenseStat: 'specDefense',
   targetting: 'ground',
   get description() {
-    return `{{user}} whips up a whirlwind. After 2 seconds, the whirlwind deals ${this.damage.join(
+    return `{{user}} whips up a whirlwind over the fastest enemy. After 2 seconds, the whirlwind deals ${this.damage.join(
       '/'
-    )} damage over 2 seconds to any enemies caught in it.`;
+    )} damage over 2 seconds to any enemies caught i it.`;
   },
   range: 3,
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
+    let fastest: Coords | undefined;
+    let fastestSpeed = -Infinity;
+    flatten(
+      board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
+    ).forEach(({ x, y, pokemon }) => {
+      if (!pokemon) {
+        return;
+      }
+      if (pokemon.basePokemon.speed > fastestSpeed) {
+        fastestSpeed = pokemon.basePokemon.speed;
+        fastest = { x, y };
+      }
+    });
+
+    if (!fastest) {
+      return undefined;
+    }
+
+    // from the possible spots that can hit the target, pick the one that will hit the most enemies
     return optimiseAOE({
       board,
       user,
       range: this.range,
       getAOE: this.getAOE,
+      pool: [
+        fastest,
+        { x: fastest.x, y: fastest.y - 1 },
+        { x: fastest.x - 1, y: fastest.y - 1 },
+        { x: fastest.x - 1, y: fastest.y - 1 },
+      ],
     });
   },
   /** Area of effect is a 4-tile square */

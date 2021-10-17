@@ -20,7 +20,7 @@ const move = {
   startingPP: 16,
   range: 1,
   targetting: 'ground',
-  damage: [300, 450, 600],
+  damage: [300, 500, 1000],
   buff: [30, 50, 874],
   defenseStat: 'defense',
   get description() {

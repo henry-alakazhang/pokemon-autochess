@@ -1,6 +1,9 @@
 import { flatten } from '../../helpers';
 import { PokemonObject } from '../../objects/pokemon.object';
-import { Coords } from '../../scenes/game/combat/combat.helpers';
+import {
+  calculateDamage,
+  Coords,
+} from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
@@ -16,10 +19,13 @@ const move = {
   type: 'active',
   cost: 4,
   startingPP: 2,
+  damage: [350, 650, 1400],
   defenseStat: 'defense',
   targetting: 'ground',
   get description() {
-    return `{{user}} dashes to the weakest enemy and attacks immediately for a guaranteed critical hit.`;
+    return `{{user}} dashes to the lowest-health enemy and attacks immediately for a guaranteed critical, plus ${this.damage.join(
+      '/'
+    )} damage.`;
   },
   range: 100,
   getTarget(board: CombatBoard, myCoords: Coords): Coords | undefined {
@@ -85,9 +91,17 @@ const move = {
 
       // attack them
       if (weakestPokemon) {
+        const target = weakestPokemon;
         const prevCritRate = user.critRate;
         user.critRate = 1;
         scene.basicAttack(user, weakestPokemon, {
+          onHit: () => {
+            const damage = calculateDamage(user, target, {
+              damage: this.damage[user.basePokemon.stage - 1],
+              defenseStat: this.defenseStat,
+            });
+            scene.causeDamage(user, target, damage, { canCrit: true });
+          },
           onComplete: () => {
             // reset to previous state
             user.critRate = prevCritRate;

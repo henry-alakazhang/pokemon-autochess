@@ -17,13 +17,13 @@ const move = {
   type: 'active',
   cost: 4,
   startingPP: 2,
-  damage: [100, 200, 400],
+  damage: [200, 400, 999],
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
     return `{{user}} slashes a single enemy rapidly to deal ${this.damage.join(
       '/'
-    )} damage, increasing with each use.`;
+    )} damage, doubling with each use.`;
   },
   range: 1,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
@@ -64,7 +64,7 @@ const move = {
               // damage increases by 50% each strike
               damage:
                 this.damage[user.basePokemon.stage - 1] *
-                1.5 ** user.consecutiveAttacks,
+                2 ** user.consecutiveAttacks,
               defenseStat: this.defenseStat,
             });
             scene.causeDamage(user, target, damage);

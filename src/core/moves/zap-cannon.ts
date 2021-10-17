@@ -21,11 +21,11 @@ const move = {
   type: 'active',
   cost: 28,
   startingPP: 14,
-  damage: [300, 550, 800],
+  damage: [400, 750, 1100],
   defenseStat: 'specDefense',
-  targetting: 'unit',
+  targetting: 'ground',
   get description() {
-    return `{{user}} charges for 2 seconds before zapping a straight line, dealing ${this.damage.join(
+    return `{{user}} charges for 1 second before zapping a straight line, dealing ${this.damage.join(
       '/'
     )} damage to every enemy hit.`;
   },
@@ -36,7 +36,7 @@ const move = {
       user,
       range: this.range,
       getAOE: this.getAOE,
-      targetting: 'unit',
+      targetting: 'ground',
     });
   },
   /**
@@ -50,21 +50,26 @@ const move = {
     board,
     user,
     userCoords,
-    target,
-    targetCoords,
+    targetCoords: initialTargetCoords,
     onComplete,
-  }: MoveConfig<'unit'>) {
-    user.playAnimation(getFacing(user, target));
+  }: MoveConfig<'ground'>) {
+    user.playAnimation(getFacing(userCoords, initialTargetCoords));
     // TODO: play volt chargy animation?
     scene.add.tween({
       targets: [user],
-      duration: 2000,
+      duration: 1000,
       scaleX: 1.5,
       scaleY: 1.5,
       onComplete: () => {
+        user.setScale(1, 1);
         // the target may have moved in the charge-up time
-        // keep aiming at the original spot
-        // TODO: aim at the target's new coords instead?
+        // so just recalculate the target lol
+        const targetCoords = this.getTarget(board, userCoords);
+        if (!targetCoords) {
+          onComplete();
+          return;
+        }
+
         const targettedLocation = getCoordinatesForMainboard(targetCoords);
         const thunder = scene.add
           .sprite(user.x, user.y, 'thunder')
@@ -103,8 +108,6 @@ const move = {
           },
           delay: animations.thunder.duration * 0.5,
         });
-
-        user.setScale(1, 1);
         onComplete();
       },
     });

@@ -22,9 +22,9 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
-    return `{{user}} drenches all status-afflicted enemies in poison, dealing ${this.damage.join(
+    return `{{user}} drenches all enemies in poison, PERMANENTLY lowering a random stat. If they are already afflicted by status, they also take ${this.damage.join(
       '/'
-    )} damage and PERMANENTLY lowering a random stat. Poisoned enemies take double damage.`;
+    )} damage, doubled if poisoned.`;
   },
   range: 99,
   getTarget(board: CombatBoard, user: Coords) {
@@ -45,25 +45,24 @@ const move = {
 
     const targets = flatten(board)
       .filter(isDefined)
-      .filter(
-        pokemon =>
-          pokemon.side !== user.side &&
-          // TODO: don't hardcode this
-          // Also update whenever I add a new proper status
-          (pokemon.status.paralyse ||
-            pokemon.status.poison ||
-            pokemon.status.blind ||
-            pokemon.status.sleep ||
-            pokemon.status.ppReduction ||
-            pokemon.status.healReduction ||
-            pokemon.statChanges.attack < 0 ||
-            pokemon.statChanges.defense < 0 ||
-            pokemon.statChanges.specAttack < 0 ||
-            pokemon.statChanges.specDefense < 0 ||
-            pokemon.statChanges.speed < 0)
-      );
+      .filter(pokemon => pokemon.side !== user.side);
 
     targets.forEach(target => {
+      const isStatused =
+        // TODO: don't hardcode this
+        // Also update whenever I add a new proper status
+        target.status.paralyse ||
+        target.status.poison ||
+        target.status.blind ||
+        target.status.sleep ||
+        target.status.ppReduction ||
+        target.status.healReduction ||
+        target.statChanges.attack < 0 ||
+        target.statChanges.defense < 0 ||
+        target.statChanges.specAttack < 0 ||
+        target.statChanges.specDefense < 0 ||
+        target.statChanges.speed < 0;
+
       const hitEffect = scene.add
         .sprite(target.x, target.y, 'poison-hit')
         .play('poison-hit')
@@ -75,13 +74,15 @@ const move = {
         [statToLower]: -1,
       });
 
-      const damage = calculateDamage(user, target, {
-        damage:
-          this.damage[user.basePokemon.stage - 1] *
-          (target.status.poison ? 2 : 1),
-        defenseStat: this.defenseStat,
-      });
-      scene.causeDamage(user, target, damage, { isAOE: true });
+      if (isStatused) {
+        const damage = calculateDamage(user, target, {
+          damage:
+            this.damage[user.basePokemon.stage - 1] *
+            (target.status.poison ? 2 : 1),
+          defenseStat: this.defenseStat,
+        });
+        scene.causeDamage(user, target, damage, { isAOE: true });
+      }
     });
     onComplete();
   },

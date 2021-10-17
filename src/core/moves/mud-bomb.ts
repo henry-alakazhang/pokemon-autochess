@@ -18,7 +18,7 @@ const move = {
   startingPP: 12,
   range: 1,
   targetting: 'unit',
-  damage: [200, 350, 550],
+  damage: [200, 350, 650],
   defenseStat: 'specDefense',
   get description() {
     return `{{user}} launches a hard-packed mud ball at single enemy, dealing ${this.damage.join(

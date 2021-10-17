@@ -25,7 +25,7 @@ const move = {
   get description() {
     return `{{user}} pierces a single enemy with shards of stone, dealing ${this.damage.join(
       '/'
-    )} damage and hitting any enemies behind. Deals 50% more damage if it only hits one enemy.`;
+    )} damage and hitting any enemy directly behind. Deals 50% more damage if it only hits one enemy.`;
   },
   getAOE(targetCoords: Coords, myCoords: Coords): Coords[] {
     const dx = targetCoords.x - myCoords.x;

@@ -16,7 +16,7 @@ const move = {
   range: 1,
   targetting: 'ground',
   // actually effectiveness haha
-  damage: [30, 45, 60],
+  damage: [40, 50, 60],
   get description() {
     return `{{user}} reduces all incoming damage by ${this.damage.join(
       '/'

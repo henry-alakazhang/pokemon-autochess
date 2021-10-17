@@ -19,7 +19,7 @@ const move = {
   type: 'active',
   cost: 10,
   startingPP: 4,
-  damage: [300, 450, 600],
+  damage: [400, 650, 800],
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
@@ -49,7 +49,7 @@ const move = {
             defenseStat: this.defenseStat,
           });
           scene.causeDamage(user, target, damage);
-          user.takeDamage(Math.floor(damage / 4), { triggerEvents: false });
+          user.takeDamage(Math.floor(damage / 3), { triggerEvents: false });
           onComplete();
         },
       });

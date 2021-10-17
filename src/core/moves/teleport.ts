@@ -17,11 +17,11 @@ const move = {
   range: 1,
   targetting: 'ground',
   // actually heal %
-  damage: [30, 45, 60],
+  damage: [25, 40, 50],
   get description() {
     return `{{user}} teleports to a random spot on the grid, healing for ${this.damage.join(
       '/'
-    )}% max HP and dropping aggro.`;
+    )}% missing HP and dropping aggro.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;
@@ -48,7 +48,9 @@ const move = {
         user.setVisible(false);
         scene.movePokemon(userCoords, emptySpaces[pick], () => {
           user.heal(
-            (user.maxHP * this.damage[user.basePokemon.stage - 1]) / 100
+            ((user.maxHP - user.currentHP) *
+              this.damage[user.basePokemon.stage - 1]) /
+              100
           );
           // reset user targetting
           user.currentTarget = undefined;
