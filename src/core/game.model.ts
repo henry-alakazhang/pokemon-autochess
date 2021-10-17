@@ -639,7 +639,8 @@ Synergy: Dark-type Pokemon gain a critical hit ratio.
 
       const critRate =
         tier === 0 ? 0 : tier === 1 ? 0.15 : tier === 2 ? 0.3 : 0.45;
-      const critDamage = tier === 0 ? 1 : tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
+      const critDamage =
+        tier === 0 ? 1.5 : tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
       flatten(
         board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
       ).forEach(slot => {
