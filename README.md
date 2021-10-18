@@ -2,7 +2,7 @@
 
 An autochess game themed after Pokemon.
 
-Play at https://henry-alakazhang.github.io/pokemon-autochess
+Play at https://autochess.caterpie.ninja
 
 I don't own the concept of Pokemon, the sprites, or anything else related to Pokemon. Those belong to GameFreak, The Pokemon Company and Nintendo. I'm well aware such disclaimers don't really mean anything, but oh well.
 

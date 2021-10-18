@@ -45,6 +45,12 @@ module.exports = {
           to: './app.css',
           force: true,
         },
+        {
+          from: './CNAME',
+          to: './CNAME',
+          toType: 'file',
+          force: true,
+        }
       ],
     }),
     new HtmlWebpackPlugin({
