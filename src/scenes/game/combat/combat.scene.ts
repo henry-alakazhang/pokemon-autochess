@@ -78,6 +78,10 @@ export class CombatScene extends Scene {
   }
 
   create(data: CombatSceneData) {
+    this.time.timeScale = 1;
+    this.tweens.timeScale = 1;
+    this.anims.globalTimeScale = 1;
+    this.physics.world.timeScale = 1;
     this.timer = 60_000;
     this.timerText = this.add
       .text(550, 35, '60', titleStyle)
@@ -189,8 +193,16 @@ export class CombatScene extends Scene {
     Object.values(this.projectiles).forEach(x => x?.update(time, delta));
 
     this.timer -= delta;
-    // TODO: speed up combat as we start running out of time
     this.timerText.setText(`${Math.round(this.timer / 1000)}`);
+
+    if (this.timer <= 55_000 && this.time.timeScale === 1) {
+      this.timerText.setBackgroundColor('#840');
+      this.time.timeScale = 2;
+      this.tweens.timeScale = 2;
+      this.anims.globalTimeScale = 2;
+      // wtf?
+      this.physics.world.timeScale = 0.5;
+    }
 
     if (this.timer <= 0) {
       this.add
