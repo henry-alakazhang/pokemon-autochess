@@ -140,7 +140,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     revengeKiller: number;
   } = { sweeper: 0, revengeKiller: 0 };
 
-  attachments: Phaser.GameObjects.GameObject[] = [];
+  attachments: Phaser.GameObjects.Components.Visible[] = [];
 
   /** Active things the Pokemon is doing that can be cancelled by CC or death */
   cancellableEvents: {
@@ -261,13 +261,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     return super.setVisible(visible);
   }
 
-  /** Attaches a GameObject so it moves with the PokemonObject */
-  attach(object: Phaser.GameObjects.GameObject) {
+  /** Attaches a visible GameObject so it moves with the PokemonObject */
+  attach(object: Phaser.GameObjects.Components.Visible) {
     this.attachments.push(object);
   }
 
   /** Detaches an attached GameObject */
-  detach(object: Phaser.GameObjects.GameObject) {
+  detach(object: Phaser.GameObjects.Components.Visible) {
     this.attachments = this.attachments.filter(item => item === object);
   }
 
@@ -499,8 +499,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
           this.setActive(false);
           this.setVisible(false);
 
-          // destroy all attachments
-          this.attachments.forEach(object => object.destroy());
+          // hide all attachments
+          this.attachments.forEach(object => object.setVisible(false));
           // and all active timers
           this.cancellableEvents.forEach(event => event.timer.remove());
           // and any tweens that are running on this
