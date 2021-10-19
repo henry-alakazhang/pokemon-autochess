@@ -25,7 +25,7 @@ const move = {
   percentReflect: [10, 25, 776],
   defenseStat: 'specDefense',
   get description() {
-    return `{{user}} shields itself, reducing all incoming damage by 50% for 4 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
+    return `{{user}} shields itself, reducing all incoming damage by 40% for 6 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
       '/'
     )} damage plus ${this.percentReflect.join(
       '/'
@@ -35,7 +35,7 @@ const move = {
     return myCoords;
   },
   use({ scene, board, user, onComplete }: MoveConfig<'ground'>) {
-    const DURATION = 4000;
+    const DURATION = 6000;
     user.addStatus('moveIsActive', DURATION);
 
     Tweens.hop(scene, { targets: [user] });
@@ -61,9 +61,9 @@ const move = {
           // adding moveIsActive here will refresh the duration
           // so it lasts the same as everything else
           .addStatus('moveIsActive', DURATION)
-          .addStatus('percentDamageReduction', DURATION, 50);
+          .addStatus('percentDamageReduction', DURATION, 40);
 
-        const damageProc = () => {
+        const damageProc = (amountTaken: number) => {
           const userCoords = scene.getBoardLocationForPokemon(user);
           if (!userCoords) {
             return;
@@ -87,10 +87,16 @@ const move = {
             const target = board[x][y];
             if (target?.side === getOppositeSide(user.side)) {
               const damage = calculateDamage(user, target, {
-                damage: this.damage[user.basePokemon.stage - 1],
+                damage:
+                  this.damage[user.basePokemon.stage - 1] +
+                  amountTaken *
+                    (this.percentReflect[user.basePokemon.stage - 1] / 100),
                 defenseStat: this.defenseStat,
               });
-              scene.causeDamage(user, target, damage, { isAOE: true });
+              scene.causeDamage(user, target, damage, {
+                isAOE: true,
+                triggerEvents: false,
+              });
             }
           });
         };

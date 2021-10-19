@@ -669,8 +669,14 @@ export class CombatScene extends Scene {
     {
       isAttack = false,
       isAOE = false,
+      triggerEvents = true,
       canCrit,
-    }: { isAttack?: boolean; isAOE?: boolean; canCrit?: boolean } = {}
+    }: {
+      isAttack?: boolean;
+      isAOE?: boolean;
+      canCrit?: boolean;
+      triggerEvents?: boolean;
+    } = {}
   ) {
     if (isAttack) {
       // calculate miss chance
@@ -725,44 +731,47 @@ export class CombatScene extends Scene {
 
     totalDamage = Math.round(totalDamage);
     attacker.dealDamage(totalDamage, { isAttack });
-    defender.takeDamage(totalDamage, { crit: doesCrit });
-    this.players[attacker.side].synergies.forEach(synergy => {
-      synergyData[synergy.category].onHit?.({
-        scene: this,
-        board: this.board,
-        attacker,
-        defender,
-        damage: amount,
-        flags: { isAttack, isAOE },
-        count: synergy.count,
+    defender.takeDamage(totalDamage, { triggerEvents, crit: doesCrit });
+
+    if (triggerEvents) {
+      this.players[attacker.side].synergies.forEach(synergy => {
+        synergyData[synergy.category].onHit?.({
+          scene: this,
+          board: this.board,
+          attacker,
+          defender,
+          damage: amount,
+          flags: { isAttack, isAOE },
+          count: synergy.count,
+        });
       });
-    });
-    this.players[defender.side].synergies.forEach(synergy => {
-      synergyData[synergy.category].onBeingHit?.({
-        scene: this,
-        board: this.board,
-        attacker,
-        defender,
-        damage: amount,
-        flags: { isAttack, isAOE },
-        count: synergy.count,
+      this.players[defender.side].synergies.forEach(synergy => {
+        synergyData[synergy.category].onBeingHit?.({
+          scene: this,
+          board: this.board,
+          attacker,
+          defender,
+          damage: amount,
+          flags: { isAttack, isAOE },
+          count: synergy.count,
+        });
       });
-    });
-    if (attacker.basePokemon.move?.type === 'passive') {
-      attacker.basePokemon.move.onHit?.({
-        scene: this,
-        attacker,
-        defender,
-        damage: totalDamage,
-      });
-    }
-    if (defender.basePokemon.move?.type === 'passive') {
-      defender.basePokemon.move.onBeingHit?.({
-        scene: this,
-        attacker,
-        defender,
-        damage: totalDamage,
-      });
+      if (attacker.basePokemon.move?.type === 'passive') {
+        attacker.basePokemon.move.onHit?.({
+          scene: this,
+          attacker,
+          defender,
+          damage: totalDamage,
+        });
+      }
+      if (defender.basePokemon.move?.type === 'passive') {
+        defender.basePokemon.move.onBeingHit?.({
+          scene: this,
+          attacker,
+          defender,
+          damage: totalDamage,
+        });
+      }
     }
 
     this.damageGraph[attacker.side].dealt[

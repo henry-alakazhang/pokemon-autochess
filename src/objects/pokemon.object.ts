@@ -451,7 +451,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     // trigger on-hit events like mana
     if (triggerEvents) {
-      this.emit(PokemonObject.Events.Damage);
+      this.emit(PokemonObject.Events.Damage, amount);
       this.addPP(Math.min(5, amount * 0.015));
     }
 
