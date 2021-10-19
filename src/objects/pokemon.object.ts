@@ -320,9 +320,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       this.width * (this.currentHP / this.maxHP) - 2,
       5
     );
-    // add little pips in the HP bar every 333 HP
+    // add little pips in the HP bar every 250 HP
     this.bars.lineStyle(1, 0x000000, 1);
-    const width = Math.round((333 / this.maxHP) * (this.width - 2));
+    const width = Math.round((250 / this.maxHP) * (this.width - 2));
     if (width <= 0) {
       // if we accidentally end up with a negative HP or a 0 width for each bar,
       // the for loop below is going to go infinite. throw instead
@@ -332,7 +332,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     }
     for (let x = width; x < this.width - 2; x += width) {
       // full height bars for 1000 increments
-      const y = (x / width) % 3 === 0 ? 6 : 4;
+      const y = (x / width) % 4 === 0 ? 6 : 4;
       this.bars.strokeLineShape(
         new Phaser.Geom.Line(
           -this.width / 2 + x,
