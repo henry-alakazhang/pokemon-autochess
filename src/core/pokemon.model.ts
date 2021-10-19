@@ -94,7 +94,6 @@ export interface Pokemon {
  */
 const basePokemonData = {
   litwick: {
-    base: 'litwick',
     categories: ['fire', 'ghost', 'sweeper'],
     tier: 2,
     maxHP: 60,
@@ -114,7 +113,6 @@ const basePokemonData = {
     move: shadowTag,
   },
   fletchling: {
-    base: 'fletchling',
     categories: ['fire', 'flying', 'revenge killer'],
     tier: 1,
     maxHP: 78,
@@ -130,7 +128,6 @@ const basePokemonData = {
     move: braveBird,
   },
   rotomw: {
-    base: 'rotomw',
     categories: ['water', 'electric', 'utility'],
     tier: 4,
     maxHP: 50,
@@ -150,7 +147,6 @@ const basePokemonData = {
     move: thunderWave,
   },
   pichu: {
-    base: 'pichu',
     categories: ['electric', 'revenge killer'],
     tier: 1,
     maxHP: 60,
@@ -166,7 +162,6 @@ const basePokemonData = {
     move: voltTackle,
   },
   seedot: {
-    base: 'seedot',
     categories: ['grass', 'dark', 'disruptor'],
     tier: 1,
     maxHP: 90,
@@ -186,7 +181,6 @@ const basePokemonData = {
     move: razorWind,
   },
   weedle: {
-    base: 'weedle',
     categories: ['bug', 'poison', 'sweeper'],
     tier: 1,
     maxHP: 65,
@@ -206,7 +200,6 @@ const basePokemonData = {
     move: twineedle,
   },
   happiny: {
-    base: 'happiny',
     categories: ['normal', 'wall'],
     tier: 2,
     maxHP: 255,
@@ -226,7 +219,6 @@ const basePokemonData = {
     move: softboiled,
   },
   scyther: {
-    base: 'scyther',
     categories: ['bug', 'steel', 'pivot'],
     tier: 4,
     maxHP: 70,
@@ -242,7 +234,6 @@ const basePokemonData = {
     move: furyCutter,
   },
   magikarp: {
-    base: 'magikarp',
     categories: ['water', 'flying', 'sweeper'],
     tier: 1,
     maxHP: 95,
@@ -260,7 +251,6 @@ const basePokemonData = {
     move: dragonDance,
   },
   sneasel: {
-    base: 'sneasel',
     categories: ['ice', 'dark', 'revenge killer'],
     tier: 4,
     maxHP: 70,
@@ -276,7 +266,6 @@ const basePokemonData = {
     move: iceShard,
   },
   porygon: {
-    base: 'porygon',
     categories: ['normal', 'wallbreaker'],
     tier: 3,
     maxHP: 85,
@@ -296,7 +285,6 @@ const basePokemonData = {
     move: triAttack,
   },
   magnemite: {
-    base: 'magnemite',
     categories: ['electric', 'steel', 'support'],
     tier: 2,
     maxHP: 70,
@@ -312,7 +300,6 @@ const basePokemonData = {
     move: magnetPull,
   },
   grubbin: {
-    base: 'grubbin',
     categories: ['electric', 'bug', 'wallbreaker'],
     tier: 1,
     maxHP: 77,
@@ -332,7 +319,6 @@ const basePokemonData = {
     move: zapCannon,
   },
   wooloo: {
-    base: 'wooloo',
     categories: ['normal', 'wall'],
     tier: 1,
     maxHP: 72,
@@ -348,7 +334,6 @@ const basePokemonData = {
     move: cottonGuard,
   },
   larvesta: {
-    base: 'larvesta',
     categories: ['fire', 'bug', 'sweeper'],
     tier: 3,
     maxHP: 85,
@@ -368,7 +353,6 @@ const basePokemonData = {
     move: quiverDance,
   },
   gible: {
-    base: 'gible',
     categories: ['dragon', 'ground', 'bulky attacker'],
     tier: 3,
     maxHP: 108,
@@ -384,7 +368,6 @@ const basePokemonData = {
     move: dragonRush,
   },
   zorua: {
-    base: 'zorua',
     categories: ['dark', 'revenge killer', 'pivot'],
     tier: 3,
     maxHP: 60,
@@ -400,7 +383,6 @@ const basePokemonData = {
     move: nightDaze,
   },
   abra: {
-    base: 'abra',
     categories: ['psychic', 'sweeper'],
     tier: 2,
     maxHP: 55,
@@ -420,7 +402,6 @@ const basePokemonData = {
     move: teleport,
   },
   litten: {
-    base: 'litten',
     categories: ['fire', 'dark', 'bulky attacker'],
     tier: 2,
     maxHP: 95,
@@ -436,7 +417,6 @@ const basePokemonData = {
     move: darkestLariat,
   },
   mewtwo: {
-    base: 'mewtwo',
     categories: ['psychic', 'utility'],
     tier: 5,
     maxHP: 106,
@@ -452,7 +432,6 @@ const basePokemonData = {
     move: clone,
   },
   turtonator: {
-    base: 'turtonator',
     categories: ['fire', 'dragon', 'wall'],
     tier: 4,
     maxHP: 60,
@@ -468,7 +447,6 @@ const basePokemonData = {
     move: shellTrap,
   },
   beldum: {
-    base: 'beldum',
     categories: ['steel', 'psychic', 'bulky attacker'],
     tier: 3,
     maxHP: 80,
@@ -484,7 +462,6 @@ const basePokemonData = {
     move: meteorMash,
   },
   zubat: {
-    base: 'zubat',
     categories: ['poison', 'flying', 'disruptor'],
     tier: 1,
     maxHP: 85,
@@ -504,7 +481,6 @@ const basePokemonData = {
     move: leechLife,
   },
   larvitar: {
-    base: 'larvitar',
     categories: ['rock', 'dark', 'bulky attacker'],
     tier: 3,
     maxHP: 100,
@@ -520,7 +496,6 @@ const basePokemonData = {
     move: stoneEdge,
   },
   gastly: {
-    base: 'gastly',
     categories: ['ghost', 'poison', 'utility'],
     tier: 2,
     maxHP: 60,
@@ -536,7 +511,6 @@ const basePokemonData = {
     move: shadowBall,
   },
   bulbasaur: {
-    base: 'bulbasaur',
     categories: ['grass', 'poison', 'wall'],
     tier: 2,
     maxHP: 80,
@@ -552,7 +526,6 @@ const basePokemonData = {
     move: frenzyPlant,
   },
   darkrai: {
-    base: 'darkrai',
     categories: ['dark', 'disruptor'],
     tier: 5,
     maxHP: 70,
@@ -572,7 +545,6 @@ const basePokemonData = {
     move: darkVoid,
   },
   exeggcute: {
-    base: 'exeggcute',
     categories: ['grass', 'psychic', 'wallbreaker'],
     tier: 3,
     maxHP: 95,
@@ -592,7 +564,6 @@ const basePokemonData = {
     move: eggBarrage,
   },
   lapras: {
-    base: 'lapras',
     categories: ['water', 'ice', 'bulky attacker'],
     tier: 4,
     maxHP: 130,
@@ -608,7 +579,6 @@ const basePokemonData = {
     move: surf,
   },
   mudkip: {
-    base: 'lapras',
     categories: ['water', 'ground', 'pivot'],
     tier: 2,
     maxHP: 100,
@@ -624,7 +594,6 @@ const basePokemonData = {
     move: mudBomb,
   },
   regigigas: {
-    base: 'regigigas',
     categories: [],
     tier: 5,
     // hp, attack, defense, specattack, specdefense get overwritten
@@ -640,7 +609,6 @@ const basePokemonData = {
     },
   },
   dreepy: {
-    base: 'dreepy',
     categories: ['dragon', 'ghost', 'revenge killer'],
     tier: 3,
     maxHP: 88,
@@ -656,7 +624,6 @@ const basePokemonData = {
     move: dragonDarts,
   },
   heatran: {
-    base: 'heatran',
     categories: ['fire', 'steel', 'wallbreaker'],
     tier: 5,
     maxHP: 91,
@@ -672,7 +639,6 @@ const basePokemonData = {
     move: magmaStorm,
   },
   landorus: {
-    base: 'landorus',
     categories: ['ground', 'flying', 'bulky attacker'],
     tier: 5,
     maxHP: 89,
@@ -688,7 +654,6 @@ const basePokemonData = {
     move: therianQuake,
   },
   nihilego: {
-    base: 'nihilego',
     categories: ['rock', 'poison', 'wall'],
     tier: 5,
     maxHP: 109,
@@ -704,7 +669,6 @@ const basePokemonData = {
     move: venomDrench,
   },
   stonjourner: {
-    base: 'stonjourner',
     categories: ['rock', 'support'],
     tier: 4,
     maxHP: 100,
@@ -720,7 +684,6 @@ const basePokemonData = {
     move: powerSpot,
   },
   geodude: {
-    base: 'geodude',
     categories: ['rock', 'ground', 'wall'],
     tier: 1,
     maxHP: 80,
@@ -736,7 +699,6 @@ const basePokemonData = {
     move: rollout,
   },
   honedge: {
-    base: 'honedge',
     categories: ['steel', 'ghost', 'sweeper'],
     tier: 3,
     maxHP: 60,
@@ -754,7 +716,6 @@ const basePokemonData = {
   // NOT A REAL POKEMON
   // ONLY USED FOR NEUTRAL ROUNDS
   neutral_only_rattata: {
-    base: 'neutral_only_rattata',
     categories: ['normal'],
     tier: 1,
     maxHP: 20,
@@ -793,6 +754,7 @@ function getEvolution(pokemon: keyof typeof basePokemonData, stage: 1 | 2 | 3) {
 
   return {
     ...basePokemon,
+    base: pokemon,
     // effectively sqrt(baseHP) * 100, but rounded to nearest 50
     // most pokemon max HP will range from 700 (50 base HP) to 1000 (100 base HP)
     maxHP: Math.ceil(2 * Math.sqrt(basePokemon.maxHP) - 1) * 50 * multi,
