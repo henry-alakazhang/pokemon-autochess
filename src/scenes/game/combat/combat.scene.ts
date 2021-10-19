@@ -195,7 +195,7 @@ export class CombatScene extends Scene {
     this.timer -= delta;
     this.timerText.setText(`${Math.round(this.timer / 1000)}`);
 
-    if (this.timer <= 55_000 && this.time.timeScale === 1) {
+    if (this.timer <= 10_000 && this.time.timeScale === 1) {
       this.timerText.setBackgroundColor('#840');
       this.time.timeScale = 2;
       this.tweens.timeScale = 2;
