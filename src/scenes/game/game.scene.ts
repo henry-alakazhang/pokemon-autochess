@@ -4,7 +4,7 @@ import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
-import { defaultStyle } from '../../objects/text.helpers';
+import { defaultStyle, titleStyle } from '../../objects/text.helpers';
 import { MenuScene } from '../menu.scene';
 import { Coords } from './combat/combat.helpers';
 import {
@@ -135,7 +135,6 @@ export class GameScene extends Phaser.Scene {
 
   players: Player[];
 
-  /* TEMPORARY JUNK */
   nextRoundButton: Button;
   shopButton: Phaser.GameObjects.GameObject;
   humanPlayer: Player;
@@ -144,7 +143,7 @@ export class GameScene extends Phaser.Scene {
   sellArea: Phaser.GameObjects.Shape;
   sellText: Phaser.GameObjects.Text;
   currentRoundText: Phaser.GameObjects.Text;
-  /* END TEMPORARY JUNK */
+  boardLimitText: Phaser.GameObjects.Text;
 
   /** A reference to the currently selected Pokemon */
   selectedPokemon?: PokemonObject;
@@ -218,7 +217,9 @@ export class GameScene extends Phaser.Scene {
       .text(
         this.game.canvas.width / 2,
         30,
-        `Round ${this.currentStage + 1}-${this.currentRound}`,
+        `Stage ${this.currentStage + 1}: ${this.currentRound} / ${
+          this.gameMode.stages[this.currentStage].rounds
+        }`,
         defaultStyle
       )
       .setFontSize(20)
@@ -249,6 +250,17 @@ export class GameScene extends Phaser.Scene {
       `Level: ${this.currentVisiblePlayer.level}\nGold: ${this.currentVisiblePlayer.gold}`,
       defaultStyle
     );
+    this.boardLimitText = this.add
+      .text(GRID_X, GRID_Y + 70, '', {
+        ...titleStyle,
+        fontSize: '72px',
+        // dark dark grey
+        color: '#222',
+      })
+      // cenetered on the board
+      .setOrigin(0.5, 0.5)
+      .setDepth(-1);
+    this.updateBoardLimit();
 
     this.scene.launch(ShopScene.KEY, {
       gameMode: this.gameMode,
@@ -282,10 +294,10 @@ export class GameScene extends Phaser.Scene {
 
     this.sellArea = this.add
       .rectangle(
-        750, // centre x
-        470, // centre y
+        760, // centre x
+        450, // centre y
         150, // width
-        300, // height
+        250, // height
         0xff0000, // color: red
         0.2 // alpha: mostly transparent
       )
@@ -296,10 +308,11 @@ export class GameScene extends Phaser.Scene {
       .on(Phaser.Input.Events.POINTER_DOWN, (event: Phaser.Input.Pointer) => {
         if (event.leftButtonDown()) {
           this.humanPlayer.sellPokemon(this.selectedPokemon as PokemonObject);
+          this.updateBoardLimit();
         }
       });
 
-    this.nextRoundButton = new Button(this, SIDEBOARD_X, 525, 'Next Round');
+    this.nextRoundButton = new Button(this, SIDEBOARD_X, 530, 'Next Round');
     this.nextRoundButton.on(Button.Events.CLICK, () => {
       this.nextRoundButton.setVisible(false).setActive(false);
       this.startCombat();
@@ -309,7 +322,9 @@ export class GameScene extends Phaser.Scene {
 
   update() {
     this.currentRoundText.setText(
-      `Round ${this.currentStage + 1}-${this.currentRound}`
+      `Stage ${this.currentStage + 1}: [${this.currentRound}] / ${
+        this.gameMode.stages[this.currentStage].rounds
+      }`
     );
     this.playerInfoText.setText(
       `Level: ${this.currentVisiblePlayer.level}\nGold: ${this.currentVisiblePlayer.gold}`
@@ -349,6 +364,7 @@ export class GameScene extends Phaser.Scene {
     this.currentVisiblePlayer.mainboard.forEach(col =>
       col.forEach(pokemon => pokemon?.setVisible(false))
     );
+    this.boardLimitText.setVisible(false);
     this.prepGrid.setVisible(false);
     // TODO: allow interacting with sideboard/shop during combat
     this.input.enabled = false;
@@ -539,6 +555,7 @@ export class GameScene extends Phaser.Scene {
       col.forEach(pokemon => pokemon?.setVisible(true))
     );
     this.prepGrid.setVisible(true);
+    this.updateBoardLimit();
     this.input.enabled = true;
 
     this.nextRoundButton.setActive(true).setVisible(true);
@@ -548,6 +565,8 @@ export class GameScene extends Phaser.Scene {
     this.currentVisiblePlayer.setVisible(false);
     player.setVisible(true);
     this.currentVisiblePlayer = player;
+
+    this.updateBoardLimit();
   }
 
   /**
@@ -588,6 +607,34 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.humanPlayer.movePokemon(selectedPokemon, newLocation);
+    this.updateBoardLimit();
+  }
+
+  // Update the big background text on the board saying how many units can still be placed
+  // Only show it for players when their board can still fit more units on it
+  updateBoardLimit() {
+    // looking at someone else's board, hide
+    if (this.currentVisiblePlayer !== this.humanPlayer) {
+      this.boardLimitText.setVisible(false);
+      return;
+    }
+
+    if (!this.humanPlayer.canAddPokemonToMainboard()) {
+      // can't add more Pokemon: show faintly
+      this.boardLimitText.setAlpha(0.2);
+    } else {
+      // can add more Pokemon: show more prominently
+      this.boardLimitText.setAlpha(0.4);
+    }
+
+    this.boardLimitText
+      .setVisible(true)
+      .setText(
+        `${
+          flatten(this.currentVisiblePlayer.mainboard).filter(v => isDefined(v))
+            .length
+        }/${this.currentVisiblePlayer.level}`
+      );
   }
 
   /**
