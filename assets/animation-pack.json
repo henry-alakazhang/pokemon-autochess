@@ -30,6 +30,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "crush-grip",
+        "url": "assets/animations/crush-grip.png",
+        "frameConfig": {
+          "frameWidth": 72,
+          "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "dragon-dance",
         "url": "assets/animations/dragon-dance.png",
         "frameConfig": {

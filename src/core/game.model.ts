@@ -1082,12 +1082,13 @@ has all of their types combined together.`,
             ],
           };
           mech.addStats({
-            maxHP: pokemon.basePokemon.maxHP * 0.6,
-            attack: pokemon.basePokemon.attack * 0.6,
-            defense: pokemon.basePokemon.defense * 0.6,
-            specAttack: pokemon.basePokemon.specAttack * 0.6,
-            specDefense: pokemon.basePokemon.specDefense * 0.6,
+            maxHP: Math.round(pokemon.basePokemon.maxHP * 0.7),
+            attack: Math.round(pokemon.basePokemon.attack * 0.6),
+            defense: Math.round(pokemon.basePokemon.defense * 0.1),
+            specAttack: Math.round(pokemon.basePokemon.specAttack * 0.6),
+            specDefense: Math.round(pokemon.basePokemon.specDefense * 0.1),
           });
+          mech.synergyState.pivot += pokemon.basePokemon.stage;
 
           // remove each of them from being tracked by the CombatScene
           scene.removePokemon(pokemon);
@@ -1109,6 +1110,9 @@ has all of their types combined together.`,
             return;
           }
           const graphicalSpot = getCoordinatesForMainboard(spotToJump);
+          slot.pokemon.takeDamage(slot.pokemon.maxHP / 2, {
+            triggerEvents: false,
+          });
           slot.pokemon
             .setVisible(true)
             .setActive(true)

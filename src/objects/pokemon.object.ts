@@ -138,7 +138,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     sweeper: number;
     /** Number of Attack stacks */
     revengeKiller: number;
-  } = { sweeper: 0, revengeKiller: 0 };
+    /** Total stage value of Mech */
+    pivot: number;
+  } = { sweeper: 0, revengeKiller: 0, pivot: 0 };
 
   attachments: Phaser.GameObjects.Components.Visible[] = [];
 
@@ -240,8 +242,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   initPhysics() {
-    // set circle to be small % of the body
-    this.body.setCircle(this.height / 4);
+    // set collision to be a small block in the center
+    this.body.setSize(32, 32, true);
   }
 
   setPosition(x: number, y: number) {
@@ -628,6 +630,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     this.basePokemon = {
       ...this.basePokemon,
+      maxHP: this.maxHP,
       attack:
         (this.rawBasePokemon.attack + this.flatStatChanges.attack) *
         getChange(this.statChanges.attack),

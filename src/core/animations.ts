@@ -183,4 +183,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 17,
     duration: 600,
   },
+  'crush-grip': {
+    texture: 'crush-grip',
+    frames: 21,
+    duration: 700,
+  },
 };

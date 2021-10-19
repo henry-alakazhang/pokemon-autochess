@@ -5,6 +5,7 @@ import {
   braveBird,
   clone,
   cottonGuard,
+  crushGrip,
   darkestLariat,
   darkVoid,
   dragonDance,
@@ -596,17 +597,18 @@ const basePokemonData = {
   regigigas: {
     categories: [],
     tier: 5,
-    // hp, attack, defense, specattack, specdefense get overwritten
+    // hp, attack, defense, specattack, specdefense also get boosted based on pivot stats
     maxHP: 100,
-    attack: 0,
-    defense: 0,
-    specAttack: 0,
-    specDefense: 0,
+    attack: 160,
+    defense: 110,
+    specAttack: 80,
+    specDefense: 110,
     speed: 100,
     basicAttack: {
       range: 1,
       stat: 'attack',
     },
+    move: crushGrip,
   },
   dreepy: {
     categories: ['dragon', 'ghost', 'revenge killer'],
@@ -1317,9 +1319,10 @@ const rawPokemonData = {
   },
   // the mech from the pivot synergy
   regigigas: {
-    ...getEvolution('regigigas', 3),
+    ...getEvolution('regigigas', 1),
     name: 'regigigas',
     displayName: 'Regigigas',
+    stage: 3,
   },
   dreepy: {
     ...getEvolution('dreepy', 1),
