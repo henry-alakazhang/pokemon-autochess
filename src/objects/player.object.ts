@@ -556,5 +556,16 @@ export class Player extends Phaser.GameObjects.GameObject {
     this.aiStrategy
       .decideSells?.(this)
       .forEach(toSell => this.sellPokemon(toSell));
+
+    // AI fallback: if doesn't want to sell anything AND board is full,
+    // just sell from the back of the sideboard
+    if (!this.canAddPokemonToSideboard()) {
+      console.warn("AI couldn't decide sells, selling anyway");
+      this.sideboard.slice(-3).forEach(toSell => {
+        if (toSell) {
+          this.sellPokemon(toSell);
+        }
+      });
+    }
   }
 }

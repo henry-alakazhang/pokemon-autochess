@@ -1,6 +1,6 @@
 import { Category, getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
-import { pokemonData, PokemonName } from '../../core/pokemon.model';
+import { Pokemon, pokemonData, PokemonName } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Player } from '../player.object';
 import { PokemonObject } from '../pokemon.object';
@@ -51,17 +51,25 @@ function genericPrioritiseBoard(
 }
 
 /**
- * Sell logic.
- * - Sells excess copies except for one Pokemon we're targetting to 3*
- * - Sells excess copies for Pokemon we've already 3*d
- * - Sells random Pokemon which won't contribute to board synergies
+ * Buy/sell prioritisation logic.
+ *
+ * Of an array of Pokemon, returns an equivalent array of whether the player wants them or not.
  */
-function genericDecideSells(player: Player) {
-  // don't bother selling if we can afford more Pokemon
-  if (player.canAddPokemonToSideboard()) {
-    return [];
-  }
-
+function decideWant(
+  player: Player,
+  list: readonly Pokemon[],
+  {
+    forced,
+    strict = false,
+  }: {
+    forced?: readonly Category[];
+    /**
+     * Increases how much quality we expect out of the board
+     * Usually only use this for selling, since we can buy some extra crap and sell later.
+     */
+    strict?: boolean;
+  } = {}
+) {
   // count number of copies of each pokemon
   const totalCopies: { [k in PokemonName]?: number } = {};
   [...flatten(player.mainboard), ...player.sideboard]
@@ -72,57 +80,130 @@ function genericDecideSells(player: Player) {
         (totalCopies[pokemon.basePokemon.base] ?? 0) + count;
     });
 
-  // find Pokemon with most copies: that's the current reroll target
-  const allCopies = Object.keys(totalCopies) as PokemonName[];
-  let rerollTarget: PokemonName = allCopies[0];
-  allCopies.forEach(pokemonName => {
+  // find board Pokemon with most copies: that's the current reroll target
+  const allBoardUnits = flatten(player.mainboard)
+    .filter(isDefined)
+    .map(pokemon => pokemon.basePokemon.base);
+  let rerollTarget: PokemonName = allBoardUnits[0];
+  allBoardUnits.forEach(pokemonName => {
     if (
       (totalCopies[pokemonName] ?? 0) > (totalCopies[rerollTarget] ?? 0) &&
       // if we already capped them, they're not a reroll target anymore
       (totalCopies[pokemonName] ?? 0) < 9 &&
       // don't bother trying to 3* a 4- or 5-cost; it's not gonna happen
-      pokemonData[pokemonName].tier >= 4
+      pokemonData[pokemonName].tier <= 3
     ) {
       rerollTarget = pokemonName;
     }
   });
 
+  // then we decide if we want the Pokemon...
+  return list.map(pokemon => {
+    // YES if board has empty slots and no sideboard to fill them with
+    if (
+      player.canAddPokemonToMainboard() &&
+      player.sideboard.every(slot => !isDefined(slot))
+    ) {
+      return true;
+    }
+
+    // NO if already have a 3* version
+    if ((totalCopies[pokemon.base] ?? 0) >= 9) {
+      return false;
+    }
+
+    // NO to excess copies if not rerolling for that Pokemon
+    if ((totalCopies[pokemon.base] ?? 0) > 3 && pokemon.base !== rerollTarget) {
+      return false;
+    }
+
+    // NO if max level and 2* Pokemon is not already on board
+    // since we're unlikely to put them on the board or level them up further.
+    if (
+      player.level === 6 &&
+      (totalCopies[pokemon.base] ?? 0) >= 3 &&
+      !flatten(player.mainboard).some(
+        boardMon => boardMon?.basePokemon.name === pokemon.name
+      )
+    ) {
+      return false;
+    }
+
+    // strict:
+    // NO to random weaker units at higher levels
+    // level 3 start ignoring 1* 1-costs, ramping up to selling excess 2/3 costs
+    if (strict && getPokemonStrength(pokemon) <= player.level + 1) {
+      return false;
+    }
+
+    // YES if it matches our forced synergies
+    if (pokemon.categories.some(category => forced?.includes(category))) {
+      return true;
+    }
+
+    // YES if this Pokemon would give an extra tier of a synergy,
+    // and player is not max level (ie. can potentially fit on board later)
+    if (
+      (!forced || forced.length === 1) &&
+      player.level < 6 &&
+      pokemon.categories.some(
+        category =>
+          getSynergyTier(
+            synergyData[category].thresholds,
+            (player.synergyMap[category] ?? 0) + 1
+          ) >
+          getSynergyTier(
+            synergyData[category].thresholds,
+            player.synergyMap[category] ?? 0
+          )
+      )
+    ) {
+      return true;
+    }
+
+    // end of forced logic: remaining is for flex only
+    if (forced) {
+      return false;
+    }
+
+    // YES if contributes to our on-board synergies
+    if (
+      player.level < 6 &&
+      pokemon.categories.some(category => player.synergyMap[category])
+    ) {
+      return true;
+    }
+
+    // YES if we've already picked one up - might as well try to 2*
+    // when strict, only keep / buy for pairs
+    if (
+      totalCopies[pokemon.base] === 2 ||
+      (!strict && totalCopies[pokemon.base] === 1)
+    ) {
+      return true;
+    }
+
+    // NO otherwise
+    return false;
+  });
+}
+
+function genericDecideSells(player: Player) {
+  // don't sell if still room to buy.
+  if (player.canAddPokemonToSideboard()) {
+    return [];
+  }
+
+  const wanted = decideWant(
+    player,
+    player.sideboard.filter(isDefined).map(pokemon => pokemon?.basePokemon),
+    { strict: true }
+  );
   return (
     player.sideboard
       .filter(isDefined)
-      .filter(pokemon => {
-        // if already have a 3* version, sell
-        if ((totalCopies[pokemon.basePokemon.base] ?? 0) >= 9) {
-          return true;
-        }
-
-        // if not rerolling for that Pokemon and have excess copies, sell
-        if (
-          (totalCopies[pokemon.basePokemon.base] ?? 0) > 3 &&
-          pokemon.basePokemon.base !== rerollTarget
-        ) {
-          return true;
-        }
-
-        // if doesn't contribute to ANY on-board synergies, sell
-        if (
-          !pokemon.basePokemon.categories.some(
-            category => player.synergyMap[category]
-          )
-        ) {
-          return true;
-        }
-
-        // at higher levels, sell random weaker units
-        // level 3 start selling 1* 1-costs, ramping up to selling excess 2/3 costs
-        if (getPokemonStrength(pokemon.basePokemon) <= player.level + 1) {
-          return true;
-        }
-
-        return false;
-      })
-      // don't go overboard and sell more than half the board at once
-      // slice from the back because the array should be sorted by power
+      .filter((_, index) => !wanted[index])
+      // don't sell tooo much
       .slice(-4)
   );
 }
@@ -131,13 +212,11 @@ function genericDecideSells(player: Player) {
 const basicFlexAI: AIStrategy = {
   name: 'Basic Flex',
   decideBuys: (player: Player) => {
-    return player.currentShop.filter(
-      pokemon =>
-        Object.keys(player.synergyMap).length < 4 ||
-        pokemonData[pokemon].categories.some(
-          category => player.synergyMap[category]
-        )
+    const wants = decideWant(
+      player,
+      player.currentShop.map(pokemon => pokemonData[pokemon])
     );
+    return player.currentShop.filter((_, index) => wants[index] === true);
   },
   prioritiseBoard: genericPrioritiseBoard,
   // always reroll if enough gold to buy some units
@@ -151,40 +230,12 @@ function generateHardForceAI(forced: readonly Category[]): AIStrategy {
     name: `Hard Force ${forced.join(' + ')}`,
     /** Buy Pokemon of the categories being forced */
     decideBuys: (player: Player) => {
-      const slightlyFlex = forced.length === 1;
-      return player.currentShop.filter(pokemon =>
-        pokemonData[pokemon].categories.some(category => {
-          // if board has holes and no sideboard units to fill, just buy whatever you can
-          if (
-            player.canAddPokemonToMainboard() &&
-            player.sideboard.every(slot => !isDefined(slot))
-          ) {
-            return true;
-          }
-
-          // if part of the forced build, always buy
-          if (forced.includes(category)) {
-            return true;
-          }
-
-          // flexible logic (for when only one category is forced)
-          // can fill out the board with extra synergies that fit
-          if (slightlyFlex) {
-            // if this Pokemon would give an extra tier of a synergy, buy and hold
-            const synergyCount = player.synergyMap[category];
-            if (
-              synergyCount &&
-              getSynergyTier(
-                synergyData[category].thresholds,
-                synergyCount + 1
-              ) > getSynergyTier(synergyData[category].thresholds, synergyCount)
-            ) {
-              return true;
-            }
-          }
-          return false;
-        })
+      const wants = decideWant(
+        player,
+        player.currentShop.map(pokemon => pokemonData[pokemon]),
+        { forced }
       );
+      return player.currentShop.filter((_, index) => wants[index] === true);
     },
     /**
      * Prioritise Pokemon that will match the forced types
