@@ -407,7 +407,6 @@ export class Player extends Phaser.GameObjects.GameObject {
     flatten(this.mainboard)
       .filter(isDefined)
       .forEach(pokemon => {
-        console.log(pokemon, counted);
         // ignore pokemon if counted already
         if (counted[pokemon.basePokemon.base]) {
           return;
@@ -446,7 +445,6 @@ export class Player extends Phaser.GameObjects.GameObject {
         }
         return b.category > a.category ? -1 : 1;
       });
-    console.log(this.synergyMap, this.synergies);
 
     // hide all synergy markers
     Object.values(this.synergyMarkers).forEach(marker => {
