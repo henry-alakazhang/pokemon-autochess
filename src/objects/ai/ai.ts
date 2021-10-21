@@ -97,7 +97,40 @@ function decideWant(
     }
   });
 
-  // then we decide if we want the Pokemon...
+  /** Whether adding a Pokemon to the mainboard will improve synergies */
+  const willImproveSynergies = (pokemon: Pokemon) =>
+    pokemon.categories.some(
+      category =>
+        getSynergyTier(
+          synergyData[category].thresholds,
+          (player.synergyMap[category] ?? 0) + 1
+        ) >
+        getSynergyTier(
+          synergyData[category].thresholds,
+          player.synergyMap[category] ?? 0
+        )
+    );
+
+  // find strongest benched unit which can sub in at next level
+  // ie. will improve synergies
+  const sideboardUnits = player.sideboard
+    .filter(isDefined)
+    .filter(pokemon => willImproveSynergies(pokemon.basePokemon));
+  let strongSubUnit: Pokemon | undefined;
+  sideboardUnits.forEach(pokemon => {
+    if (!strongSubUnit) {
+      if (pokemon.basePokemon.stage >= 2) {
+        strongSubUnit = pokemon.basePokemon;
+      }
+    } else if (
+      getPokemonStrength(pokemon.basePokemon) >
+      getPokemonStrength(strongSubUnit)
+    ) {
+      strongSubUnit = pokemon.basePokemon;
+    }
+  });
+
+  // then we decide if we want the Pokemon
   return list.map(pokemon => {
     // YES if board has empty slots and no sideboard to fill them with
     if (
@@ -132,20 +165,34 @@ function decideWant(
     // strict:
     // NO to random weaker units at higher levels
     // level 3 start ignoring 1* 1-costs, ramping up to selling excess 2/3 costs
-    if (strict && getPokemonStrength(pokemon) <= player.level + 1) {
+    if (
+      strict &&
+      getPokemonStrength(pokemon) <= player.level + 1 &&
+      rerollTarget !== pokemon.base
+    ) {
       return false;
     }
 
-    // YES if it matches our forced synergies
-    if (pokemon.categories.some(category => forced?.includes(category))) {
+    // YES if it matches our forced synergies OR boosts our reroll carry
+    if (
+      pokemon.categories.some(
+        category =>
+          forced?.includes(category) ||
+          pokemonData[rerollTarget].categories.includes(category)
+      )
+    ) {
       return true;
     }
 
     // YES if this Pokemon would give an extra tier of a synergy,
     // and player is not max level (ie. can potentially fit on board later)
     if (
+      // only flex for forced comps with no explicit splash
       (!forced || forced.length === 1) &&
+      // only hold extra units when can still level up
       player.level < 6 &&
+      // don't pick up if we already have a candidate for next board unit
+      !strongSubUnit &&
       pokemon.categories.some(
         category =>
           getSynergyTier(
@@ -225,15 +272,18 @@ const basicFlexAI: AIStrategy = {
   decideSells: genericDecideSells,
 };
 
-function generateHardForceAI(forced: readonly Category[]): AIStrategy {
+function generateHardForceAI(
+  primary?: Category,
+  splash: readonly Category[] = []
+): AIStrategy {
   return {
-    name: `Hard Force ${forced.join(' + ')}`,
+    name: `Hard Force ${primary} + ${splash.join(' + ')}`,
     /** Buy Pokemon of the categories being forced */
     decideBuys: (player: Player) => {
       const wants = decideWant(
         player,
         player.currentShop.map(pokemon => pokemonData[pokemon]),
-        { forced }
+        { forced: primary ? [primary, ...splash] : splash }
       );
       return player.currentShop.filter((_, index) => wants[index] === true);
     },
@@ -243,16 +293,21 @@ function generateHardForceAI(forced: readonly Category[]): AIStrategy {
      */
     prioritiseBoard: (player: Player) => {
       return genericPrioritiseBoard(player, (a, b) => {
-        // number of categories matching the force
-        const categoryCountDiff =
-          b.basePokemon.categories.filter(category => forced.includes(category))
+        // always prioritise primary force units (if there is a primary trait)
+        const primaryCategoryDiff =
+          b.basePokemon.categories.filter(c => c === primary).length -
+          a.basePokemon.categories.filter(c => c === primary).length;
+
+        // include secondary categories based on how many there are
+        const splashCategoryDiff =
+          b.basePokemon.categories.filter(category => splash.includes(category))
             .length -
-          a.basePokemon.categories.filter(category => forced.includes(category))
+          a.basePokemon.categories.filter(category => splash.includes(category))
             .length;
         const pokemonStrengthDiff =
           getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon);
         // pick Pokemon that fit the categories, then order by power
-        return categoryCountDiff || pokemonStrengthDiff;
+        return primaryCategoryDiff || splashCategoryDiff || pokemonStrengthDiff;
       });
     },
     /** Donkey as long as there's money and room to buy units */
@@ -265,43 +320,35 @@ function generateHardForceAI(forced: readonly Category[]): AIStrategy {
 const hardForceStrategies: AIStrategy[] = [
   // single vertical trait comps
   // comps capable of filling 6 vertical
-  generateHardForceAI(['dark']),
-  generateHardForceAI(['fire']),
-  generateHardForceAI(['bulky attacker']),
-  generateHardForceAI(['sweeper']),
+  generateHardForceAI('dark'),
+  generateHardForceAI('fire'),
+  generateHardForceAI('bulky attacker'),
+  generateHardForceAI('sweeper'),
 
-  // comps that need a bit of flex
-  generateHardForceAI(['bug']),
-  generateHardForceAI(['poison']),
-  generateHardForceAI(['sweeper']),
-  generateHardForceAI(['ground']),
+  // comps that will focus a trait with some flex units
+  generateHardForceAI('dragon'),
+  generateHardForceAI('bug'),
+  generateHardForceAI('poison'),
+  generateHardForceAI('ground'),
+  generateHardForceAI('pivot'),
+  generateHardForceAI('water'),
+  generateHardForceAI('electric'),
+  generateHardForceAI('revenge killer'),
 
-  // verticals + supports
-  generateHardForceAI(['poison', 'grass']),
-  generateHardForceAI(['poison', 'electric']),
-  generateHardForceAI(['poison', 'disruptor']),
-  generateHardForceAI(['sweeper', 'steel']),
-  generateHardForceAI(['fire', 'support']),
-  generateHardForceAI(['revenge killer', 'electric']),
-  generateHardForceAI(['ground', 'rock']),
+  // non-full verticals + explicit supports
+  generateHardForceAI('poison', ['disruptor']),
+  generateHardForceAI('revenge killer', ['electric']),
+  generateHardForceAI('ground', ['bulky attacker']),
+  generateHardForceAI('pivot', ['ground']),
+  generateHardForceAI('pivot', ['dark']),
+  generateHardForceAI('wallbreaker', ['grass', 'steel']),
 
   // generic frontline + backline
-  generateHardForceAI(['psychic', 'wall']),
-  generateHardForceAI(['psychic', 'bulky attacker']),
-  generateHardForceAI(['sweeper', 'wall']),
-  generateHardForceAI(['sweeper', 'bulky attacker']),
-  generateHardForceAI(['wallbreaker', 'wall']),
-
-  // me mech
-  generateHardForceAI(['pivot']),
-  generateHardForceAI(['pivot', 'dark']),
-
-  // force some specific carries
-  generateHardForceAI(pokemonData.weedle.categories),
-  generateHardForceAI(pokemonData.magikarp.categories),
-  generateHardForceAI(pokemonData.larvitar.categories),
-  generateHardForceAI(pokemonData.exeggcute.categories),
-  generateHardForceAI(pokemonData.scyther.categories),
+  generateHardForceAI(undefined, ['psychic', 'wall']),
+  generateHardForceAI(undefined, ['psychic', 'bulky attacker']),
+  generateHardForceAI(undefined, ['sweeper', 'steel']),
+  generateHardForceAI(undefined, ['sweeper', 'ghost']),
+  generateHardForceAI(undefined, ['wallbreaker', 'wall']),
 ];
 
 export function getRandomAI(): AIStrategy {
