@@ -213,10 +213,16 @@ function decideWant(
       return false;
     }
 
-    // YES if contributes to our on-board synergies
+    // YES if contributes to our active on-board synergies
     if (
       player.level < 6 &&
-      pokemon.categories.some(category => player.synergyMap[category])
+      pokemon.categories.some(
+        category =>
+          getSynergyTier(
+            synergyData[category].thresholds,
+            player.synergyMap[category] ?? 0
+          ) > 0
+      )
     ) {
       return true;
     }
