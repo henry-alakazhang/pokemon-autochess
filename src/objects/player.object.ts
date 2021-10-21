@@ -485,24 +485,22 @@ export class Player extends Phaser.GameObjects.GameObject {
 
     this.currentShop = this.pool.reroll(this, this.currentShop);
 
+    this.decideEnemyBuys();
+    while (this.aiStrategy.decideReroll(this)) {
+      this.currentShop = this.pool.reroll(this, this.currentShop);
+      this.gold -= 2;
+      this.decideEnemyBuys();
+    }
+  }
+
+  decideEnemyBuys() {
     this.aiStrategy.decideBuys(this).forEach(pokemon => {
       if (this.buyPokemon(pokemon)) {
         delete this.currentShop[this.currentShop.indexOf(pokemon)];
       }
     });
 
-    while (this.aiStrategy.decideReroll(this)) {
-      this.currentShop = this.pool.reroll(this, this.currentShop);
-      this.gold -= 2;
-
-      this.aiStrategy.decideBuys(this).forEach(pokemon => {
-        if (this.buyPokemon(pokemon)) {
-          delete this.currentShop[this.currentShop.indexOf(pokemon)];
-        }
-      });
-    }
-
-    // for everyone in the selected board, position them onto the mainboard
+    // after each shop, reorder the board so we can decide what to sell
     const boardOrder = this.aiStrategy.prioritiseBoard(this);
     // we position them by "removing" all the Pokemon from the board first,
     // then manually putting them in the right places using `setPokemonAtLocation`

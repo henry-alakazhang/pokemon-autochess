@@ -35,7 +35,10 @@ function genericPrioritiseBoard(
     const seen: { [k in PokemonName]?: boolean } = {};
     let swapsMade = 0;
     for (let i = 0; i < player.level; i++) {
-      if (seen[sortedPokemon[i].basePokemon.base]) {
+      if (
+        seen[sortedPokemon[i].basePokemon.base] &&
+        sortedPokemon[player.level + swapsMade]
+      ) {
         // if seen, swap it with someone past the end of the mainboard
         [sortedPokemon[i], sortedPokemon[player.level + swapsMade]] = [
           sortedPokemon[player.level + swapsMade],
@@ -80,25 +83,20 @@ function decideWant(
         (totalCopies[pokemon.basePokemon.base] ?? 0) + count;
     });
 
-  // find board Pokemon with most copies: that's the current reroll target
+  // find board Pokemon with a lot of copies: that's the reroll target
   const allBoardUnits = flatten(player.mainboard)
     .filter(isDefined)
     .map(pokemon => pokemon.basePokemon.base);
-  let rerollTarget: PokemonName = allBoardUnits[0];
-  allBoardUnits.forEach(pokemonName => {
-    if (
-      (totalCopies[pokemonName] ?? 0) > (totalCopies[rerollTarget] ?? 0) &&
-      // if we already capped them, they're not a reroll target anymore
+  const rerollTarget = allBoardUnits.find(
+    pokemonName =>
+      (totalCopies[pokemonName] ?? 0) >= 3 &&
       (totalCopies[pokemonName] ?? 0) < 9 &&
-      // don't bother trying to 3* a 4- or 5-cost; it's not gonna happen
       pokemonData[pokemonName].tier <= 3
-    ) {
-      rerollTarget = pokemonName;
-    }
-  });
+  );
 
   /** Whether adding a Pokemon to the mainboard will improve synergies */
   const willImproveSynergies = (pokemon: Pokemon) =>
+    !allBoardUnits.some(boardUnit => pokemon.base === boardUnit) &&
     pokemon.categories.some(
       category =>
         getSynergyTier(
@@ -111,27 +109,18 @@ function decideWant(
         )
     );
 
-  // find strongest benched unit which can sub in at next level
-  // ie. will improve synergies
-  const sideboardUnits = player.sideboard
+  // list all the bench units that will improve synergies
+  // note: this should be sorted by approxiamte strength because he sideboard should be
+  const potentialNextUnits = player.sideboard
     .filter(isDefined)
     .filter(pokemon => willImproveSynergies(pokemon.basePokemon));
-  let strongSubUnit: Pokemon | undefined;
-  sideboardUnits.forEach(pokemon => {
-    if (!strongSubUnit) {
-      if (pokemon.basePokemon.stage >= 2) {
-        strongSubUnit = pokemon.basePokemon;
-      }
-    } else if (
-      getPokemonStrength(pokemon.basePokemon) >
-      getPokemonStrength(strongSubUnit)
-    ) {
-      strongSubUnit = pokemon.basePokemon;
-    }
-  });
+  // and also find if there are any already-evolved ready-to-go ones.
+  const strongNextUnit = potentialNextUnits.find(
+    pokemon => pokemon.basePokemon.stage >= 2
+  );
 
   // then we decide if we want the Pokemon
-  return list.map(pokemon => {
+  const defaultWants = list.map(pokemon => {
     // YES if board has empty slots and no sideboard to fill them with
     if (
       player.canAddPokemonToMainboard() &&
@@ -153,11 +142,10 @@ function decideWant(
     // NO if max level and 2* Pokemon is not already on board
     // since we're unlikely to put them on the board or level them up further.
     if (
+      strict &&
       player.level === 6 &&
       (totalCopies[pokemon.base] ?? 0) >= 3 &&
-      !flatten(player.mainboard).some(
-        boardMon => boardMon?.basePokemon.name === pokemon.name
-      )
+      !allBoardUnits.includes(pokemon.name)
     ) {
       return false;
     }
@@ -173,14 +161,8 @@ function decideWant(
       return false;
     }
 
-    // YES if it matches our forced synergies OR boosts our reroll carry
-    if (
-      pokemon.categories.some(
-        category =>
-          forced?.includes(category) ||
-          pokemonData[rerollTarget].categories.includes(category)
-      )
-    ) {
+    // YES if it matches our forced synergies
+    if (pokemon.categories.some(category => forced?.includes(category))) {
       return true;
     }
 
@@ -192,7 +174,7 @@ function decideWant(
       // only hold extra units when can still level up
       player.level < 6 &&
       // don't pick up if we already have a candidate for next board unit
-      !strongSubUnit &&
+      !strongNextUnit &&
       pokemon.categories.some(
         category =>
           getSynergyTier(
@@ -213,15 +195,23 @@ function decideWant(
       return false;
     }
 
-    // YES if contributes to our active on-board synergies
+    // YES if can improve our active on-board synergies
+    // and we don't have enough units on bench or some of them are weak
     if (
-      player.level < 6 &&
+      (potentialNextUnits.length < 6 - player.level ||
+        potentialNextUnits.some(
+          potentialUnit => potentialUnit.basePokemon.tier < pokemon.tier
+        )) &&
       pokemon.categories.some(
         category =>
           getSynergyTier(
             synergyData[category].thresholds,
+            (player.synergyMap[category] ?? 0) + 1
+          ) >
+          getSynergyTier(
+            synergyData[category].thresholds,
             player.synergyMap[category] ?? 0
-          ) > 0
+          )
       )
     ) {
       return true;
@@ -239,6 +229,15 @@ function decideWant(
     // NO otherwise
     return false;
   });
+
+  // if we want to sell stuff and can't decide, just sell all the random 1-ofs
+  if (strict && !defaultWants.includes(false)) {
+    console.warn("AI couldn't decide sells, selling everything not paired");
+    return list.map(pokemon => totalCopies[pokemon.base] !== 1);
+  }
+
+  // otherwise we should be good
+  return defaultWants;
 }
 
 function genericDecideSells(player: Player) {
