@@ -23,34 +23,113 @@ export interface AIStrategy {
  */
 function genericPrioritiseBoard(
   player: Player,
+  force?: Category,
   sortFn = (a: PokemonObject, b: PokemonObject) =>
     getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon)
 ): PokemonObject[] {
-  const sortedPokemon = [...flatten(player.mainboard), ...player.sideboard]
+  const allPokemon = [...flatten(player.mainboard), ...player.sideboard]
     .filter(isDefined)
     .sort(sortFn);
 
-  // get rid of duplicates (only relevant if we have sideboard units to swap to)
-  if (sortedPokemon.length > player.level) {
-    const seen: { [k in PokemonName]?: boolean } = {};
-    let swapsMade = 0;
-    for (let i = 0; i < player.level; i++) {
-      if (
-        seen[sortedPokemon[i].basePokemon.base] &&
-        sortedPokemon[player.level + swapsMade]
-      ) {
-        // if seen, swap it with someone past the end of the mainboard
-        [sortedPokemon[i], sortedPokemon[player.level + swapsMade]] = [
-          sortedPokemon[player.level + swapsMade],
-          sortedPokemon[i],
-        ];
-        swapsMade++;
-      }
-      seen[sortedPokemon[i].basePokemon.base] = true;
+  const allCategoryCounts: { [k in Category]?: number } = {};
+  const seenPokemon: { [k in PokemonName]?: boolean } = {};
+  let deduplicatedPokemon: PokemonObject[] = [];
+  const duplicates: PokemonObject[] = [];
+  allPokemon.forEach(pokemon => {
+    if (seenPokemon[pokemon.basePokemon.base]) {
+      duplicates.push(pokemon);
+      return;
     }
+
+    pokemon.basePokemon.categories.forEach(category => {
+      allCategoryCounts[category] = (allCategoryCounts[category] ?? 0) + 1;
+    });
+    deduplicatedPokemon.push(pokemon);
+    seenPokemon[pokemon.basePokemon.base] = true;
+  });
+
+  const forceCount = force ? allCategoryCounts[force] ?? 0 : 0;
+  const forceTier = force
+    ? getSynergyTier(synergyData[force].thresholds, forceCount)
+    : 0;
+
+  // sort category counts by count, take the biggest.
+  // if ties, prioritise the force (if any)
+  const [biggestSynergy, biggestCount] =
+    force && forceCount && forceTier > 0
+      ? [force, forceCount]
+      : (Object.entries(allCategoryCounts)
+          .sort((a, b) => a[1] - b[1])
+          .pop() as [Category, number]);
+  const biggestSynergyHighestTier = getSynergyTier(
+    synergyData[biggestSynergy].thresholds,
+    biggestCount
+  );
+
+  // track a board and synergies we're building as we go.
+  const currentBoard: PokemonObject[] = [];
+  const currentSynergyCounts: { [k in Category]?: number } = {};
+
+  /** Function that adds a Pokemon to the current board we're building */
+  const addToCurrentBoard = (pokemon: PokemonObject) => {
+    //  add to board
+    currentBoard.push(pokemon);
+    // remove from current working list
+    deduplicatedPokemon = deduplicatedPokemon.filter(p => p !== pokemon);
+    // and count synergies
+    pokemon.basePokemon.categories.forEach(category => {
+      currentSynergyCounts[category] =
+        (currentSynergyCounts[category] ?? 0) + 1;
+    });
+  };
+
+  while (currentBoard.length < player.level) {
+    // if we're not at the highest possible tier,
+    // then try to add the main synergy until we are.
+    // Only do this when we have a few units/synergies.
+    // At lower levels, it's better to just play strong units
+    if (
+      player.level > 3 &&
+      getSynergyTier(
+        synergyData[biggestSynergy].thresholds,
+        currentSynergyCounts[biggestSynergy] ?? 0
+      ) < biggestSynergyHighestTier
+    ) {
+      const mainSynergyMon = deduplicatedPokemon.find(pokemon =>
+        pokemon.basePokemon.categories.includes(biggestSynergy)
+      );
+      if (mainSynergyMon) {
+        addToCurrentBoard(mainSynergyMon);
+        continue;
+      }
+    }
+
+    // otherwise, try to add some splash traits in
+    const improvesAnyTraitMon = deduplicatedPokemon.find(pokemon =>
+      pokemon.basePokemon.categories.some(
+        category =>
+          getSynergyTier(
+            synergyData[category].thresholds,
+            (currentSynergyCounts[category] ?? 0) + 1
+          ) >
+          getSynergyTier(
+            synergyData[category].thresholds,
+            currentSynergyCounts[category] ?? 0
+          )
+      )
+    );
+    if (improvesAnyTraitMon) {
+      addToCurrentBoard(improvesAnyTraitMon);
+      continue;
+    }
+
+    addToCurrentBoard(deduplicatedPokemon[0]);
   }
 
-  return sortedPokemon;
+  // priority is the selected board, duplicates (so we can keep rolling), then remaining dedupes
+  // This is relevant because the AI sell fallback logic will delete from the end
+  // so let's not sacrifice all the stuff we spent ages rolling for...
+  return [...currentBoard, ...duplicates, ...deduplicatedPokemon];
 }
 
 /**
@@ -297,7 +376,7 @@ function generateHardForceAI(
      * and pick the ones that are stronger
      */
     prioritiseBoard: (player: Player) => {
-      return genericPrioritiseBoard(player, (a, b) => {
+      return genericPrioritiseBoard(player, primary, (a, b) => {
         // always prioritise primary force units (if there is a primary trait)
         const primaryCategoryDiff =
           b.basePokemon.categories.filter(c => c === primary).length -
