@@ -407,7 +407,6 @@ export class Player extends Phaser.GameObjects.GameObject {
     flatten(this.mainboard)
       .filter(isDefined)
       .forEach(pokemon => {
-        console.log(pokemon, counted);
         // ignore pokemon if counted already
         if (counted[pokemon.basePokemon.base]) {
           return;
@@ -446,7 +445,6 @@ export class Player extends Phaser.GameObjects.GameObject {
         }
         return b.category > a.category ? -1 : 1;
       });
-    console.log(this.synergyMap, this.synergies);
 
     // hide all synergy markers
     Object.values(this.synergyMarkers).forEach(marker => {
@@ -487,24 +485,22 @@ export class Player extends Phaser.GameObjects.GameObject {
 
     this.currentShop = this.pool.reroll(this, this.currentShop);
 
+    this.decideEnemyBuys();
+    while (this.aiStrategy.decideReroll(this)) {
+      this.currentShop = this.pool.reroll(this, this.currentShop);
+      this.gold -= 2;
+      this.decideEnemyBuys();
+    }
+  }
+
+  decideEnemyBuys() {
     this.aiStrategy.decideBuys(this).forEach(pokemon => {
       if (this.buyPokemon(pokemon)) {
         delete this.currentShop[this.currentShop.indexOf(pokemon)];
       }
     });
 
-    while (this.aiStrategy.decideReroll(this)) {
-      this.currentShop = this.pool.reroll(this, this.currentShop);
-      this.gold -= 2;
-
-      this.aiStrategy.decideBuys(this).forEach(pokemon => {
-        if (this.buyPokemon(pokemon)) {
-          delete this.currentShop[this.currentShop.indexOf(pokemon)];
-        }
-      });
-    }
-
-    // for everyone in the selected board, position them onto the mainboard
+    // after each shop, reorder the board so we can decide what to sell
     const boardOrder = this.aiStrategy.prioritiseBoard(this);
     // we position them by "removing" all the Pokemon from the board first,
     // then manually putting them in the right places using `setPokemonAtLocation`
@@ -558,5 +554,16 @@ export class Player extends Phaser.GameObjects.GameObject {
     this.aiStrategy
       .decideSells?.(this)
       .forEach(toSell => this.sellPokemon(toSell));
+
+    // AI fallback: if doesn't want to sell anything AND board is full,
+    // just sell from the back of the sideboard
+    if (!this.canAddPokemonToSideboard()) {
+      console.warn("AI couldn't decide sells, selling anyway");
+      this.sideboard.slice(-3).forEach(toSell => {
+        if (toSell) {
+          this.sellPokemon(toSell);
+        }
+      });
+    }
   }
 }

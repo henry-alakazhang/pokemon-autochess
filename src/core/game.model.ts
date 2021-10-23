@@ -239,7 +239,6 @@ when low on health.
       }
 
       const ppGain = tier === 1 ? 1 : tier === 2 ? 2 : 3;
-      console.log(isAttack, ppGain, attacker);
       if (isAttack) {
         attacker.addPP(ppGain);
         attacker.redrawBars();
