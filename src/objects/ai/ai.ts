@@ -26,14 +26,20 @@ function genericPrioritiseBoard(
   sortFn = (a: PokemonObject, b: PokemonObject) =>
     getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon)
 ): PokemonObject[] {
+  // Shortcut: For level 1-2, just play strongest units.
+  // ignore any specialised ordering logic as well.
+  if (player.level <= 2) {
+    return [...flatten(player.mainboard), ...player.sideboard]
+      .filter(isDefined)
+      .sort(
+        (a: PokemonObject, b: PokemonObject) =>
+          getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon)
+      );
+  }
+
   const allPokemon = [...flatten(player.mainboard), ...player.sideboard]
     .filter(isDefined)
     .sort(sortFn);
-
-  // Shortcut: For level 1-2, just play units sorted by strength.
-  if (player.level <= 2) {
-    return allPokemon;
-  }
 
   // ==========================================================
   // STEP 1:
@@ -51,7 +57,13 @@ function genericPrioritiseBoard(
     }
 
     pokemon.basePokemon.categories.forEach(category => {
-      allSynergies[category] = (allSynergies[category] ?? 0) + 1;
+      // add 1 to the synergy, capping out at player level
+      // eg. if level 3 and have 4 of a synergy on bench,
+      // the max possible count for that synergy is still 3
+      allSynergies[category] = Math.min(
+        (allSynergies[category] ?? 0) + 1,
+        player.level
+      );
     });
     deduplicatedPokemon.push(pokemon);
     seenPokemon[pokemon.basePokemon.base] = true;
@@ -81,7 +93,7 @@ function genericPrioritiseBoard(
   // Always add the "strongest" Pokemon, which should be
   // the first Pokemon in the list (sorted by strength)
   // ==========================================================
-  currentBoard.push(deduplicatedPokemon[0]);
+  addToCurrentBoard(deduplicatedPokemon[0]);
 
   // ==========================================================
   // STEP 4:
@@ -129,6 +141,7 @@ function genericPrioritiseBoard(
     }
 
     // otherwise, try to add some splash traits in
+    const nextStrongestMon = deduplicatedPokemon[0];
     const improvesAnyTraitMon = deduplicatedPokemon.find(pokemon =>
       pokemon.basePokemon.categories.some(
         category =>
@@ -142,19 +155,30 @@ function genericPrioritiseBoard(
           )
       )
     );
-    if (improvesAnyTraitMon) {
+    if (
+      improvesAnyTraitMon &&
+      getPokemonStrength(nextStrongestMon.basePokemon) -
+        getPokemonStrength(improvesAnyTraitMon.basePokemon) <=
+        2
+    ) {
+      // if the trait bot is not significantly weaker than the next strongest Pokemon, add it
       addToCurrentBoard(improvesAnyTraitMon);
-      continue;
+    } else {
+      // otherwise, add the strongest Pokemon
+      addToCurrentBoard(nextStrongestMon);
     }
-
-    // otherwise, add the strongest Pokemon
-    addToCurrentBoard(deduplicatedPokemon[0]);
   }
 
   // priority is the selected board, duplicates (so we can keep rolling), then remaining dedupes
   // This is relevant because the AI sell fallback logic will delete from the end
   // so let's not sacrifice all the stuff we spent ages rolling for...
-  return [...currentBoard, ...duplicates, ...deduplicatedPokemon];
+  const boardOrder = [...currentBoard, ...duplicates, ...deduplicatedPokemon];
+  if (boardOrder.length !== allPokemon.length) {
+    console.error(allPokemon);
+    console.error(currentBoard, duplicates, deduplicatedPokemon);
+    throw new Error(`Board prioritisation didnt return units exactly`);
+  }
+  return boardOrder;
 }
 
 /**
