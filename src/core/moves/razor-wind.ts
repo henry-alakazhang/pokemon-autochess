@@ -30,7 +30,7 @@ const move = {
       '/'
     )} damage over 2 seconds to any enemies caught i it.`;
   },
-  range: 3,
+  range: 99,
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
     let fastest: Coords | undefined;
     let fastestSpeed = -Infinity;
@@ -40,7 +40,10 @@ const move = {
       if (!pokemon) {
         return;
       }
-      if (pokemon.basePokemon.speed > fastestSpeed) {
+      if (
+        pokemon.side !== board[user.x][user.y]?.side &&
+        pokemon.basePokemon.speed > fastestSpeed
+      ) {
         fastestSpeed = pokemon.basePokemon.speed;
         fastest = { x, y };
       }
