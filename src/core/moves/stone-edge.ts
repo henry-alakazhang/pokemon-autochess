@@ -78,7 +78,10 @@ const move = {
                 damage: realBaseDamage,
                 defenseStat: this.defenseStat,
               });
-              scene.causeDamage(user, pokemon, damage, { isAOE: true });
+              scene.causeDamage(user, pokemon, damage, {
+                isAOE: true,
+                canCrit: true,
+              });
             });
           },
           delay: animations['stone-edge-shoot'].duration / 2,

@@ -568,7 +568,7 @@ Pokemon at the start of the round.
     displayName: 'Dragon: Sheer Force',
     description: `Boosts the power of Dragon-type moves.
 
- (3) - 75% more damage.`,
+ (3) - 50% more damage.`,
     thresholds: [3],
     calculateDamage({ attacker, baseAmount, side, count, flags }): number {
       const tier = getSynergyTier(this.thresholds, count);
@@ -625,7 +625,8 @@ Pokemon at the start of the round.
     description: `Innate: ALL Dark-type Pokemon teleport to the opposite
 side of the battlefield at the start of each round.
 
-Synergy: Dark-type Pokemon gain a critical hit ratio.
+Synergy: Dark-type Pokemon gain a critical hit ratio
+to both their attacks and their moves.
 
  (2) - 15% chance to deal 200% damage.
  (4) - 30% chance to deal 250% damage.

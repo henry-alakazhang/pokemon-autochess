@@ -37,7 +37,7 @@ const move = {
           damage: this.damage[user.basePokemon.stage - 1],
           defenseStat: this.defenseStat,
         });
-        scene.causeDamage(user, target, damage, { isAOE: true });
+        scene.causeDamage(user, target, damage, { isAOE: true, canCrit: true });
         target.addStatus('blind', 3000);
         onComplete();
       },

@@ -19,11 +19,11 @@ const move = {
   startingPP: 28,
   range: 1,
   targetting: 'unit',
-  damage: [65, 80, 90],
+  damage: [70, 80, 90],
   get description() {
-    return `{{user}} guards for 3 seconds, reducing incoming damage by ${this.damage.join(
+    return `{{user}} guards for 2 seconds, reducing incoming damage by ${this.damage.join(
       '/'
-    )}%. Afterwards, it lashes out, lowering Attack of nearby enemies for 8 seconds and raising its own Attack and Speed for each enemy hit.`;
+    )}%. Afterwards, it lashes out, lowering Attack of nearby enemies for 8 seconds and raising its own Attack and Defense for each enemy hit.`;
   },
   getAOE({ x, y }: Coords) {
     return [
@@ -138,7 +138,8 @@ const move = {
         user.changeStats(
           {
             attack: targetsHit,
-            speed: targetsHit,
+            defense: targetsHit,
+            specDefense: targetsHit,
           },
           8000
         );

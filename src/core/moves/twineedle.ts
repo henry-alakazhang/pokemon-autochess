@@ -8,7 +8,7 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Twineedle',
   type: 'active',
-  // slight hack: this move is a move that "casts" every attack instead of trigering
+  // slight hack: this move is a move that "casts" every attack instead of triggering
   cost: 0,
   startingPP: 0,
   range: 3,

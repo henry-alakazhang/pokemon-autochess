@@ -16,13 +16,13 @@ const move = {
   type: 'active',
   cost: 20,
   startingPP: 10,
-  damage: [300, 550, 800],
+  damage: [350, 550, 900],
   defenseStat: 'specDefense',
   targetting: 'unit',
   get description() {
     return `{{user}} hurls a shadowy blob in a straight line, dealing ${this.damage.join(
       '/'
-    )} damage to every enemy hit and lowering their Sp. Defense for 10 seconds.`;
+    )} damage to every enemy hit and sharply lowering their Sp. Defense for 8 seconds.`;
   },
   range: 1,
   use({
@@ -78,9 +78,9 @@ const move = {
               // TODO: don't apply this more than once ever
               target.changeStats(
                 {
-                  specDefense: -1,
+                  specDefense: -2,
                 },
-                10000
+                8000
               );
               hasBeenHit[target.id] = true;
             });

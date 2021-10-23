@@ -14,11 +14,11 @@ const move = {
   displayName: 'Frenzy Plant',
   type: 'active',
   cost: 22,
-  startingPP: 16,
+  startingPP: 18,
   range: 99,
   targetting: 'ground',
   // HP of the plant
-  damage: [150, 350, 600],
+  damage: [250, 400, 600],
   get description() {
     return `{{user}} summons a plant in a nearby square with its Attack and ${this.damage.join(
       '/'

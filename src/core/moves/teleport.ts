@@ -12,12 +12,12 @@ import { Move, MoveConfig } from '../move.model';
 const move = {
   displayName: 'Teleport',
   type: 'active',
-  cost: 24,
+  cost: 28,
   startingPP: 4,
   range: 1,
   targetting: 'ground',
   // actually heal %
-  damage: [25, 40, 50],
+  damage: [15, 20, 33],
   get description() {
     return `{{user}} teleports to a random spot on the grid, healing for ${this.damage.join(
       '/'

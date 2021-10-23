@@ -10,7 +10,7 @@ const move = {
   displayName: 'Gale Wings',
   type: 'passive',
   flags: {},
-  damage: [30, 55, 90],
+  damage: [35, 55, 100],
   get description() {
     return `{{user}} raises its speed while above 50% health. While below 50% health, raises its Attack instead, and recovers ${this.damage.join(
       '/'

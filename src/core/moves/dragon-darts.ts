@@ -19,7 +19,7 @@ const move = {
   type: 'active',
   cost: 5,
   startingPP: 2,
-  damage: [175, 300, 500],
+  damage: [200, 275, 400],
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
@@ -39,7 +39,7 @@ const move = {
 
     await Tweens.hop(scene, { targets: [user] });
 
-    // targets: X randomenemies, with X increasing each cast.
+    // targets: X random enemies, with X increasing each cast.
     user.consecutiveAttacks++;
     const enemies = flatten(board)
       .filter(isDefined)
