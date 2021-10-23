@@ -21,7 +21,7 @@ const move = {
   type: 'active',
   cost: 28,
   startingPP: 14,
-  damage: [400, 750, 1100],
+  damage: [450, 850, 1100],
   defenseStat: 'specDefense',
   targetting: 'ground',
   get description() {

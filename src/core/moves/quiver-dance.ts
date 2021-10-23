@@ -11,8 +11,8 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Quiver Dance',
   type: 'active',
-  cost: 100,
-  startingPP: 90,
+  cost: 99,
+  startingPP: 88,
   range: 1,
   targetting: 'ground',
   get description() {

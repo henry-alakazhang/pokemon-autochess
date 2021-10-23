@@ -13,11 +13,11 @@ const move = {
   type: 'active',
   // FIXME: Just disable mana after using move
   cost: 100,
-  startingPP: 92,
+  startingPP: 94,
   range: 1,
   targetting: 'ground',
   get description() {
-    return `{{user}} dances to sharply boost its Attack and Speed PERMANENTLY.`;
+    return `{{user}} dances to drastically boost its Attack and Speed PERMANENTLY.`;
   },
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;
@@ -53,8 +53,8 @@ const move = {
           yoyo: true,
           onComplete: () => {
             user.changeStats({
-              attack: +2,
-              speed: +2,
+              attack: +3,
+              speed: +3,
             });
             onComplete();
           },

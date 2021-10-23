@@ -21,8 +21,8 @@ const move = {
   startingPP: 16,
   range: 1,
   targetting: 'ground',
-  damage: [100, 175, 300],
-  percentReflect: [10, 25, 776],
+  damage: [150, 200, 300],
+  percentReflect: [15, 25, 776],
   defenseStat: 'specDefense',
   get description() {
     return `{{user}} shields itself, reducing all incoming damage by 40% for 6 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(

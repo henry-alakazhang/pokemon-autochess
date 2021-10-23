@@ -19,7 +19,7 @@ const move = {
   type: 'active',
   cost: 4,
   startingPP: 2,
-  damage: [350, 650, 1400],
+  damage: [400, 550, 1400],
   defenseStat: 'defense',
   targetting: 'ground',
   get description() {
@@ -100,7 +100,7 @@ const move = {
               damage: this.damage[user.basePokemon.stage - 1],
               defenseStat: this.defenseStat,
             });
-            scene.causeDamage(user, target, damage, { canCrit: true });
+            scene.causeDamage(user, target, damage);
           },
           onComplete: () => {
             // reset to previous state

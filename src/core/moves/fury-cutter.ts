@@ -15,9 +15,9 @@ import * as Tweens from '../tweens';
 const move = {
   displayName: 'Fury Cutter',
   type: 'active',
-  cost: 4,
+  cost: 5,
   startingPP: 2,
-  damage: [200, 400, 999],
+  damage: [600, 1100, 999],
   defenseStat: 'defense',
   targetting: 'unit',
   get description() {
@@ -64,7 +64,7 @@ const move = {
               // damage increases by 50% each strike
               damage:
                 this.damage[user.basePokemon.stage - 1] *
-                2 ** user.consecutiveAttacks,
+                2 ** (user.consecutiveAttacks - 1),
               defenseStat: this.defenseStat,
             });
             scene.causeDamage(user, target, damage);

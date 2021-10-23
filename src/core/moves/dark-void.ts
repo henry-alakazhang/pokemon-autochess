@@ -22,11 +22,11 @@ const move = {
   defenseStat: 'specDefense',
   targetting: 'unit',
   // number of targets
-  damage: [2, 3, 8],
+  damage: [1, 2, 6],
   get description() {
     return `{{user}} puts the ${this.damage.join(
       '/'
-    )} enemies with highest HP to sleep for 4 seconds, and drains 10% of their HP/s while they sleep.`;
+    )} enemies with highest HP to sleep for 4 seconds, and drains 8% of their HP/s while they sleep.`;
   },
   range: 100,
   getTarget(board: CombatBoard, myCoords: Coords): Coords | undefined {
@@ -55,7 +55,7 @@ const move = {
           callback: () => {
             targets.forEach(target => {
               const damage = calculateDamage(user, target, {
-                damage: target.maxHP / 10,
+                damage: target.maxHP * 0.08,
                 defenseStat: this.defenseStat,
               });
               scene.causeDamage(user, target, damage, { isAOE: true });

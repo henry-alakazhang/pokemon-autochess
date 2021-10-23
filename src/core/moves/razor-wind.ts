@@ -124,7 +124,10 @@ const move = {
                   damage: dph,
                   defenseStat: this.defenseStat,
                 });
-                scene.causeDamage(user, pokemon, damage, { isAOE: true });
+                scene.causeDamage(user, pokemon, damage, {
+                  isAOE: true,
+                  canCrit: true,
+                });
               }
             });
             if (timer.repeatCount === 0) {

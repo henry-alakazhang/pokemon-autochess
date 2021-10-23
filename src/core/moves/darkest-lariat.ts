@@ -62,7 +62,7 @@ const move = {
           user,
           target,
           this.damage[user.basePokemon.stage - 1],
-          { isAOE: true }
+          { isAOE: true, canCrit: true }
         );
       }
     });
