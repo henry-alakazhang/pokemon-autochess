@@ -23,7 +23,6 @@ export interface AIStrategy {
  */
 function genericPrioritiseBoard(
   player: Player,
-  force?: Category,
   sortFn = (a: PokemonObject, b: PokemonObject) =>
     getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon)
 ): PokemonObject[] {
@@ -31,7 +30,17 @@ function genericPrioritiseBoard(
     .filter(isDefined)
     .sort(sortFn);
 
-  const allCategoryCounts: { [k in Category]?: number } = {};
+  // Shortcut: For level 1-2, just play units sorted by strength.
+  if (player.level <= 2) {
+    return allPokemon;
+  }
+
+  // ==========================================================
+  // STEP 1:
+  // partition all the pokemon into originals and dupes
+  // and calculate the max possible values of each synergy
+  // ==========================================================
+  const allSynergies: { [k in Category]?: number } = {};
   const seenPokemon: { [k in PokemonName]?: boolean } = {};
   let deduplicatedPokemon: PokemonObject[] = [];
   const duplicates: PokemonObject[] = [];
@@ -42,34 +51,18 @@ function genericPrioritiseBoard(
     }
 
     pokemon.basePokemon.categories.forEach(category => {
-      allCategoryCounts[category] = (allCategoryCounts[category] ?? 0) + 1;
+      allSynergies[category] = (allSynergies[category] ?? 0) + 1;
     });
     deduplicatedPokemon.push(pokemon);
     seenPokemon[pokemon.basePokemon.base] = true;
   });
 
-  const forceCount = force ? allCategoryCounts[force] ?? 0 : 0;
-  const forceTier = force
-    ? getSynergyTier(synergyData[force].thresholds, forceCount)
-    : 0;
-
-  // sort category counts by count, take the biggest.
-  // if ties, prioritise the force (if any)
-  const [biggestSynergy, biggestCount] =
-    force && forceCount && forceTier > 0
-      ? [force, forceCount]
-      : (Object.entries(allCategoryCounts)
-          .sort((a, b) => a[1] - b[1])
-          .pop() as [Category, number]);
-  const biggestSynergyHighestTier = getSynergyTier(
-    synergyData[biggestSynergy].thresholds,
-    biggestCount
-  );
-
-  // track a board and synergies we're building as we go.
+  // ==========================================================
+  // STEP 2:
+  // track a board and synergies we're building as we go
+  // ==========================================================
   const currentBoard: PokemonObject[] = [];
   const currentSynergyCounts: { [k in Category]?: number } = {};
-
   /** Function that adds a Pokemon to the current board we're building */
   const addToCurrentBoard = (pokemon: PokemonObject) => {
     //  add to board
@@ -83,13 +76,44 @@ function genericPrioritiseBoard(
     });
   };
 
+  // ==========================================================
+  // STEP 3:
+  // Always add the "strongest" Pokemon, which should be
+  // the first Pokemon in the list (sorted by strength)
+  // ==========================================================
+  currentBoard.push(deduplicatedPokemon[0]);
+
+  // ==========================================================
+  // STEP 4:
+  // Find the "key" synergy, ie the one with the highest count
+  // Slightly prioritise whatever the strongest Pokemon is
+  // ==========================================================
+  const [biggestSynergy, biggestSynergyCount] = Object.entries(allSynergies)
+    .sort(
+      ([aCategory, aCount], [bCategory, bCount]) =>
+        aCount +
+        (currentSynergyCounts[aCategory as Category] ?? 0) -
+        bCount +
+        (currentSynergyCounts[bCategory as Category] ?? 0)
+    )
+    .pop() as [Category, number];
+
+  const biggestSynergyHighestTier = getSynergyTier(
+    synergyData[biggestSynergy].thresholds,
+    biggestSynergyCount
+  );
+
+  // ==========================================================
+  // STEP 5:
+  // Select the rest of the board one at a time, prioritising:
+  //  1. The "key" synergy, up to the highest tier possible
+  //  2. Any units that boost the tier of a splash trait
+  //  3. The strongest unit out of the rest
+  // ==========================================================
   while (currentBoard.length < player.level) {
     // if we're not at the highest possible tier,
-    // then try to add the main synergy until we are.
-    // Only do this when we have a few units/synergies.
-    // At lower levels, it's better to just play strong units
+    // then try to add the key synergy until we are.
     if (
-      player.level > 3 &&
       getSynergyTier(
         synergyData[biggestSynergy].thresholds,
         currentSynergyCounts[biggestSynergy] ?? 0
@@ -123,6 +147,7 @@ function genericPrioritiseBoard(
       continue;
     }
 
+    // otherwise, add the strongest Pokemon
     addToCurrentBoard(deduplicatedPokemon[0]);
   }
 
@@ -376,7 +401,7 @@ function generateHardForceAI(
      * and pick the ones that are stronger
      */
     prioritiseBoard: (player: Player) => {
-      return genericPrioritiseBoard(player, primary, (a, b) => {
+      return genericPrioritiseBoard(player, (a, b) => {
         // always prioritise primary force units (if there is a primary trait)
         const primaryCategoryDiff =
           b.basePokemon.categories.filter(c => c === primary).length -
