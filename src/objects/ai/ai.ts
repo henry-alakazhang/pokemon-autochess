@@ -123,6 +123,11 @@ function genericPrioritiseBoard(
   //  3. The strongest unit out of the rest
   // ==========================================================
   while (currentBoard.length < player.level) {
+    if (deduplicatedPokemon.length === 0) {
+      console.warn('Not enough deduplicated Pokemon to build a full board!');
+      break;
+    }
+
     // if we're not at the highest possible tier,
     // then try to add the key synergy until we are.
     if (
