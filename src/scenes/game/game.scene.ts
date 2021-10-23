@@ -136,7 +136,7 @@ export class GameScene extends Phaser.Scene {
   players: Player[];
 
   nextRoundButton: Button;
-  shopButton: Phaser.GameObjects.GameObject;
+  shopButton: Button;
   humanPlayer: Player;
   currentVisiblePlayer: Player;
   playerInfoText: Phaser.GameObjects.Text;
@@ -144,6 +144,7 @@ export class GameScene extends Phaser.Scene {
   sellText: Phaser.GameObjects.Text;
   currentRoundText: Phaser.GameObjects.Text;
   boardLimitText: Phaser.GameObjects.Text;
+  movePokemonListener: Function;
 
   /** A reference to the currently selected Pokemon */
   selectedPokemon?: PokemonObject;
@@ -270,18 +271,16 @@ export class GameScene extends Phaser.Scene {
     this.shop = this.scene.get(ShopScene.KEY) as ShopScene;
     this.shop.setCentre({ x: SHOP_X, y: SHOP_Y });
 
-    this.input.on(
-      Phaser.Input.Events.POINTER_DOWN,
-      (event: Phaser.Input.Pointer) => {
-        if (event.leftButtonDown()) {
-          if (!this.selectedPokemon) {
-            this.selectPokemon({ x: event.downX, y: event.downY });
-          } else {
-            this.movePokemon({ x: event.downX, y: event.downY });
-          }
+    this.movePokemonListener = (event: Phaser.Input.Pointer) => {
+      if (event.leftButtonDown()) {
+        if (!this.selectedPokemon) {
+          this.selectPokemon({ x: event.downX, y: event.downY });
+        } else {
+          this.movePokemon({ x: event.downX, y: event.downY });
         }
       }
-    );
+    };
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, this.movePokemonListener);
 
     this.input.keyboard.on('keydown-SPACE', () => {
       this.toggleShop();
@@ -496,44 +495,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   startDowntime() {
-    if (this.humanPlayer.hp <= 0) {
-      this.add
-        .text(GRID_X, GRID_Y, `YOU PLACED #${this.players.length}`, {
-          ...defaultStyle,
-          backgroundColor: '#000',
-          fontSize: '40px',
-        })
-        .setDepth(200)
-        .setOrigin(0.5, 0.5);
-      this.time.addEvent({
-        callback: () => {
-          this.scene.start(MenuScene.KEY);
-        },
-        delay: 2000,
-      });
-      return;
-    }
-
     // remove any dead players
     // note: disabling the player is handled by the player object
     this.players = this.players.filter(player => player.hp > 0);
-    if (this.players.length <= 1) {
-      this.add
-        .text(GRID_X, GRID_Y, `YOU WIN!!`, {
-          ...defaultStyle,
-          backgroundColor: '#242',
-          fontSize: '40px',
-        })
-        .setDepth(200)
-        .setOrigin(0.5, 0.5);
-      this.time.addEvent({
-        callback: () => {
-          this.scene.start(MenuScene.KEY);
-        },
-        delay: 2000,
-      });
-      return;
-    }
 
     this.currentRound += 1;
     if (this.currentRound > this.gameMode.stages[this.currentStage].rounds) {
@@ -559,6 +523,46 @@ export class GameScene extends Phaser.Scene {
     this.input.enabled = true;
 
     this.nextRoundButton.setActive(true).setVisible(true);
+
+    if (this.humanPlayer.hp <= 0) {
+      this.add
+        .text(GRID_X, GRID_Y, `YOU PLACED #${this.players.length}`, {
+          ...defaultStyle,
+          backgroundColor: '#000',
+          fontSize: '40px',
+        })
+        .setDepth(200)
+        .setOrigin(0.5, 0.5);
+      this.endGame();
+      return;
+    }
+    if (this.players.length <= 1) {
+      this.add
+        .text(GRID_X, GRID_Y, `YOU WIN!!`, {
+          ...defaultStyle,
+          backgroundColor: '#242',
+          fontSize: '40px',
+        })
+        .setDepth(200)
+        .setOrigin(0.5, 0.5);
+      this.endGame();
+    }
+  }
+
+  endGame() {
+    // disable next round button and turn it into an EXIT button
+    this.nextRoundButton
+      .setText('Exit game')
+      .off(Button.Events.CLICK)
+      .once(Button.Events.CLICK, () => {
+        this.scene.start(MenuScene.KEY);
+      });
+    // disable moving Pokemon on/off the board
+    this.input.off(Phaser.Input.Events.POINTER_DOWN, this.movePokemonListener);
+    // disable the shop
+    this.shopButton.setVisible(false);
+    this.scene.stop(this.shop);
+    // can still examine board, look at enemy boards, take screenshots etc.
   }
 
   watchPlayer(player: Player) {

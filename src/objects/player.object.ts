@@ -140,7 +140,9 @@ export class Player extends Phaser.GameObjects.GameObject {
     if (this.hp <= 0) {
       this.hp = 0;
       // grey the name out and prevent viewing board
-      this.nameInList.setColor('#aaaaaa').disableInteractive();
+      if (!this.isHumanPlayer) {
+        this.nameInList.setColor('#aaaaaa').disableInteractive();
+      }
     }
   }
 
