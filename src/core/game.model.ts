@@ -1045,8 +1045,10 @@ has all of their types combined together.`,
           slot.pokemon.basePokemon.categories.includes('pivot')
       ) as { x: number; y: number; pokemon: PokemonObject }[]; // cast away the undefined, because we know it's not
 
+      // remove each of them from being tracked by the CombatScene
+      pivots.forEach(pivot => scene.removePokemon(pivot.pokemon));
+
       // get the nearest space to the center of the pivot units
-      // TODO: should we remove the pivots first?
       const mechPosition = getNearestEmpty(board, getCenter(pivots));
       if (!mechPosition) {
         // no room for mech: should be impossible
@@ -1089,8 +1091,6 @@ has all of their types combined together.`,
           });
           mech.synergyState.pivot += pokemon.basePokemon.stage;
 
-          // remove each of them from being tracked by the CombatScene
-          scene.removePokemon(pokemon);
           // then move them physically to the mech spot and hide them
           pokemon.move(graphicalPosition, {
             duration: 500,
