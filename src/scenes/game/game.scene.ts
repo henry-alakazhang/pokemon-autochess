@@ -2,6 +2,7 @@ import { synergyData } from '../../core/game.model';
 import { buyablePokemon, pokemonData } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Button } from '../../objects/button.object';
+import { DamageChart } from '../../objects/damage-chart.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { defaultStyle, titleStyle } from '../../objects/text.helpers';
@@ -153,6 +154,9 @@ export class GameScene extends Phaser.Scene {
   prepGrid: Phaser.GameObjects.Grid;
   /** A background for highlighting the valid regions to put Pokemon in */
   prepGridHighlight: Phaser.GameObjects.Shape;
+
+  /** The damage chart of the last combat to take place */
+  lastDamageChart: DamageChart;
 
   shop: ShopScene;
 
@@ -334,7 +338,7 @@ export class GameScene extends Phaser.Scene {
       .sort((a, b) => b.hp - a.hp)
       .forEach((playerObj, index) => {
         playerObj.update();
-        playerObj.updatePosition(720, 100 + 30 * index);
+        playerObj.updatePosition(720, 100 + 28 * index);
       });
 
     // show the "valid range" highlight if a Pokemon is selected
@@ -365,6 +369,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.boardLimitText.setVisible(false);
     this.prepGrid.setVisible(false);
+    this.lastDamageChart?.destroy();
     // TODO: allow interacting with sideboard/shop during combat
     this.input.enabled = false;
     // hide the shop
@@ -386,8 +391,11 @@ export class GameScene extends Phaser.Scene {
         .get(CombatScene.KEY)
         .events.once(
           CombatScene.Events.COMBAT_END,
-          ({ winner }: CombatEndEvent) => {
+          ({ winner, damageGraph }: CombatEndEvent) => {
             this.handleCombatResult(this.humanPlayer, winner === 'player');
+            this.lastDamageChart = this.add.existing(
+              new DamageChart(this, 690, 340, damageGraph.player.dealt)
+            );
             this.players.forEach(
               // all the AIs win 100%
               player =>
@@ -447,7 +455,10 @@ export class GameScene extends Phaser.Scene {
           .get(CombatScene.KEY)
           .events.once(
             CombatScene.Events.COMBAT_END,
-            ({ winner }: CombatEndEvent) => {
+            ({ winner, damageGraph }: CombatEndEvent) => {
+              this.lastDamageChart = this.add.existing(
+                new DamageChart(this, 690, 340, damageGraph.player.dealt)
+              );
               this.handleCombatResult(pair1.player, winner === 'player');
               // apply state to player 2 if they're a real player
               if (pair2.isReal) {

@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { synergyData } from '../../../core/game.model';
 import { PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
+import { DamageChart } from '../../../objects/damage-chart.object';
 import { FloatingText } from '../../../objects/floating-text.object';
 import { Player } from '../../../objects/player.object';
 import {
@@ -33,6 +34,10 @@ import {
 
 export interface CombatEndEvent {
   readonly winner: 'player' | 'enemy' | undefined;
+  readonly damageGraph: {
+    player: { dealt: { [k: string]: number }; taken: { [k: string]: number } };
+    enemy: { dealt: { [k: string]: number }; taken: { [k: string]: number } };
+  };
 }
 export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
@@ -63,6 +68,7 @@ export class CombatScene extends Scene {
     player: { dealt: { [k: string]: number }; taken: { [k: string]: number } };
     enemy: { dealt: { [k: string]: number }; taken: { [k: string]: number } };
   };
+  private damageChart: DamageChart;
 
   private timer: number;
 
@@ -132,6 +138,9 @@ export class CombatScene extends Scene {
       player: { dealt: {}, taken: {} },
       enemy: { dealt: {}, taken: {} },
     };
+    this.damageChart = this.add.existing(
+      new DamageChart(this, 690, 340, this.damageGraph.player.dealt)
+    );
 
     this.players.player.mainboard.forEach((col, x) =>
       col.forEach(
@@ -216,6 +225,7 @@ export class CombatScene extends Scene {
       this.scene.pause();
       this.events.emit(CombatScene.Events.COMBAT_END, {
         winner: undefined,
+        damageGraph: this.damageGraph,
       } as CombatEndEvent);
       console.log(this.damageGraph);
       setTimeout(() => {
@@ -267,6 +277,7 @@ export class CombatScene extends Scene {
     this.scene.pause();
     this.events.emit(CombatScene.Events.COMBAT_END, {
       winner,
+      damageGraph: this.damageGraph,
     } as CombatEndEvent);
     setTimeout(() => {
       this.scene.stop(CombatScene.KEY);
@@ -324,10 +335,10 @@ export class CombatScene extends Scene {
     this.board[x][y] = pokemon;
     // initialize damage graph
     this.damageGraph[side].dealt[
-      `${pokemon.basePokemon.displayName}-${pokemon.id}`
+      `${pokemon.basePokemon.name}-${pokemon.id}`
     ] = 0;
     this.damageGraph[side].taken[
-      `${pokemon.basePokemon.displayName}-${pokemon.id}`
+      `${pokemon.basePokemon.name}-${pokemon.id}`
     ] = 0;
     return pokemon;
   }
@@ -777,12 +788,15 @@ export class CombatScene extends Scene {
       }
     }
 
-    this.damageGraph[attacker.side].dealt[
-      `${attacker.basePokemon.displayName}-${attacker.id}`
+    // link damage to the Pokemon who owns/summoned this one
+    const realAttacker = attacker.owner ?? attacker;
+    this.damageGraph[realAttacker.side].dealt[
+      `${realAttacker.basePokemon.name}-${realAttacker.id}`
     ] += amount;
     this.damageGraph[defender.side].taken[
-      `${defender.basePokemon.displayName}-${defender.id}`
+      `${defender.basePokemon.name}-${defender.id}`
     ] += amount;
+    this.damageChart.render();
   }
 
   /**
