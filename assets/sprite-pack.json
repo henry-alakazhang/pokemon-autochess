@@ -530,8 +530,28 @@
       },
       {
         "type": "image",
+        "key": "aegislash-mini",
+        "url": "assets/pokemon/mini/aegislash.png"
+      },
+      {
+        "type": "image",
+        "key": "alakazam-mini",
+        "url": "assets/pokemon/mini/alakazam.png"
+      },
+      {
+        "type": "image",
+        "key": "beedrill-mini",
+        "url": "assets/pokemon/mini/beedrill.png"
+      },
+      {
+        "type": "image",
         "key": "beldum-mini",
         "url": "assets/pokemon/mini/beldum.png"
+      },
+      {
+        "type": "image",
+        "key": "blissey-mini",
+        "url": "assets/pokemon/mini/blissey.png"
       },
       {
         "type": "image",
@@ -540,8 +560,38 @@
       },
       {
         "type": "image",
+        "key": "chandelure-mini",
+        "url": "assets/pokemon/mini/chandelure.png"
+      },
+      {
+        "type": "image",
+        "key": "chansey-mini",
+        "url": "assets/pokemon/mini/chansey.png"
+      },
+      {
+        "type": "image",
+        "key": "crobat-mini",
+        "url": "assets/pokemon/mini/crobat.png"
+      },
+      {
+        "type": "image",
         "key": "darkrai-mini",
         "url": "assets/pokemon/mini/darkrai.png"
+      },
+      {
+        "type": "image",
+        "key": "doublade-mini",
+        "url": "assets/pokemon/mini/doublade.png"
+      },
+      {
+        "type": "image",
+        "key": "dragapult-mini",
+        "url": "assets/pokemon/mini/dragapult.png"
+      },
+      {
+        "type": "image",
+        "key": "drakloak-mini",
+        "url": "assets/pokemon/mini/drakloak.png"
       },
       {
         "type": "image",
@@ -550,8 +600,23 @@
       },
       {
         "type": "image",
+        "key": "dubwool-mini",
+        "url": "assets/pokemon/mini/dubwool.png"
+      },
+      {
+        "type": "image",
         "key": "exeggcute-mini",
         "url": "assets/pokemon/mini/exeggcute.png"
+      },
+      {
+        "type": "image",
+        "key": "exeggutor-mini",
+        "url": "assets/pokemon/mini/exeggutor.png"
+      },
+      {
+        "type": "image",
+        "key": "fletchinder-mini",
+        "url": "assets/pokemon/mini/fletchinder.png"
       },
       {
         "type": "image",
@@ -560,8 +625,23 @@
       },
       {
         "type": "image",
+        "key": "gabite-mini",
+        "url": "assets/pokemon/mini/gabite.png"
+      },
+      {
+        "type": "image",
+        "key": "garchomp-mini",
+        "url": "assets/pokemon/mini/garchomp.png"
+      },
+      {
+        "type": "image",
         "key": "gastly-mini",
         "url": "assets/pokemon/mini/gastly.png"
+      },
+      {
+        "type": "image",
+        "key": "gengar-mini",
+        "url": "assets/pokemon/mini/gengar.png"
       },
       {
         "type": "image",
@@ -575,13 +655,38 @@
       },
       {
         "type": "image",
+        "key": "golbat-mini",
+        "url": "assets/pokemon/mini/golbat.png"
+      },
+      {
+        "type": "image",
+        "key": "golem-mini",
+        "url": "assets/pokemon/mini/golem.png"
+      },
+      {
+        "type": "image",
+        "key": "graveler-mini",
+        "url": "assets/pokemon/mini/graveler.png"
+      },
+      {
+        "type": "image",
         "key": "grubbin-mini",
         "url": "assets/pokemon/mini/grubbin.png"
       },
       {
         "type": "image",
+        "key": "gyarados-mini",
+        "url": "assets/pokemon/mini/gyarados.png"
+      },
+      {
+        "type": "image",
         "key": "happiny-mini",
         "url": "assets/pokemon/mini/happiny.png"
+      },
+      {
+        "type": "image",
+        "key": "haunter-mini",
+        "url": "assets/pokemon/mini/haunter.png"
       },
       {
         "type": "image",
@@ -592,6 +697,31 @@
         "type": "image",
         "key": "honedge-mini",
         "url": "assets/pokemon/mini/honedge.png"
+      },
+      {
+        "type": "image",
+        "key": "incineroar-mini",
+        "url": "assets/pokemon/mini/incineroar.png"
+      },
+      {
+        "type": "image",
+        "key": "ivysaur-mini",
+        "url": "assets/pokemon/mini/ivysaur.png"
+      },
+      {
+        "type": "image",
+        "key": "kadabra-mini",
+        "url": "assets/pokemon/mini/kadabra.png"
+      },
+      {
+        "type": "image",
+        "key": "kakuna-mini",
+        "url": "assets/pokemon/mini/kakuna.png"
+      },
+      {
+        "type": "image",
+        "key": "lampent-mini",
+        "url": "assets/pokemon/mini/lampent.png"
       },
       {
         "type": "image",
@@ -635,6 +765,31 @@
       },
       {
         "type": "image",
+        "key": "magneton-mini",
+        "url": "assets/pokemon/mini/magneton.png"
+      },
+      {
+        "type": "image",
+        "key": "magnezone-mini",
+        "url": "assets/pokemon/mini/magnezone.png"
+      },
+      {
+        "type": "image",
+        "key": "marshtomp-mini",
+        "url": "assets/pokemon/mini/marshtomp.png"
+      },
+      {
+        "type": "image",
+        "key": "metagross-mini",
+        "url": "assets/pokemon/mini/metagross.png"
+      },
+      {
+        "type": "image",
+        "key": "metang-mini",
+        "url": "assets/pokemon/mini/metang.png"
+      },
+      {
+        "type": "image",
         "key": "mewtwo-mini",
         "url": "assets/pokemon/mini/mewtwo.png"
       },
@@ -650,8 +805,18 @@
       },
       {
         "type": "image",
+        "key": "nuzleaf-mini",
+        "url": "assets/pokemon/mini/nuzleaf.png"
+      },
+      {
+        "type": "image",
         "key": "pichu-mini",
         "url": "assets/pokemon/mini/pichu.png"
+      },
+      {
+        "type": "image",
+        "key": "pikachu-mini",
+        "url": "assets/pokemon/mini/pikachu.png"
       },
       {
         "type": "image",
@@ -660,8 +825,43 @@
       },
       {
         "type": "image",
+        "key": "porygon2-mini",
+        "url": "assets/pokemon/mini/porygon2.png"
+      },
+      {
+        "type": "image",
+        "key": "porygonz-mini",
+        "url": "assets/pokemon/mini/porygonz.png"
+      },
+      {
+        "type": "image",
+        "key": "pupitar-mini",
+        "url": "assets/pokemon/mini/pupitar.png"
+      },
+      {
+        "type": "image",
+        "key": "raichu-mini",
+        "url": "assets/pokemon/mini/raichu.png"
+      },
+      {
+        "type": "image",
+        "key": "rattata-mini",
+        "url": "assets/pokemon/mini/rattata.png"
+      },
+      {
+        "type": "image",
+        "key": "regigigas-mini",
+        "url": "assets/pokemon/mini/regigigas.png"
+      },
+      {
+        "type": "image",
         "key": "rotomw-mini",
         "url": "assets/pokemon/mini/rotomw.png"
+      },
+      {
+        "type": "image",
+        "key": "scizor-mini",
+        "url": "assets/pokemon/mini/scizor.png"
       },
       {
         "type": "image",
@@ -675,6 +875,11 @@
       },
       {
         "type": "image",
+        "key": "shiftry-mini",
+        "url": "assets/pokemon/mini/shiftry.png"
+      },
+      {
+        "type": "image",
         "key": "sneasel-mini",
         "url": "assets/pokemon/mini/sneasel.png"
       },
@@ -685,8 +890,48 @@
       },
       {
         "type": "image",
+        "key": "swampert-mini",
+        "url": "assets/pokemon/mini/swampert.png"
+      },
+      {
+        "type": "image",
+        "key": "talonflame-mini",
+        "url": "assets/pokemon/mini/talonflame.png"
+      },
+      {
+        "type": "image",
+        "key": "torracat-mini",
+        "url": "assets/pokemon/mini/torracat.png"
+      },
+      {
+        "type": "image",
         "key": "turtonator-mini",
         "url": "assets/pokemon/mini/turtonator.png"
+      },
+      {
+        "type": "image",
+        "key": "tyranitar-mini",
+        "url": "assets/pokemon/mini/tyranitar.png"
+      },
+      {
+        "type": "image",
+        "key": "venusaur-mini",
+        "url": "assets/pokemon/mini/venusaur.png"
+      },
+      {
+        "type": "image",
+        "key": "vikavolt-mini",
+        "url": "assets/pokemon/mini/vikavolt.png"
+      },
+      {
+        "type": "image",
+        "key": "volcarona-mini",
+        "url": "assets/pokemon/mini/volcarona.png"
+      },
+      {
+        "type": "image",
+        "key": "weavile-mini",
+        "url": "assets/pokemon/mini/weavile.png"
       },
       {
         "type": "image",
@@ -697,6 +942,11 @@
         "type": "image",
         "key": "wooloo-mini",
         "url": "assets/pokemon/mini/wooloo.png"
+      },
+      {
+        "type": "image",
+        "key": "zoroark-mini",
+        "url": "assets/pokemon/mini/zoroark.png"
       },
       {
         "type": "image",
