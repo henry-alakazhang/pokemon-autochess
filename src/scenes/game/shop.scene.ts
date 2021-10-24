@@ -186,7 +186,7 @@ export class ShopScene extends Phaser.Scene {
 
     this.pokemonForSale = newShop.map((pokemon, i) => {
       const currCoords = this.getCoordinatesForShopIndex(i);
-      return new PokemonForSaleObject(this, currCoords, pokemon);
+      return new PokemonForSaleObject(this, currCoords, pokemon, this.player);
     });
   }
 

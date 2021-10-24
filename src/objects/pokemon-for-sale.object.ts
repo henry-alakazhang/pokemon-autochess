@@ -1,42 +1,59 @@
 import { pokemonData, PokemonName } from '../core/pokemon.model';
+import { flatten } from '../helpers';
 import { Coords } from '../scenes/game/combat/combat.helpers';
+import { Player } from './player.object';
 import { titleStyle } from './text.helpers';
 
 /**
  * The pokemon object in the shop, including gold cost and any other elements
  */
 export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
-  public pokemonName: PokemonName;
   public cost: number;
-
-  public centre: Coords;
 
   private pokemonSprite: Phaser.GameObjects.Sprite;
   private costText: Phaser.GameObjects.Text;
   private costIcon: Phaser.GameObjects.Image;
   private typeSprites: Phaser.GameObjects.Sprite[];
+  private sheen: Phaser.GameObjects.Graphics;
 
   constructor(
     public scene: Phaser.Scene,
-    coordinates: Coords,
-    name: PokemonName
+    public centre: Coords,
+    public pokemonName: PokemonName,
+    private player: Player
   ) {
     super(scene, 'PokemonForSale');
 
-    if (pokemonData[name].stage === 1) {
-      this.cost = pokemonData[name].tier;
+    if (pokemonData[pokemonName].stage === 1) {
+      this.cost = pokemonData[pokemonName].tier;
     } else {
       console.error('Tried to add evolved Pokemon to shop!');
       // let's not break
       this.cost = 99;
     }
 
-    this.pokemonName = name;
-
-    this.centre = coordinates;
-
     this.drawPokemon();
     this.drawCost();
+
+    // if player has any of a given pokemon, add a highlight to the shop item
+    if (
+      [...flatten(player.mainboard), ...player.sideboard].some(
+        p => p?.basePokemon.base === pokemonName
+      )
+    ) {
+      this.sheen = scene.add.graphics({ x: this.centre.x, y: this.centre.y });
+      this.sheen.fillGradientStyle(
+        0xffffff,
+        0xffffff,
+        0xffffff,
+        0xffffff,
+        255,
+        230,
+        255,
+        230
+      );
+      this.sheen.fillRect(-70, -45, 140, 90);
+    }
   }
 
   drawPokemon(): void {
