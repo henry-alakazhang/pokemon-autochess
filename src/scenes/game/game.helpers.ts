@@ -87,7 +87,7 @@ export function getHyperRollGameMode(): GameMode {
       {
         rounds: 1,
         damage: () => 5,
-        gold: goldGainFunc(10),
+        gold: goldGainFunc(5),
         neutralRounds: {
           1: [
             { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
@@ -96,7 +96,7 @@ export function getHyperRollGameMode(): GameMode {
         },
       },
       { rounds: 2, damage: () => 10, autolevel: 2, gold: goldGainFunc(6) },
-      { rounds: 2, damage: () => 10, autolevel: 3, gold: goldGainFunc(7) },
+      { rounds: 3, damage: () => 10, autolevel: 3, gold: goldGainFunc(7) },
       { rounds: 3, damage: () => 15, autolevel: 4, gold: goldGainFunc(7) },
       { rounds: 4, damage: () => 15, autolevel: 5, gold: goldGainFunc(8) },
       { rounds: 10, damage: () => 20, autolevel: 6, gold: goldGainFunc(8) },
