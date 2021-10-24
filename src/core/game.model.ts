@@ -8,7 +8,7 @@ import {
   getGridDistance,
   getNearestEmpty,
   getOppositeSide,
-  inBounds
+  inBounds,
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../scenes/game/game.helpers';
