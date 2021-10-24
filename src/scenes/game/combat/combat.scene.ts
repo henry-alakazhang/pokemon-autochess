@@ -729,6 +729,9 @@ export class CombatScene extends Scene {
       totalDamage *= attacker.critDamage;
     }
 
+    // deal more damage in the Sudden Death fast time
+    totalDamage *= this.time.timeScale;
+
     totalDamage = Math.round(totalDamage);
     attacker.dealDamage(totalDamage, { isAttack });
     defender.takeDamage(totalDamage, { triggerEvents, crit: doesCrit });
