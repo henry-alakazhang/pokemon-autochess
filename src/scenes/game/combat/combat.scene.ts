@@ -232,8 +232,6 @@ export class CombatScene extends Scene {
         this.scene.stop(CombatScene.KEY);
       }, 2000);
     }
-
-    this.damageChart.render();
   }
 
   checkRoundEnd() {
@@ -798,6 +796,7 @@ export class CombatScene extends Scene {
     this.damageGraph[defender.side].taken[
       `${defender.basePokemon.name}-${defender.id}`
     ] += amount;
+    this.damageChart.render();
   }
 
   /**
