@@ -38,6 +38,7 @@ const move = {
       ...plant.basePokemon,
       specAttack,
     };
+    plant.owner = user;
     plant.addStatus('immobile', 99999);
     scene.setTurn(plant);
     onComplete();

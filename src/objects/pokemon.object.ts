@@ -71,6 +71,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   name: PokemonName;
   /**
+   * The Pokemon that "owns" this one.
+   * Used for referencing a Pokemon that summoned another
+   */
+  owner?: PokemonObject;
+  /**
    * The "base" Pokemon for an object.
    * Used for external access to combat stats, move, and other things.
    */

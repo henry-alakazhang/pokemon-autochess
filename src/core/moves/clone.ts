@@ -47,6 +47,7 @@ const move = {
       place,
       target.basePokemon.name
     );
+    newPokemon.owner = user;
     newPokemon.addPP(this.damage[user.basePokemon.stage - 1]);
     scene.setTurn(newPokemon);
     onComplete();
