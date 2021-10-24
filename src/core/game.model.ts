@@ -8,7 +8,7 @@ import {
   getGridDistance,
   getNearestEmpty,
   getOppositeSide,
-  inBounds,
+  inBounds
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../scenes/game/game.helpers';
@@ -953,7 +953,7 @@ for 3 seconds when they hit with their move.
  (2) - 30% less PP gain
  (3) - and 50% less healing
  (4) - 50% for both`,
-    thresholds: [2, 4],
+    thresholds: [2, 3, 4],
     onHit({ attacker, defender, flags: { isAttack }, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
