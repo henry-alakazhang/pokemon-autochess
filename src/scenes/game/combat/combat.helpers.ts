@@ -286,11 +286,11 @@ export function optimiseAOE({
 
   const checkCoords = (x: number, y: number) => {
     const tryCoords = { x, y };
-    const unitAtCoords = board[x]?.[y];
     if (!inBounds(board, tryCoords)) {
       return;
     }
 
+    const unitAtCoords = board[x]?.[y];
     // ignore squares outside of range
     if (getGridDistance(user, tryCoords) > range) {
       return;
@@ -305,9 +305,9 @@ export function optimiseAOE({
     }
 
     // check how many people this would hit
-    const numberHit = getAOE(tryCoords, user).filter(
-      hit => board[hit.x]?.[hit.y]?.side === targetSide
-    ).length;
+    const numberHit = getAOE(tryCoords, user)
+      .filter(coords => inBounds(board, coords))
+      .filter(hit => board[hit.x]?.[hit.y]?.side === targetSide).length;
 
     if (numberHit > most) {
       best = tryCoords;
