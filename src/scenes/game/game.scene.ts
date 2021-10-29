@@ -11,7 +11,7 @@ import { Coords } from './combat/combat.helpers';
 import {
   CombatEndEvent,
   CombatScene,
-  CombatSceneData
+  CombatSceneData,
 } from './combat/combat.scene';
 import {
   BOARD_WIDTH,
@@ -22,7 +22,7 @@ import {
   GRID_X,
   GRID_Y,
   NeutralRound,
-  shuffle
+  shuffle,
 } from './game.helpers';
 import { ShopPool } from './shop.helpers';
 import { ShopScene, ShopSceneData } from './shop.scene';
