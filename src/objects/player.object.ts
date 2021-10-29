@@ -42,6 +42,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   isHumanPlayer: boolean;
 
   nameInList: Phaser.GameObjects.Text;
+  takingTurnIcon: Phaser.GameObjects.Text;
 
   /** The Pokemon board representing the player's team composition */
   mainboard: CombatBoard = Array(BOARD_WIDTH)
@@ -100,6 +101,10 @@ export class Player extends Phaser.GameObjects.GameObject {
       .on(Phaser.Input.Events.POINTER_DOWN, () => {
         this.emit(Player.Events.SELECT);
       });
+
+    this.takingTurnIcon = scene.add
+      .text(x - 20, y, '🗘', defaultStyle)
+      .setVisible(false);
   }
 
   update() {
@@ -112,6 +117,7 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   updatePosition(x: number, y: number) {
     this.nameInList.setPosition(x, y);
+    this.takingTurnIcon.setPosition(x - 20, y);
   }
 
   setVisible(visible: boolean): this {
@@ -120,6 +126,11 @@ export class Player extends Phaser.GameObjects.GameObject {
       pokemon?.setVisible(visible)
     );
     this.updateSynergies();
+    return this;
+  }
+
+  setTakingTurn(takingTurn: boolean): this {
+    this.takingTurnIcon.setVisible(takingTurn);
     return this;
   }
 

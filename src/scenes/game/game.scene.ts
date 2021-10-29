@@ -11,7 +11,7 @@ import { Coords } from './combat/combat.helpers';
 import {
   CombatEndEvent,
   CombatScene,
-  CombatSceneData,
+  CombatSceneData
 } from './combat/combat.scene';
 import {
   BOARD_WIDTH,
@@ -22,7 +22,7 @@ import {
   GRID_X,
   GRID_Y,
   NeutralRound,
-  shuffle,
+  shuffle
 } from './game.helpers';
 import { ShopPool } from './shop.helpers';
 import { ShopScene, ShopSceneData } from './shop.scene';
@@ -350,15 +350,34 @@ export class GameScene extends Phaser.Scene {
     this.scene.stop(ShopScene.KEY);
   }
 
-  startCombat() {
+  async startCombat() {
     // switch view back to own board
     this.watchPlayer(this.humanPlayer);
     // take AI player turns
-    this.players.forEach(player => {
-      if (player !== this.humanPlayer) {
-        player.takeEnemyTurn();
-      }
-    });
+    await Promise.all(
+      this.players
+        .filter(player => player !== this.humanPlayer)
+        .map(player => {
+          player.setTakingTurn(true);
+          return new Promise<void>(resolve => {
+            if (window.requestIdleCallback) {
+              // use idleCallback so we can render frames between
+              // otherwise it will block the entire time,
+              // and the `takingTurn` state won't load properly
+              window.requestIdleCallback(() => {
+                player.takeEnemyTurn();
+                player.setTakingTurn(false);
+                resolve();
+              });
+            } else {
+              // for browsers that don't support it (Safari...)
+              player.takeEnemyTurn();
+              player.setTakingTurn(false);
+              resolve();
+            }
+          });
+        })
+    );
 
     // slightly hacky: trigger a click event far away
     // this deselects Pokemon, closes any info cards and so on.
