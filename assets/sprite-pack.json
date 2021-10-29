@@ -570,6 +570,11 @@
       },
       {
         "type": "image",
+        "key": "charjabug-mini",
+        "url": "assets/pokemon/mini/charjabug.png"
+      },
+      {
+        "type": "image",
         "key": "crobat-mini",
         "url": "assets/pokemon/mini/crobat.png"
       },
