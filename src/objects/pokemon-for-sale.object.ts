@@ -103,6 +103,7 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
       this.pokemonSprite.destroy();
       this.costText.destroy();
       this.costIcon.destroy();
+      this.sheen?.destroy();
       this.typeSprites.forEach(sprite => sprite.destroy());
     }
   }
