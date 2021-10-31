@@ -451,17 +451,21 @@ export class GameScene extends Phaser.Scene {
       // if either are undefined, set them to random ghost players
       // Ghost players use another player's board and name,
       // but don't cause that player to take damage if they lose.
+      // Players can't fight their own ghosts (or it's just a coinflip)
+      const otherPlayers = this.players.filter(
+        player => player !== player1 && player !== player2
+      );
       const pair1 = {
         isReal: isDefined(player1),
         player: isDefined(player1)
           ? player1
-          : this.players[Math.floor(Math.random() * this.players.length)],
+          : otherPlayers[Math.floor(Math.random() * otherPlayers.length)],
       };
       const pair2 = {
         isReal: isDefined(player2),
         player: isDefined(player2)
           ? player2
-          : this.players[Math.floor(Math.random() * this.players.length)],
+          : otherPlayers[Math.floor(Math.random() * otherPlayers.length)],
       };
 
       if (pair1.player === this.humanPlayer) {
