@@ -275,7 +275,7 @@ export function optimiseAOE({
   /** Whether the tile needs to be empty */
   needsEmpty?: boolean;
 }): Coords | undefined {
-  const userSide = board[user.x][user.y]?.side;
+  const userSide = board[user.x]?.[user.y]?.side;
   if (!userSide) {
     return undefined;
   }
