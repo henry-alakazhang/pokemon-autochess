@@ -6,7 +6,7 @@
     "yarn": ">=1.16.0"
   },
   "scripts": {
-    "prepare": "ts-node scripts/generate-sprite-pack.ts",
+    "prepare": "tsx scripts/generate-sprite-pack.ts",
     "prestart": "yarn prepare",
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
@@ -22,11 +22,9 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.38.0",
     "@jest/globals": "^30.2.0",
-    "@types/node": "^10.12.2",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "@typescript-eslint/parser": "^8.46.1",
     "eslint": "^9.38.0",
-    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-local-rules": "^3.0.2",
@@ -37,7 +35,6 @@
     "raw-loader": "^4.0.2",
     "ts-jest": "^29.4.5",
     "ts-loader": "^9.5.4",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1",
@@ -49,6 +46,7 @@
     "glob": "^11.0.3",
     "html-webpack-plugin": "^5.6.4",
     "phaser": "^3.55.2",
+    "tsx": "^4.20.6",
     "webpack-merge": "^6.0.1"
   }
 }

@@ -18,7 +18,6 @@ const compat = new FlatCompat({
 
 export default defineConfig([{
     extends: compat.extends(
-        "airbnb-base",
         "plugin:prettier/recommended",
         "plugin:@typescript-eslint/recommended",
         "prettier",
