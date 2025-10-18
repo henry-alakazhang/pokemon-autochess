@@ -44,7 +44,7 @@
     "copy-webpack-plugin": "^13.0.1",
     "glob": "^11.0.3",
     "html-webpack-plugin": "^5.6.4",
-    "phaser": "^3.55.2",
+    "phaser": "^3.90.0",
     "tsx": "^4.20.6",
     "webpack-merge": "^6.0.1"
   }
