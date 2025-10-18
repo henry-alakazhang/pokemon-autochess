@@ -475,52 +475,62 @@ the further they are from their target.
   },
   rock: {
     category: 'rock',
-    displayName: 'Rock: Sturdy',
-    description: `All Rock-type Pokemon take less damage.
+    displayName: 'Rock: Hard Rock',
+    description: `All Rock-type Pokemon deal more damage
+and take less damage from each hit.
 
- (2) - 25 less damage
- (4) - 50 less damage
- (6) - 70 less damage`,
+ (2) - +15 / -15 damage
+ (4) - +30 / -30 damage
+ (6) - +50 / -50 damage`,
     thresholds: [2, 4, 6],
-    calculateDamage({ defender, baseAmount, side, count }): number {
+    calculateDamage({ attacker, defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return baseAmount;
       }
-      const reduction = tier === 1 ? 25 : tier === 2 ? 50 : 70;
+      const effect = tier === 1 ? 15 : tier === 2 ? 30 : 50;
+
+      if (
+        attacker.side === side &&
+        attacker.basePokemon.categories.includes('rock')
+      ) {
+        return baseAmount + effect;
+      }
 
       if (
         defender.side === side &&
         defender.basePokemon.categories.includes('rock')
       ) {
-        return Math.max(0, baseAmount - reduction);
+        return Math.max(0, baseAmount - effect);
       }
+
       return baseAmount;
     },
   },
   ice: {
     category: 'ice',
-    displayName: 'Ice: Glaciate',
+    displayName: 'Ice: Snow Warning',
     description: `At the start of the round, all enemy Pokemon
-have their Speed lowered for a duration.
+take damage.
 
- (2) - 4 seconds
- (3) - 6 seconds`,
+ (2) - 10% max HP
+ (3) - and become slowed for 4 seconds`,
     thresholds: [2, 3],
     onRoundStart({ board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
       }
-      const duration = tier === 1 ? 4000 : 6000;
+      const slowDuration = tier === 0 ? 0 : 4000;
 
       flatten(board).forEach((pokemon) => {
         if (pokemon && pokemon.side !== side) {
+          pokemon.takeDamage(Math.floor(pokemon.maxHP * 0.1));
           pokemon.changeStats(
             {
               speed: -1,
             },
-            duration
+            slowDuration
           );
         }
       });
