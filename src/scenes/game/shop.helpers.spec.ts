@@ -189,7 +189,6 @@ describe('shop rerolling', () => {
       { 1: 2, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
 
-    // eslint-disable-next-line no-sparse-arrays
     expect(pool.reroll({ level: 1 } as Player)).toEqual([
       'litwick',
       'litwick',

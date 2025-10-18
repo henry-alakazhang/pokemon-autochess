@@ -175,13 +175,13 @@ export class ShopScene extends Phaser.Scene {
    */
   reroll(): void {
     // Remove the old pokemon
-    this.pokemonForSale.forEach(pokemon => {
+    this.pokemonForSale.forEach((pokemon) => {
       pokemon.destroy();
     });
 
     const newShop = this.pool.reroll(
       this.player,
-      this.pokemonForSale.map(pokemon => pokemon.pokemonName)
+      this.pokemonForSale.map((pokemon) => pokemon.pokemonName)
     );
 
     this.pokemonForSale = newShop.map((pokemon, i) => {

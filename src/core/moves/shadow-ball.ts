@@ -64,12 +64,12 @@ const move = {
             const targetsHit = scene
               .getOverlappingUnits(ball)
               .filter(
-                pokemon =>
+                (pokemon) =>
                   !hasBeenHit[pokemon.id] &&
                   pokemon.side === getOppositeSide(user.side)
               );
             // then hit em
-            targetsHit.forEach(target => {
+            targetsHit.forEach((target) => {
               const damage = calculateDamage(user, target, {
                 damage: this.damage[user.basePokemon.stage - 1],
                 defenseStat: this.defenseStat,

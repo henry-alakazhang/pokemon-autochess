@@ -78,7 +78,7 @@ const move = {
         board[targetCoords.x - 1]?.[targetCoords.y],
         board[targetCoords.x]?.[targetCoords.y + 1],
         board[targetCoords.x]?.[targetCoords.y - 1],
-      ].forEach(possibleTarget => {
+      ].forEach((possibleTarget) => {
         if (
           possibleTarget &&
           possibleTarget.side !== user.side &&

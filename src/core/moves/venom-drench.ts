@@ -45,9 +45,9 @@ const move = {
 
     const targets = flatten(board)
       .filter(isDefined)
-      .filter(pokemon => pokemon.side !== user.side);
+      .filter((pokemon) => pokemon.side !== user.side);
 
-    targets.forEach(target => {
+    targets.forEach((target) => {
       const isStatused =
         // TODO: don't hardcode this
         // Also update whenever I add a new proper status

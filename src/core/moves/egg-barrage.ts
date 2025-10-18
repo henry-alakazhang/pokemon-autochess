@@ -70,12 +70,12 @@ const move = {
           ];
           possibleTargets
             // get Pokemon if in bounds
-            .map(coords =>
+            .map((coords) =>
               inBounds(board, coords) ? board[coords.x][coords.y] : undefined
             )
             // filter out nonexistent ones
             .filter(isDefined)
-            .forEach(secondaryTarget => {
+            .forEach((secondaryTarget) => {
               if (secondaryTarget.side !== user.side) {
                 const secondaryDamage = calculateDamage(user, secondaryTarget, {
                   damage: baseDamage / 2,

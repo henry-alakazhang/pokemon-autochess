@@ -206,7 +206,9 @@ export function pathfind(
     const check = queue.shift() as Coords;
 
     // check all targets to see if one is reachable
-    const reachedTarget = targets.find(t => getGridDistance(check, t) <= range);
+    const reachedTarget = targets.find(
+      (t) => getGridDistance(check, t) <= range
+    );
     if (reachedTarget) {
       prev[reachedTarget.x][reachedTarget.y] = check;
       break;
@@ -218,7 +220,7 @@ export function pathfind(
       { x: check.x - 1, y: check.y },
       { x: check.x, y: check.y + 1 },
       { x: check.x, y: check.y - 1 },
-    ].forEach(newCoord => {
+    ].forEach((newCoord) => {
       if (
         inBounds(board, newCoord) &&
         !seen[newCoord.x][newCoord.y] &&
@@ -232,7 +234,7 @@ export function pathfind(
   }
 
   // find the target which we ended up reaching
-  const foundTarget = targets.find(t => isDefined(prev[t.x][t.y]));
+  const foundTarget = targets.find((t) => isDefined(prev[t.x][t.y]));
   if (!foundTarget) {
     // if there wasn't one, then no targets are in range
     return undefined;
@@ -306,8 +308,8 @@ export function optimiseAOE({
 
     // check how many people this would hit
     const numberHit = getAOE(tryCoords, user)
-      .filter(coords => inBounds(board, coords))
-      .filter(hit => board[hit.x]?.[hit.y]?.side === targetSide).length;
+      .filter((coords) => inBounds(board, coords))
+      .filter((hit) => board[hit.x]?.[hit.y]?.side === targetSide).length;
 
     if (numberHit > most) {
       best = tryCoords;

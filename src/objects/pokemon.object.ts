@@ -152,7 +152,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /** Active things the Pokemon is doing that can be cancelled by CC or death */
   cancellableEvents: {
     timer: Phaser.Time.TimerEvent;
-    onCancel?: Function;
+    onCancel?: () => void;
   }[] = [];
 
   // TODO: clean up messiness in model
@@ -280,7 +280,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   addCancellableEvent(event: {
     timer: Phaser.Time.TimerEvent;
-    onCancel?: Function;
+    onCancel?: () => void;
   }) {
     this.cancellableEvents.push(event);
   }
@@ -387,7 +387,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       onComplete,
       duration,
       ease = 'Quad',
-    }: { onComplete?: Function; duration?: number; ease?: string } = {}
+    }: { onComplete?: () => void; duration?: number; ease?: string } = {}
   ) {
     this.scene.add.tween({
       targets: [this, this.bars, ...this.attachments],

@@ -192,10 +192,10 @@ export function getRandomNames(amount: number): string[] {
 export function calculateBoardStrength(player: Player): number {
   const totalStrength = flatten(player.mainboard)
     .filter(isDefined)
-    .map(pokemon => getPokemonStrength(pokemon.basePokemon))
+    .map((pokemon) => getPokemonStrength(pokemon.basePokemon))
     .reduce((a, b) => a + b, 0);
   const totalSynergyTiers = player.synergies
-    .map(synergy =>
+    .map((synergy) =>
       getSynergyTier(synergyData[synergy.category].thresholds, synergy.count)
     )
     .reduce((a, b) => a + 2 ** (b - 1), 0);

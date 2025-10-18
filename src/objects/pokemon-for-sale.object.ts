@@ -38,7 +38,7 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
     // if player has any of a given pokemon, add a highlight to the shop item
     if (
       [...flatten(player.mainboard), ...player.sideboard].some(
-        p => p?.basePokemon.base === pokemonName
+        (p) => p?.basePokemon.base === pokemonName
       )
     ) {
       this.sheen = scene.add.graphics({ x: this.centre.x, y: this.centre.y });
@@ -64,16 +64,15 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
     );
     this.pokemonSprite.play(`${this.pokemonName}--down`);
 
-    this.typeSprites = pokemonData[
-      this.pokemonName
-    ].categories.map((category, index) =>
-      this.scene.add
-        .sprite(
-          this.centre.x - 30,
-          this.centre.y + (index * 2 - 3) * 8,
-          category
-        )
-        .setDisplaySize(75, 16)
+    this.typeSprites = pokemonData[this.pokemonName].categories.map(
+      (category, index) =>
+        this.scene.add
+          .sprite(
+            this.centre.x - 30,
+            this.centre.y + (index * 2 - 3) * 8,
+            category
+          )
+          .setDisplaySize(75, 16)
     );
   }
 
@@ -104,7 +103,7 @@ export class PokemonForSaleObject extends Phaser.GameObjects.GameObject {
       this.costText.destroy();
       this.costIcon.destroy();
       this.sheen?.destroy();
-      this.typeSprites.forEach(sprite => sprite.destroy());
+      this.typeSprites.forEach((sprite) => sprite.destroy());
     }
   }
 }

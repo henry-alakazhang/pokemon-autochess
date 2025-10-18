@@ -92,8 +92,8 @@ const move = {
     const pushX = targetCoords.x - userCoords.x;
     const pushY = targetCoords.y - userCoords.y;
     targets
-      .filter(coords => inBounds(board, coords))
-      .map(coords => ({ coords, pokemon: board[coords.x][coords.y] }))
+      .filter((coords) => inBounds(board, coords))
+      .map((coords) => ({ coords, pokemon: board[coords.x][coords.y] }))
       .forEach(({ coords: validTargetCoords, pokemon: validTarget }) => {
         if (!validTarget || validTarget.side === user.side) {
           return;

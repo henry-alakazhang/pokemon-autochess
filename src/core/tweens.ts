@@ -14,13 +14,13 @@ export async function spin(
     height: number;
     width: number;
     duration: number;
-    onComplete?: Function;
+    onComplete?: () => void;
   }
 ) {
   const easeIn = Phaser.Math.Easing.Circular.In;
   const easeOut = Phaser.Math.Easing.Circular.Out;
   // make four quarter-circle turns
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     scene.add.tween({
       targets,
       props: {
@@ -76,10 +76,10 @@ export async function hop(
   }: {
     targets: Phaser.GameObjects.GameObject[];
     repeat?: number;
-    onComplete?: Function;
+    onComplete?: () => void;
   }
 ) {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     scene.add.tween({
       targets,
       duration: 150,

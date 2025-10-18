@@ -61,10 +61,10 @@ const move = {
       facing === 'down'
         ? { y: -25 }
         : facing === 'up'
-        ? { y: 25 }
-        : facing === 'left'
-        ? { x: 25 }
-        : { x: -25 };
+          ? { y: 25 }
+          : facing === 'left'
+            ? { x: 25 }
+            : { x: -25 };
     const rush = scene.add
       .sprite(user.x + (offset.x ?? 0), user.y + (offset.y ?? 0), 'dragon-rush')
       .setDepth(-1)
@@ -89,7 +89,7 @@ const move = {
         }
         scene.movePokemon(userCoords, realTarget, onComplete);
         this.getAOE(realTarget, userCoords)
-          .filter(coords => inBounds(board, coords))
+          .filter((coords) => inBounds(board, coords))
           .forEach(({ x, y }) => {
             const thisTarget = board[x][y];
             if (thisTarget?.side === getOppositeSide(user.side)) {

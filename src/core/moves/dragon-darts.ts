@@ -43,14 +43,14 @@ const move = {
     user.consecutiveAttacks++;
     const enemies = flatten(board)
       .filter(isDefined)
-      .filter(pokemon => pokemon.side !== user.side);
+      .filter((pokemon) => pokemon.side !== user.side);
     // each enemy can be hit up to twice
     const targets = shuffle([...enemies, ...enemies]).slice(
       0,
       user.consecutiveAttacks
     );
 
-    targets.forEach(target => {
+    targets.forEach((target) => {
       scene.fireProjectile(
         user,
         target,

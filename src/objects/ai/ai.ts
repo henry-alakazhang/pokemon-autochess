@@ -50,13 +50,13 @@ function genericPrioritiseBoard(
   const seenPokemon: { [k in PokemonName]?: boolean } = {};
   let deduplicatedPokemon: PokemonObject[] = [];
   const duplicates: PokemonObject[] = [];
-  allPokemon.forEach(pokemon => {
+  allPokemon.forEach((pokemon) => {
     if (seenPokemon[pokemon.basePokemon.base]) {
       duplicates.push(pokemon);
       return;
     }
 
-    pokemon.basePokemon.categories.forEach(category => {
+    pokemon.basePokemon.categories.forEach((category) => {
       // add 1 to the synergy, capping out at player level
       // eg. if level 3 and have 4 of a synergy on bench,
       // the max possible count for that synergy is still 3
@@ -80,9 +80,9 @@ function genericPrioritiseBoard(
     //  add to board
     currentBoard.push(pokemon);
     // remove from current working list
-    deduplicatedPokemon = deduplicatedPokemon.filter(p => p !== pokemon);
+    deduplicatedPokemon = deduplicatedPokemon.filter((p) => p !== pokemon);
     // and count synergies
-    pokemon.basePokemon.categories.forEach(category => {
+    pokemon.basePokemon.categories.forEach((category) => {
       currentSynergyCounts[category] =
         (currentSynergyCounts[category] ?? 0) + 1;
     });
@@ -136,7 +136,7 @@ function genericPrioritiseBoard(
         currentSynergyCounts[biggestSynergy] ?? 0
       ) < biggestSynergyHighestTier
     ) {
-      const mainSynergyMon = deduplicatedPokemon.find(pokemon =>
+      const mainSynergyMon = deduplicatedPokemon.find((pokemon) =>
         pokemon.basePokemon.categories.includes(biggestSynergy)
       );
       if (mainSynergyMon) {
@@ -147,9 +147,9 @@ function genericPrioritiseBoard(
 
     // otherwise, try to add some splash traits in
     const nextStrongestMon = deduplicatedPokemon[0];
-    const improvesAnyTraitMon = deduplicatedPokemon.find(pokemon =>
+    const improvesAnyTraitMon = deduplicatedPokemon.find((pokemon) =>
       pokemon.basePokemon.categories.some(
-        category =>
+        (category) =>
           getSynergyTier(
             synergyData[category].thresholds,
             (currentSynergyCounts[category] ?? 0) + 1
@@ -210,7 +210,7 @@ function decideWant(
   const totalCopies: { [k in PokemonName]?: number } = {};
   [...flatten(player.mainboard), ...player.sideboard]
     .filter(isDefined)
-    .forEach(pokemon => {
+    .forEach((pokemon) => {
       const count = 3 ** (pokemon.basePokemon.stage - 1);
       totalCopies[pokemon.basePokemon.base] =
         (totalCopies[pokemon.basePokemon.base] ?? 0) + count;
@@ -219,9 +219,9 @@ function decideWant(
   // find board Pokemon with a lot of copies: that's the reroll target
   const allBoardUnits = flatten(player.mainboard)
     .filter(isDefined)
-    .map(pokemon => pokemon.basePokemon.base);
+    .map((pokemon) => pokemon.basePokemon.base);
   const rerollTarget = allBoardUnits.find(
-    pokemonName =>
+    (pokemonName) =>
       (totalCopies[pokemonName] ?? 0) >= 3 &&
       (totalCopies[pokemonName] ?? 0) < 9 &&
       pokemonData[pokemonName].tier <= 3
@@ -229,9 +229,9 @@ function decideWant(
 
   /** Whether adding a Pokemon to the mainboard will improve synergies */
   const willImproveSynergies = (pokemon: Pokemon) =>
-    !allBoardUnits.some(boardUnit => pokemon.base === boardUnit) &&
+    !allBoardUnits.some((boardUnit) => pokemon.base === boardUnit) &&
     pokemon.categories.some(
-      category =>
+      (category) =>
         getSynergyTier(
           synergyData[category].thresholds,
           (player.synergyMap[category] ?? 0) + 1
@@ -246,18 +246,18 @@ function decideWant(
   // note: this should be sorted by approxiamte strength because he sideboard should be
   const potentialNextUnits = player.sideboard
     .filter(isDefined)
-    .filter(pokemon => willImproveSynergies(pokemon.basePokemon));
+    .filter((pokemon) => willImproveSynergies(pokemon.basePokemon));
   // and also find if there are any already-evolved ready-to-go ones.
   const strongNextUnit = potentialNextUnits.find(
-    pokemon => pokemon.basePokemon.stage >= 2
+    (pokemon) => pokemon.basePokemon.stage >= 2
   );
 
   // then we decide if we want the Pokemon
-  const defaultWants = list.map(pokemon => {
+  const defaultWants = list.map((pokemon) => {
     // YES if board has empty slots and no sideboard to fill them with
     if (
       player.canAddPokemonToMainboard() &&
-      player.sideboard.every(slot => !isDefined(slot))
+      player.sideboard.every((slot) => !isDefined(slot))
     ) {
       return true;
     }
@@ -295,7 +295,7 @@ function decideWant(
     }
 
     // YES if it matches our forced synergies
-    if (pokemon.categories.some(category => forced?.includes(category))) {
+    if (pokemon.categories.some((category) => forced?.includes(category))) {
       return true;
     }
 
@@ -309,7 +309,7 @@ function decideWant(
       // don't pick up if we already have a candidate for next board unit
       !strongNextUnit &&
       pokemon.categories.some(
-        category =>
+        (category) =>
           getSynergyTier(
             synergyData[category].thresholds,
             (player.synergyMap[category] ?? 0) + 1
@@ -333,10 +333,10 @@ function decideWant(
     if (
       (potentialNextUnits.length < 6 - player.level ||
         potentialNextUnits.some(
-          potentialUnit => potentialUnit.basePokemon.tier < pokemon.tier
+          (potentialUnit) => potentialUnit.basePokemon.tier < pokemon.tier
         )) &&
       pokemon.categories.some(
-        category =>
+        (category) =>
           getSynergyTier(
             synergyData[category].thresholds,
             (player.synergyMap[category] ?? 0) + 1
@@ -366,7 +366,7 @@ function decideWant(
   // if we want to sell stuff and can't decide, just sell all the random 1-ofs
   if (strict && !defaultWants.includes(false)) {
     console.warn("AI couldn't decide sells, selling everything not paired");
-    return list.map(pokemon => totalCopies[pokemon.base] !== 1);
+    return list.map((pokemon) => totalCopies[pokemon.base] !== 1);
   }
 
   // otherwise we should be good
@@ -381,7 +381,7 @@ function genericDecideSells(player: Player) {
 
   const wanted = decideWant(
     player,
-    player.sideboard.filter(isDefined).map(pokemon => pokemon?.basePokemon),
+    player.sideboard.filter(isDefined).map((pokemon) => pokemon?.basePokemon),
     { strict: true }
   );
   return (
@@ -399,7 +399,7 @@ const basicFlexAI: AIStrategy = {
   decideBuys: (player: Player) => {
     const wants = decideWant(
       player,
-      player.currentShop.map(pokemon => pokemonData[pokemon])
+      player.currentShop.map((pokemon) => pokemonData[pokemon])
     );
     return player.currentShop.filter((_, index) => wants[index] === true);
   },
@@ -420,7 +420,7 @@ function generateHardForceAI(
     decideBuys: (player: Player) => {
       const wants = decideWant(
         player,
-        player.currentShop.map(pokemon => pokemonData[pokemon]),
+        player.currentShop.map((pokemon) => pokemonData[pokemon]),
         { forced: primary ? [primary, ...splash] : splash }
       );
       return player.currentShop.filter((_, index) => wants[index] === true);
@@ -433,15 +433,17 @@ function generateHardForceAI(
       return genericPrioritiseBoard(player, (a, b) => {
         // always prioritise primary force units (if there is a primary trait)
         const primaryCategoryDiff =
-          b.basePokemon.categories.filter(c => c === primary).length -
-          a.basePokemon.categories.filter(c => c === primary).length;
+          b.basePokemon.categories.filter((c) => c === primary).length -
+          a.basePokemon.categories.filter((c) => c === primary).length;
 
         // include secondary categories based on how many there are
         const splashCategoryDiff =
-          b.basePokemon.categories.filter(category => splash.includes(category))
-            .length -
-          a.basePokemon.categories.filter(category => splash.includes(category))
-            .length;
+          b.basePokemon.categories.filter((category) =>
+            splash.includes(category)
+          ).length -
+          a.basePokemon.categories.filter((category) =>
+            splash.includes(category)
+          ).length;
         const pokemonStrengthDiff =
           getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon);
         // pick Pokemon that fit the categories, then order by power

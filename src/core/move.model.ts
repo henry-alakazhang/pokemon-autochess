@@ -14,7 +14,7 @@ export interface MoveConfig<T extends Targetting> {
   /** The targetted Pokemon for the move. Always exists if the move is unit-targetted */
   target: T extends 'unit' ? PokemonObject : PokemonObject | undefined;
   targetCoords: Coords;
-  onComplete: Function;
+  onComplete: () => void;
 }
 
 /**

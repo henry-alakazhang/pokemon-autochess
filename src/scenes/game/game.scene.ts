@@ -145,7 +145,7 @@ export class GameScene extends Phaser.Scene {
   sellText: Phaser.GameObjects.Text;
   currentRoundText: Phaser.GameObjects.Text;
   boardLimitText: Phaser.GameObjects.Text;
-  movePokemonListener: Function;
+  movePokemonListener: (event: Phaser.Input.Pointer) => void;
 
   /** A reference to the currently selected Pokemon */
   selectedPokemon?: PokemonObject;
@@ -721,7 +721,7 @@ export class GameScene extends Phaser.Scene {
       player.addPokemonToSideboard(pokemon.name);
       player.movePokemon(
         // whatever lol, we just put it there.
-        // eslint-disable-next-line
+
         player.sideboard[0]!,
         { location: 'mainboard', coords: pokemon.location }
       );

@@ -41,7 +41,7 @@ const move = {
         onComplete();
         const targets = flatten(board)
           .filter(isDefined)
-          .filter(pokemon => pokemon.side === getOppositeSide(user.side))
+          .filter((pokemon) => pokemon.side === getOppositeSide(user.side))
           // sort by max HP
           .sort(
             (a: PokemonObject, b: PokemonObject) => a.currentHP - b.currentHP
@@ -49,11 +49,11 @@ const move = {
           // and pick the highest X targets
           .slice(0, this.damage[user.basePokemon.stage - 1]);
         // todo: add attack graphics
-        targets.forEach(target => target.addStatus('sleep', 4000));
+        targets.forEach((target) => target.addStatus('sleep', 4000));
         // apply damage every second for 4 seconds
         scene.time.addEvent({
           callback: () => {
-            targets.forEach(target => {
+            targets.forEach((target) => {
               const damage = calculateDamage(user, target, {
                 damage: target.maxHP * 0.08,
                 defenseStat: this.defenseStat,

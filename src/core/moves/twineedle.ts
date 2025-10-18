@@ -33,10 +33,10 @@ const move = {
               ? // -2 = 66%
                 -2
               : user.basePokemon.stage === 2
-              ? // +0 = 100%
-                0
-              : // + 1 = 125%
-                +2;
+                ? // +0 = 100%
+                  0
+                : // + 1 = 125%
+                  +2;
           user.changeStats({ attack: multi }, 500);
           scene.basicAttack(user, target);
         }

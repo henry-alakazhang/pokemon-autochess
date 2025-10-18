@@ -120,11 +120,11 @@ const move = {
 
         // get all valid targets
         const targets = this.getAOE(currentCoords)
-          .filter(coords => inBounds(board, coords))
-          .map(coords => board[coords.x][coords.y])
+          .filter((coords) => inBounds(board, coords))
+          .map((coords) => board[coords.x][coords.y])
           .filter(isDefined);
 
-        targets.forEach(target => {
+        targets.forEach((target) => {
           // reduce their attack
           target.changeStats(
             {

@@ -61,11 +61,11 @@ const move = {
       { x: userCoords.x, y: userCoords.y + 1 },
       { x: userCoords.x, y: userCoords.y - 1 },
     ]
-      .filter(coords => inBounds(board, coords))
-      .map(coords => board[coords.x][coords.y])
+      .filter((coords) => inBounds(board, coords))
+      .map((coords) => board[coords.x][coords.y])
       .filter(isDefined);
 
-    targets.forEach(target => {
+    targets.forEach((target) => {
       if (target.side === user.side) {
         // buff allies
         const buffEffect = scene.add

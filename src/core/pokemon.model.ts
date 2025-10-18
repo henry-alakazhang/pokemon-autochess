@@ -1464,11 +1464,11 @@ const rawPokemonData = {
 } as const;
 
 export type PokemonName = keyof typeof rawPokemonData;
-export const allPokemonNames = Object.keys(rawPokemonData) as Array<
-  PokemonName
->;
+export const allPokemonNames = Object.keys(
+  rawPokemonData
+) as Array<PokemonName>;
 export const buyablePokemon = allPokemonNames.filter(
-  name => rawPokemonData[name].stage === 1
+  (name) => rawPokemonData[name].stage === 1
 );
 
 /**
@@ -1508,14 +1508,14 @@ export const pokemonPerSynergy: { [k in Category]: PokemonName[] } = {
 };
 
 // add all buyable pokemon of the appropriate synergy
-buyablePokemon.forEach(pokemon => {
-  pokemonData[pokemon].categories.forEach(category => {
+buyablePokemon.forEach((pokemon) => {
+  pokemonData[pokemon].categories.forEach((category) => {
     pokemonPerSynergy[category].push(pokemon);
   });
 });
 
 // and sort by tier (ascending)
-Object.values(pokemonPerSynergy).forEach(list => {
+Object.values(pokemonPerSynergy).forEach((list) => {
   list.sort((a, b) => pokemonData[a].tier - pokemonData[b].tier);
 });
 
@@ -1545,7 +1545,7 @@ const defenseTargetting = {
   specDefense: 0,
 };
 
-Object.values(basePokemonData).forEach(pokemon => {
+Object.values(basePokemonData).forEach((pokemon) => {
   if (
     'move' in pokemon &&
     'defenseStat' in pokemon.move &&
@@ -1561,7 +1561,7 @@ Object.values(basePokemonData).forEach(pokemon => {
   stats[pokemon.basicAttack.stat].push(pokemon[pokemon.basicAttack.stat]);
   stats.dps.push(
     pokemon[pokemon.basicAttack.stat] *
-      (1000 / getTurnDelay((pokemon as unknown) as Pokemon))
+      (1000 / getTurnDelay(pokemon as unknown as Pokemon))
   );
   // copied from getEvolution... whatever
   stats.maxHP.push(Math.round(2 * Math.sqrt(pokemon.maxHP) - 1) * 50 + 200);

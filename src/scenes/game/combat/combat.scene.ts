@@ -164,7 +164,7 @@ export class CombatScene extends Scene {
       )
     );
 
-    this.players.player.synergies.forEach(synergy => {
+    this.players.player.synergies.forEach((synergy) => {
       synergyData[synergy.category].onRoundStart?.({
         scene: this,
         board: this.board,
@@ -172,7 +172,7 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
-    this.players.enemy.synergies.forEach(synergy => {
+    this.players.enemy.synergies.forEach((synergy) => {
       synergyData[synergy.category].onRoundStart?.({
         scene: this,
         board: this.board,
@@ -186,7 +186,7 @@ export class CombatScene extends Scene {
 
     flatten(this.board)
       .filter(isDefined)
-      .forEach(pokemon => {
+      .forEach((pokemon) => {
         if (pokemon.basePokemon.move?.type === 'passive') {
           pokemon.basePokemon.move.onRoundStart?.({
             scene: this,
@@ -199,7 +199,7 @@ export class CombatScene extends Scene {
 
   update(time: number, delta: number) {
     // trigger updates on each projectile
-    Object.values(this.projectiles).forEach(x => x?.update(time, delta));
+    Object.values(this.projectiles).forEach((x) => x?.update(time, delta));
 
     this.timer -= delta;
     this.timerText.setText(`${Math.round(this.timer / 1000)}`);
@@ -237,7 +237,7 @@ export class CombatScene extends Scene {
   checkRoundEnd() {
     const remainingSides = flatten(this.board)
       .filter(isDefined)
-      .map(pokemon => pokemon.side);
+      .map((pokemon) => pokemon.side);
 
     const playerAlive = remainingSides.includes('player');
     const enemyAlive = remainingSides.includes('enemy');
@@ -302,7 +302,7 @@ export class CombatScene extends Scene {
     pokemon.on(
       PokemonObject.Events.Dead,
       () => {
-        this.players.player.synergies.forEach(synergy => {
+        this.players.player.synergies.forEach((synergy) => {
           synergyData[synergy.category].onDeath?.({
             scene: this,
             board: this.board,
@@ -311,7 +311,7 @@ export class CombatScene extends Scene {
             count: synergy.count,
           });
         });
-        this.players.enemy.synergies.forEach(synergy => {
+        this.players.enemy.synergies.forEach((synergy) => {
           synergyData[synergy.category].onDeath?.({
             scene: this,
             board: this.board,
@@ -334,12 +334,10 @@ export class CombatScene extends Scene {
     }
     this.board[x][y] = pokemon;
     // initialize damage graph
-    this.damageGraph[side].dealt[
-      `${pokemon.basePokemon.name}-${pokemon.id}`
-    ] = 0;
-    this.damageGraph[side].taken[
-      `${pokemon.basePokemon.name}-${pokemon.id}`
-    ] = 0;
+    this.damageGraph[side].dealt[`${pokemon.basePokemon.name}-${pokemon.id}`] =
+      0;
+    this.damageGraph[side].taken[`${pokemon.basePokemon.name}-${pokemon.id}`] =
+      0;
     return pokemon;
   }
 
@@ -353,7 +351,7 @@ export class CombatScene extends Scene {
     );
   }
 
-  movePokemon(start: Coords, end: Coords, onComplete?: Function) {
+  movePokemon(start: Coords, end: Coords, onComplete?: () => void) {
     if (start.x === end.x && start.y === end.y) {
       onComplete?.();
       return;
@@ -423,7 +421,7 @@ export class CombatScene extends Scene {
       return;
     }
 
-    this.players[pokemon.side].synergies.forEach(synergy => {
+    this.players[pokemon.side].synergies.forEach((synergy) => {
       synergyData[synergy.category].onTurnStart?.({
         scene: this,
         board: this.board,
@@ -577,7 +575,7 @@ export class CombatScene extends Scene {
         // we know because we just checkked `targetted && !targetPokemon`.
         target: targetPokemon as PokemonObject,
         onComplete: () => {
-          this.players[pokemon.side].synergies.forEach(synergy => {
+          this.players[pokemon.side].synergies.forEach((synergy) => {
             synergyData[synergy.category].onMoveUse?.({
               scene: this,
               board: this.board,
@@ -621,7 +619,7 @@ export class CombatScene extends Scene {
   basicAttack(
     attacker: PokemonObject,
     defender: PokemonObject,
-    { onComplete, onHit }: { onComplete?: Function; onHit?: Function } = {}
+    { onComplete, onHit }: { onComplete?: () => void; onHit?: () => void } = {}
   ) {
     // don't do anything if the attacker can't attack
     if (attacker.basePokemon.basicAttack.unusable) {
@@ -705,7 +703,7 @@ export class CombatScene extends Scene {
     }
 
     let totalDamage = amount;
-    this.players[attacker.side].synergies.forEach(synergy => {
+    this.players[attacker.side].synergies.forEach((synergy) => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
           attacker,
@@ -716,7 +714,7 @@ export class CombatScene extends Scene {
           count: synergy.count,
         }) ?? totalDamage;
     });
-    this.players[defender.side].synergies.forEach(synergy => {
+    this.players[defender.side].synergies.forEach((synergy) => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
           attacker,
@@ -748,7 +746,7 @@ export class CombatScene extends Scene {
     defender.takeDamage(totalDamage, { triggerEvents, crit: doesCrit });
 
     if (triggerEvents) {
-      this.players[attacker.side].synergies.forEach(synergy => {
+      this.players[attacker.side].synergies.forEach((synergy) => {
         synergyData[synergy.category].onHit?.({
           scene: this,
           board: this.board,
@@ -759,7 +757,7 @@ export class CombatScene extends Scene {
           count: synergy.count,
         });
       });
-      this.players[defender.side].synergies.forEach(synergy => {
+      this.players[defender.side].synergies.forEach((synergy) => {
         synergyData[synergy.category].onBeingHit?.({
           scene: this,
           board: this.board,
@@ -808,7 +806,7 @@ export class CombatScene extends Scene {
     from: PokemonObject,
     to: PokemonObject,
     config: ProjectileConfig,
-    onHit: Function
+    onHit: () => void
   ) {
     const projectileObj = this.add.existing(
       new Projectile(this, from.x, from.y, to, config)
@@ -829,6 +827,6 @@ export class CombatScene extends Scene {
   ): PokemonObject[] {
     return flatten(this.board)
       .filter(isDefined)
-      .filter(pokemon => this.physics.overlap(pokemon, projectile));
+      .filter((pokemon) => this.physics.overlap(pokemon, projectile));
   }
 }

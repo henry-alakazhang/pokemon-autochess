@@ -122,7 +122,7 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   setVisible(visible: boolean): this {
     this.visible = visible;
-    [...flatten(this.mainboard), ...this.sideboard].forEach(pokemon =>
+    [...flatten(this.mainboard), ...this.sideboard].forEach((pokemon) =>
       pokemon?.setVisible(visible)
     );
     this.updateSynergies();
@@ -243,7 +243,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     }
 
     // should never be -1 because we just checked
-    const empty = this.sideboard.findIndex(v => !v);
+    const empty = this.sideboard.findIndex((v) => !v);
     // insert new Pokemon
     const newPokemon = new PokemonObject({
       scene: this.scene,
@@ -313,7 +313,7 @@ export class Player extends Phaser.GameObjects.GameObject {
       [...flatten(this.mainboard), ...this.sideboard]
         .filter(isDefined)
         // that are have the same Name as this one
-        .filter(pokemon => pokemon.name === speciesToCheck)
+        .filter((pokemon) => pokemon.name === speciesToCheck)
         // and pick the first three
         .slice(0, 3);
     if (samePokemon.length < threshold) {
@@ -329,7 +329,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     }
 
     // remove existing Pokemon (without destroying)
-    samePokemon.forEach(pokemon => {
+    samePokemon.forEach((pokemon) => {
       this.removePokemon(pokemon, false);
     });
 
@@ -345,7 +345,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     this.setPokemonAtLocation(evoLocation, evo);
 
     // play animations
-    samePokemon.forEach(pokemon => {
+    samePokemon.forEach((pokemon) => {
       if (this.visible) {
         // if visible, play animation
         // move towards Pokemon, grow, merge
@@ -419,14 +419,14 @@ export class Player extends Phaser.GameObjects.GameObject {
     const counted: { [k in PokemonName]?: boolean } = {};
     flatten(this.mainboard)
       .filter(isDefined)
-      .forEach(pokemon => {
+      .forEach((pokemon) => {
         // ignore pokemon if counted already
         if (counted[pokemon.basePokemon.base]) {
           return;
         }
 
         counted[pokemon.basePokemon.base] = true;
-        pokemon.basePokemon.categories.forEach(category => {
+        pokemon.basePokemon.categories.forEach((category) => {
           const newValue = (synergyMap[category] ?? 0) + 1;
           synergyMap[category] = newValue;
         });
@@ -460,7 +460,7 @@ export class Player extends Phaser.GameObjects.GameObject {
       });
 
     // hide all synergy markers
-    Object.values(this.synergyMarkers).forEach(marker => {
+    Object.values(this.synergyMarkers).forEach((marker) => {
       marker.setVisible(false).setActive(false);
     });
 
@@ -486,7 +486,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   canAddPokemonToMainboard() {
-    return flatten(this.mainboard).filter(v => !!v).length < this.level;
+    return flatten(this.mainboard).filter((v) => !!v).length < this.level;
   }
 
   canAddPokemonToSideboard() {
@@ -507,7 +507,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   decideEnemyBuys() {
-    this.aiStrategy.decideBuys(this).forEach(pokemon => {
+    this.aiStrategy.decideBuys(this).forEach((pokemon) => {
       if (this.buyPokemon(pokemon)) {
         delete this.currentShop[this.currentShop.indexOf(pokemon)];
       }
@@ -566,13 +566,13 @@ export class Player extends Phaser.GameObjects.GameObject {
     // sell any pokemon (if relevant)
     this.aiStrategy
       .decideSells?.(this)
-      .forEach(toSell => this.sellPokemon(toSell));
+      .forEach((toSell) => this.sellPokemon(toSell));
 
     // AI fallback: if doesn't want to sell anything AND board is full,
     // just sell from the back of the sideboard
     if (!this.canAddPokemonToSideboard()) {
       console.warn("AI couldn't decide sells, selling anyway");
-      this.sideboard.slice(-3).forEach(toSell => {
+      this.sideboard.slice(-3).forEach((toSell) => {
         if (toSell) {
           this.sellPokemon(toSell);
         }

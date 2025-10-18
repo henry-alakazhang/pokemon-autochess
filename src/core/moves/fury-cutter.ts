@@ -46,7 +46,7 @@ const move = {
               callback: () => {
                 // at the end of the loop, clean up
                 if (event.repeatCount === 0) {
-                  animationArr.forEach(sprite => sprite.destroy());
+                  animationArr.forEach((sprite) => sprite.destroy());
                 } else {
                   animationArr.push(
                     scene.add

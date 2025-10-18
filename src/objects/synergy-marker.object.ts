@@ -44,10 +44,7 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
       .setOrigin(0);
     // background covers the type + text and grows in size based on tier
     // styles are applied in `setCount()`
-    this.background = scene.add
-      .rectangle()
-      .setOrigin(0)
-      .setDepth(-1);
+    this.background = scene.add.rectangle().setOrigin(0).setDepth(-1);
     this.setCount(count);
 
     // hover text showing the synergy name

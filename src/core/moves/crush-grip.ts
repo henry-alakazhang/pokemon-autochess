@@ -64,7 +64,7 @@ const move = {
       duration: 400,
       onComplete: () => {
         onComplete();
-        this.getAOE(targetCoords).forEach(coords => {
+        this.getAOE(targetCoords).forEach((coords) => {
           if (!inBounds(board, coords)) {
             return;
           }

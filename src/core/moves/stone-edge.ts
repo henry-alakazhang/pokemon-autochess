@@ -65,15 +65,15 @@ const move = {
         scene.time.addEvent({
           callback: () => {
             const targets = this.getAOE(targetCoords, userCoords)
-              .map(coords => board[coords.x]?.[coords.y])
+              .map((coords) => board[coords.x]?.[coords.y])
               .filter(isDefined)
-              .filter(pokemon => pokemon.side === getOppositeSide(user.side));
+              .filter((pokemon) => pokemon.side === getOppositeSide(user.side));
 
             const rawBaseDamage = this.damage[user.basePokemon.stage - 1];
             // deal more damage if there's only one target
             const realBaseDamage =
               targets.length === 1 ? rawBaseDamage * 1.5 : rawBaseDamage;
-            targets.forEach(pokemon => {
+            targets.forEach((pokemon) => {
               const damage = calculateDamage(user, pokemon, {
                 damage: realBaseDamage,
                 defenseStat: this.defenseStat,

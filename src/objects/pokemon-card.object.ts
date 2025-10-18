@@ -196,7 +196,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           <div class="PokemonTypes">
             ${this.pokemon.categories
               .map(
-                category =>
+                (category) =>
                   `<img width="75px" src="assets/fx/types/${category}.png"></img>`
               )
               .join('')}

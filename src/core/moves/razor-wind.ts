@@ -117,7 +117,7 @@ const move = {
         const timer = scene.time.addEvent({
           callback: () => {
             // deal damage to each person in range (2 x 2 square)
-            this.getAOE(targetCoords).forEach(coord => {
+            this.getAOE(targetCoords).forEach((coord) => {
               const pokemon = board[coord.x]?.[coord.y];
               if (pokemon && pokemon.side !== user.side) {
                 const damage = calculateDamage(user, pokemon, {
