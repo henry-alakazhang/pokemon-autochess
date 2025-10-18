@@ -33,7 +33,7 @@ const move = {
       from: 0,
       to: 15,
       onUpdate: (tween: Phaser.Tweens.Tween) => {
-        user.playAnimation(animations[Math.floor(tween.getValue()) % 4]);
+        user.playAnimation(animations[Math.floor(tween.getValue() ?? 0) % 4]);
       },
       duration: 1000,
       ease: 'Quad.easeIn',
@@ -55,7 +55,7 @@ const move = {
           // reset user targetting
           user.currentTarget = undefined;
           // drop aggro from all units targetting the user
-          flatten(board).forEach(pokemon => {
+          flatten(board).forEach((pokemon) => {
             if (pokemon?.currentTarget === user) {
               pokemon.currentTarget = undefined;
             }

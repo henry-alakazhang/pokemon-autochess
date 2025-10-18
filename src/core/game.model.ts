@@ -145,7 +145,7 @@ export interface Synergy {
 }
 
 export function getSynergyTier(thresholds: number[], count: number) {
-  let tier = thresholds.findIndex(threshold => count < threshold);
+  let tier = thresholds.findIndex((threshold) => count < threshold);
   // if tier is -1, it means it's beyond the max
   if (tier === -1) {
     tier = thresholds.length;
@@ -174,7 +174,7 @@ to Pick Up a Pokeball at end of round.
 
       flatten(board)
         .filter(isDefined)
-        .forEach(pokemon => {
+        .forEach((pokemon) => {
           if (
             pokemon.basePokemon.categories.includes('normal') &&
             Math.random() < 0.5
@@ -330,7 +330,7 @@ at the end of each of their turns.
 
         // Duration is endless, but that's not fixable ATM
         // FIXME: can't track stacks separately
-        defender.addStatus('poison', 99999, prev =>
+        defender.addStatus('poison', 99999, (prev) =>
           Math.min(
             // Add one stack to the previous amount,
             // initialising to 0 if unset
@@ -364,15 +364,15 @@ it raises the Speed of other nearby allies.
       const range = tier === 1 ? 1 : 2;
 
       flatten(board)
-        .filter(pokemon => pokemon?.side === user.side)
+        .filter((pokemon) => pokemon?.side === user.side)
         .filter(isDefined)
         // FIXME: a visual distance is a bit hacky
         .filter(
-          pokemon =>
+          (pokemon) =>
             pokemon !== user &&
             Math.round(getGridDistance(pokemon, user) / 70) <= range
         )
-        .forEach(pokemon => {
+        .forEach((pokemon) => {
           const cog = scene.add
             .sprite(pokemon.x, pokemon.y, 'cog')
             .play('cog')
@@ -433,11 +433,11 @@ it raises the Speed of other nearby allies.
         { x: targetPos.x, y: targetPos.y - 1 },
       ]
         // that are in bounds
-        .filter(coords => inBounds(board, coords))
+        .filter((coords) => inBounds(board, coords))
         // and have Pokemon on them
-        .map(coords => board[coords.x][coords.y])
+        .map((coords) => board[coords.x][coords.y])
         .filter(isDefined)
-        .forEach(adjacentPokemon => {
+        .forEach((adjacentPokemon) => {
           if (adjacentPokemon?.side === getOppositeSide(attacker.side)) {
             // apply damage directly; no defense calcs, no synergy modifiers.
             adjacentPokemon.takeDamage(Math.round(damage * splashPerc));
@@ -514,7 +514,7 @@ have their Speed lowered for a duration.
       }
       const duration = tier === 1 ? 4000 : 6000;
 
-      flatten(board).forEach(pokemon => {
+      flatten(board).forEach((pokemon) => {
         if (pokemon && pokemon.side !== side) {
           pokemon.changeStats(
             {
@@ -544,7 +544,7 @@ Pokemon at the start of the round.
         .filter(isDefined)
         // find all the Bug-types of the appropriate side
         .filter(
-          pokemon =>
+          (pokemon) =>
             pokemon.side === side &&
             pokemon.basePokemon.categories.includes('bug')
         )
@@ -608,7 +608,7 @@ Pokemon at the start of the round.
       const evasionBoost = tier === 1 ? 0.2 : tier === 2 ? 0.4 : 0.6;
       flatten(board)
         .filter(isDefined)
-        .forEach(pokemon => {
+        .forEach((pokemon) => {
           if (
             pokemon.side === side &&
             pokemon.basePokemon.categories.includes('ghost')
@@ -643,7 +643,7 @@ to both their attacks and their moves.
         tier === 0 ? 1.5 : tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
       flatten(
         board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-      ).forEach(slot => {
+      ).forEach((slot) => {
         if (
           slot.pokemon?.side === side &&
           slot.pokemon.basePokemon.categories.includes('dark')
@@ -690,7 +690,7 @@ effects at the start of the round.
       const duration = tier === 1 ? 5000 : 10000;
       flatten(board)
         .filter(isDefined)
-        .forEach(pokemon => {
+        .forEach((pokemon) => {
           if (pokemon.side === side) {
             // TODO: apply some visual for status immunity
             pokemon.addStatus('statusImmunity', duration);
@@ -770,7 +770,7 @@ boost their Attack, Special Attack and Speed.
       const maxStacks = tier === 1 ? 1 : 3;
 
       if (pokemon.side === side) {
-        flatten(board).forEach(boardPokemon => {
+        flatten(board).forEach((boardPokemon) => {
           if (
             boardPokemon?.side === side &&
             boardPokemon.basePokemon.categories.includes('revenge killer') &&
@@ -789,8 +789,8 @@ boost their Attack, Special Attack and Speed.
                 boardPokemon.setTint(
                   Phaser.Display.Color.GetColor(
                     0xff,
-                    Math.floor(tween.getValue()),
-                    Math.floor(tween.getValue())
+                    Math.floor(tween.getValue() ?? 0),
+                    Math.floor(tween.getValue() ?? 0)
                   )
                 );
               },
@@ -886,7 +886,7 @@ when they deal damage.
       const boost = tier === 1 ? 400 : tier === 2 ? 800 : 1500;
       flatten(board)
         .filter(isDefined)
-        .forEach(pokemon => {
+        .forEach((pokemon) => {
           if (
             pokemon.side === side &&
             pokemon.basePokemon.categories.includes('bulky attacker')
@@ -991,11 +991,11 @@ it shares PP with non-Support allies.
 
         flatten(board)
           .filter(
-            pokemon =>
+            (pokemon) =>
               pokemon?.side === user.side &&
               !pokemon.basePokemon.categories.includes('support')
           )
-          .forEach(pokemon => {
+          .forEach((pokemon) => {
             // TODO: Add animation (blue buff effect?)
             pokemon?.addPP((user.maxPP ?? 10) * sharePercent).redrawBars();
           });
@@ -1041,13 +1041,13 @@ has all of their types combined together.`,
       const pivots = flatten(
         board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
       ).filter(
-        slot =>
+        (slot) =>
           slot.pokemon?.side === side &&
           slot.pokemon.basePokemon.categories.includes('pivot')
       ) as { x: number; y: number; pokemon: PokemonObject }[]; // cast away the undefined, because we know it's not
 
       // remove each of them from being tracked by the CombatScene
-      pivots.forEach(pivot => scene.removePokemon(pivot.pokemon));
+      pivots.forEach((pivot) => scene.removePokemon(pivot.pokemon));
 
       // get the nearest space to the center of the pivot units
       const mechPosition = getNearestEmpty(board, getCenter(pivots));
@@ -1071,7 +1071,7 @@ has all of their types combined together.`,
       pivots
         // map away the coords since we don't need them here
         .map(({ pokemon }) => pokemon)
-        .forEach(pokemon => {
+        .forEach((pokemon) => {
           // update the mech's stats
           mech.basePokemon = {
             ...mech.basePokemon,
@@ -1079,7 +1079,7 @@ has all of their types combined together.`,
               ...mech.basePokemon.categories,
               // only keep the types
               ...pokemon.basePokemon.categories.filter(
-                synergy => synergy in isType
+                (synergy) => synergy in isType
               ),
             ],
           };
@@ -1103,7 +1103,7 @@ has all of their types combined together.`,
 
       mech.redrawCard();
       mech.once(PokemonObject.Events.Dead, () => {
-        pivots.forEach(slot => {
+        pivots.forEach((slot) => {
           // get the nearest position to where they were at the start of round
           const spotToJump = getNearestEmpty(scene.board, slot);
           if (!spotToJump) {
@@ -1113,10 +1113,7 @@ has all of their types combined together.`,
           slot.pokemon.takeDamage(slot.pokemon.maxHP / 2, {
             triggerEvents: false,
           });
-          slot.pokemon
-            .setVisible(true)
-            .setActive(true)
-            .move(graphicalSpot);
+          slot.pokemon.setVisible(true).setActive(true).move(graphicalSpot);
           scene.board[spotToJump.x][spotToJump.y] = slot.pokemon;
           scene.setTurn(slot.pokemon);
         });

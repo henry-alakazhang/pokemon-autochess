@@ -240,7 +240,7 @@ export class GameScene extends Phaser.Scene {
         })
       )
     );
-    this.players.forEach(player => {
+    this.players.forEach((player) => {
       player.on(Player.Events.SELECT, () => {
         this.watchPlayer(player);
       });
@@ -286,7 +286,7 @@ export class GameScene extends Phaser.Scene {
     };
     this.input.on(Phaser.Input.Events.POINTER_DOWN, this.movePokemonListener);
 
-    this.input.keyboard.on('keydown-SPACE', () => {
+    this.input.keyboard?.on('keydown-SPACE', () => {
       this.toggleShop();
     });
 
@@ -356,10 +356,10 @@ export class GameScene extends Phaser.Scene {
     // take AI player turns
     await Promise.all(
       this.players
-        .filter(player => player !== this.humanPlayer)
-        .map(player => {
+        .filter((player) => player !== this.humanPlayer)
+        .map((player) => {
           player.setTakingTurn(true);
-          return new Promise<void>(resolve => {
+          return new Promise<void>((resolve) => {
             if (window.requestIdleCallback) {
               // use idleCallback so we can render frames between
               // otherwise it will block the entire time,
@@ -383,8 +383,8 @@ export class GameScene extends Phaser.Scene {
     // this deselects Pokemon, closes any info cards and so on.
     this.events.emit(Phaser.Input.Events.POINTER_DOWN, { x: 0, y: 0 });
     // hide all the prep-only stuff
-    this.currentVisiblePlayer.mainboard.forEach(col =>
-      col.forEach(pokemon => pokemon?.setVisible(false))
+    this.currentVisiblePlayer.mainboard.forEach((col) =>
+      col.forEach((pokemon) => pokemon?.setVisible(false))
     );
     this.boardLimitText.setVisible(false);
     this.prepGrid.setVisible(false);
@@ -397,8 +397,10 @@ export class GameScene extends Phaser.Scene {
       this.scene.pause(ShopScene.KEY);
     }
 
-    const neutralRound = this.gameMode.stages[this.currentStage]
-      .neutralRounds?.[this.currentRound];
+    const neutralRound =
+      this.gameMode.stages[this.currentStage].neutralRounds?.[
+        this.currentRound
+      ];
     if (neutralRound) {
       // if there's a neutral round, create the neutral round.
       const opponent = this.generateNeutralPlayer(neutralRound);
@@ -417,7 +419,7 @@ export class GameScene extends Phaser.Scene {
             );
             this.players.forEach(
               // all the AIs win 100%
-              player =>
+              (player) =>
                 player !== this.humanPlayer &&
                 this.handleCombatResult(player, true)
             );
@@ -427,7 +429,7 @@ export class GameScene extends Phaser.Scene {
         .get(CombatScene.KEY)
         .events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
           // clean up fake neutral opponent
-          flatten(opponent.mainboard).forEach(pokemon => pokemon?.destroy());
+          flatten(opponent.mainboard).forEach((pokemon) => pokemon?.destroy());
           opponent.destroy();
           this.startDowntime();
         });
@@ -436,7 +438,7 @@ export class GameScene extends Phaser.Scene {
 
     const pairings = this.matchmakePairings();
     console.log('PAIRINGS', pairings);
-    pairings.forEach(pairing => {
+    pairings.forEach((pairing) => {
       let [player1, player2] = [pairing[0], pairing[1]];
       // neither is a real player: skip
       if (!isDefined(player1) && !isDefined(player2)) {
@@ -453,7 +455,7 @@ export class GameScene extends Phaser.Scene {
       // but don't cause that player to take damage if they lose.
       // Players can't fight their own ghosts (or it's just a coinflip)
       const otherPlayers = this.players.filter(
-        player => player !== player1 && player !== player2
+        (player) => player !== player1 && player !== player2
       );
       const pair1 = {
         isReal: isDefined(player1),
@@ -516,7 +518,7 @@ export class GameScene extends Phaser.Scene {
 
   // TODO: should this all just live inside Player?
   handleCombatResult(player: Player, won: boolean) {
-    player.synergies.forEach(synergy => {
+    player.synergies.forEach((synergy) => {
       synergyData[synergy.category].onRoundEnd?.({
         scene: this,
         board: player.mainboard,
@@ -531,7 +533,7 @@ export class GameScene extends Phaser.Scene {
   startDowntime() {
     // remove any dead players
     // note: disabling the player is handled by the player object
-    this.players = this.players.filter(player => player.hp > 0);
+    this.players = this.players.filter((player) => player.hp > 0);
 
     this.currentRound += 1;
     if (this.currentRound > this.gameMode.stages[this.currentStage].rounds) {
@@ -541,7 +543,7 @@ export class GameScene extends Phaser.Scene {
       // if game mode includes autolevelling, autolevel them
       const newLevel = this.gameMode.stages[this.currentStage].autolevel;
       if (newLevel) {
-        this.players.forEach(player => {
+        this.players.forEach((player) => {
           player.level = newLevel;
         });
       }
@@ -549,8 +551,8 @@ export class GameScene extends Phaser.Scene {
 
     this.shop.reroll();
     // show all the prep-only stuff
-    this.currentVisiblePlayer.mainboard.forEach(col =>
-      col.forEach(pokemon => pokemon?.setVisible(true))
+    this.currentVisiblePlayer.mainboard.forEach((col) =>
+      col.forEach((pokemon) => pokemon?.setVisible(true))
     );
     this.prepGrid.setVisible(true);
     this.updateBoardLimit();
@@ -669,8 +671,9 @@ export class GameScene extends Phaser.Scene {
       .setVisible(true)
       .setText(
         `${
-          flatten(this.currentVisiblePlayer.mainboard).filter(v => isDefined(v))
-            .length
+          flatten(this.currentVisiblePlayer.mainboard).filter((v) =>
+            isDefined(v)
+          ).length
         }/${this.currentVisiblePlayer.level}`
       );
   }
@@ -697,7 +700,7 @@ export class GameScene extends Phaser.Scene {
     // literally just shuffle it and return pairs
     // TODO: prevent the same players playing too often.
     const order = shuffle(this.players.map((_, index) => index)).map(
-      index => this.players[index]
+      (index) => this.players[index]
     );
 
     return [
@@ -714,7 +717,7 @@ export class GameScene extends Phaser.Scene {
       isHumanPlayer: false,
       initialLevel: round.length,
     });
-    round.forEach(pokemon => {
+    round.forEach((pokemon) => {
       player.addPokemonToSideboard(pokemon.name);
       player.movePokemon(
         // whatever lol, we just put it there.

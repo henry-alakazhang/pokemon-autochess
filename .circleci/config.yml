@@ -38,7 +38,7 @@ jobs:
 
   deploy:
     docker:
-      - image: circleci/node:14.17
+      - image: cimg/node:22.10
     working_directory: ~/pokemon-autochess
 
     steps:

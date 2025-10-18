@@ -48,8 +48,8 @@ const move = {
         user.setTint(
           Phaser.Display.Color.GetColor(
             0xff,
-            Math.floor(tween.getValue()),
-            Math.floor(tween.getValue())
+            Math.floor(tween.getValue() ?? 0),
+            Math.floor(tween.getValue() ?? 0)
           )
         );
       },
@@ -82,7 +82,7 @@ const move = {
             { x: userCoords.x, y: userCoords.y - 1 }, // up
             { x: userCoords.x + 1, y: userCoords.y }, // right
             { x: userCoords.x, y: userCoords.y + 1 }, // down
-          ].filter(coords => inBounds(board, coords));
+          ].filter((coords) => inBounds(board, coords));
           possibleTargets.forEach(({ x, y }) => {
             const target = board[x][y];
             if (target?.side === getOppositeSide(user.side)) {

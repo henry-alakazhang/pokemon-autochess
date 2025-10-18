@@ -41,7 +41,7 @@ const move = {
       { x: userCoords.x, y: userCoords.y - 1 }, // up
       { x: userCoords.x + 1, y: userCoords.y }, // right
       { x: userCoords.x, y: userCoords.y + 1 }, // down
-    ].filter(coords => inBounds(board, coords));
+    ].filter((coords) => inBounds(board, coords));
     const startingDirection = getFacing(userCoords, targetCoords);
     const startIndex = directions.indexOf(startingDirection);
     // TODO: graphics: add a dark tornado effect
@@ -49,13 +49,13 @@ const move = {
       from: 0,
       to: 4,
       duration: 200,
-      onUpdate: tween => {
-        const index = (startIndex + Math.floor(tween.getValue())) % 4;
+      onUpdate: (tween) => {
+        const index = (startIndex + Math.floor(tween.getValue() ?? 0)) % 4;
         user.playAnimation(directions[index]);
       },
       onComplete: () => onComplete(),
     });
-    possibleTargets.forEach(coords => {
+    possibleTargets.forEach((coords) => {
       const target = board[coords.x][coords.y];
       if (target?.side === getOppositeSide(user.side)) {
         scene.causeDamage(

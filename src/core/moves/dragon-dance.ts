@@ -35,8 +35,8 @@ const move = {
         user.setTint(
           Phaser.Display.Color.GetColor(
             0xff,
-            Math.floor(tween.getValue()),
-            Math.floor(tween.getValue())
+            Math.floor(tween.getValue() ?? 0),
+            Math.floor(tween.getValue() ?? 0)
           )
         );
       },

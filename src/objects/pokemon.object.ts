@@ -248,7 +248,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   initPhysics() {
     // set collision to be a small block in the center
-    this.body.setSize(32, 32, true);
+    this.body?.setSize(32, 32, true);
   }
 
   setPosition(x: number, y: number) {
@@ -275,7 +275,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   /** Detaches an attached GameObject */
   detach(object: Phaser.GameObjects.Components.Visible) {
-    this.attachments = this.attachments.filter(item => item === object);
+    this.attachments = this.attachments.filter((item) => item === object);
   }
 
   addCancellableEvent(event: {
@@ -507,13 +507,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
           this.setVisible(false);
 
           // hide all attachments
-          this.attachments.forEach(object => object.setVisible(false));
+          this.attachments.forEach((object) => object.setVisible(false));
           // and all active timers
-          this.cancellableEvents.forEach(event => event.timer.remove());
+          this.cancellableEvents.forEach((event) => event.timer.remove());
           // and any tweens that are running on this
-          this.scene.tweens
-            .getTweensOf(this, true)
-            .forEach(tween => tween.stop());
+          this.scene.tweens.getTweensOf(this).forEach((tween) => tween.stop());
         },
         callbackScope: this,
       });
@@ -681,7 +679,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     // disabling statuses can interrupt stuff
     if (status === 'paralyse' || status === 'sleep') {
-      this.cancellableEvents.forEach(event => {
+      this.cancellableEvents.forEach((event) => {
         event.timer.remove();
         event.onCancel?.();
       });

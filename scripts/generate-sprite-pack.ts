@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as glob from 'glob';
+import { writeFileSync } from 'fs';
+import { glob } from 'glob';
 
 const sizeOverrides: { [k: string]: number } = {
   regigigas: 128,
@@ -8,14 +8,11 @@ const sizeOverrides: { [k: string]: number } = {
 const spriteOutputFile = 'assets/sprite-pack.json';
 const fxOutputFile = 'assets/fx-pack.json';
 
-glob('assets/pokemon/**/*.png', (err, matches) => {
-  if (err) {
-    throw err;
-  }
+glob('assets/pokemon/**/*.png').then((matches) => {
   console.log(`Generating sprite-pack.json: Found ${matches.length} files`);
   const output = {
     sprites: {
-      files: matches.map(url => {
+      files: matches.map((url) => {
         const filename = url.split('/').pop();
         const key = filename && filename.split('.')[0];
 
@@ -41,17 +38,14 @@ glob('assets/pokemon/**/*.png', (err, matches) => {
       }),
     },
   };
-  fs.writeFileSync(spriteOutputFile, JSON.stringify(output, null, 2));
+  writeFileSync(spriteOutputFile, JSON.stringify(output, null, 2));
 });
 
-glob('assets/fx/**/*.png', (err, matches) => {
-  if (err) {
-    throw err;
-  }
+glob('assets/fx/**/*.png').then((matches) => {
   console.log(`Generating fx-pack.json: Found ${matches.length} files`);
   const output = {
     sprites: {
-      files: matches.map(url => {
+      files: matches.map((url) => {
         const filename = url.split('/').pop();
         const key = filename && filename.split('.')[0];
         return {
@@ -62,5 +56,5 @@ glob('assets/fx/**/*.png', (err, matches) => {
       }),
     },
   };
-  fs.writeFileSync(fxOutputFile, JSON.stringify(output, null, 2));
+  writeFileSync(fxOutputFile, JSON.stringify(output, null, 2));
 });
