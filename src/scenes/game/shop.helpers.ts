@@ -53,7 +53,7 @@ export class ShopPool {
     private pokemonData: { [k in PokemonName]: Pokemon },
     poolSizes = SHOP_POOL_SIZES
   ) {
-    Object.keys(rates).forEach(level => {
+    Object.keys(rates).forEach((level) => {
       rates[level].forEach((rate, tier) => {
         // generate an array with that many elements
         const arr = Array(rate).fill(tier);
@@ -62,7 +62,7 @@ export class ShopPool {
       });
     });
 
-    pokemonList.forEach(pokemon => {
+    pokemonList.forEach((pokemon) => {
       this.pools[this.pokemonData[pokemon].tier].push(
         ...Array(poolSizes[this.pokemonData[pokemon].tier]).fill(pokemon)
       );
@@ -77,7 +77,7 @@ export class ShopPool {
    */
   reroll(player: Player, currentShop: PokemonName[] = Array(5)): PokemonName[] {
     // return the original Pokemon to the shop (if applicable)
-    currentShop.forEach(pokemon => {
+    currentShop.forEach((pokemon) => {
       this.returnToShop(pokemon);
     });
 
@@ -89,7 +89,7 @@ export class ShopPool {
     for (let i = 0; i < currentShop.length; i++) {
       if (
         this.rates[player.level].every(
-          availableTier => this.pools[availableTier].length === 0
+          (availableTier) => this.pools[availableTier].length === 0
         )
       ) {
         // if every available tier for this player level is used up,
@@ -120,8 +120,6 @@ export class ShopPool {
       }
 
       // take the pokemon out of the pool
-      // non-null assertion here is ok because we literally just checked it
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       newShop.push(pick);
     }
     return newShop;
