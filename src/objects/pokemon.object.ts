@@ -103,6 +103,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   id: string;
   side: 'player' | 'enemy';
   // todo: remove and just use moveState for everything
+  // alternative todo: use DataManager to store this
+  // tradeoff for that is less type safety.
   consecutiveAttacks = 0;
   moveState: string | number;
   currentTarget?: PokemonObject;
@@ -137,6 +139,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   /**
    * State stored for synergies. Each synergy stores whatever it needs to track.
+   * TODO: use DataManager for this? Tradeoff is less type safety and less documentation
    */
   synergyState: {
     /** Number of Speed stacks */
