@@ -118,6 +118,15 @@ export interface Synergy {
     pokemon: PokemonObject;
     count: number;
   }) => void;
+  /** Possible effect that occurs on a regular timer */
+  readonly onTimer?: (config: {
+    scene: CombatScene;
+    board: CombatScene['board'];
+    side: 'player' | 'enemy';
+    count: number;
+    /** Time elapsed in SECONDS */
+    time: number;
+  }) => void;
   /** Possible effect that occurs on start of round */
   readonly onRoundStart?: (config: {
     scene: CombatScene;

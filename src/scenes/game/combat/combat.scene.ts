@@ -62,6 +62,7 @@ export class CombatScene extends Scene {
   private grid: Phaser.GameObjects.Grid;
   private title: Phaser.GameObjects.Text;
   private timerText: Phaser.GameObjects.Text;
+  private timePassedSeconds: number;
   private projectiles: { [k: string]: Projectile } = {};
 
   private damageGraph: {
@@ -89,6 +90,7 @@ export class CombatScene extends Scene {
     this.anims.globalTimeScale = 1;
     this.physics.world.timeScale = 1;
     this.timer = 60_000;
+    this.timePassedSeconds = 0;
     this.timerText = this.add
       .text(550, 35, '60', titleStyle)
       .setOrigin(0, 0)
@@ -203,6 +205,30 @@ export class CombatScene extends Scene {
 
     this.timer -= delta;
     this.timerText.setText(`${Math.round(this.timer / 1000)}`);
+
+    const prevTimePassed = this.timePassedSeconds;
+    this.timePassedSeconds = 60 - Math.floor(this.timer / 1000);
+    if (prevTimePassed !== this.timePassedSeconds) {
+      // trigger timer effects on synergies every second
+      this.players.player.synergies.forEach((synergy) => {
+        synergyData[synergy.category].onTimer?.({
+          scene: this,
+          board: this.board,
+          side: 'player',
+          count: synergy.count,
+          time: this.timePassedSeconds,
+        });
+      });
+      this.players.enemy.synergies.forEach((synergy) => {
+        synergyData[synergy.category].onTimer?.({
+          scene: this,
+          board: this.board,
+          side: 'enemy',
+          count: synergy.count,
+          time: this.timePassedSeconds,
+        });
+      });
+    }
 
     if (this.timer <= 10_000 && this.time.timeScale === 1) {
       this.timerText.setBackgroundColor('#840');
