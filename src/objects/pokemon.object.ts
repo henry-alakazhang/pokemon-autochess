@@ -406,20 +406,24 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   /**
-   * Cause this pokemon to heal health
+   * Cause this pokemon to heal health.
+   * Returns actual healing done.
    */
-  public heal(amount: number) {
+  public heal(amount: number): number {
     if (amount < 0 || this.currentHP <= 0) {
-      return;
+      return 0;
     }
 
     const mult = 1 - (this.status.healReduction?.value ?? 0);
 
+    const prevHP = this.currentHP;
     this.currentHP = Math.min(
       this.maxHP,
       Math.round(this.currentHP + amount * mult)
     );
     this.redrawBars();
+
+    return this.currentHP - prevHP;
   }
 
   /**

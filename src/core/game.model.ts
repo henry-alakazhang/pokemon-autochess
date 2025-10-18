@@ -292,27 +292,66 @@ moves and attacks which hit an area.
   grass: {
     category: 'grass',
     displayName: 'Grass: Absorb',
-    description: `All party members drain life when dealing damage.
+    description: `Grass types recover HP when dealing damage.
+Every 4 seconds, deal damage based on health
+recovered, split among all enemies.
 
- (2) - 15% of damage
- (3) - 25% of damage
- (4) - 40% of damage`,
+ (2) - Heal 15% of damage
+ (3) - Heal 25% of damage
+ (4) - Heal 40% of damage`,
     thresholds: [2, 3, 4],
-    onHit({ attacker, damage, count }) {
+    onHit({ scene, attacker, damage, count }) {
       // TODO add animation for healing?
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
       }
+      let healAmount = 0;
       switch (tier) {
         case 1:
-          return attacker.heal(damage * 0.15);
+          healAmount = damage * 0.15;
+          break;
         case 2:
-          return attacker.heal(damage * 0.25);
+          healAmount = damage * 0.25;
+          break;
         case 3:
-          return attacker.heal(damage * 0.4);
+          healAmount = damage * 0.4;
+          break;
         default: // nothing
       }
+      const healingDone = attacker.heal(Math.floor(healAmount));
+      scene.data.inc(this.category, Math.floor(healingDone));
+    },
+    onTimer({ scene, board, side, count, time }) {
+      // every 4 seconds
+      if (time % 4 !== 0) {
+        return;
+      }
+
+      const tier = getSynergyTier(this.thresholds, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const healPerc = tier === 1 ? 1 : tier === 2 ? 1.5 : 2;
+      const healingDone = scene.data.get(this.category) || 0;
+      // split damage among all targets
+      const targets = flatten(board).filter(
+        (pokemon) => pokemon && pokemon?.side !== side
+      );
+      const damage = Math.floor((healingDone * healPerc) / targets.length);
+      flatten(board)
+        .filter(isDefined)
+        .forEach((pokemon) => {
+          if (pokemon.side !== side) {
+            // TODO: do this damage via combat scene so the damage gets tracked in graphs
+            pokemon.takeDamage(damage, {
+              triggerEvents: false,
+              tint: 0x00ff00, // Slight green tint
+            });
+          }
+        });
+      scene.data.set(this.category, 0);
     },
   },
   poison: {
