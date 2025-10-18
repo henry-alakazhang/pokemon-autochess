@@ -1,4 +1,4 @@
-import * as expect from 'expect';
+import { afterEach, describe, expect, test } from '@jest/globals';
 import { PokemonName } from '../../core/pokemon.model';
 import { Player } from '../../objects/player.object';
 import { ShopPool } from './shop.helpers';
@@ -22,7 +22,7 @@ describe('shop rerolling', () => {
     Math.random = origRandom;
   });
 
-  it('should roll and remove stuff from the pool', () => {
+  test('should roll and remove stuff from the pool', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
@@ -42,7 +42,7 @@ describe('shop rerolling', () => {
     expect(pool.pools[1]).toHaveLength(0);
   });
 
-  it('should roll from the correct level for the player', () => {
+  test('should roll from the correct level for the player', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
@@ -77,7 +77,7 @@ describe('shop rerolling', () => {
     expect(pool.pools[2]).toHaveLength(0);
   });
 
-  it('should roll through different pokemon', () => {
+  test('should roll through different pokemon', () => {
     Math.random = alwaysLast;
     const pool = new ShopPool(
       {
@@ -103,7 +103,7 @@ describe('shop rerolling', () => {
     expect(pool.pools[1]).toHaveLength(1);
   });
 
-  it('should put stuff back in the pool when rerolling', () => {
+  test('should put stuff back in the pool when rerolling', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
@@ -119,7 +119,7 @@ describe('shop rerolling', () => {
     expect(pool.pools[1]).toHaveLength(5);
   });
 
-  it('should put more back for higher stage pokemon', () => {
+  test('should put more back for higher stage pokemon', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
@@ -152,7 +152,7 @@ describe('shop rerolling', () => {
     ]);
   });
 
-  it('should fall back to alternative tiers if current is exhausted', () => {
+  test('should fall back to alternative tiers if current is exhausted', () => {
     Math.random = customRng([0, 0.9999]);
     const pool = new ShopPool(
       {
@@ -176,7 +176,7 @@ describe('shop rerolling', () => {
     ]);
   });
 
-  it('should return empty slots if the entire shop is exhausted', () => {
+  test('should return empty slots if the entire shop is exhausted', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
       {
@@ -202,7 +202,7 @@ describe('shop rerolling', () => {
     expect(pool.pools[1]).toHaveLength(0);
   });
 
-  it('should handle passed shops with deleted elements', () => {
+  test('should handle passed shops with deleted elements', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
       {

@@ -1,4 +1,4 @@
-import * as expect from 'expect';
+import { beforeAll, describe, expect, test } from '@jest/globals';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { ActiveMove } from '../move.model';
 import { iceShard as ic } from './ice-shard';
@@ -33,18 +33,18 @@ describe('ice shard', () => {
   describe('getTarget', () => {
     const iceShard = ic as ActiveMove<'ground'>;
     let getTarget: NonNullable<typeof iceShard.getTarget>;
-    before(() => {
+    beforeAll(() => {
       if (!iceShard.getTarget) {
         throw new Error('getTarget not defined for iceShard!');
       }
       getTarget = iceShard.getTarget;
     });
 
-    it(`should not target if there are no enemies`, () => {
+    test(`should not target if there are no enemies`, () => {
       expect(getTarget([[highPlayerMock]], { x: 0, y: 0 })).toBeUndefined();
     });
 
-    it(`should jump next to only enemy if there is one
+    test(`should jump next to only enemy if there is one
         A..
        >.B.
         ...`, () => {
@@ -60,7 +60,7 @@ describe('ice shard', () => {
       ).toEqual({ x: 0, y: 1 });
     });
 
-    it(`should work with enemies close to the edge
+    test(`should work with enemies close to the edge
         A..
         ...
         B..
@@ -87,7 +87,7 @@ describe('ice shard', () => {
       ).toEqual({ x: 1, y: 2 });
     });
 
-    it(`should target the lowest-HP enemy if there are multiple
+    test(`should target the lowest-HP enemy if there are multiple
         A..
         .B.
        >.b.`, () => {
@@ -103,7 +103,7 @@ describe('ice shard', () => {
       ).toEqual({ x: 0, y: 2 });
     });
 
-    it(`should not jump to a low-health ally
+    test(`should not jump to a low-health ally
         A..
        >.B.
         .a.`, () => {
@@ -119,7 +119,7 @@ describe('ice shard', () => {
       ).toEqual({ x: 0, y: 1 });
     });
 
-    it(`should only jump into open spaces
+    test(`should only jump into open spaces
                 v
         AB. | A.. | AB.  | AB.
        >.bB | BbB | Bb.< | BbB
@@ -167,7 +167,7 @@ describe('ice shard', () => {
       ).toEqual({ x: 1, y: 2 });
     });
 
-    it(`should pick the next-lowest if the lowest HP is inaccessible
+    test(`should pick the next-lowest if the lowest HP is inaccessible
         A..
         .B.<
         BbX`, () => {

@@ -1,4 +1,4 @@
-import * as expect from 'expect';
+import { describe, expect, test } from '@jest/globals';
 import { PokemonObject } from '../../../objects/pokemon.object';
 import {
   Coords,
@@ -12,7 +12,7 @@ const playerMock = { side: 'player' } as PokemonObject;
 const enemyMock = { side: 'enemy' } as PokemonObject;
 
 describe('getNearestTarget', () => {
-  it(`should find an enemy if they're right next to the player
+  test(`should find an enemy if they're right next to the player
       ...
       .AB
       ...`, () => {
@@ -28,7 +28,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 2, y: 1 });
   });
 
-  it(`should find an enemy if they're right above the player
+  test(`should find an enemy if they're right above the player
       .B.
       .A.
       ...`, () => {
@@ -44,7 +44,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 1, y: 0 });
   });
 
-  it(`should not break if it can't find anything
+  test(`should not break if it can't find anything
       ...
       .A.
       ...`, () => {
@@ -60,7 +60,7 @@ describe('getNearestTarget', () => {
     ).toEqual(undefined);
   });
 
-  it(`should not break if it isn't given a valid player can't find anything
+  test(`should not break if it isn't given a valid player can't find anything
       ...
       ...
       ...`, () => {
@@ -76,7 +76,7 @@ describe('getNearestTarget', () => {
     ).toEqual(undefined);
   });
 
-  it(`should prioritise enemies in a clockwise order
+  test(`should prioritise enemies in a clockwise order
       .b.
       .AB
       ...`, () => {
@@ -92,7 +92,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 2, y: 1 });
   });
 
-  it(`should ignore allies
+  test(`should ignore allies
       ...
       .Aa
       .B.`, () => {
@@ -108,7 +108,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 1, y: 2 });
   });
 
-  it(`should work at longer distances
+  test(`should work at longer distances
       ...
       A.B
       ...`, () => {
@@ -124,7 +124,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 2, y: 1 });
   });
 
-  it(`should prioritise closer units
+  test(`should prioritise closer units
       ...
       A.b
       B..`, () => {
@@ -140,7 +140,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 0, y: 2 });
   });
 
-  it(`should work in the top-right quadrant
+  test(`should work in the top-right quadrant
       ..B
       ...
       A..`, () => {
@@ -156,7 +156,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 2, y: 0 });
   });
 
-  it(`should work in the bottom-right quadrant
+  test(`should work in the bottom-right quadrant
       A..
       ...
       ..B`, () => {
@@ -172,7 +172,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 2, y: 2 });
   });
 
-  it(`should work in the bottom-left quadrant
+  test(`should work in the bottom-left quadrant
       ..A
       ...
       B..`, () => {
@@ -188,7 +188,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 0, y: 2 });
   });
 
-  it(`should work in the top-left quadrant
+  test(`should work in the top-left quadrant
       B..
       ...
       ..A`, () => {
@@ -204,7 +204,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 0, y: 0 });
   });
 
-  it(`should prioritise distant enemies in a clockwise order
+  test(`should prioritise distant enemies in a clockwise order
       .b.
       A..
       .B.`, () => {
@@ -220,7 +220,7 @@ describe('getNearestTarget', () => {
     ).toEqual({ x: 1, y: 2 });
   });
 
-  it(`should work for bigger boards
+  test(`should work for bigger boards
       ......
       ......
       ......
@@ -244,7 +244,7 @@ describe('getNearestTarget', () => {
 });
 
 describe('pathfind', () => {
-  it(`should find a path between two points
+  test(`should find a path between two points
     A>B
     ...
     ...`, () => {
@@ -262,7 +262,7 @@ describe('pathfind', () => {
     ).toEqual([{ x: 1, y: 0 }]);
   });
 
-  it(`should find a path between distant points
+  test(`should find a path between distant points
     A>v
     ..v
     ..B`, () => {
@@ -286,7 +286,7 @@ describe('pathfind', () => {
     );
   });
 
-  it(`should go around obstacles
+  test(`should go around obstacles
     AX.
     >>v
     ..B`, () => {
@@ -310,7 +310,7 @@ describe('pathfind', () => {
     );
   });
 
-  it(`should return cleanly if there's no path
+  test(`should return cleanly if there's no path
     A.X
     .X.
     X.B`, () => {
@@ -328,7 +328,7 @@ describe('pathfind', () => {
     ).toEqual(undefined);
   });
 
-  it(`should pick a closer target between multiple
+  test(`should pick a closer target between multiple
     A>B
     ...
     ..C`, () => {
@@ -349,7 +349,7 @@ describe('pathfind', () => {
     expect(pathFound?.path).toEqual([{ x: 1, y: 0 }]);
   });
 
-  it(`should pick a closer target through obstacles
+  test(`should pick a closer target through obstacles
     AXB
     >v.
     .C.`, () => {
@@ -375,7 +375,7 @@ describe('pathfind', () => {
     );
   });
 
-  it(`should only path up to within range
+  test(`should only path up to within range
     A>O
     ...
     ..B`, () => {
@@ -398,7 +398,7 @@ describe('pathfind', () => {
     );
   });
 
-  it(`should allow range to ignore blockers
+  test(`should allow range to ignore blockers
     A>O
     XXX
     ..B`, () => {
@@ -421,7 +421,7 @@ describe('pathfind', () => {
     );
   });
 
-  it(`should pick closest target even if that target is through blockers
+  test(`should pick closest target even if that target is through blockers
     Av.
     XX.
     .BC`, () => {
@@ -442,7 +442,7 @@ describe('pathfind', () => {
     expect(pathFound?.path).toEqual([{ x: 1, y: 0 }]);
   });
 
-  it(`should work for larger boards (7x7)`, () => {
+  test(`should work for larger boards (7x7)`, () => {
     expect(
       pathfind(
         [
@@ -531,7 +531,7 @@ describe('pathfind', () => {
     );
   });
 
-  it(`should work in the edges of larger boards (7x7)`, () => {
+  test(`should work in the edges of larger boards (7x7)`, () => {
     expect(
       pathfind(
         [
@@ -630,7 +630,7 @@ const directionLineAOEMock = (coords: Coords, myCoords: Coords) => {
 };
 
 describe('optimiseAOE', () => {
-  it('should return nothing if there is nobody attacking', () => {
+  test('should return nothing if there is nobody attacking', () => {
     expect(
       optimiseAOE({
         board: [[]],
@@ -641,7 +641,7 @@ describe('optimiseAOE', () => {
     ).toBeUndefined();
   });
 
-  it('should return nothing if there are no targets', () => {
+  test('should return nothing if there are no targets', () => {
     expect(
       optimiseAOE({
         board: [[playerMock]],
@@ -652,7 +652,7 @@ describe('optimiseAOE', () => {
     ).toBeUndefined();
   });
 
-  it(`should return a target if there is one in range
+  test(`should return a target if there is one in range
       A.. 
      >B.. | range = 1
       ...`, () => {
@@ -670,7 +670,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 0, y: 1 });
   });
 
-  it(`should not return a target if they are out of range
+  test(`should not return a target if they are out of range
       A.. 
       ... | range = 1
       B..`, () => {
@@ -688,7 +688,7 @@ describe('optimiseAOE', () => {
     ).toBeUndefined();
   });
 
-  it(`should pick targets for a multi-target aoe
+  test(`should pick targets for a multi-target aoe
      A..
     >B.. | range = 2
      B.. `, () => {
@@ -706,7 +706,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 0, y: 1 });
   });
 
-  it(`should maximise targets when able to
+  test(`should maximise targets when able to
       AB.
      >B..
       B..`, () => {
@@ -724,7 +724,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 0, y: 1 });
   });
 
-  it(`should still pick a target if unable to maximise targets
+  test(`should still pick a target if unable to maximise targets
          v
         ABB
         ... | range = 2
@@ -743,7 +743,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 1, y: 0 });
   });
 
-  it(`should be able to utilise the AOE if targets are out of direct range
+  test(`should be able to utilise the AOE if targets are out of direct range
       A..
      >... | range = 1
       B..`, () => {
@@ -761,7 +761,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 0, y: 1 });
   });
 
-  it(`should work with an odd AOE
+  test(`should work with an odd AOE
       A.B
       .X.
       B.B`, () => {
@@ -779,7 +779,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 1, y: 1 });
   });
 
-  it(`should work if the AOE goes off the board
+  test(`should work if the AOE goes off the board
       AB.
       ..B<
       .B.`, () => {
@@ -797,7 +797,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 2, y: 1 });
   });
 
-  it(`should always pick a unit for a unit-targetted AOE
+  test(`should always pick a unit for a unit-targetted AOE
        v
       ABB
       ..B
@@ -818,7 +818,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 1, y: 0 });
   });
 
-  it(`should pick a unit of the right side for a unit-targetted AOE
+  test(`should pick a unit of the right side for a unit-targetted AOE
       AAA
       .BA<
       AAA`, () => {
@@ -839,7 +839,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 2, y: 1 });
   });
 
-  it(`should work with moves that change AOE depending on user position
+  test(`should work with moves that change AOE depending on user position
        v
       ABB
       BBB
@@ -858,7 +858,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 1, y: 0 });
   });
 
-  it(`should pick from the provided pool even if not optimal
+  test(`should pick from the provided pool even if not optimal
       A B 
        B  
      >B B 
@@ -883,7 +883,7 @@ describe('optimiseAOE', () => {
     ).toEqual({ x: 0, y: 2 });
   });
 
-  it(`should still range when picking from a provided pool
+  test(`should still range when picking from a provided pool
       A B 
      > B  
       B B 
@@ -910,22 +910,22 @@ describe('optimiseAOE', () => {
 });
 
 describe('getFacing', () => {
-  it('should return facing properly in cardinal directions', () => {
+  test('should return facing properly in cardinal directions', () => {
     expect(getFacing({ x: 0, y: 0 }, { x: 0, y: -3 })).toEqual('up');
     expect(getFacing({ x: 0, y: 0 }, { x: 0, y: 3 })).toEqual('down');
     expect(getFacing({ x: 0, y: 0 }, { x: -3, y: 0 })).toEqual('left');
     expect(getFacing({ x: 0, y: 0 }, { x: 3, y: 0 })).toEqual('right');
   });
 
-  it('should return facing at a semi-horizontal angle', () => {
+  test('should return facing at a semi-horizontal angle', () => {
     expect(getFacing({ x: 0, y: 0 }, { x: 2, y: 1 })).toEqual('right');
   });
 
-  it('should return facing at a semi-vertical angle', () => {
+  test('should return facing at a semi-vertical angle', () => {
     expect(getFacing({ x: 0, y: 0 }, { x: 1, y: 2 })).toEqual('down');
   });
 
-  it('should return something valid at a full diagonal', () => {
+  test('should return something valid at a full diagonal', () => {
     expect(['up', 'down', 'left', 'right']).toContain(
       getFacing({ x: 0, y: 0 }, { x: 1, y: 1 })
     );

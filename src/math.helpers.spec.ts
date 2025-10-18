@@ -1,29 +1,29 @@
-import * as expect from 'expect';
+import { describe, expect, test } from '@jest/globals';
 import { interpolateLineAOE } from './math.helpers';
 
 describe('math helpers', () => {
   describe('line interpolation', () => {
-    it(`should interpolate a point as a point`, () => {
+    test(`should interpolate a point as a point`, () => {
       expect(interpolateLineAOE({ x: 0, y: 0 }, { x: 0, y: 0 })).toEqual([
         { x: 0, y: 0 },
       ]);
     });
 
-    it(`should interpolate a short horizontal line`, () => {
+    test(`should interpolate a short horizontal line`, () => {
       expect(interpolateLineAOE({ x: 0, y: 0 }, { x: 1, y: 0 })).toEqual([
         { x: 0, y: 0 },
         { x: 1, y: 0 },
       ]);
     });
 
-    it(`should interpolate a short vertical line`, () => {
+    test(`should interpolate a short vertical line`, () => {
       expect(interpolateLineAOE({ x: 0, y: 0 }, { x: 0, y: 1 })).toEqual([
         { x: 0, y: 0 },
         { x: 0, y: 1 },
       ]);
     });
 
-    it(`should interpolate a horizontal line correctly
+    test(`should interpolate a horizontal line correctly
         ...
         ...
         A*B`, () => {
@@ -34,7 +34,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a vertical line correctly
+    test(`should interpolate a vertical line correctly
         B..
         *..
         A..`, () => {
@@ -45,7 +45,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a diagonal line correctly
+    test(`should interpolate a diagonal line correctly
         ..B
         .*.
         A..`, () => {
@@ -56,7 +56,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a non-steep line
+    test(`should interpolate a non-steep line
         ....
         ..*B
         A*..`, () => {
@@ -68,7 +68,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a steep line
+    test(`should interpolate a steep line
         .B.
         .*.
         *..
@@ -81,7 +81,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate an inverted horizontal line
+    test(`should interpolate an inverted horizontal line
         ....
         ..*A
         B*..`, () => {
@@ -93,7 +93,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate an inverted vertical line
+    test(`should interpolate an inverted vertical line
         .B.
         .*.
         *..
@@ -106,7 +106,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a horizontal line away from the origin
+    test(`should interpolate a horizontal line away from the origin
         .....
         .A*..
         ...*B
@@ -119,7 +119,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a vertical line away from the origin
+    test(`should interpolate a vertical line away from the origin
         ...B.
         ..*..
         ..*..
@@ -133,7 +133,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a wide straight line
+    test(`should interpolate a wide straight line
         .....
         .****
         .A**B
@@ -156,7 +156,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a wide horizontal-angled line
+    test(`should interpolate a wide horizontal-angled line
         ...**
         .***B
         .A***
@@ -179,7 +179,7 @@ describe('math helpers', () => {
       ]);
     });
 
-    it(`should interpolate a wide vertical-angled line
+    test(`should interpolate a wide vertical-angled line
         .*B*.
         .***.
         *A*..
