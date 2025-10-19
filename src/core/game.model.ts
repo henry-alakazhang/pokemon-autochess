@@ -3,6 +3,7 @@ import { FloatingText } from '../objects/floating-text.object';
 import { Player } from '../objects/player.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import {
+  calculateDamage,
   getCenter,
   getDamageReduction,
   getGridDistance,
@@ -25,6 +26,7 @@ export type Status =
   | 'movePowerBoost'
   | 'ppReduction'
   | 'healReduction'
+  | 'curse'
   /** the user can't gain PP because their move is active right now */
   | 'moveIsActive';
 
@@ -495,30 +497,60 @@ it raises the Speed of other nearby allies.
   },
   psychic: {
     category: 'psychic',
-    displayName: 'Psychic: Sniper',
-    description: `Psychic-type Pokemon deal more damage
-the further they are from their target.
+    displayName: 'Psychic: Magic Room',
+    description: `Psychic-type Pokemon gain extra stats
+when starting combat isolated.
 
- (2) - 8% damage per square
- (4) - 15% damage per square`,
-    thresholds: [2, 4],
-    calculateDamage({ attacker, defender, baseAmount, side, count }): number {
+ (2) - +1 to Atk/SpAtk
+ (3) - And +1 to Def/SpDef
+ (4) - And +1 to Speed`,
+    thresholds: [2, 3, 4],
+    onRoundStart({ scene, board, side, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
-        return baseAmount;
+        return;
       }
-      const mult = tier === 1 ? 0.08 : 0.15;
 
-      if (
-        attacker.side === side &&
-        attacker.basePokemon.categories.includes('psychic')
-      ) {
-        const distance = getGridDistance(attacker, defender);
-        // FIXME: ref combatscene
-        const distanceInSquares = distance / 70;
-        return (1 + distanceInSquares * mult) * baseAmount;
-      }
-      return baseAmount;
+      flatten(board)
+        .filter(isDefined)
+        .forEach((pokemon) => {
+          if (
+            pokemon.side === side &&
+            pokemon.basePokemon.categories.includes('psychic')
+          ) {
+            const location = scene.getBoardLocationForPokemon(pokemon);
+            if (!location) {
+              return;
+            }
+
+            const adjacents = [
+              { x: location.x + 1, y: location.y },
+              { x: location.x - 1, y: location.y },
+              { x: location.x, y: location.y + 1 },
+              { x: location.x, y: location.y - 1 },
+            ]
+              .filter((coords) => inBounds(board, coords))
+              .map((coords) => board[coords.x][coords.y])
+              .filter((mon) => mon?.side === side);
+
+            if (adjacents.length === 0) {
+              // isolated!
+              const statChanges = {
+                attack: tier >= 1 ? +1 : 0,
+                specAttack: tier >= 1 ? +1 : 0,
+                defense: tier >= 2 ? +1 : 0,
+                specDefense: tier >= 2 ? +1 : 0,
+                speed: tier >= 3 ? +1 : 0,
+              } as const;
+              console.log(
+                pokemon,
+                ' is isolated, applying psychic buff',
+                statChanges
+              );
+              pokemon.changeStats(statChanges);
+            }
+          }
+        });
     },
   },
   rock: {
@@ -647,34 +679,50 @@ Pokemon at the start of the round.
   },
   ghost: {
     category: 'ghost',
-    displayName: 'Ghost: Night Shade',
-    // TODO: if this is bullshit, make it deterministic
-    // eg. every 4th / 3rd / 2nd attack
-    // eg. for X seconds after using a move / critting / being crit
-    description: `Ghost-types can dodge attacks.
+    displayName: 'Ghost: Cursed Body',
+    description: `Whenever a Ghost-type deals damage,
+it applies Curse to the target.
 
- (2) - 20% chance
- (4) - 40% chance
- (6) - 60% chance`,
+At 4 stacks of Curse, consume them to deal
+damage and Blind the target for 1 second.
+
+ (2) - 44 + 4% max HP special damage
+ (3) - 144 + 14% max HP special damage
+ (4) - 244 + 24% max HP special damage`,
     thresholds: [2, 4, 6],
-    onRoundStart({ board, side, count }) {
+    onHit({ scene, attacker, defender, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
         return;
       }
+      if (!attacker.basePokemon.categories.includes('ghost')) {
+        return;
+      }
 
-      const evasionBoost = tier === 1 ? 0.2 : tier === 2 ? 0.4 : 0.6;
-      flatten(board)
-        .filter(isDefined)
-        .forEach((pokemon) => {
-          if (
-            pokemon.side === side &&
-            pokemon.basePokemon.categories.includes('ghost')
-          ) {
-            // TODO: better way of setting base evasion ?
-            pokemon.evasion += evasionBoost;
-          }
+      defender.addStatus('curse', 120_000, (prev) => (prev ?? 0) + 1);
+      const newStacks = defender.status.curse?.value ?? 0;
+      if (newStacks >= 4) {
+        // reset statuses
+        defender.addStatus('curse', 0, 0);
+        defender.addStatus('blind', 1000);
+
+        let baseDamage =
+          tier === 1
+            ? 44 + defender.maxHP * 0.04
+            : tier === 2
+              ? 144 + defender.maxHP * 0.14
+              : 244 + defender.maxHP * 0.24;
+        const damage = calculateDamage(attacker, defender, {
+          damage: baseDamage,
+          defenseStat: 'specDefense',
         });
+        scene.causeDamage(attacker, defender, damage, {
+          isAttack: false,
+          isAOE: false,
+          triggerEvents: false,
+          canCrit: false,
+        });
+      }
     },
   },
   dark: {
