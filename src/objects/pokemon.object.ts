@@ -1,4 +1,4 @@
-import { Status } from '../core/game.model';
+import { NEGATIVE_STATUS, Status } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';
 import { boundRange } from '../math.helpers';
@@ -672,15 +672,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     duration: number,
     value?: number | ((prev?: number) => number)
   ): this {
-    if (
-      // FIXME: don't hardcode bad statuses
-      (status === 'blind' ||
-        status === 'immobile' ||
-        status === 'paralyse' ||
-        status === 'poison' ||
-        status === 'sleep') &&
-      this.status.statusImmunity
-    ) {
+    if (NEGATIVE_STATUS.includes(status) && this.status.statusImmunity) {
       return this;
     }
 

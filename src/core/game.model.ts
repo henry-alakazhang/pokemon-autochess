@@ -30,6 +30,19 @@ export type Status =
   /** the user can't gain PP because their move is active right now */
   | 'moveIsActive';
 
+// TODO: Don't hardcode negative statuses
+// Maybe create a model of statuses similar to synergies?
+export const NEGATIVE_STATUS: Status[] = [
+  'paralyse',
+  'sleep',
+  'blind',
+  'poison',
+  'immobile',
+  'ppReduction',
+  'healReduction',
+  'curse',
+];
+
 export type Type =
   | 'normal'
   | 'fire'
@@ -1053,13 +1066,13 @@ at round start.
   disruptor: {
     category: 'disruptor',
     displayName: 'Disruptor: Prankster',
-    description: `Disruptors reduce PP gain and healing
-for 3 seconds when they hit with their move.
-
- (2) - 30% less PP gain
- (3) - and 50% less healing
- (4) - 50% for both`,
-    thresholds: [2, 3, 4],
+    description: `Disruptors gain more PP after attacking
+opponents with reduced stats or status effects.
+  (2) - 1 extra PP
+  (3) - 2 extra PP
+  (4) - 3 extra PP
+`,
+    thresholds: [2, 3],
     onHit({ attacker, defender, flags: { isAttack }, count }) {
       const tier = getSynergyTier(this.thresholds, count);
       if (tier === 0) {
@@ -1070,21 +1083,29 @@ for 3 seconds when they hit with their move.
         return;
       }
 
-      const ppReduction = tier === 3 ? 0.5 : 0.3;
-      const healReduction = tier >= 2 ? 0.5 : 0;
-
-      defender.addStatus('ppReduction', 3000, ppReduction);
-      defender.addStatus('healReduction', 3000, healReduction);
+      const hasDebuff =
+        Object.values(defender.statChanges).some((change) => change < 0) ||
+        Object.entries(defender.status).some(
+          ([name, status]) => status && NEGATIVE_STATUS.includes(name as Status)
+        );
+      if (hasDebuff) {
+        const ppGain = tier === 1 ? 1 : tier === 2 ? 2 : 3;
+        attacker.addPP(ppGain);
+        attacker.redrawBars();
+      }
     },
   },
   support: {
     category: 'support',
-    displayName: 'Support: Skill Swap',
+    displayName: 'Support: Hospitality',
+    // TODO: would be best if this affected the targets.
+    // Needs support for returning affected targets from a move onComplete
     description: `Whenever a Support uses its move,
-it shares PP with non-Support allies.
+it and adjacent allies recover HP.
 
- (2) - 20% of the move to all
- (3) - 33% of the move to all`,
+ (2) - 10% of max HP.
+ (3) - 15% of max HP.
+ (4) - 25% of max HP.`,
     thresholds: [2, 3],
     onMoveUse({ board, user, count }) {
       const tier = getSynergyTier(this.thresholds, count);
@@ -1093,17 +1114,23 @@ it shares PP with non-Support allies.
       }
 
       if (user.basePokemon.categories.includes('support')) {
-        const sharePercent = tier === 1 ? 0.2 : 0.33;
+        const healPercent = tier === 1 ? 0.1 : tier === 2 ? 0.15 : 0.25;
 
-        flatten(board)
-          .filter(
-            (pokemon) =>
-              pokemon?.side === user.side &&
-              !pokemon.basePokemon.categories.includes('support')
-          )
+        const adjacentSquares = [
+          { x: user.x + 1, y: user.y },
+          { x: user.x - 1, y: user.y },
+          { x: user.x, y: user.y + 1 },
+          { x: user.x, y: user.y - 1 },
+        ];
+
+        adjacentSquares
+          .filter((coords) => inBounds(board, coords))
+          .map((coords) => board[coords.x][coords.y])
+          .filter((pokemon) => pokemon?.side === user.side)
+          .filter(isDefined)
           .forEach((pokemon) => {
-            // TODO: Add animation (blue buff effect?)
-            pokemon?.addPP((user.maxPP ?? 10) * sharePercent).redrawBars();
+            const healAmount = Math.floor(pokemon.maxHP * healPercent);
+            pokemon.heal(healAmount);
           });
       }
     },
