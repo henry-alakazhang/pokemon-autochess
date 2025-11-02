@@ -1,5 +1,6 @@
 import { PokemonAnimationType } from '../../objects/pokemon.object';
 import {
+  calculateDamage,
   getFacing,
   getOppositeSide,
   inBounds,
@@ -19,13 +20,17 @@ const move = {
   startingPP: 2,
   range: 1,
   targetting: 'unit',
-  damage: [200, 350, 550],
+  damage: [150, 250, 400],
   // not used, just here to change the icon displayed in the card
   defenseStat: 'defense',
   get description() {
     return `{{user}} spins with both arms, hitting all adjacent enemies for ${this.damage.join(
       '/'
-    )} damage. Ignores defense.`;
+    )} physical damage, plus ${this.damage
+      .map((d) => d * 0.5)
+      .join('/')} damage that ignores defense. Heals for ${this.damage
+      .map((d) => d * 0.5)
+      .join('/')}`;
   },
   use({
     scene,
@@ -53,15 +58,28 @@ const move = {
         const index = (startIndex + Math.floor(tween.getValue() ?? 0)) % 4;
         user.playAnimation(directions[index]);
       },
-      onComplete: () => onComplete(),
+      onComplete: () => {
+        user.heal(this.damage[user.basePokemon.stage - 1] * 0.5);
+        onComplete();
+      },
     });
     possibleTargets.forEach((coords) => {
       const target = board[coords.x][coords.y];
       if (target?.side === getOppositeSide(user.side)) {
+        // Base damage
         scene.causeDamage(
           user,
           target,
-          this.damage[user.basePokemon.stage - 1],
+          calculateDamage(user, target, {
+            damage: this.damage[user.basePokemon.stage - 1],
+            defenseStat: 'defense',
+          })
+        );
+        // Additional true damage
+        scene.causeDamage(
+          user,
+          target,
+          this.damage[user.basePokemon.stage - 1] * 0.5,
           { isAOE: true, canCrit: true }
         );
       }
