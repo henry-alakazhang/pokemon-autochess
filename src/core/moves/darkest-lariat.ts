@@ -12,7 +12,6 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Damages surrounding targets, ignoring defense. Should have a low casting cost.
  */
-/* eslint-disable local-rules/validate-calculate-damage */
 const move = {
   displayName: 'Darkest Lariat',
   type: 'active',

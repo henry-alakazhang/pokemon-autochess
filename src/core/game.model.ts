@@ -719,7 +719,7 @@ damage and Blind the target for 1 second.
         defender.addStatus('curse', 0, 0);
         defender.addStatus('blind', 1000);
 
-        let baseDamage =
+        const baseDamage =
           tier === 1
             ? 44 + defender.maxHP * 0.04
             : tier === 2
