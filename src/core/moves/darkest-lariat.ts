@@ -1,5 +1,5 @@
 import { PokemonAnimationType } from '../../objects/pokemon.object';
-import { getFacing, inBounds } from '../../scenes/game/combat/combat.helpers';
+import { getFacing } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
 /**
@@ -27,7 +27,6 @@ const move = {
   },
   use({
     scene,
-    board,
     user,
     userCoords,
     targetCoords,
@@ -39,7 +38,7 @@ const move = {
       { x: userCoords.x, y: userCoords.y - 1 }, // up
       { x: userCoords.x + 1, y: userCoords.y }, // right
       { x: userCoords.x, y: userCoords.y + 1 }, // down
-    ].filter((coords) => inBounds(board, coords));
+    ];
     const startingDirection = getFacing(userCoords, targetCoords);
     const startIndex = directions.indexOf(startingDirection);
     // TODO: graphics: add a dark tornado effect
