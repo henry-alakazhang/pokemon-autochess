@@ -24,11 +24,14 @@ import {
 import {
   calculateDamage,
   Coords,
+  DamageConfig,
   getAttackAnimation,
   getFacing,
   getGridDistance,
   getOppositeSide,
   getTurnDelay,
+  inBounds,
+  OffenseAction,
   pathfind,
 } from './combat.helpers';
 
@@ -674,10 +677,11 @@ export class CombatScene extends Scene {
       },
       onYoyo: () => {
         const attack = attacker.basePokemon.basicAttack;
-        const damage = calculateDamage(attacker, defender, attack);
 
         const applyDamage = () => {
-          this.causeDamage(attacker, defender, damage, { isAttack: true });
+          this.causeDamage(attacker, defender, attack, {
+            isAttack: true,
+          });
         };
 
         if (!attack.projectile) {
@@ -701,18 +705,8 @@ export class CombatScene extends Scene {
   causeDamage(
     attacker: PokemonObject,
     defender: PokemonObject,
-    amount: number,
-    {
-      isAttack = false,
-      isAOE = false,
-      triggerEvents = true,
-      canCrit,
-    }: {
-      isAttack?: boolean;
-      isAOE?: boolean;
-      canCrit?: boolean;
-      triggerEvents?: boolean;
-    } = {}
+    action: OffenseAction,
+    { isAttack, isAOE, triggerEvents, canCrit }: DamageConfig = {}
   ) {
     if (isAttack) {
       // calculate miss chance
@@ -729,7 +723,7 @@ export class CombatScene extends Scene {
       }
     }
 
-    let totalDamage = amount;
+    let totalDamage = calculateDamage(attacker, defender, action);
     this.players[attacker.side].synergies.forEach((synergy) => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
@@ -779,7 +773,7 @@ export class CombatScene extends Scene {
           board: this.board,
           attacker,
           defender,
-          damage: amount,
+          damage: totalDamage,
           flags: { isAttack, isAOE },
           count: synergy.count,
         });
@@ -790,7 +784,7 @@ export class CombatScene extends Scene {
           board: this.board,
           attacker,
           defender,
-          damage: amount,
+          damage: totalDamage,
           flags: { isAttack, isAOE },
           count: synergy.count,
         });
@@ -817,11 +811,53 @@ export class CombatScene extends Scene {
     const realAttacker = attacker.owner ?? attacker;
     this.damageGraph[realAttacker.side].dealt[
       `${realAttacker.basePokemon.name}-${realAttacker.id}`
-    ] += amount;
+    ] += totalDamage;
     this.damageGraph[defender.side].taken[
       `${defender.basePokemon.name}-${defender.id}`
-    ] += amount;
+    ] += totalDamage;
     this.damageChart.render();
+  }
+
+  /**
+   * Cause one Pokemon to deal damage to a number of targets
+   */
+  causeAOEDamage(
+    attacker: PokemonObject,
+    /**
+     * Targets - either coordinates or Pokemon directly.
+     *
+     * Coordinates will be mapped to Pokemon on the board and filtered for opposing Pokemon.
+     * If you want to hit allies for some reason, pass in PokemonObjects.
+     */
+    targets: Coords[] | PokemonObject[],
+    /**
+     * Action to use. Can be a static OffenseAction
+     * or a function that dynamically generates one based on the target
+     */
+    action: OffenseAction | ((defender: PokemonObject) => OffenseAction),
+    config: Omit<DamageConfig, 'isAOE'> = {}
+  ) {
+    let realTargets: PokemonObject[];
+    if (targets[0] instanceof PokemonObject) {
+      // cast needed here because the check is not a real guard
+      realTargets = targets as PokemonObject[];
+    } else {
+      realTargets = targets
+        .filter((coords) => inBounds(this.board, coords))
+        .map((coords) => this.board[coords.x][coords.y])
+        .filter(isDefined)
+        .filter((target) => target.side === getOppositeSide(attacker.side));
+    }
+
+    realTargets.forEach((defender) => {
+      const realAction =
+        typeof action === 'function' ? action(defender) : action;
+      this.causeDamage(attacker, defender, realAction, {
+        ...config,
+        // always true (can't be passed via param either)
+        isAOE: true,
+      });
+    });
   }
 
   /**

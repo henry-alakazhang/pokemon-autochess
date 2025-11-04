@@ -1,6 +1,5 @@
 import { isDefined } from '../../helpers';
 import {
-  calculateDamage,
   Coords,
   getAngle,
   getOppositeSide,
@@ -73,16 +72,15 @@ const move = {
             // deal more damage if there's only one target
             const realBaseDamage =
               targets.length === 1 ? rawBaseDamage * 1.5 : rawBaseDamage;
-            targets.forEach((pokemon) => {
-              const damage = calculateDamage(user, pokemon, {
+            scene.causeAOEDamage(
+              user,
+              targets,
+              {
                 damage: realBaseDamage,
                 defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, pokemon, damage, {
-                isAOE: true,
-                canCrit: true,
-              });
-            });
+              },
+              { canCrit: true }
+            );
           },
           delay: animations['stone-edge-shoot'].duration / 2,
         });

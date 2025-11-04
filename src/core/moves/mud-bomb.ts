@@ -1,8 +1,3 @@
-import { isDefined } from '../../helpers';
-import {
-  calculateDamage,
-  inBounds,
-} from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
@@ -26,7 +21,6 @@ const move = {
     )} damage and slowing its Speed for 5 seconds. Adjacent enemies take half damage and aren't slowed.`;
   },
   async use({
-    board,
     scene,
     user,
     target,
@@ -53,11 +47,15 @@ const move = {
             bomb.setDepth(-1);
           });
         Tweens.hop(scene, { targets: [target] });
-        const damage = calculateDamage(user, target, {
-          damage: baseDamage,
-          defenseStat: this.defenseStat,
-        });
-        scene.causeDamage(user, target, damage, { isAOE: true });
+        scene.causeDamage(
+          user,
+          target,
+          {
+            damage: baseDamage,
+            defenseStat: this.defenseStat,
+          },
+          { isAOE: true }
+        );
         target.changeStats({ speed: -1 }, 5000);
         scene.time.addEvent({
           callback: () => {
@@ -74,24 +72,10 @@ const move = {
           { x: targetCoords.x + 1, y: targetCoords.y },
           { x: targetCoords.x - 1, y: targetCoords.y },
         ];
-        extraTargets
-          // get Pokemon if in bounds
-          .map((coords) =>
-            inBounds(board, coords) ? board[coords.x][coords.y] : undefined
-          )
-          // filter out nonexistent ones
-          .filter(isDefined)
-          .forEach((secondaryTarget) => {
-            if (secondaryTarget.side !== user.side) {
-              const secondaryDamage = calculateDamage(user, secondaryTarget, {
-                damage: baseDamage / 2,
-                defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, secondaryTarget, secondaryDamage, {
-                isAOE: true,
-              });
-            }
-          });
+        scene.causeAOEDamage(user, extraTargets, {
+          damage: baseDamage / 2,
+          defenseStat: this.defenseStat,
+        });
 
         onComplete();
       },

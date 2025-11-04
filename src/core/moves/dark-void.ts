@@ -54,12 +54,16 @@ const move = {
         scene.time.addEvent({
           callback: () => {
             targets.forEach((target) => {
-              const damage = calculateDamage(user, target, {
+              const action = {
                 damage: target.maxHP * 0.08,
                 defenseStat: this.defenseStat,
+              };
+              scene.causeDamage(user, target, action, {
+                isAOE: true,
+                triggerEvents: false,
               });
-              scene.causeDamage(user, target, damage, { isAOE: true });
-              user.heal(damage / 2);
+              // FIXME: heal based on damage dealt
+              user.heal(calculateDamage(user, target, action) / 2);
             });
           },
           delay: 1000,

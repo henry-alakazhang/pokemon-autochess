@@ -3,7 +3,6 @@ import { FloatingText } from '../objects/floating-text.object';
 import { Player } from '../objects/player.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import {
-  calculateDamage,
   getCenter,
   getDamageReduction,
   getGridDistance,
@@ -725,15 +724,14 @@ damage and Blind the target for 1 second.
             : tier === 2
               ? 144 + defender.maxHP * 0.14
               : 244 + defender.maxHP * 0.24;
-        const damage = calculateDamage(attacker, defender, {
+        const damage = {
           damage: baseDamage,
           defenseStat: 'specDefense',
-        });
+        } as const;
         scene.causeDamage(attacker, defender, damage, {
           isAttack: false,
           isAOE: false,
           triggerEvents: false,
-          canCrit: false,
         });
       }
     },

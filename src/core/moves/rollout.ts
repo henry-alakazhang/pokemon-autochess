@@ -1,8 +1,5 @@
 import { isDefined } from '../../helpers';
-import {
-  calculateDamage,
-  inBounds,
-} from '../../scenes/game/combat/combat.helpers';
+import { inBounds } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
 /**
@@ -48,8 +45,9 @@ const move = {
           .map((coords) => board[coords.x][coords.y])
           .filter(isDefined);
 
-        targets.forEach((target) => {
-          if (target.side !== user.side) {
+        targets
+          .filter((target) => target.side !== user.side)
+          .forEach((target) => {
             // hit enemies
             const hitEffect = scene.add
               .sprite(target.x, target.y, 'rock-hit')
@@ -57,13 +55,16 @@ const move = {
               .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
                 hitEffect.destroy();
               });
-            const damage = calculateDamage(user, target, {
-              damage: this.damage[user.basePokemon.stage - 1] / 10,
-              defenseStat: this.defenseStat,
-            });
-            scene.causeDamage(user, target, damage);
-          }
-        });
+            scene.causeDamage(
+              user,
+              target,
+              {
+                damage: this.damage[user.basePokemon.stage - 1] / 10,
+                defenseStat: this.defenseStat,
+              },
+              { isAOE: true }
+            );
+          });
 
         // after final spin, finish.
         if (spinTimer.getRepeatCount() === 0) {

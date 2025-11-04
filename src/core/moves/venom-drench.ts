@@ -1,6 +1,5 @@
 import { flatten, isDefined } from '../../helpers';
 import {
-  calculateDamage,
   Coords,
   getRandomTarget,
 } from '../../scenes/game/combat/combat.helpers';
@@ -75,13 +74,17 @@ const move = {
       });
 
       if (isStatused) {
-        const damage = calculateDamage(user, target, {
-          damage:
-            this.damage[user.basePokemon.stage - 1] *
-            (target.status.poison ? 2 : 1),
-          defenseStat: this.defenseStat,
-        });
-        scene.causeDamage(user, target, damage, { isAOE: true });
+        scene.causeDamage(
+          user,
+          target,
+          {
+            damage:
+              this.damage[user.basePokemon.stage - 1] *
+              (target.status.poison ? 2 : 1),
+            defenseStat: this.defenseStat,
+          },
+          { isAOE: true }
+        );
       }
     });
     onComplete();

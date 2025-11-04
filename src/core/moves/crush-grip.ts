@@ -1,9 +1,4 @@
-import {
-  calculateDamage,
-  Coords,
-  inBounds,
-  optimiseAOE,
-} from '../../scenes/game/combat/combat.helpers';
+import { Coords, optimiseAOE } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
@@ -49,7 +44,7 @@ const move = {
     });
   },
   range: 2,
-  use({ scene, board, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
+  use({ scene, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
     const graphicalCoords = getCoordinatesForMainboard(targetCoords);
     const grip = scene.add
       .sprite(graphicalCoords.x, graphicalCoords.y - 30, 'crush-grip')
@@ -64,24 +59,13 @@ const move = {
       duration: 400,
       onComplete: () => {
         onComplete();
-        this.getAOE(targetCoords).forEach((coords) => {
-          if (!inBounds(board, coords)) {
-            return;
-          }
-          const potentialTarget = board[coords.x][coords.y];
-          if (!potentialTarget || potentialTarget.side === user.side) {
-            return;
-          }
-          const damage = calculateDamage(user, potentialTarget, {
-            damage: Math.round(
-              (this.damagePercent[user.synergyState.pivot - 3] *
-                potentialTarget.maxHP) /
-                100
-            ),
-            defenseStat: this.defenseStat,
-          });
-          scene.causeDamage(user, potentialTarget, damage);
-        });
+        scene.causeAOEDamage(user, this.getAOE(targetCoords), (defender) => ({
+          damage: Math.round(
+            (this.damagePercent[user.synergyState.pivot - 3] * defender.maxHP) /
+              100
+          ),
+          defenseStat: this.defenseStat,
+        }));
       },
     });
   },

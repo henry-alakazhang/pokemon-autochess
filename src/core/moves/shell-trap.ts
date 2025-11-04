@@ -1,10 +1,5 @@
 import { PokemonObject } from '../../objects/pokemon.object';
-import {
-  calculateDamage,
-  Coords,
-  getOppositeSide,
-  inBounds,
-} from '../../scenes/game/combat/combat.helpers';
+import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
@@ -34,7 +29,7 @@ const move = {
   getTarget(board: CombatScene['board'], myCoords: Coords) {
     return myCoords;
   },
-  use({ scene, board, user, onComplete }: MoveConfig<'ground'>) {
+  use({ scene, user, onComplete }: MoveConfig<'ground'>) {
     const DURATION = 6000;
     user.addStatus('moveIsActive', DURATION);
 
@@ -82,23 +77,20 @@ const move = {
             { x: userCoords.x, y: userCoords.y - 1 }, // up
             { x: userCoords.x + 1, y: userCoords.y }, // right
             { x: userCoords.x, y: userCoords.y + 1 }, // down
-          ].filter((coords) => inBounds(board, coords));
-          possibleTargets.forEach(({ x, y }) => {
-            const target = board[x][y];
-            if (target?.side === getOppositeSide(user.side)) {
-              const damage = calculateDamage(user, target, {
-                damage:
-                  this.damage[user.basePokemon.stage - 1] +
-                  amountTaken *
-                    (this.percentReflect[user.basePokemon.stage - 1] / 100),
-                defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, target, damage, {
-                isAOE: true,
-                triggerEvents: false,
-              });
-            }
-          });
+          ];
+
+          scene.causeAOEDamage(
+            user,
+            possibleTargets,
+            {
+              damage:
+                this.damage[user.basePokemon.stage - 1] +
+                amountTaken *
+                  (this.percentReflect[user.basePokemon.stage - 1] / 100),
+              defenseStat: this.defenseStat,
+            },
+            { triggerEvents: false }
+          );
         };
 
         user.on(PokemonObject.Events.Damage, damageProc);

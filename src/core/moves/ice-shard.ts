@@ -1,9 +1,6 @@
 import { flatten } from '../../helpers';
 import { PokemonObject } from '../../objects/pokemon.object';
-import {
-  calculateDamage,
-  Coords,
-} from '../../scenes/game/combat/combat.helpers';
+import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
@@ -96,11 +93,11 @@ const move = {
         user.critRate = 1;
         scene.basicAttack(user, weakestPokemon, {
           onHit: () => {
-            const damage = calculateDamage(user, target, {
+            const action = {
               damage: this.damage[user.basePokemon.stage - 1],
               defenseStat: this.defenseStat,
-            });
-            scene.causeDamage(user, target, damage);
+            };
+            scene.causeDamage(user, target, action);
           },
           onComplete: () => {
             // reset to previous state

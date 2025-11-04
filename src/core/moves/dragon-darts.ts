@@ -1,6 +1,5 @@
 import { flatten, isDefined } from '../../helpers';
 import {
-  calculateDamage,
   Coords,
   getRandomTarget,
 } from '../../scenes/game/combat/combat.helpers';
@@ -61,11 +60,10 @@ const move = {
           trajectory: 'randomArc',
         },
         () => {
-          const damage = calculateDamage(user, target, {
+          scene.causeDamage(user, target, {
             damage: this.damage[user.basePokemon.stage - 1],
             defenseStat: this.defenseStat,
           });
-          scene.causeDamage(user, target, damage);
         }
       );
     });
