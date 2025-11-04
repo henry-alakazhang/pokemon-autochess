@@ -1,5 +1,4 @@
 import {
-  calculateDamage,
   getAttackAnimation,
   getFacing,
   inBounds,
@@ -76,10 +75,10 @@ const move = {
               y: endCoords.y - dy,
             });
 
-            const damage = calculateDamage(user, target, {
+            const damage = {
               damage: this.damage[user.basePokemon.stage - 1],
               defenseStat: this.defenseStat,
-            });
+            };
             scene.causeDamage(user, target, damage);
 
             if (
@@ -91,13 +90,7 @@ const move = {
 
               const otherTarget = board[endCoords.x][endCoords.y];
               if (otherTarget) {
-                const otherDamage = calculateDamage(user, otherTarget, {
-                  damage: this.damage[user.basePokemon.stage - 1],
-                  defenseStat: this.defenseStat,
-                });
-                scene.causeDamage(user, otherTarget, otherDamage, {
-                  isAOE: true,
-                });
+                scene.causeDamage(user, otherTarget, damage, { isAOE: true });
                 otherTarget.addStatus('paralyse', 2000);
               }
             } else {

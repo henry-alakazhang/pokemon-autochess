@@ -1,5 +1,4 @@
 import {
-  calculateDamage,
   getOppositeSide,
   inBounds,
 } from '../../scenes/game/combat/combat.helpers';
@@ -70,11 +69,15 @@ const move = {
               );
             // then hit em
             targetsHit.forEach((target) => {
-              const damage = calculateDamage(user, target, {
-                damage: this.damage[user.basePokemon.stage - 1],
-                defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, target, damage, { isAOE: true });
+              scene.causeDamage(
+                user,
+                target,
+                {
+                  damage: this.damage[user.basePokemon.stage - 1],
+                  defenseStat: this.defenseStat,
+                },
+                { isAOE: true }
+              );
               // TODO: don't apply this more than once ever
               target.changeStats(
                 {

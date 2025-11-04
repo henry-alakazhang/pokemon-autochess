@@ -1,9 +1,4 @@
-import { isDefined } from '../../helpers';
-import {
-  calculateDamage,
-  getNearestTarget,
-  inBounds,
-} from '../../scenes/game/combat/combat.helpers';
+import { getNearestTarget } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
@@ -56,11 +51,15 @@ const move = {
               explosion.destroy();
             });
           // damage applies separately
-          const damage = calculateDamage(user, targetPokemon, {
-            damage: baseDamage,
-            defenseStat: this.defenseStat,
-          });
-          scene.causeDamage(user, targetPokemon, damage, { isAOE: true });
+          scene.causeDamage(
+            user,
+            targetPokemon,
+            {
+              damage: baseDamage,
+              defenseStat: this.defenseStat,
+            },
+            { isAOE: true }
+          );
 
           const possibleTargets = [
             { x: targetCoords.x - 1, y: targetCoords.y }, // left
@@ -68,24 +67,10 @@ const move = {
             { x: targetCoords.x + 1, y: targetCoords.y }, // right
             { x: targetCoords.x, y: targetCoords.y + 1 }, // down
           ];
-          possibleTargets
-            // get Pokemon if in bounds
-            .map((coords) =>
-              inBounds(board, coords) ? board[coords.x][coords.y] : undefined
-            )
-            // filter out nonexistent ones
-            .filter(isDefined)
-            .forEach((secondaryTarget) => {
-              if (secondaryTarget.side !== user.side) {
-                const secondaryDamage = calculateDamage(user, secondaryTarget, {
-                  damage: baseDamage / 2,
-                  defenseStat: this.defenseStat,
-                });
-                scene.causeDamage(user, secondaryTarget, secondaryDamage, {
-                  isAOE: true,
-                });
-              }
-            });
+          scene.causeAOEDamage(user, possibleTargets, {
+            damage: baseDamage / 2,
+            defenseStat: this.defenseStat,
+          });
         }
       );
     };

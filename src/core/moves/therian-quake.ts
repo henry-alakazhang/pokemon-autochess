@@ -1,5 +1,4 @@
 import {
-  calculateDamage,
   Coords,
   getFacing,
   getGridDistance,
@@ -137,13 +136,15 @@ const move = {
 
                 const possibleTarget = board[coords.x][coords.y];
                 if (possibleTarget?.side === getOppositeSide(user.side)) {
-                  const damage = calculateDamage(user, possibleTarget, {
-                    damage: baseDamage,
-                    defenseStat: this.defenseStat,
-                  });
-                  scene.causeDamage(user, possibleTarget, damage, {
-                    isAOE: true,
-                  });
+                  scene.causeDamage(
+                    user,
+                    possibleTarget,
+                    {
+                      damage: baseDamage,
+                      defenseStat: this.defenseStat,
+                    },
+                    { isAOE: true }
+                  );
                   possibleTarget.changeStats({ attack: -1 }, 8000);
                 }
               };

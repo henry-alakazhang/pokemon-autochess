@@ -1,5 +1,4 @@
 import {
-  calculateDamage,
   getAttackAnimation,
   getFacing,
   getTurnDelay,
@@ -33,11 +32,15 @@ const move = {
       yoyo: true,
       ease: 'Power1',
       onYoyo: () => {
-        const damage = calculateDamage(user, target, {
-          damage: this.damage[user.basePokemon.stage - 1],
-          defenseStat: this.defenseStat,
-        });
-        scene.causeDamage(user, target, damage, { isAOE: true, canCrit: true });
+        scene.causeDamage(
+          user,
+          target,
+          {
+            damage: this.damage[user.basePokemon.stage - 1],
+            defenseStat: this.defenseStat,
+          },
+          { canCrit: true }
+        );
         target.addStatus('blind', 3000);
         onComplete();
       },

@@ -1,4 +1,3 @@
-import { calculateDamage } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
@@ -36,11 +35,10 @@ const move = {
       .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
         storm.destroy();
 
-        const damage = calculateDamage(user, target, {
+        scene.causeDamage(user, target, {
           damage: this.damage[user.basePokemon.stage - 1],
           defenseStat: this.defenseStat,
         });
-        scene.causeDamage(user, target, damage);
 
         const burnTimer = scene.time.addEvent({
           delay: 1000,
@@ -52,10 +50,17 @@ const move = {
               return;
             }
             // burn for max HP damage that can't be modified or reduced
-            target.takeDamage(Math.round(target.maxHP / 6), {
-              triggerEvents: false,
-              tint: 0xaa4488,
-            });
+            scene.causeDamage(
+              user,
+              target,
+              {
+                trueDamage: Math.round(target.maxHP / 6),
+              },
+              {
+                // TODO: make target glow red
+                triggerEvents: false,
+              }
+            );
           },
         });
       });

@@ -24,11 +24,11 @@ const move = {
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     scene.basicAttack(user, target, {
       onHit: () => {
-        const damage = calculateDamage(user, target, {
+        const action = {
           damage: this.damage[user.basePokemon.stage - 1],
           defenseStat: this.defenseStat,
-        });
-        scene.causeDamage(user, target, damage);
+        };
+        scene.causeDamage(user, target, action);
 
         // play bee animation on the target
         const bees = scene.add
@@ -44,7 +44,8 @@ const move = {
           x: user.x,
           y: user.y,
           onComplete: () => {
-            user.heal(damage / 2);
+            // FIXME: heal based on actual damage dealt
+            user.heal(calculateDamage(user, target, action) / 2);
           },
         });
       },

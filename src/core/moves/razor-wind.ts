@@ -1,9 +1,5 @@
 import { flatten } from '../../helpers';
-import {
-  calculateDamage,
-  Coords,
-  optimiseAOE,
-} from '../../scenes/game/combat/combat.helpers';
+import { Coords, optimiseAOE } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
@@ -76,13 +72,7 @@ const move = {
       { x: coords.x + 1, y: coords.y + 1 },
     ];
   },
-  async use({
-    scene,
-    user,
-    targetCoords,
-    board,
-    onComplete,
-  }: MoveConfig<'ground'>) {
+  async use({ scene, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
     const gfxTarget = getCoordinatesForMainboard(targetCoords);
     await Tweens.hop(scene, {
       targets: [user],
@@ -117,19 +107,15 @@ const move = {
         const timer = scene.time.addEvent({
           callback: () => {
             // deal damage to each person in range (2 x 2 square)
-            this.getAOE(targetCoords).forEach((coord) => {
-              const pokemon = board[coord.x]?.[coord.y];
-              if (pokemon && pokemon.side !== user.side) {
-                const damage = calculateDamage(user, pokemon, {
-                  damage: dph,
-                  defenseStat: this.defenseStat,
-                });
-                scene.causeDamage(user, pokemon, damage, {
-                  isAOE: true,
-                  canCrit: true,
-                });
-              }
-            });
+            scene.causeAOEDamage(
+              user,
+              this.getAOE(targetCoords),
+              {
+                damage: dph,
+                defenseStat: this.defenseStat,
+              },
+              { canCrit: true }
+            );
             if (timer.repeatCount === 0) {
               wind.destroy();
             }

@@ -1,6 +1,5 @@
 import { interpolateLineAOE } from '../../math.helpers';
 import {
-  calculateDamage,
   Coords,
   getAngle,
   getFacing,
@@ -92,18 +91,9 @@ const move = {
         );
         scene.time.addEvent({
           callback: () => {
-            this.getAOE(userCoords, targetCoords).forEach(({ x, y }) => {
-              const pokemon = board[x]?.[y];
-              if (!pokemon) {
-                return;
-              }
-              if (pokemon.side !== user.side) {
-                const damage = calculateDamage(user, pokemon, {
-                  damage: this.damage[user.basePokemon.stage - 1],
-                  defenseStat: this.defenseStat,
-                });
-                scene.causeDamage(user, pokemon, damage, { isAOE: true });
-              }
+            scene.causeAOEDamage(user, this.getAOE(userCoords, targetCoords), {
+              damage: this.damage[user.basePokemon.stage - 1],
+              defenseStat: this.defenseStat,
             });
           },
           delay: animations.thunder.duration * 0.5,

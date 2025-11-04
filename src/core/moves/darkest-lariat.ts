@@ -1,10 +1,5 @@
 import { PokemonAnimationType } from '../../objects/pokemon.object';
-import {
-  calculateDamage,
-  getFacing,
-  getOppositeSide,
-  inBounds,
-} from '../../scenes/game/combat/combat.helpers';
+import { getFacing, inBounds } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
 /**
@@ -20,7 +15,6 @@ const move = {
   range: 1,
   targetting: 'unit',
   damage: [150, 250, 400],
-  // not used, just here to change the icon displayed in the card
   defenseStat: 'defense',
   get description() {
     return `{{user}} spins with both arms, hitting all adjacent enemies for ${this.damage.join(
@@ -62,27 +56,27 @@ const move = {
         onComplete();
       },
     });
-    possibleTargets.forEach((coords) => {
-      const target = board[coords.x][coords.y];
-      if (target?.side === getOppositeSide(user.side)) {
-        // Base damage
-        scene.causeDamage(
-          user,
-          target,
-          calculateDamage(user, target, {
-            damage: this.damage[user.basePokemon.stage - 1],
-            defenseStat: 'defense',
-          })
-        );
-        // Additional true damage
-        scene.causeDamage(
-          user,
-          target,
-          this.damage[user.basePokemon.stage - 1] * 0.5,
-          { isAOE: true, canCrit: true }
-        );
-      }
-    });
+
+    const config = { canCrit: true };
+    // Base damage
+    scene.causeAOEDamage(
+      user,
+      possibleTargets,
+      {
+        damage: this.damage[user.basePokemon.stage - 1],
+        defenseStat: this.defenseStat,
+      },
+      config
+    );
+    // Additional true damage
+    scene.causeAOEDamage(
+      user,
+      possibleTargets,
+      {
+        trueDamage: this.damage[user.basePokemon.stage - 1] * 0.5,
+      },
+      config
+    );
   },
 } as const;
 

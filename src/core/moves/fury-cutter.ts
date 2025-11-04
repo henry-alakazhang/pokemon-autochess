@@ -1,5 +1,4 @@
 import {
-  calculateDamage,
   getAttackAnimation,
   getFacing,
   getTurnDelay,
@@ -60,14 +59,14 @@ const move = {
               // repeat once more than necessary to clean up
               repeat: user.consecutiveAttacks + 1,
             });
-            const damage = calculateDamage(user, target, {
+            const action = {
               // damage increases by 50% each strike
               damage:
                 this.damage[user.basePokemon.stage - 1] *
                 2 ** (user.consecutiveAttacks - 1),
               defenseStat: this.defenseStat,
-            });
-            scene.causeDamage(user, target, damage);
+            };
+            scene.causeDamage(user, target, action);
           },
         });
       },

@@ -1,11 +1,8 @@
 import { interpolateLineAOE } from '../../math.helpers';
 import {
-  calculateDamage,
   Coords,
   getAngle,
   getFacing,
-  getOppositeSide,
-  inBounds,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
@@ -88,18 +85,10 @@ const move = {
           }
         }
         scene.movePokemon(userCoords, realTarget, onComplete);
-        this.getAOE(realTarget, userCoords)
-          .filter((coords) => inBounds(board, coords))
-          .forEach(({ x, y }) => {
-            const thisTarget = board[x][y];
-            if (thisTarget?.side === getOppositeSide(user.side)) {
-              const damage = calculateDamage(user, thisTarget, {
-                damage: this.damage[user.basePokemon.stage - 1],
-                defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, thisTarget, damage, { isAOE: true });
-            }
-          });
+        scene.causeAOEDamage(user, this.getAOE(realTarget, userCoords), {
+          damage: this.damage[user.basePokemon.stage - 1],
+          defenseStat: this.defenseStat,
+        });
         // reset target after movement
         user.currentTarget = undefined;
       },

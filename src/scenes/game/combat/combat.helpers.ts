@@ -456,7 +456,16 @@ export function getAttackAnimation(
   return start;
 }
 
-type OffenseAction =
+/**
+ * Represents a damaging action. One of:
+ * - Basic attack (attack stat -> defense stat)
+ * - Regular move damage (damage number -> defense stat)
+ * - True damage (damage number)
+ *
+ * Latter is fully separated to make it harder to accidentally
+ * pass true damage to a move.
+ */
+export type OffenseAction =
   | {
       stat: 'attack' | 'specAttack';
       defenseStat?: 'defense' | 'specDefense';
@@ -464,7 +473,21 @@ type OffenseAction =
   | {
       damage: number;
       defenseStat: 'defense' | 'specDefense';
+    }
+  | {
+      trueDamage: number;
     };
+
+export interface DamageConfig {
+  /** Whether this is damage from a basic attack */
+  readonly isAttack?: boolean;
+  /** Whether damage is being dealt in an AOE */
+  readonly isAOE?: boolean;
+  /** Whether to trigger events (usually false for damage over time and similar effects) */
+  readonly triggerEvents?: boolean;
+  /** Whether attack can crit */
+  readonly canCrit?: boolean;
+}
 
 /**
  * Returns the % damage reduction provided by a defense stat.
@@ -486,6 +509,10 @@ export function calculateDamage(
   defender: PokemonObject,
   attack: OffenseAction
 ) {
+  if ('trueDamage' in attack) {
+    return attack.trueDamage;
+  }
+
   // use specified defenseStat, or the one that correlates to the attack stat
   const defenseStatName =
     attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';

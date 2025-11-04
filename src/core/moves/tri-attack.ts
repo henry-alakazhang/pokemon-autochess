@@ -1,8 +1,6 @@
 import {
-  calculateDamage,
   Coords,
   getGridDistance,
-  getOppositeSide,
   optimiseAOE,
 } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
@@ -57,7 +55,7 @@ const move = {
       { x: x - 1, y: y - 1 },
     ];
   },
-  use({ scene, board, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
+  use({ scene, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
     scene.add.tween({
       targets: [user],
       angle: '+=360',
@@ -85,14 +83,10 @@ const move = {
             // set timeouts to inflict damage when the explosions occur
 
             // explosion 1: single target
-            const singleTarget = board[targetCoords.x][targetCoords.y];
-            if (singleTarget?.side === getOppositeSide(user.side)) {
-              const damage = calculateDamage(user, singleTarget, {
-                damage: this.damage[user.basePokemon.stage - 1],
-                defenseStat: this.defenseStat,
-              });
-              scene.causeDamage(user, singleTarget, damage, { isAOE: true });
-            }
+            scene.causeAOEDamage(user, [targetCoords], {
+              damage: this.damage[user.basePokemon.stage - 1],
+              defenseStat: this.defenseStat,
+            });
 
             // explosion 2: 9 squares
             scene.time.addEvent({
@@ -105,17 +99,9 @@ const move = {
                   duration: 150,
                   ease: Phaser.Math.Easing.Quadratic.In,
                   onComplete: () => {
-                    this.getAOE(targetCoords).forEach(({ x, y }) => {
-                      const thisTarget = board[x]?.[y];
-                      if (thisTarget?.side === getOppositeSide(user.side)) {
-                        const damage = calculateDamage(user, thisTarget, {
-                          damage: this.damage[user.basePokemon.stage - 1],
-                          defenseStat: this.defenseStat,
-                        });
-                        scene.causeDamage(user, thisTarget, damage, {
-                          isAOE: true,
-                        });
-                      }
+                    scene.causeAOEDamage(user, this.getAOE(targetCoords), {
+                      damage: this.damage[user.basePokemon.stage - 1],
+                      defenseStat: this.defenseStat,
                     });
                   },
                 });
@@ -134,17 +120,9 @@ const move = {
                   duration: 150,
                   ease: Phaser.Math.Easing.Quadratic.In,
                   onComplete: () => {
-                    this.getAOE(targetCoords).forEach(({ x, y }) => {
-                      const thisTarget = board[x]?.[y];
-                      if (thisTarget?.side === getOppositeSide(user.side)) {
-                        const damage = calculateDamage(user, thisTarget, {
-                          damage: this.damage[user.basePokemon.stage - 1],
-                          defenseStat: this.defenseStat,
-                        });
-                        scene.causeDamage(user, thisTarget, damage, {
-                          isAOE: true,
-                        });
-                      }
+                    scene.causeAOEDamage(user, this.getAOE(targetCoords), {
+                      damage: this.damage[user.basePokemon.stage - 1],
+                      defenseStat: this.defenseStat,
                     });
                   },
                 });
