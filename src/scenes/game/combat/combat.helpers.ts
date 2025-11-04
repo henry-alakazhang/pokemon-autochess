@@ -515,7 +515,8 @@ export function calculateDamage(
 
   // use specified defenseStat, or the one that correlates to the attack stat
   const defenseStatName =
-    attack.defenseStat || attack.stat === 'attack' ? 'defense' : 'specDefense';
+    attack.defenseStat ??
+    (attack.stat === 'attack' ? 'defense' : 'specDefense');
   // use base attack/defense so the formula doesn't scale exponentially with level
   const baseDamage =
     'damage' in attack ? attack.damage : attacker.basePokemon[attack.stat];
