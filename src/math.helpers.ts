@@ -97,3 +97,11 @@ export function interpolateLineAOE(
 export function boundRange(value: number, min: number, max: number) {
   return Math.max(Math.min(value, max), min);
 }
+
+export function getRandomIndex(array: readonly unknown[]): number {
+  return Math.floor(Math.random() * array.length);
+}
+
+export function getRandomInArray<T>(array: readonly T[]): T {
+  return array[getRandomIndex(array)];
+}

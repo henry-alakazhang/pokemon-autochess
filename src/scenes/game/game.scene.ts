@@ -1,6 +1,7 @@
 import { synergyData } from '../../core/game.model';
 import { buyablePokemon, pokemonData } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
+import { getRandomInArray } from '../../math.helpers';
 import { Button } from '../../objects/button.object';
 import { DamageChart } from '../../objects/damage-chart.object';
 import { Player } from '../../objects/player.object';
@@ -459,15 +460,11 @@ export class GameScene extends Phaser.Scene {
       );
       const pair1 = {
         isReal: isDefined(player1),
-        player: isDefined(player1)
-          ? player1
-          : otherPlayers[Math.floor(Math.random() * otherPlayers.length)],
+        player: isDefined(player1) ? player1 : getRandomInArray(otherPlayers),
       };
       const pair2 = {
         isReal: isDefined(player2),
-        player: isDefined(player2)
-          ? player2
-          : otherPlayers[Math.floor(Math.random() * otherPlayers.length)],
+        player: isDefined(player2) ? player2 : getRandomInArray(otherPlayers),
       };
 
       if (pair1.player === this.humanPlayer) {
@@ -712,12 +709,12 @@ export class GameScene extends Phaser.Scene {
   }
 
   generateNeutralPlayer(round: NeutralRound): Player {
-    const player = new Player(this, 'Wild Pokemon', -100, -100, {
+    const player = new Player(this, round.name, -100, -100, {
       pool: this.pool,
       isHumanPlayer: false,
-      initialLevel: round.length,
+      initialLevel: round.board.length,
     });
-    round.forEach((pokemon) => {
+    round.board.forEach((pokemon) => {
       player.addPokemonToSideboard(pokemon.name);
       player.movePokemon(
         // whatever lol, we just put it there.

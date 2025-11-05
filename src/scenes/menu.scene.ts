@@ -1,5 +1,6 @@
 import { Input, Scene } from 'phaser';
 import { allPokemonNames } from '../core/pokemon.model';
+import { getRandomInArray } from '../math.helpers';
 import { Button } from '../objects/button.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import { getDebugGameMode, getHyperRollGameMode } from './game/game.helpers';
@@ -29,21 +30,26 @@ export class MenuScene extends Scene {
     this.addTitlePokemon();
 
     this.add
-      .existing(new Button(this, center, 475, 'Play Hyper Roll (1P)'))
+      .existing(new Button(this, center, 475, 'Play Adventure Mode (1P)'))
       .on(Button.Events.CLICK, () =>
         this.scene.start(GameScene.KEY, getHyperRollGameMode())
       );
 
     this.add
-      .existing(new Button(this, center, 525, 'Debug Mode'))
+      .existing(new Button(this, center, 525, 'Play Free For All (1P)'))
+      .on(Button.Events.CLICK, () =>
+        this.scene.start(GameScene.KEY, getHyperRollGameMode())
+      );
+
+    this.add
+      .existing(new Button(this, center, 575, 'Debug Mode'))
       .on(Button.Events.CLICK, () =>
         this.scene.start(GameScene.KEY, getDebugGameMode())
       );
   }
 
   addTitlePokemon() {
-    const randomPokemon =
-      allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)];
+    const randomPokemon = getRandomInArray(allPokemonNames);
     this.titlePokemon = new PokemonObject({
       scene: this,
       x: this.game.canvas.width / 2,
