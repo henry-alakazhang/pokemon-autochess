@@ -2,7 +2,15 @@ import { getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
 import { PokemonName } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
+import { getRandomInArray } from '../../math.helpers';
 import { Player } from '../../objects/player.object';
+import {
+  CHAMPION_ROUNDS,
+  ELITE_FOUR_ROUNDS,
+  GYM_LEADER_ROUNDS,
+  TRAINER_ROUNDS,
+  WILD_POKEMON_ROUNDS,
+} from './adventure.models';
 import { Coords } from './combat/combat.helpers';
 
 // fixme: scale this off the canvas size
@@ -42,10 +50,13 @@ export interface GameMode {
   readonly levelCosts?: number[];
 }
 
-export type NeutralRound = ReadonlyArray<{
-  readonly name: PokemonName;
-  readonly location: Coords;
-}>;
+export type NeutralRound = {
+  name: string;
+  board: readonly {
+    readonly name: PokemonName;
+    readonly location: Coords;
+  }[];
+};
 
 export interface Stage {
   /** Number of rounds to play through (1-1, 1-2, etc) */
@@ -61,6 +72,115 @@ export interface Stage {
   readonly autolevel?: number;
   // TODO: add only when shop is there
   // readonly pokemarts: number[];
+}
+
+export function getAdventureGameMode(): GameMode {
+  const streakGold = (streak: number) => (streak > 2 ? 1 : 0);
+  const goldGainFunc = (base: number) => {
+    return (player: Player, won: boolean, streak: number) =>
+      base + (won ? 2 : 0) + streakGold(streak);
+  };
+
+  const randomStageRounds = (stage: number) => {
+    return {
+      1: getRandomInArray(WILD_POKEMON_ROUNDS[stage]),
+      2: getRandomInArray(TRAINER_ROUNDS[stage]),
+      3: getRandomInArray(GYM_LEADER_ROUNDS[stage]),
+    };
+  };
+
+  const eliteFour = Object.fromEntries(
+    shuffle(ELITE_FOUR_ROUNDS)
+      .slice(0, 4)
+      .map((round, index) => [index + 1, round])
+  );
+
+  return {
+    startingGold: 10,
+    // TODO: make this scale with stage instead of player level.
+    shopRates: {
+      1: [0, 100, 0, 0, 0, 0],
+      2: [0, 70, 30, 0, 0, 0],
+      3: [0, 50, 35, 15, 0, 0],
+      4: [0, 30, 35, 28, 7, 0],
+      5: [0, 19, 30, 35, 15, 1],
+      6: [0, 15, 25, 30, 23, 7],
+    },
+    stages: [
+      // 8 stages of wild -> trainer -> gym leader
+      {
+        rounds: 3,
+        damage: () => 5,
+        gold: goldGainFunc(3),
+        neutralRounds: randomStageRounds(0),
+      },
+      {
+        rounds: 3,
+        damage: () => 5,
+        gold: goldGainFunc(3),
+        neutralRounds: randomStageRounds(1),
+      },
+      {
+        rounds: 3,
+        damage: () => 5,
+        gold: goldGainFunc(3),
+        neutralRounds: randomStageRounds(2),
+      },
+      {
+        rounds: 3,
+        damage: () => 10,
+        gold: goldGainFunc(4),
+        neutralRounds: randomStageRounds(3),
+      },
+      {
+        rounds: 3,
+        damage: () => 10,
+        gold: goldGainFunc(4),
+        neutralRounds: randomStageRounds(4),
+      },
+      {
+        rounds: 3,
+        damage: () => 20,
+        gold: goldGainFunc(5),
+        neutralRounds: randomStageRounds(5),
+      },
+      {
+        rounds: 3,
+        damage: () => 20,
+        gold: goldGainFunc(5),
+        neutralRounds: randomStageRounds(6),
+      },
+      {
+        rounds: 3,
+        damage: () => 20,
+        gold: goldGainFunc(6),
+        neutralRounds: randomStageRounds(7),
+      },
+      // Victory Road
+      {
+        rounds: 4,
+        damage: () => 25,
+        gold: goldGainFunc(7),
+        neutralRounds: {
+          1: getRandomInArray(TRAINER_ROUNDS[8]),
+          2: getRandomInArray(TRAINER_ROUNDS[8]),
+          3: getRandomInArray(TRAINER_ROUNDS[8]),
+          4: getRandomInArray(TRAINER_ROUNDS[8]),
+        },
+      },
+      // Elite Four + Champion
+      {
+        rounds: 5,
+        // One shot, one opportunity!
+        damage: () => 100,
+        gold: () => 0,
+        neutralRounds: {
+          ...eliteFour,
+          5: getRandomInArray(CHAMPION_ROUNDS),
+        },
+      },
+    ],
+  } satisfies GameMode;
 }
 
 export function getHyperRollGameMode(): GameMode {
@@ -92,10 +212,13 @@ export function getHyperRollGameMode(): GameMode {
         damage: () => 5,
         gold: goldGainFunc(5),
         neutralRounds: {
-          1: [
-            { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
-            { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
-          ],
+          1: {
+            name: 'Wild Pokemon',
+            board: [
+              { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
+            ],
+          },
         },
       },
       { rounds: 2, damage: () => 10, autolevel: 2, gold: goldGainFunc(6) },
