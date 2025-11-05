@@ -1,4 +1,5 @@
 import { Pokemon, PokemonName } from '../../core/pokemon.model';
+import { getRandomInArray, getRandomIndex } from '../../math.helpers';
 import { Player } from '../../objects/player.object';
 
 const SHOP_POOL_SIZES = {
@@ -8,14 +9,6 @@ const SHOP_POOL_SIZES = {
   4: 18,
   5: 15,
 };
-
-function getRandomIndex(array: unknown[]): number {
-  return Math.floor(Math.random() * array.length);
-}
-
-function getRandomInArray<T>(array: T[]): T {
-  return array[getRandomIndex(array)];
-}
 
 /**
  * A pool of buyable units which forms a shop.

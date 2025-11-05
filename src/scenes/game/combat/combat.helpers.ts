@@ -1,6 +1,7 @@
 import { Targetting } from '../../../core/move.model';
 import { Pokemon } from '../../../core/pokemon.model';
 import { assertNever, flatten, isDefined } from '../../../helpers';
+import { getRandomInArray } from '../../../math.helpers';
 import {
   PokemonAnimationType,
   PokemonObject,
@@ -421,10 +422,8 @@ export function getRandomTarget({
     return undefined;
   }
 
-  const choice = Math.floor(Math.random() * possibleTargets.length);
-
   // technically this returns the Pokemon with it, but the type system should prevent it from being used
-  return possibleTargets[choice];
+  return getRandomInArray(possibleTargets);
 }
 
 /**
