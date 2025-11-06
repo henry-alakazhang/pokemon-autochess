@@ -81,7 +81,7 @@ export type PassiveMove = {
   description: string;
   damage?: readonly [number, number, number];
 } &
-  // Pasive moves can have any Effects attached,
+  // Passive moves can have any Effects attached,
   // ... except onMoveUse because the move is not usable.
   // ... except onRoundEnd (TODO: maybe that can be added)
   Omit<Effect<{ self: PokemonObject }>, 'onMoveUse' | 'onRoundEnd'>;
