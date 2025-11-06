@@ -77,95 +77,125 @@ export type Role =
 export type Category = Type | Role;
 
 /**
+ * Model representing an effect that can be triggered during combat
+ * Type parameter is for extra config that can be passed to effects
+ * of certain types. (eg. current synergy counts)
+ */
+export interface Effect<ExtraConfig = unknown> {
+  /** Possible effect that occurs when using move */
+  readonly onMoveUse?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      user: PokemonObject;
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on hit */
+  readonly onHit?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      flags: { isAttack?: boolean; isAOE?: boolean };
+      damage: number;
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on being hit */
+  readonly onBeingHit?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      flags: { isAttack?: boolean; isAOE?: boolean };
+      damage: number;
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on any Pokemon dying */
+  readonly onDeath?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      pokemon: PokemonObject;
+      side: 'player' | 'enemy';
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on an ally's turn */
+  readonly onTurnStart?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      pokemon: PokemonObject;
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on a regular timer */
+  readonly onTimer?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+      /** Time elapsed in SECONDS */
+      time: number;
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on start of round */
+  readonly onRoundStart?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      side: 'player' | 'enemy';
+    } & ExtraConfig
+  ) => void;
+  /** Possible effect that occurs on end of round, after combat has concluded */
+  readonly onRoundEnd?: (
+    config: {
+      scene: GameScene;
+      board: CombatScene['board'];
+      player: Player;
+      won: boolean;
+    } & ExtraConfig
+  ) => void;
+  /** Possible extra damage calculation */
+  readonly calculateDamage?: (
+    config: {
+      attacker: PokemonObject;
+      defender: PokemonObject;
+      baseAmount: number;
+      flags: { isAttack?: boolean; isAOE?: boolean };
+      side: 'player' | 'enemy';
+    } & ExtraConfig
+  ) => number;
+}
+
+/**
  * Model representing the effects of a synergy.
  *
  * Each synergy has one or more functions which can be called during combat,
  * eg. at the start of the round, on hitting an enemy, on being hit
  *
  * The logic for these sits here
+ *
+ * TODO: Would it be worth moving them ALL to just add permanent Effects to Pokemon?
+ * Would slightly clean up the CombatScene but in exchange make this a mess.
  */
-export interface Synergy {
+export type Synergy = {
   readonly category: Category;
   readonly displayName: string;
   readonly description: string;
   /** Amount of synergy required to trigger different levels */
   readonly thresholds: number[];
-  /** Possible effect that occurs when using move */
-  readonly onMoveUse?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    user: PokemonObject;
-    count: number;
-  }) => void;
-  /** Possible effect that occurs on hit */
-  readonly onHit?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    attacker: PokemonObject;
-    defender: PokemonObject;
-    flags: { isAttack?: boolean; isAOE?: boolean };
-    damage: number;
-    count: number;
-  }) => void;
-  /** Possible effect that occurs on being hit */
-  readonly onBeingHit?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    attacker: PokemonObject;
-    defender: PokemonObject;
-    flags: { isAttack?: boolean; isAOE?: boolean };
-    damage: number;
-    count: number;
-  }) => void;
-  /** Possible effect that occurs on any Pokemon dying */
-  readonly onDeath?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    pokemon: PokemonObject;
-    side: 'player' | 'enemy';
-    count: number;
-  }) => void;
-  /** Possible effect that occurs on an ally's turn */
-  readonly onTurnStart?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    pokemon: PokemonObject;
-    count: number;
-  }) => void;
-  /** Possible effect that occurs on a regular timer */
-  readonly onTimer?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    side: 'player' | 'enemy';
-    count: number;
-    /** Time elapsed in SECONDS */
-    time: number;
-  }) => void;
-  /** Possible effect that occurs on start of round */
-  readonly onRoundStart?: (config: {
-    scene: CombatScene;
-    board: CombatScene['board'];
-    side: 'player' | 'enemy';
-    count: number;
-  }) => void;
-  /** Possible effect that occurs on end of round, after combat has concluded */
-  readonly onRoundEnd?: (config: {
-    scene: GameScene;
-    board: CombatScene['board'];
-    player: Player;
-    won: boolean;
-    count: number;
-  }) => void;
-  /** Possible extra damage calculation */
-  readonly calculateDamage?: (config: {
-    attacker: PokemonObject;
-    defender: PokemonObject;
-    baseAmount: number;
-    flags: { isAttack?: boolean; isAOE?: boolean };
-    side: 'player' | 'enemy';
-    count: number;
-  }) => number;
-}
+} & Effect<{ count: number }>;
+
+/**
+ * Model representing any effect that can be applied to a Pokemon.
+ * This is a broad definition and includes any kind of buff
+ * or debuff aside from stat alterations
+ */
+export type StatusEffect = {
+  readonly name: string;
+  readonly isNegative: boolean;
+} & Effect;
 
 export function getSynergyTier(thresholds: number[], count: number) {
   let tier = thresholds.findIndex((threshold) => count < threshold);
