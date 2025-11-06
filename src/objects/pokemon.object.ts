@@ -1,4 +1,4 @@
-import { NEGATIVE_STATUS, Status } from '../core/game.model';
+import { Effect, NEGATIVE_STATUS, Status } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
 import { generateId, getBaseTexture } from '../helpers';
 import { boundRange } from '../math.helpers';
@@ -717,4 +717,136 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     });
     this.redrawBars();
   }
+
+  // Effect methods
+  // These are written as arrow functions to make it easier to type them.
+  // These trigger all effects that may be attached to the Pokemon
+  // via move, status effects and (possibly other stuff?)
+
+  onMoveUse: NonNullable<Effect['onMoveUse']> = ({}) => {};
+
+  onHit: NonNullable<Effect['onHit']> = ({
+    scene,
+    board,
+    attacker,
+    defender,
+    flags,
+    damage,
+  }) => {
+    if (this.basePokemon.move?.type === 'passive') {
+      this.basePokemon.move.onHit?.({
+        scene,
+        board,
+        attacker,
+        defender,
+        flags,
+        damage,
+        self: this,
+      });
+    }
+  };
+
+  onBeingHit: NonNullable<Effect['onBeingHit']> = ({
+    scene,
+    board,
+    attacker,
+    defender,
+    flags,
+    damage,
+  }) => {
+    if (this.basePokemon.move?.type === 'passive') {
+      this.basePokemon.move.onBeingHit?.({
+        scene,
+        board,
+        attacker,
+        defender,
+        flags,
+        damage,
+        self: this,
+      });
+    }
+  };
+
+  onDeath: NonNullable<Effect['onDeath']> = ({
+    scene,
+    board,
+    pokemon,
+    side,
+  }) => {
+    if (this.basePokemon.move?.type === 'passive') {
+      this.basePokemon.move.onDeath?.({
+        scene,
+        board,
+        pokemon,
+        side,
+        self: this,
+      });
+    }
+  };
+  onTurnStart: NonNullable<Effect['onTurnStart']> = ({
+    scene,
+    board,
+    pokemon,
+  }) => {
+    if (this.basePokemon.move?.type === 'passive') {
+      this.basePokemon.move.onTurnStart?.({
+        scene,
+        board,
+        pokemon,
+        self: this,
+      });
+    }
+  };
+
+  onTimer: NonNullable<Effect['onTimer']> = ({ scene, board, side, time }) => {
+    if (this.basePokemon.move?.type === 'passive') {
+      this.basePokemon.move.onTimer?.({
+        scene,
+        board,
+        side,
+        time,
+        self: this,
+      });
+    }
+  };
+
+  onRoundStart: NonNullable<Effect['onRoundStart']> = ({
+    scene,
+    board,
+    side,
+  }) => {
+    if (this.basePokemon.move?.type === 'passive') {
+      this.basePokemon.move.onRoundStart?.({
+        scene,
+        board,
+        side,
+        self: this,
+      });
+    }
+  };
+
+  // Doesn't exist
+  // onRoundEnd: NonNullable<Effect['onRoundEnd']>
+
+  calculateDamage: NonNullable<Effect['calculateDamage']> = ({
+    attacker,
+    defender,
+    baseAmount,
+    flags,
+    side,
+  }) => {
+    let newTotal = baseAmount;
+    if (this.basePokemon.move?.type === 'passive') {
+      newTotal =
+        this.basePokemon.move.calculateDamage?.({
+          attacker,
+          defender,
+          baseAmount: newTotal,
+          flags,
+          side,
+          self: this,
+        }) ?? newTotal;
+    }
+    return newTotal;
+  };
 }

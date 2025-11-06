@@ -183,6 +183,16 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
+    flatten(this.board)
+      .filter(isDefined)
+      .forEach((pokemon) => {
+        pokemon.onRoundStart({
+          scene: this,
+          board: this.board,
+          side: pokemon.side,
+        });
+        this.setTurn(pokemon);
+      });
 
     // Set up recurring timer event for synergy effects every second
     this.time.addEvent({
@@ -207,24 +217,22 @@ export class CombatScene extends Scene {
             time: timePassedSeconds,
           });
         });
+        flatten(this.board)
+          .filter(isDefined)
+          .forEach((pokemon) => {
+            pokemon.onTimer({
+              scene: this,
+              board: this.board,
+              side: pokemon.side,
+              time: timePassedSeconds,
+            });
+          });
       },
       loop: true,
     });
 
     // check immediately in case someone is open-forting
     this.checkRoundEnd();
-
-    flatten(this.board)
-      .filter(isDefined)
-      .forEach((pokemon) => {
-        if (pokemon.basePokemon.move?.type === 'passive') {
-          pokemon.basePokemon.move.onRoundStart?.({
-            scene: this,
-            self: pokemon,
-          });
-        }
-        this.setTurn(pokemon);
-      });
   }
 
   update(time: number, delta: number) {
@@ -350,6 +358,16 @@ export class CombatScene extends Scene {
             count: synergy.count,
           });
         });
+        flatten(this.board)
+          .filter(isDefined)
+          .forEach((otherMon) => {
+            otherMon.onDeath({
+              scene: this,
+              board: this.board,
+              pokemon: pokemon,
+              side: pokemon.side,
+            });
+          });
         this.removePokemon(pokemon);
         // wait a tick for other death triggers to go off as well
         this.time.addEvent({
@@ -458,6 +476,11 @@ export class CombatScene extends Scene {
         pokemon,
         count: synergy.count,
       });
+    });
+    pokemon.onTurnStart({
+      scene: this,
+      board: this.board,
+      pokemon,
     });
 
     // use move if available, otherwise use basic attack
@@ -746,6 +769,20 @@ export class CombatScene extends Scene {
           count: synergy.count,
         }) ?? totalDamage;
     });
+    totalDamage = attacker.calculateDamage({
+      attacker,
+      defender,
+      baseAmount: totalDamage,
+      flags: { isAttack, isAOE },
+      side: attacker.side,
+    });
+    totalDamage = defender.calculateDamage({
+      attacker,
+      defender,
+      baseAmount: totalDamage,
+      flags: { isAttack, isAOE },
+      side: defender.side,
+    });
 
     if (!isAttack) {
       totalDamage *= attacker.status.movePowerBoost?.value ?? 1;
@@ -789,22 +826,22 @@ export class CombatScene extends Scene {
           count: synergy.count,
         });
       });
-      if (attacker.basePokemon.move?.type === 'passive') {
-        attacker.basePokemon.move.onHit?.({
-          scene: this,
-          attacker,
-          defender,
-          damage: totalDamage,
-        });
-      }
-      if (defender.basePokemon.move?.type === 'passive') {
-        defender.basePokemon.move.onBeingHit?.({
-          scene: this,
-          attacker,
-          defender,
-          damage: totalDamage,
-        });
-      }
+      attacker.onHit({
+        scene: this,
+        board: this.board,
+        attacker,
+        defender,
+        damage: totalDamage,
+        flags: { isAttack, isAOE },
+      });
+      defender.onBeingHit({
+        scene: this,
+        board: this.board,
+        attacker,
+        defender,
+        damage: totalDamage,
+        flags: { isAttack, isAOE },
+      });
     }
 
     // link damage to the Pokemon who owns/summoned this one
