@@ -10,9 +10,7 @@ const move = {
   type: 'passive',
   description:
     "{{user}} attacks a Pokemon's shadow, so its attacks cannot be dodged.",
-  flags: {
-    undodgable: true,
-  },
+  // Actually does nothing
 } as const;
 
 export const shadowTag: Move = move;

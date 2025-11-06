@@ -734,7 +734,6 @@ const basePokemonData = {
       displayName: 'Tackle',
       type: 'passive',
       description: `{{user}} tackles as a normal attack. It's not special or top percentage.`,
-      flags: {},
     },
   },
 } as const;
@@ -852,7 +851,6 @@ const rawPokemonData = {
       displayName: 'Splash',
       type: 'passive',
       description: `{{user}} flops around to no effect at all. It can't attack.`,
-      flags: {},
     },
     name: 'magikarp',
     displayName: 'Magikarp',
@@ -864,7 +862,6 @@ const rawPokemonData = {
       displayName: 'Tackle',
       type: 'passive',
       description: `{{user}} tackles as a normal attack. It has no move.`,
-      flags: {},
     },
     name: 'magikarp-2',
     displayName: 'Magikarp',

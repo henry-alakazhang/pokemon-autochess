@@ -79,6 +79,7 @@ export type PassiveMove = {
   displayName: string;
   type: 'passive';
   description: string;
+  damage?: readonly [number, number, number];
 } &
   // Pasive moves can have any Effects attached,
   // ... except onMoveUse because the move is not usable.
