@@ -201,7 +201,7 @@ const basePokemonData = {
     move: twineedle,
   },
   happiny: {
-    categories: ['normal', 'wall'],
+    categories: ['normal', 'support'],
     tier: 2,
     maxHP: 255,
     attack: 10,
@@ -286,7 +286,7 @@ const basePokemonData = {
     move: triAttack,
   },
   magnemite: {
-    categories: ['electric', 'steel', 'support'],
+    categories: ['electric', 'steel', 'utility'],
     tier: 2,
     maxHP: 70,
     attack: 70,
@@ -482,7 +482,7 @@ const basePokemonData = {
     move: leechLife,
   },
   larvitar: {
-    categories: ['rock', 'dark', 'bulky attacker'],
+    categories: ['rock', 'dark', 'revenge killer'],
     tier: 3,
     maxHP: 100,
     attack: 134,
@@ -497,7 +497,7 @@ const basePokemonData = {
     move: stoneEdge,
   },
   gastly: {
-    categories: ['ghost', 'poison', 'utility'],
+    categories: ['ghost', 'poison', 'disruptor'],
     tier: 2,
     maxHP: 60,
     attack: 65,
