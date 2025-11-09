@@ -536,7 +536,7 @@ export class CombatScene extends Scene {
         // get all possible enemy targets
         const allEnemyCoords = mapPokemonCoords(this.board)
           .filter(
-            // filter for opposing Poekmon
+            // filter for opposing Pokemon
             (boardUnit) =>
               boardUnit.pokemon?.side === getOppositeSide(pokemon.side)
           )
