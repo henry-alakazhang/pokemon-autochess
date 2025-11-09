@@ -829,14 +829,6 @@ export class CombatScene extends Scene {
           count: synergy.count,
         });
       });
-      const attackerCoords = this.getBoardLocationForPokemon(attacker) ?? {
-        x: -1,
-        y: -1,
-      };
-      const defenderCoords = this.getBoardLocationForPokemon(defender) ?? {
-        x: -1,
-        y: -1,
-      };
       attacker.onHit({
         scene: this,
         board: this.board,
