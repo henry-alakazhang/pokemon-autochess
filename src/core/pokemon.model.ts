@@ -40,6 +40,7 @@ import {
   voltTackle,
   zapCannon,
 } from './moves';
+import { icicleCrash } from './moves/icicle-crash';
 import { leechLife } from './moves/leech-life';
 
 export interface Attack {
@@ -714,6 +715,21 @@ const basePokemonData = {
       stat: 'attack',
     },
     move: kingsShield,
+  },
+  swinub: {
+    categories: ['ice', 'ground', 'disruptor'],
+    tier: 2,
+    maxHP: 110,
+    attack: 130,
+    defense: 80,
+    specAttack: 70,
+    specDefense: 60,
+    speed: 80,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: icicleCrash,
   },
   // NOT A REAL POKEMON
   // ONLY USED FOR NEUTRAL ROUNDS
@@ -1451,6 +1467,23 @@ const rawPokemonData = {
     ...getEvolution('honedge', 3),
     name: 'aegislash_shield',
     displayName: 'aegislash_shield',
+  },
+  swinub: {
+    ...getEvolution('swinub', 1),
+    name: 'swinub',
+    displayName: 'Swinub',
+    evolution: 'piloswine',
+  },
+  piloswine: {
+    ...getEvolution('swinub', 2),
+    name: 'piloswine',
+    displayName: 'Piloswine',
+    evolution: 'mamoswine',
+  },
+  mamoswine: {
+    ...getEvolution('swinub', 3),
+    name: 'mamoswine',
+    displayName: 'Mamoswine',
   },
   neutral_only_rattata: {
     ...getEvolution('neutral_only_rattata', 1),

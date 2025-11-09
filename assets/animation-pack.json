@@ -75,6 +75,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "icicle-crash",
+        "url": "assets/animations/icicle-crash.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 120
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "leech-life",
         "url": "assets/animations/leech-life.png",
         "frameConfig": {

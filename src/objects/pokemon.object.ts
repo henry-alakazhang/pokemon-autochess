@@ -787,7 +787,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   // These trigger all effects that may be attached to the Pokemon
   // via move, status effects and (possibly other stuff?)
 
-  onMoveUse: NonNullable<EffectParams['onMoveUse']> = ({}) => {};
+  onMoveUse: NonNullable<EffectParams['onMoveUse']> = ({}) => {
+    // Cancel out PP reductions after using a move.
+    if (this.status.ppReduction) {
+      this.status.ppReduction = undefined;
+    }
+  };
 
   onHit: NonNullable<EffectParams['onHit']> = ({
     scene,

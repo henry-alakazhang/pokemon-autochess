@@ -631,6 +631,12 @@ export class CombatScene extends Scene {
               count: synergy.count,
             });
           });
+          pokemon.onMoveUse({
+            scene: this,
+            board: this.board,
+            user: pokemon,
+            selfCoords: myCoords,
+          });
           if (pokemon.currentHP > 0) {
             this.setTurn(pokemon);
           }
