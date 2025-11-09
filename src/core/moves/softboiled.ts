@@ -1,5 +1,7 @@
-import { flatten } from '../../helpers';
-import { Coords } from '../../scenes/game/combat/combat.helpers';
+import {
+  Coords,
+  mapPokemonCoords,
+} from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
@@ -29,11 +31,8 @@ const move = {
    */
   getTarget(board: CombatScene['board'], myCoords: Coords): Coords | undefined {
     const self = board[myCoords.x][myCoords.y];
-    const found = flatten(
-      board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-    ).find(
+    const found = mapPokemonCoords(board).find(
       ({ pokemon }) =>
-        pokemon &&
         self &&
         pokemon.side === self.side &&
         pokemon.currentHP <= pokemon.maxHP * 0.66

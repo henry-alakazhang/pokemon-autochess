@@ -31,6 +31,7 @@ import {
   getOppositeSide,
   getTurnDelay,
   inBounds,
+  mapPokemonCoords,
   OffenseAction,
   pathfind,
 } from './combat.helpers';
@@ -183,16 +184,15 @@ export class CombatScene extends Scene {
         count: synergy.count,
       });
     });
-    flatten(this.board)
-      .filter(isDefined)
-      .forEach((pokemon) => {
-        pokemon.onRoundStart({
-          scene: this,
-          board: this.board,
-          side: pokemon.side,
-        });
-        this.setTurn(pokemon);
+    mapPokemonCoords(this.board).forEach(({ pokemon, x, y }) => {
+      pokemon.onRoundStart({
+        scene: this,
+        board: this.board,
+        side: pokemon.side,
+        selfCoords: { x, y },
       });
+      this.setTurn(pokemon);
+    });
 
     // Set up recurring timer event for synergy effects every second
     this.time.addEvent({
@@ -217,16 +217,15 @@ export class CombatScene extends Scene {
             time: timePassedSeconds,
           });
         });
-        flatten(this.board)
-          .filter(isDefined)
-          .forEach((pokemon) => {
-            pokemon.onTimer({
-              scene: this,
-              board: this.board,
-              side: pokemon.side,
-              time: timePassedSeconds,
-            });
+        mapPokemonCoords(this.board).forEach(({ pokemon, x, y }) => {
+          pokemon.onTimer({
+            scene: this,
+            board: this.board,
+            side: pokemon.side,
+            time: timePassedSeconds,
+            selfCoords: { x, y },
           });
+        });
       },
       loop: true,
     });
@@ -358,16 +357,15 @@ export class CombatScene extends Scene {
             count: synergy.count,
           });
         });
-        flatten(this.board)
-          .filter(isDefined)
-          .forEach((otherMon) => {
-            otherMon.onDeath({
-              scene: this,
-              board: this.board,
-              pokemon: pokemon,
-              side: pokemon.side,
-            });
+        mapPokemonCoords(this.board).forEach(({ pokemon: otherMon, x, y }) => {
+          otherMon.onDeath({
+            scene: this,
+            board: this.board,
+            pokemon: pokemon,
+            side: pokemon.side,
+            selfCoords: { x, y },
           });
+        });
         this.removePokemon(pokemon);
         // wait a tick for other death triggers to go off as well
         this.time.addEvent({
@@ -481,6 +479,7 @@ export class CombatScene extends Scene {
       scene: this,
       board: this.board,
       pokemon,
+      selfCoords: myCoords,
     });
 
     // use move if available, otherwise use basic attack
@@ -535,19 +534,13 @@ export class CombatScene extends Scene {
         selectedCoords = currentTargetCoords;
       } else {
         // get all possible enemy targets
-        const allEnemyCoords =
-          // first, map the board to Pokemon + coords and flatten it
-          flatten(
-            this.board.map((col, x) =>
-              col.map((pokemonAt, y) => ({ pokemonAt, boardCoords: { x, y } }))
-            )
+        const allEnemyCoords = mapPokemonCoords(this.board)
+          .filter(
+            // filter for opposing Poekmon
+            (boardUnit) =>
+              boardUnit.pokemon?.side === getOppositeSide(pokemon.side)
           )
-            .filter(
-              // filter for opposing Poekmon
-              ({ pokemonAt }) =>
-                pokemonAt?.side === getOppositeSide(pokemon.side)
-            )
-            .map(({ boardCoords }) => boardCoords);
+          .map(({ x, y }) => ({ x, y }));
 
         // and use pathfind to get path to closest one
         const pathfound = pathfind(
@@ -769,12 +762,21 @@ export class CombatScene extends Scene {
           count: synergy.count,
         }) ?? totalDamage;
     });
+    const attackerCoords = this.getBoardLocationForPokemon(attacker) ?? {
+      x: -1,
+      y: -1,
+    };
+    const defenderCoords = this.getBoardLocationForPokemon(defender) ?? {
+      x: -1,
+      y: -1,
+    };
     totalDamage = attacker.calculateDamage({
       attacker,
       defender,
       baseAmount: totalDamage,
       flags: { isAttack, isAOE },
       side: attacker.side,
+      selfCoords: attackerCoords,
     });
     totalDamage = defender.calculateDamage({
       attacker,
@@ -782,6 +784,7 @@ export class CombatScene extends Scene {
       baseAmount: totalDamage,
       flags: { isAttack, isAOE },
       side: defender.side,
+      selfCoords: defenderCoords,
     });
 
     if (!isAttack) {
@@ -826,6 +829,14 @@ export class CombatScene extends Scene {
           count: synergy.count,
         });
       });
+      const attackerCoords = this.getBoardLocationForPokemon(attacker) ?? {
+        x: -1,
+        y: -1,
+      };
+      const defenderCoords = this.getBoardLocationForPokemon(defender) ?? {
+        x: -1,
+        y: -1,
+      };
       attacker.onHit({
         scene: this,
         board: this.board,
@@ -833,6 +844,7 @@ export class CombatScene extends Scene {
         defender,
         damage: totalDamage,
         flags: { isAttack, isAOE },
+        selfCoords: attackerCoords,
       });
       defender.onBeingHit({
         scene: this,
@@ -841,6 +853,7 @@ export class CombatScene extends Scene {
         defender,
         damage: totalDamage,
         flags: { isAttack, isAOE },
+        selfCoords: defenderCoords,
       });
     }
 

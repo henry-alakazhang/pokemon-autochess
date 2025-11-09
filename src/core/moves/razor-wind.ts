@@ -1,5 +1,8 @@
-import { flatten } from '../../helpers';
-import { Coords, optimiseAOE } from '../../scenes/game/combat/combat.helpers';
+import {
+  Coords,
+  mapPokemonCoords,
+  optimiseAOE,
+} from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
@@ -30,12 +33,7 @@ const move = {
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
     let fastest: Coords | undefined;
     let fastestSpeed = -Infinity;
-    flatten(
-      board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-    ).forEach(({ x, y, pokemon }) => {
-      if (!pokemon) {
-        return;
-      }
+    mapPokemonCoords(board).forEach(({ x, y, pokemon }) => {
       if (
         pokemon.side !== board[user.x][user.y]?.side &&
         pokemon.basePokemon.speed > fastestSpeed

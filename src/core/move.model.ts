@@ -1,7 +1,6 @@
-import { PokemonObject } from '../objects/pokemon.object';
+import { PokemonEffect, PokemonObject } from '../objects/pokemon.object';
 import { Coords } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
-import { Effect } from './game.model';
 
 export type Move = ActiveMove<'ground'> | ActiveMove<'unit'> | PassiveMove;
 export type Targetting = 'ground' | 'unit';
@@ -75,13 +74,14 @@ export interface ActiveMove<T extends Targetting> {
   defenseStat?: 'defense' | 'specDefense';
 }
 
+/**
+ * Passive moves can have any Effects attached,
+ * ... except onMoveUse because the move is not usable.
+ * ... except onRoundEnd (TODO: maybe that can be added)
+ */
 export type PassiveMove = {
   displayName: string;
   type: 'passive';
   description: string;
   damage?: readonly [number, number, number];
-} &
-  // Passive moves can have any Effects attached,
-  // ... except onMoveUse because the move is not usable.
-  // ... except onRoundEnd (TODO: maybe that can be added)
-  Omit<Effect<{ self: PokemonObject }>, 'onMoveUse' | 'onRoundEnd'>;
+} & Omit<PokemonEffect, 'onMoveUse' | 'onRoundEnd'>;

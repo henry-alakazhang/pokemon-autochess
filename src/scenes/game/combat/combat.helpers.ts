@@ -36,6 +36,19 @@ export function getOppositeSide(side: 'player' | 'enemy') {
   return side === 'player' ? 'enemy' : 'player';
 }
 
+/**
+ * Returns a flattened array of all Pokemon on the board with their coordinates
+ */
+export function mapPokemonCoords(
+  board: CombatScene['board']
+): { pokemon: PokemonObject; x: number; y: number }[] {
+  return flatten(
+    board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
+  ).filter((entry): entry is { pokemon: PokemonObject; x: number; y: number } =>
+    isDefined(entry.pokemon)
+  );
+}
+
 /*
   This file has a `getNearestTarget` and a `pathfind` function,
   which are both implementations of breadth-first search.
@@ -393,9 +406,9 @@ export function getRandomTarget({
   }
   const targetSide = targetAllies ? userSide : getOppositeSide(userSide);
 
-  const possibleTargets = flatten(
-    board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-  ).filter(({ pokemon }) => pokemon?.side === targetSide);
+  const possibleTargets = mapPokemonCoords(board).filter(
+    ({ pokemon }) => pokemon?.side === targetSide
+  );
 
   if (possibleTargets.length === 0) {
     return undefined;
