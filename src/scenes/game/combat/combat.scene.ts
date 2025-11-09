@@ -762,6 +762,7 @@ export class CombatScene extends Scene {
           count: synergy.count,
         }) ?? totalDamage;
     });
+    // This is a bit janky but it's probably fine...
     const attackerCoords = this.getBoardLocationForPokemon(attacker) ?? {
       x: -1,
       y: -1,
