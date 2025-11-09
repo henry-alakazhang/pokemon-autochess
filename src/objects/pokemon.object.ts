@@ -56,6 +56,16 @@ type ModifiableStat =
 
 export type PokemonAnimationType = 'left' | 'right' | 'up' | 'down';
 
+/**
+ * Effects that can be applied to individual Pokemon.
+ * Requires extra fields for referencing self.
+ */
+export type PokemonEffect = Effect<{ self: PokemonObject; selfCoords: Coords }>;
+/**
+ * Effects with required params to trigger effects on Pokemon
+ */
+type EffectParams = Effect<{ selfCoords: Coords }>;
+
 export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public static readonly Events = {
     Dead: 'dead',
@@ -723,15 +733,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   // These trigger all effects that may be attached to the Pokemon
   // via move, status effects and (possibly other stuff?)
 
-  onMoveUse: NonNullable<Effect['onMoveUse']> = ({}) => {};
+  onMoveUse: NonNullable<EffectParams['onMoveUse']> = ({}) => {};
 
-  onHit: NonNullable<Effect['onHit']> = ({
+  onHit: NonNullable<EffectParams['onHit']> = ({
     scene,
     board,
     attacker,
     defender,
     flags,
     damage,
+    selfCoords,
   }) => {
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onHit?.({
@@ -742,17 +753,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         flags,
         damage,
         self: this,
+        selfCoords,
       });
     }
   };
 
-  onBeingHit: NonNullable<Effect['onBeingHit']> = ({
+  onBeingHit: NonNullable<EffectParams['onBeingHit']> = ({
     scene,
     board,
     attacker,
     defender,
     flags,
     damage,
+    selfCoords,
   }) => {
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onBeingHit?.({
@@ -763,15 +776,17 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         flags,
         damage,
         self: this,
+        selfCoords,
       });
     }
   };
 
-  onDeath: NonNullable<Effect['onDeath']> = ({
+  onDeath: NonNullable<EffectParams['onDeath']> = ({
     scene,
     board,
     pokemon,
     side,
+    selfCoords,
   }) => {
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onDeath?.({
@@ -780,13 +795,15 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         pokemon,
         side,
         self: this,
+        selfCoords,
       });
     }
   };
-  onTurnStart: NonNullable<Effect['onTurnStart']> = ({
+  onTurnStart: NonNullable<EffectParams['onTurnStart']> = ({
     scene,
     board,
     pokemon,
+    selfCoords,
   }) => {
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onTurnStart?.({
@@ -794,11 +811,18 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         board,
         pokemon,
         self: this,
+        selfCoords,
       });
     }
   };
 
-  onTimer: NonNullable<Effect['onTimer']> = ({ scene, board, side, time }) => {
+  onTimer: NonNullable<EffectParams['onTimer']> = ({
+    scene,
+    board,
+    side,
+    selfCoords,
+    time,
+  }) => {
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onTimer?.({
         scene,
@@ -806,14 +830,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         side,
         time,
         self: this,
+        selfCoords,
       });
     }
   };
 
-  onRoundStart: NonNullable<Effect['onRoundStart']> = ({
+  onRoundStart: NonNullable<EffectParams['onRoundStart']> = ({
     scene,
     board,
     side,
+    selfCoords,
   }) => {
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onRoundStart?.({
@@ -821,19 +847,21 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         board,
         side,
         self: this,
+        selfCoords,
       });
     }
   };
 
   // Doesn't exist
-  // onRoundEnd: NonNullable<Effect['onRoundEnd']>
+  // onRoundEnd: NonNullable<EffectParams['onRoundEnd']>
 
-  calculateDamage: NonNullable<Effect['calculateDamage']> = ({
+  calculateDamage: NonNullable<EffectParams['calculateDamage']> = ({
     attacker,
     defender,
     baseAmount,
     flags,
     side,
+    selfCoords,
   }) => {
     let newTotal = baseAmount;
     if (this.basePokemon.move?.type === 'passive') {
@@ -845,6 +873,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
           flags,
           side,
           self: this,
+          selfCoords,
         }) ?? newTotal;
     }
     return newTotal;

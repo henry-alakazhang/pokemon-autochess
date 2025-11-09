@@ -1,6 +1,8 @@
-import { flatten } from '../../helpers';
 import { PokemonObject } from '../../objects/pokemon.object';
-import { Coords } from '../../scenes/game/combat/combat.helpers';
+import {
+  Coords,
+  mapPokemonCoords,
+} from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
@@ -29,11 +31,8 @@ const move = {
     const self = board[myCoords.x][myCoords.y];
     let weakest: Coords | undefined;
     let weakestHP = Infinity;
-    flatten(
-      board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-    ).forEach(({ x, y, pokemon }) => {
+    mapPokemonCoords(board).forEach(({ x, y, pokemon }) => {
       if (
-        pokemon &&
         self &&
         pokemon.side !== self.side &&
         pokemon.currentHP <= weakestHP

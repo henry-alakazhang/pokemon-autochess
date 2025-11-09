@@ -9,6 +9,7 @@ import {
   getNearestEmpty,
   getOppositeSide,
   inBounds,
+  mapPokemonCoords,
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../scenes/game/game.helpers';
@@ -788,9 +789,7 @@ to both their attacks and their moves.
         tier === 0 ? 0 : tier === 1 ? 0.15 : tier === 2 ? 0.3 : 0.45;
       const critDamage =
         tier === 0 ? 1.5 : tier === 1 ? 2 : tier === 2 ? 2.5 : 3;
-      flatten(
-        board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-      ).forEach((slot) => {
+      mapPokemonCoords(board).forEach((slot) => {
         if (
           slot.pokemon?.side === side &&
           slot.pokemon.basePokemon.categories.includes('dark')
@@ -1199,9 +1198,7 @@ has all of their types combined together.`,
         return;
       }
 
-      const pivots = flatten(
-        board.map((col, x) => col.map((pokemon, y) => ({ x, y, pokemon })))
-      ).filter(
+      const pivots = mapPokemonCoords(board).filter(
         (slot) =>
           slot.pokemon?.side === side &&
           slot.pokemon.basePokemon.categories.includes('pivot')
