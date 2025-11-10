@@ -357,15 +357,17 @@ export class CombatScene extends Scene {
             count: synergy.count,
           });
         });
-        mapPokemonCoords(this.board).forEach(({ pokemon: otherMon, x, y }) => {
-          otherMon.onDeath({
-            scene: this,
-            board: this.board,
-            pokemon: pokemon,
-            side: pokemon.side,
-            selfCoords: { x, y },
-          });
-        });
+        mapPokemonCoords(this.board).forEach(
+          ({ pokemon: otherMon, ...selfCoords }) => {
+            otherMon.onDeath({
+              scene: this,
+              board: this.board,
+              pokemon: pokemon,
+              side: pokemon.side,
+              selfCoords,
+            });
+          }
+        );
         this.removePokemon(pokemon);
         // wait a tick for other death triggers to go off as well
         this.time.addEvent({

@@ -67,6 +67,7 @@ export default defineConfig([{
         "@typescript-eslint/explicit-member-accessibility": 0,
         "@typescript-eslint/explicit-module-boundary-types": 0,
         "@typescript-eslint/ban-types": 0,
+        "@typescript-eslint/no-shadow": 2
     },
 }, {
     files: ["**/*.spec.ts"],
