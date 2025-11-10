@@ -8,7 +8,7 @@ import { Move, MoveConfig } from '../move.model';
  *
  * Boots attack damage and speed for the rest of the battle
  */
-const move = {
+export const dragonDance = {
   displayName: 'Dragon Dance',
   type: 'active',
   // FIXME: Just disable mana after using move
@@ -62,6 +62,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const dragonDance: Move = move;
+} as const satisfies Move;

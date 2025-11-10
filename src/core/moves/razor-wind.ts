@@ -8,6 +8,19 @@ import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+/** Area of effect is a 4-tile square */
+const getAOE = (coords: Coords) => {
+  return [
+    { x: coords.x, y: coords.y },
+    { x: coords.x, y: coords.y + 1 },
+    { x: coords.x + 1, y: coords.y },
+    { x: coords.x + 1, y: coords.y + 1 },
+  ];
+};
+
+const defenseStat = 'specDefense' as const;
+const damage = [400, 750, 100];
+
 /**
  * Razor Wind - Shiftry line's move
  *
@@ -16,20 +29,20 @@ import * as Tweens from '../tweens';
  *
  * TODO: add custom targetting to hit maximum AoE
  */
-const move = {
+export const razorWind = {
   displayName: 'Razor Wind',
   type: 'active',
   cost: 24,
   startingPP: 12,
-  damage: [400, 750, 100],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'ground',
   get description() {
-    return `{{user}} whips up a whirlwind over the fastest enemy. After 2 seconds, the whirlwind deals ${this.damage.join(
+    return `{{user}} whips up a whirlwind over the fastest enemy. After 2 seconds, the whirlwind deals ${damage.join(
       '/'
     )} damage over 2 seconds to any enemies caught i it.`;
   },
   range: 99,
+  getAOE,
   getTarget(board: CombatScene['board'], user: Coords): Coords | undefined {
     let fastest: Coords | undefined;
     let fastestSpeed = -Infinity;
@@ -51,8 +64,8 @@ const move = {
     return optimiseAOE({
       board,
       user,
-      range: this.range,
-      getAOE: this.getAOE,
+      range: 99,
+      getAOE,
       pool: [
         fastest,
         { x: fastest.x, y: fastest.y - 1 },
@@ -60,15 +73,6 @@ const move = {
         { x: fastest.x - 1, y: fastest.y - 1 },
       ],
     });
-  },
-  /** Area of effect is a 4-tile square */
-  getAOE(coords: Coords) {
-    return [
-      { x: coords.x, y: coords.y },
-      { x: coords.x, y: coords.y + 1 },
-      { x: coords.x + 1, y: coords.y },
-      { x: coords.x + 1, y: coords.y + 1 },
-    ];
   },
   async use({ scene, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
     const gfxTarget = getCoordinatesForMainboard(targetCoords);
@@ -101,16 +105,16 @@ const move = {
         });
         // the code below has a delay, so the first tick will occur after the tween ends
         const ticks = 4;
-        const dph = this.damage[user.basePokemon.stage - 1] / ticks;
+        const dph = damage[user.basePokemon.stage - 1] / ticks;
         const timer = scene.time.addEvent({
           callback: () => {
             // deal damage to each person in range (2 x 2 square)
             scene.causeAOEDamage(
               user,
-              this.getAOE(targetCoords),
+              getAOE(targetCoords),
               {
                 damage: dph,
-                defenseStat: this.defenseStat,
+                defenseStat,
               },
               { canCrit: true }
             );
@@ -125,6 +129,4 @@ const move = {
       delay: 1000,
     });
   },
-} as const;
-
-export const razorWind: Move = move;
+} as const satisfies Move;

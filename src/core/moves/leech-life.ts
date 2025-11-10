@@ -2,21 +2,23 @@ import { calculateDamage } from '../../scenes/game/combat/combat.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const bonusDamage = [175, 300, 400];
+
 /**
  * Leech Life - Zubat line's move
  *
  * Deals damage to a single target and heals the user for half the amount
  */
-const move = {
+export const leechLife = {
   displayName: 'Leech Life',
   type: 'active',
   cost: 16,
   startingPP: 0,
-  damage: [175, 300, 400],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} attacks a single enemy and drains their blood, dealing ${this.damage.join(
+    return `{{user}} attacks a single enemy and drains their blood, dealing ${bonusDamage.join(
       '/'
     )} bonus damage. {{user}}'s HP is restored by half that amount.`;
   },
@@ -25,8 +27,8 @@ const move = {
     scene.basicAttack(user, target, {
       onHit: () => {
         const action = {
-          damage: this.damage[user.basePokemon.stage - 1],
-          defenseStat: this.defenseStat,
+          damage: bonusDamage[user.basePokemon.stage - 1],
+          defenseStat,
         };
         scene.causeDamage(user, target, action);
 
@@ -52,6 +54,4 @@ const move = {
       onComplete,
     });
   },
-} as const;
-
-export const leechLife: Move = move;
+} as const satisfies Move;

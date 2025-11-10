@@ -1,17 +1,18 @@
 import { PokemonObject } from '../../objects/pokemon.object';
 import { Move } from '../move.model';
 
+const values = [35, 55, 100];
+
 /**
  * Gale Wings - Talonflame line's move
  *
  * Passive that grants increased attack speed / attack based on HP
  */
-const move = {
+export const braveBird = {
   displayName: 'Gale Wings',
   type: 'passive',
-  damage: [35, 55, 100],
   get description() {
-    return `{{user}} raises its speed while above 50% health. While below 50% health, raises its Attack instead, and recovers ${this.damage.join(
+    return `{{user}} raises its speed while above 50% health. While below 50% health, raises its Attack instead, and recovers ${values.join(
       '/'
     )} HP on hit.`;
   },
@@ -40,9 +41,7 @@ const move = {
   },
   onHit({ attacker }: { attacker: PokemonObject }) {
     if (attacker.moveState === 'slow') {
-      attacker.heal(this.damage[attacker.basePokemon.stage - 1]);
+      attacker.heal(values[attacker.basePokemon.stage - 1]);
     }
   },
-} as const;
-
-export const braveBird: Move = move;
+} as const satisfies Move;

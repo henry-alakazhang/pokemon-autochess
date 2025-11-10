@@ -10,40 +10,46 @@ import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'specDefense' as const;
+const damage = [450, 850, 1100];
+
+/**
+ * A line from user to target.
+ */
+const getAOE = (targetCoords: Coords, myCoords: Coords) => {
+  return interpolateLineAOE(myCoords, targetCoords);
+};
+
+const getTarget = (board: CombatBoard, user: Coords) => {
+  return optimiseAOE({
+    board,
+    user,
+    range: 99,
+    getAOE,
+    targetting: 'ground',
+  });
+};
+
 /**
  * Zap Cannon - Grubbin line's move
  *
  * Charges for 2s, then deals damage in a line
  */
-const move = {
+export const zapCannon = {
   displayName: 'Zap Cannon',
   type: 'active',
   cost: 28,
   startingPP: 14,
-  damage: [450, 850, 1100],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'ground',
   get description() {
-    return `{{user}} charges for 1 second before zapping a straight line, dealing ${this.damage.join(
+    return `{{user}} charges for 1 second before zapping a straight line, dealing ${damage.join(
       '/'
     )} damage to every enemy hit.`;
   },
   range: 99,
-  getTarget(board: CombatBoard, user: Coords) {
-    return optimiseAOE({
-      board,
-      user,
-      range: this.range,
-      getAOE: this.getAOE,
-      targetting: 'ground',
-    });
-  },
-  /**
-   * A line from user to target.
-   */
-  getAOE(targetCoords: Coords, myCoords: Coords) {
-    return interpolateLineAOE(myCoords, targetCoords);
-  },
+  getTarget,
+  getAOE,
   use({
     scene,
     board,
@@ -63,7 +69,7 @@ const move = {
         user.setScale(1, 1);
         // the target may have moved in the charge-up time
         // so just recalculate the target lol
-        const targetCoords = this.getTarget(board, userCoords);
+        const targetCoords = getTarget(board, userCoords);
         if (!targetCoords) {
           onComplete();
           return;
@@ -91,9 +97,9 @@ const move = {
         );
         scene.time.addEvent({
           callback: () => {
-            scene.causeAOEDamage(user, this.getAOE(userCoords, targetCoords), {
-              damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: this.defenseStat,
+            scene.causeAOEDamage(user, getAOE(userCoords, targetCoords), {
+              damage: damage[user.basePokemon.stage - 1],
+              defenseStat,
             });
           },
           delay: animations.thunder.duration * 0.5,
@@ -102,6 +108,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const zapCannon: Move = move;
+} as const satisfies Move;

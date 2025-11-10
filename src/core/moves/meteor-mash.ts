@@ -5,22 +5,24 @@ import {
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const damage = [400, 750, 1400];
+
 /**
  * Meteor Mash - Beldum line's unique move
  *
  * Damages a target knocks it back, stunning it and anyone behind it.
  */
-const move = {
+export const meteorMash = {
   displayName: 'Meteor Mash',
   type: 'active',
   cost: 22,
   startingPP: 14,
   range: 1,
   targetting: 'unit',
-  damage: [400, 750, 1400],
-  defenseStat: 'defense',
+  defenseStat,
   get description() {
-    return `{{user}} winds up for a huge punch to a single enemy. It deals ${this.damage.join(
+    return `{{user}} winds up for a huge punch to a single enemy. It deals ${damage.join(
       '/'
     )} damage and knocks the target back. The target and any enemy behind it are stunned for 2 seconds, doubled if hit into a wall.`;
   },
@@ -75,11 +77,11 @@ const move = {
               y: endCoords.y - dy,
             });
 
-            const damage = {
-              damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: this.defenseStat,
+            const damageConfig = {
+              damage: damage[user.basePokemon.stage - 1],
+              defenseStat,
             };
-            scene.causeDamage(user, target, damage);
+            scene.causeDamage(user, target, damageConfig);
 
             if (
               inBounds(board, endCoords) &&
@@ -90,7 +92,9 @@ const move = {
 
               const otherTarget = board[endCoords.x][endCoords.y];
               if (otherTarget) {
-                scene.causeDamage(user, otherTarget, damage, { isAOE: true });
+                scene.causeDamage(user, otherTarget, damageConfig, {
+                  isAOE: true,
+                });
                 otherTarget.addStatus('paralyse', 2000);
               }
             } else {
@@ -112,6 +116,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const meteorMash: Move = move;
+} as const satisfies Move;

@@ -4,25 +4,27 @@ import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'defense' as const;
+const damage = [300, 500, 1000];
+const movePowerBoost = [30, 50, 874];
+
 /**
  * Ancient Power (Spot) - Stonjourner's move
  *
  * Deals damage to adjacent enemies and buffs the power of adjacent allies' moves.
  */
-const move = {
+export const powerSpot = {
   displayName: 'Power Spot',
   type: 'active',
   cost: 24,
   startingPP: 16,
   range: 1,
   targetting: 'ground',
-  damage: [300, 500, 1000],
-  buff: [30, 50, 874],
-  defenseStat: 'defense',
+  defenseStat,
   get description() {
-    return `{{user}} summons a circle of ancient power around it. It deals ${this.damage.join(
+    return `{{user}} summons a circle of ancient power around it. It deals ${damage.join(
       '/'
-    )} damage to each adjacent enemy and raises the power of each adjacent ally's moves by ${this.buff.join(
+    )} damage to each adjacent enemy and raises the power of each adjacent ally's moves by ${movePowerBoost.join(
       '/'
     )}% for 6 seconds.`;
   },
@@ -73,7 +75,7 @@ const move = {
         target.addStatus(
           'movePowerBoost',
           6000,
-          1 + this.buff[user.basePokemon.stage - 1] / 100
+          1 + movePowerBoost[user.basePokemon.stage - 1] / 100
         );
       } else {
         // hit enemies
@@ -87,8 +89,8 @@ const move = {
           user,
           target,
           {
-            damage: this.damage[user.basePokemon.stage - 1],
-            defenseStat: this.defenseStat,
+            damage: damage[user.basePokemon.stage - 1],
+            defenseStat,
           },
           { isAOE: true }
         );
@@ -97,6 +99,4 @@ const move = {
 
     onComplete();
   },
-} as const;
-
-export const powerSpot: Move = move;
+} as const satisfies Move;

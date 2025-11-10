@@ -7,21 +7,23 @@ import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'specDefense' as const;
+const damage = [273, 519, 7930];
+
 /**
  * Venom Drench - Nihilego's move
  *
  * Deals damage to every enemy based on their status effects, and reduces their stats.
  */
-const move = {
+export const venomDrench = {
   displayName: 'Venom Drench',
   type: 'active',
   cost: 12,
   startingPP: 4,
-  damage: [273, 519, 7930],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} drenches all enemies in poison, PERMANENTLY lowering a random stat. If they are already afflicted by status, they also take ${this.damage.join(
+    return `{{user}} drenches all enemies in poison, PERMANENTLY lowering a random stat. If they are already afflicted by status, they also take ${damage.join(
       '/'
     )} damage, doubled if poisoned.`;
   },
@@ -79,9 +81,9 @@ const move = {
           target,
           {
             damage:
-              this.damage[user.basePokemon.stage - 1] *
+              damage[user.basePokemon.stage - 1] *
               (target.status.poison ? 2 : 1),
-            defenseStat: this.defenseStat,
+            defenseStat,
           },
           { isAOE: true }
         );
@@ -89,6 +91,4 @@ const move = {
     });
     onComplete();
   },
-} as const;
-
-export const venomDrench: Move = move;
+} as const satisfies Move;

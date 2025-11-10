@@ -5,22 +5,24 @@ import {
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const damage = [450, 650, 1200];
+
 /**
  * Night Daze - Zoroark line's move
  *
  * Damages a target and blinds them for 3 seconds.
  */
-const move = {
+export const nightDaze = {
   displayName: 'Night Daze',
   type: 'active',
   cost: 16,
   startingPP: 10,
   range: 1,
   targetting: 'unit',
-  damage: [450, 650, 1200],
-  defenseStat: 'defense',
+  defenseStat,
   get description() {
-    return `{{user}} hits a single enemy with a pitch-black blast, dealing ${this.damage.join(
+    return `{{user}} hits a single enemy with a pitch-black blast, dealing ${damage.join(
       '/'
     )} damage and blinding it for 3 seconds`;
   },
@@ -36,8 +38,8 @@ const move = {
           user,
           target,
           {
-            damage: this.damage[user.basePokemon.stage - 1],
-            defenseStat: this.defenseStat,
+            damage: damage[user.basePokemon.stage - 1],
+            defenseStat,
           },
           { canCrit: true }
         );
@@ -46,6 +48,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const nightDaze: Move = move;
+} as const satisfies Move;

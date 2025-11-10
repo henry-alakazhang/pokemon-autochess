@@ -1,23 +1,27 @@
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'specDefense' as const;
+const damage = [400, 700, 4850];
+const cost = 24;
+
 /**
  * Magma Storm, Heatran's move
  *
  * Blasts a target with fire and burns them forever.
  * When they faint, they spread the fire.
  */
-const move = {
+
+export const magmaStorm = {
   displayName: 'Magma Storm',
   type: 'active',
-  cost: 24,
+  cost,
   startingPP: 14,
   range: 1,
   targetting: 'unit',
-  damage: [400, 700, 4850],
-  defenseStat: 'specDefense',
+  defenseStat,
   get description() {
-    return `{{user}} traps a single enemy in a maelstrom of fire, dealing ${this.damage.join(
+    return `{{user}} traps a single enemy in a maelstrom of fire, dealing ${damage.join(
       '/'
     )} damage and permanently burning the target for 1/6 of its HP per second. After it faints, {{user}} recovers half its PP.`;
   },
@@ -36,8 +40,8 @@ const move = {
         storm.destroy();
 
         scene.causeDamage(user, target, {
-          damage: this.damage[user.basePokemon.stage - 1],
-          defenseStat: this.defenseStat,
+          damage: damage[user.basePokemon.stage - 1],
+          defenseStat,
         });
 
         const burnTimer = scene.time.addEvent({
@@ -46,7 +50,7 @@ const move = {
           callback: () => {
             if (!target.active) {
               scene.time.removeEvent(burnTimer);
-              user.addPP(this.cost / 2);
+              user.addPP(cost / 2);
               return;
             }
             // burn for max HP damage that can't be modified or reduced
@@ -66,6 +70,4 @@ const move = {
       });
     onComplete();
   },
-} as const;
-
-export const magmaStorm: Move = move;
+} as const satisfies Move;

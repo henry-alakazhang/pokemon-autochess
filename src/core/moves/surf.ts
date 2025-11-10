@@ -4,71 +4,75 @@ import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
 /**
+ * Wave in front of and beside user
+ *
+ * X T X      X X _
+ * X U X  OR  T U _
+ * _ _ _      X X _
+ */
+const getAOE = (targetCoords: Coords, myCoords: Coords) => {
+  const dx = targetCoords.x - myCoords.x;
+  const dy = targetCoords.y - myCoords.y;
+
+  // aiming horizontally -> splashes vertically
+  if (Math.abs(dx) > 0) {
+    return [
+      // important: further targets first, so we can properly knock everyone back when iterating over
+      targetCoords,
+      // above target
+      { x: targetCoords.x, y: targetCoords.y - 1 },
+      // below target
+      { x: targetCoords.x, y: targetCoords.y + 1 },
+      // above user
+      { x: myCoords.x, y: myCoords.y - 1 },
+      // below user
+      { x: myCoords.x, y: myCoords.y + 1 },
+    ];
+  }
+  // aiming vertically -> splashes horizontally
+  if (Math.abs(dy) > 0) {
+    return [
+      targetCoords,
+      // left of target
+      { x: targetCoords.x - 1, y: targetCoords.y },
+      // right of target
+      { x: targetCoords.x + 1, y: targetCoords.y },
+      // left of user
+      { x: myCoords.x + 1, y: myCoords.y },
+      // right of user
+      { x: myCoords.x - 1, y: myCoords.y },
+    ];
+  }
+  // ??????
+  throw new Error(
+    `Invalid positioning for Surf ${JSON.stringify(
+      targetCoords
+    )} ${JSON.stringify(myCoords)}`
+  );
+};
+
+const defenseStat = 'specDefense' as const;
+const damage = [400, 850, 1700];
+
+/**
  * Surf - Lapras's move
  *
  * Sends a wave of water which knocks back all Pokemon in front/to the side and stuns them
  */
-const move = {
+export const surf = {
   displayName: 'Surf',
   type: 'active',
   cost: 28,
   startingPP: 20,
-  damage: [400, 850, 1700],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} sends forth a wave of water, dealing ${this.damage.join(
+    return `{{user}} sends forth a wave of water, dealing ${damage.join(
       '/'
     )} damage to enemies in front of and beside it, knocking them back and stunning them for 1.5 seconds.`;
   },
   range: 1,
-  /**
-   * Wave in front of and beside user
-   *
-   * X T X      X X _
-   * X U X  OR  T U _
-   * _ _ _      X X _
-   */
-  getAOE(targetCoords: Coords, myCoords: Coords) {
-    const dx = targetCoords.x - myCoords.x;
-    const dy = targetCoords.y - myCoords.y;
-
-    // aiming horizontally -> splashes vertically
-    if (Math.abs(dx) > 0) {
-      return [
-        // important: further targets first, so we can properly knock everyone back when iterating over
-        targetCoords,
-        // above target
-        { x: targetCoords.x, y: targetCoords.y - 1 },
-        // below target
-        { x: targetCoords.x, y: targetCoords.y + 1 },
-        // above user
-        { x: myCoords.x, y: myCoords.y - 1 },
-        // below user
-        { x: myCoords.x, y: myCoords.y + 1 },
-      ];
-    }
-    // aiming vertically -> splashes horizontally
-    if (Math.abs(dy) > 0) {
-      return [
-        targetCoords,
-        // left of target
-        { x: targetCoords.x - 1, y: targetCoords.y },
-        // right of target
-        { x: targetCoords.x + 1, y: targetCoords.y },
-        // left of user
-        { x: myCoords.x + 1, y: myCoords.y },
-        // right of user
-        { x: myCoords.x - 1, y: myCoords.y },
-      ];
-    }
-    // ??????
-    throw new Error(
-      `Invalid positioning for Surf ${JSON.stringify(
-        targetCoords
-      )} ${JSON.stringify(myCoords)}`
-    );
-  },
+  getAOE,
   async use({
     scene,
     board,
@@ -84,7 +88,7 @@ const move = {
       duration: 200,
     });
     // TODO: add surf graphic
-    const targets = this.getAOE(targetCoords, userCoords);
+    const targets = getAOE(targetCoords, userCoords);
     const pushX = targetCoords.x - userCoords.x;
     const pushY = targetCoords.y - userCoords.y;
     targets
@@ -109,8 +113,8 @@ const move = {
           user,
           validTarget,
           {
-            damage: this.damage[user.basePokemon.stage - 1],
-            defenseStat: this.defenseStat,
+            damage: damage[user.basePokemon.stage - 1],
+            defenseStat,
           },
           { isAOE: true }
         );
@@ -127,6 +131,4 @@ const move = {
       });
     onComplete();
   },
-} as const;
-
-export const surf: Move = move;
+} as const satisfies Move;

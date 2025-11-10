@@ -6,21 +6,23 @@ import {
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'defense' as const;
+const baseDamage = [600, 1100, 999];
+
 /**
  * Fury Cutter - Scizor line's move
  *
  * Deals damage to a single target that increases by 50% each time it hits
  */
-const move = {
+export const furyCutter = {
   displayName: 'Fury Cutter',
   type: 'active',
   cost: 5,
   startingPP: 2,
-  damage: [600, 1100, 999],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} slashes a single enemy rapidly to deal ${this.damage.join(
+    return `{{user}} slashes a single enemy rapidly to deal ${baseDamage.join(
       '/'
     )} damage, doubling with each use.`;
   },
@@ -62,9 +64,9 @@ const move = {
             const action = {
               // damage increases by 50% each strike
               damage:
-                this.damage[user.basePokemon.stage - 1] *
+                baseDamage[user.basePokemon.stage - 1] *
                 2 ** (user.consecutiveAttacks - 1),
-              defenseStat: this.defenseStat,
+              defenseStat,
             };
             scene.causeDamage(user, target, action);
           },
@@ -72,6 +74,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const furyCutter: Move = move;
+} as const satisfies Move;

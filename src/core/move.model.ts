@@ -21,20 +21,20 @@ export interface MoveConfig<T extends Targetting> {
  * Moves which (typically) require PP and have to be used to have an effect
  */
 export interface ActiveMove<T extends Targetting> {
-  displayName: string;
-  type: 'active';
-  description: string;
-  range: number;
+  readonly displayName: string;
+  readonly type: 'active';
+  readonly description: string;
+  readonly range: number;
 
   /** Amount of PP needed to use the move */
-  cost: number;
+  readonly cost: number;
   /** Amount of PP Pokemon starts with */
-  startingPP: number;
+  readonly startingPP: number;
 
   /**
    * Whether the move specifically targets a unit or not
    */
-  targetting: T;
+  readonly targetting: T;
 
   /**
    * Picks a target for the move and returns its coordinates,
@@ -45,7 +45,7 @@ export interface ActiveMove<T extends Targetting> {
    */
   getTarget?(
     board: (PokemonObject | undefined)[][],
-    userCoords: Coords
+    userCoords?: Coords
   ): Coords | undefined;
 
   /**
@@ -54,7 +54,7 @@ export interface ActiveMove<T extends Targetting> {
    *
    * This may involve the user's own coords (for directional attacks)
    */
-  getAOE?(coords: Coords, myCoords: Coords): Coords[];
+  getAOE?(coords: Coords, myCoords?: Coords): Coords[];
 
   /**
    * Use the move and trigger animations, effects, damage, etc.
@@ -67,11 +67,7 @@ export interface ActiveMove<T extends Targetting> {
 
   /* here follow a bunch of optional fields for damage and effect calculation */
 
-  /**
-   * Flat damage at each stage of evolution
-   */
-  damage?: readonly [number, number, number];
-  defenseStat?: 'defense' | 'specDefense';
+  readonly defenseStat?: 'defense' | 'specDefense';
 }
 
 /**
@@ -83,5 +79,4 @@ export type PassiveMove = {
   displayName: string;
   type: 'passive';
   description: string;
-  damage?: readonly [number, number, number];
 } & Omit<PokemonEffect, 'onMoveUse' | 'onRoundEnd'>;

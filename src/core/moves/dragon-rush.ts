@@ -9,40 +9,46 @@ import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
 /**
+ * A wide line from user to target
+ */
+const getAOE = (targetCoords: Coords, myCoords: Coords) => {
+  return interpolateLineAOE(myCoords, targetCoords, { width: 3 });
+};
+
+const getTarget = (board: CombatBoard, user: Coords) => {
+  return optimiseAOE({
+    board,
+    user,
+    range: 99,
+    getAOE,
+    targetting: 'ground',
+    needsEmpty: true,
+  });
+};
+
+const defenseStat = 'defense' as const;
+const damage = [500, 800, 1300];
+
+/**
  * Dragon Rush - Gible line's move
  *
  * Dashes behind / next to the furthest enemy, dealing damage to every target hit
  */
-const move = {
+export const dragonRush = {
   displayName: 'Dragon Rush',
   type: 'active',
   cost: 18,
   startingPP: 10,
-  damage: [500, 800, 1300],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'ground',
   get description() {
-    return `{{user}} charges, dashing behind the furthest enemy. It deals ${this.damage.join(
+    return `{{user}} charges, dashing behind the furthest enemy. It deals ${damage.join(
       '/'
     )} damage to every enemy it passes through.`;
   },
   range: 99,
-  getTarget(board: CombatBoard, user: Coords) {
-    return optimiseAOE({
-      board,
-      user,
-      range: 99,
-      getAOE: this.getAOE,
-      targetting: 'ground',
-      needsEmpty: true,
-    });
-  },
-  /**
-   * A wide line from user to target
-   */
-  getAOE(targetCoords: Coords, myCoords: Coords) {
-    return interpolateLineAOE(myCoords, targetCoords, { width: 3 });
-  },
+  getAOE,
+  getTarget,
   use({
     scene,
     board,
@@ -78,16 +84,16 @@ const move = {
         let realTarget: Coords | undefined = targetCoords;
         // if target is occupied, find another target
         if (board[realTarget.x][realTarget.y] !== undefined) {
-          realTarget = this.getTarget(board, user);
+          realTarget = getTarget(board, user);
           if (!realTarget) {
             onComplete();
             return;
           }
         }
         scene.movePokemon(userCoords, realTarget, onComplete);
-        scene.causeAOEDamage(user, this.getAOE(realTarget, userCoords), {
-          damage: this.damage[user.basePokemon.stage - 1],
-          defenseStat: this.defenseStat,
+        scene.causeAOEDamage(user, getAOE(realTarget, userCoords), {
+          damage: damage[user.basePokemon.stage - 1],
+          defenseStat,
         });
         // reset target after movement
         user.currentTarget = undefined;
@@ -95,6 +101,4 @@ const move = {
       delay: 250,
     });
   },
-} as const;
-
-export const dragonRush: Move = move;
+} as const satisfies Move;

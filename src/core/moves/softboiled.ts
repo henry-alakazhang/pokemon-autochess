@@ -6,6 +6,8 @@ import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const healing = [200, 350, 550];
+
 /**
  * Softboiled, Blissey line's move
  *
@@ -13,15 +15,14 @@ import * as Tweens from '../tweens';
  *
  * TODO: actually make it target the lowest-health rather than just any low-health
  */
-const move = {
+export const softboiled = {
   displayName: 'Softboiled',
   type: 'active',
   cost: 14,
   startingPP: 4,
-  damage: [200, 350, 550],
   targetting: 'unit',
   get description() {
-    return `{{user}} throws an egg to the lowest-health ally that that heals it for 20% of their missing HP plus ${this.damage.join(
+    return `{{user}} throws an egg to the lowest-health ally that that heals it for 20% of their missing HP plus ${healing.join(
       '/'
     )}`;
   },
@@ -52,7 +53,7 @@ const move = {
             .on(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
               target.heal(
                 // move flat healing
-                this.damage[user.basePokemon.stage - 1] +
+                healing[user.basePokemon.stage - 1] +
                   // plus 20% missing health
                   (target.maxHP - target.currentHP) * 0.2
               );
@@ -63,6 +64,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const softboiled: Move = move;
+} as const satisfies Move;

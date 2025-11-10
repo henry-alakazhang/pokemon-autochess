@@ -6,22 +6,22 @@ import {
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
+const bonusPP = [5, 10, 50];
+
 /**
  * Clone - Mewtwo's move
  *
  * Copies members of the enemy team to fight for you
  */
-const move = {
+export const clone = {
   displayName: 'Clone',
   type: 'active',
   cost: 32,
   startingPP: 18,
   range: 99,
   targetting: 'unit',
-  // amount of PP to grant the clone
-  damage: [5, 10, 50],
   get description() {
-    return `{{user}} clones a random enemy, with ${this.damage.join(
+    return `{{user}} clones a random enemy, with ${bonusPP.join(
       '/'
     )} bonus PP.`;
   },
@@ -48,10 +48,8 @@ const move = {
       target.basePokemon.name
     );
     newPokemon.owner = user;
-    newPokemon.addPP(this.damage[user.basePokemon.stage - 1]);
+    newPokemon.addPP(bonusPP[user.basePokemon.stage - 1]);
     scene.setTurn(newPokemon);
     onComplete();
   },
-} as const;
-
-export const clone: Move = move;
+} as const satisfies Move;

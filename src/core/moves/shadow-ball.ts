@@ -5,21 +5,23 @@ import {
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'specDefense' as const;
+const damage = [350, 550, 900];
+
 /**
  * Shadow Ball - Gastly line's move
  *
  * Fires a shadowy ball forward that damages and reduces the Special Defense of units hit.
  */
-const move = {
+export const shadowBall = {
   displayName: 'Shadow Ball',
   type: 'active',
   cost: 20,
   startingPP: 10,
-  damage: [350, 550, 900],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} hurls a shadowy blob in a straight line, dealing ${this.damage.join(
+    return `{{user}} hurls a shadowy blob in a straight line, dealing ${damage.join(
       '/'
     )} damage to every enemy hit and sharply lowering their Sp. Defense for 8 seconds.`;
   },
@@ -73,8 +75,8 @@ const move = {
                 user,
                 target,
                 {
-                  damage: this.damage[user.basePokemon.stage - 1],
-                  defenseStat: this.defenseStat,
+                  damage: damage[user.basePokemon.stage - 1],
+                  defenseStat,
                 },
                 { isAOE: true }
               );
@@ -95,6 +97,4 @@ const move = {
         });
       });
   },
-} as const;
-
-export const shadowBall: Move = move;
+} as const satisfies Move;

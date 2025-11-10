@@ -4,22 +4,22 @@ import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
+const healPercent = [15, 20, 33];
+
 /**
  * Teleport - Abra line's move
  *
  * Teleports to a random spot on the grid, healing and dropping aggro.
  */
-const move = {
+export const teleport = {
   displayName: 'Teleport',
   type: 'active',
   cost: 28,
   startingPP: 4,
   range: 1,
   targetting: 'ground',
-  // actually heal %
-  damage: [15, 20, 33],
   get description() {
-    return `{{user}} teleports to a random spot on the grid, healing for ${this.damage.join(
+    return `{{user}} teleports to a random spot on the grid, healing for ${healPercent.join(
       '/'
     )}% missing HP and dropping aggro.`;
   },
@@ -49,7 +49,7 @@ const move = {
         scene.movePokemon(userCoords, emptySpaces[pick], () => {
           user.heal(
             ((user.maxHP - user.currentHP) *
-              this.damage[user.basePokemon.stage - 1]) /
+              healPercent[user.basePokemon.stage - 1]) /
               100
           );
           // reset user targetting
@@ -66,6 +66,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const teleport: Move = move;
+} as const satisfies Move;
