@@ -19,7 +19,7 @@ const getAOE = (coords: Coords) => {
 };
 
 const defenseStat = 'specDefense' as const;
-const damage = [400, 750, 100];
+const damage = [400, 750, 1000];
 
 /**
  * Razor Wind - Shiftry line's move
@@ -39,7 +39,7 @@ export const razorWind = {
   get description() {
     return `{{user}} whips up a whirlwind over the fastest enemy. After 2 seconds, the whirlwind deals ${damage.join(
       '/'
-    )} damage over 2 seconds to any enemies caught i it.`;
+    )} damage over 2 seconds to any enemies caught in it.`;
   },
   range: 99,
   getAOE,

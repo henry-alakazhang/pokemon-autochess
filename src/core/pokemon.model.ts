@@ -851,7 +851,6 @@ const rawPokemonData = {
       displayName: 'Splash',
       type: 'passive',
       description: `{{user}} flops around to no effect at all. It can't attack.`,
-      values: [],
     },
     name: 'magikarp',
     displayName: 'Magikarp',
