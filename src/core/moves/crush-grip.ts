@@ -3,42 +3,45 @@ import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+// target + adjacent Pokemon
+const getAOE = (targetCoords: Coords) => {
+  return [
+    targetCoords,
+    { x: targetCoords.x + 1, y: targetCoords.y },
+    { x: targetCoords.x - 1, y: targetCoords.y },
+    { x: targetCoords.x, y: targetCoords.y + 1 },
+    { x: targetCoords.x, y: targetCoords.y - 1 },
+  ];
+};
+
+// regigigas has 3-9 stages based on total stage level of pivots
+//              3   4   5   6   7   8   9
+const damage = [40, 44, 48, 52, 56, 60, 486];
+
 /**
  * Crush Grip, Regigigas (Mech)'s move
  *
  * Slams a target, dealing % MAX HP damage to it and adjacent enemies.
  */
-const move = {
+export const crushGrip = {
   displayName: 'Crush Grip',
   type: 'active',
   cost: 30,
   startingPP: 0,
-  // regigigas has 3-9 stages based on total stage level of pivots
-  //              3   4   5   6   7   8   9
-  damagePercent: [40, 44, 48, 52, 56, 60, 486],
   defenseStat: 'defense',
   targetting: 'ground',
   get description() {
-    return `{{user}} crushes a nearby group of enemies under its grip, dealing damage equal to ${this.damagePercent.join(
+    return `{{user}} crushes a nearby group of enemies under its grip, dealing damage equal to ${damage.join(
       '/'
     )}% of their max HP`;
   },
-  // target + adjacent Pokemon
-  getAOE(targetCoords: Coords) {
-    return [
-      targetCoords,
-      { x: targetCoords.x + 1, y: targetCoords.y },
-      { x: targetCoords.x - 1, y: targetCoords.y },
-      { x: targetCoords.x, y: targetCoords.y + 1 },
-      { x: targetCoords.x, y: targetCoords.y - 1 },
-    ];
-  },
+  getAOE,
   getTarget(board: CombatBoard, user: Coords) {
     return optimiseAOE({
       board,
       user,
       range: 2,
-      getAOE: this.getAOE,
+      getAOE,
       targetting: 'ground',
       needsEmpty: false,
     });
@@ -59,16 +62,13 @@ const move = {
       duration: 400,
       onComplete: () => {
         onComplete();
-        scene.causeAOEDamage(user, this.getAOE(targetCoords), (defender) => ({
+        scene.causeAOEDamage(user, getAOE(targetCoords), (defender) => ({
           damage: Math.round(
-            (this.damagePercent[user.synergyState.pivot - 3] * defender.maxHP) /
-              100
+            (damage[user.synergyState.pivot - 3] * defender.maxHP) / 100
           ),
-          defenseStat: this.defenseStat,
+          defenseStat: crushGrip.defenseStat,
         }));
       },
     });
   },
-} as const;
-
-export const crushGrip: Move = move;
+} as const satisfies Move;

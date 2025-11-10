@@ -7,37 +7,40 @@ import {
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const getAOE = ({ x, y }: Coords) => {
+  return [
+    { x, y },
+    { x, y: y + 1 },
+    { x, y: y + 1 },
+    { x: x + 1, y },
+    { x: x + 1, y: y + 1 },
+    { x: x + 1, y: y - 1 },
+    { x: x - 1, y },
+    { x: x - 1, y: y + 1 },
+    { x: x - 1, y: y - 1 },
+  ];
+};
+
 /**
  * King's Shield - Honedge line's move
  *
  * Gains some damage reduction for 3 seconds, then transforms into Sword Stance and buff self bigly
  */
-const move = {
+const damageReduction = [70, 80, 90];
+
+export const kingsShield = {
   displayName: "King's Shield",
   type: 'active',
   cost: 32,
   startingPP: 28,
   range: 1,
   targetting: 'unit',
-  damage: [70, 80, 90],
   get description() {
-    return `{{user}} guards for 2 seconds, reducing incoming damage by ${this.damage.join(
+    return `{{user}} guards for 2 seconds, reducing incoming damage by ${damageReduction.join(
       '/'
     )}%. Afterwards, it lashes out, lowering Attack of nearby enemies for 8 seconds and raising its own Attack and Defense for each enemy hit.`;
   },
-  getAOE({ x, y }: Coords) {
-    return [
-      { x, y },
-      { x, y: y + 1 },
-      { x, y: y + 1 },
-      { x: x + 1, y },
-      { x: x + 1, y: y + 1 },
-      { x: x + 1, y: y - 1 },
-      { x: x - 1, y },
-      { x: x - 1, y: y + 1 },
-      { x: x - 1, y: y - 1 },
-    ];
-  },
+  getAOE,
   use({
     scene,
     board,
@@ -50,7 +53,7 @@ const move = {
     user.addStatus(
       'percentDamageReduction',
       2000,
-      this.damage[user.basePokemon.stage - 1]
+      damageReduction[user.basePokemon.stage - 1]
     );
 
     // graphics: two crossed swords
@@ -119,7 +122,7 @@ const move = {
         }
 
         // get all valid targets
-        const targets = this.getAOE(currentCoords)
+        const targets = getAOE(currentCoords)
           .filter((coords) => inBounds(board, coords))
           .map((coords) => board[coords.x][coords.y])
           .filter(isDefined);
@@ -146,6 +149,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const kingsShield: Move = move;
+} as const satisfies Move;

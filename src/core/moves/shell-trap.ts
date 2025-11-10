@@ -4,25 +4,27 @@ import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'specDefense' as const;
+const damage = [150, 200, 300];
+const percentReflect = [15, 25, 776];
+
 /**
  * Shell Trap - Turtonator's move
  *
  * Reduces damage taken and reflects damage at enemies during the duration
  */
-const move = {
+export const shellTrap = {
   displayName: 'Shell Trap',
   type: 'active',
   cost: 20,
   startingPP: 16,
   range: 1,
   targetting: 'ground',
-  damage: [150, 200, 300],
-  percentReflect: [15, 25, 776],
-  defenseStat: 'specDefense',
+  defenseStat,
   get description() {
-    return `{{user}} shields itself, reducing all incoming damage by 40% for 6 seconds. When hit by an attack, {{user}} erupts to deal ${this.damage.join(
+    return `{{user}} shields itself, reducing all incoming damage by 40% for 6 seconds. When hit by an attack, {{user}} erupts to deal ${damage.join(
       '/'
-    )} damage plus ${this.percentReflect.join(
+    )} damage plus ${percentReflect.join(
       '/'
     )}% of the damage taken to all adjacent enemies.`;
   },
@@ -84,10 +86,10 @@ const move = {
             possibleTargets,
             {
               damage:
-                this.damage[user.basePokemon.stage - 1] +
+                damage[user.basePokemon.stage - 1] +
                 amountTaken *
-                  (this.percentReflect[user.basePokemon.stage - 1] / 100),
-              defenseStat: this.defenseStat,
+                  (percentReflect[user.basePokemon.stage - 1] / 100),
+              defenseStat,
             },
             { triggerEvents: false }
           );
@@ -105,6 +107,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const shellTrap: Move = move;
+} as const satisfies Move;

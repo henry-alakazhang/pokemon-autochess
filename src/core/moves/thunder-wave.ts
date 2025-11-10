@@ -1,7 +1,7 @@
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
-const move = {
+export const thunderWave = {
   displayName: 'Thunder Wave',
   type: 'active',
   cost: 16,
@@ -43,6 +43,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const thunderWave: Move = move;
+} as const satisfies Move;

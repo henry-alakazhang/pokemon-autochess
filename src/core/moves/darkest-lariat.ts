@@ -2,26 +2,28 @@ import { PokemonAnimationType } from '../../objects/pokemon.object';
 import { getFacing } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const damage = [150, 250, 400];
+
 /**
  * Darkest Lariat - Litten line's move
  *
  * Damages surrounding targets, ignoring defense. Should have a low casting cost.
  */
-const move = {
+export const darkestLariat = {
   displayName: 'Darkest Lariat',
   type: 'active',
   cost: 6,
   startingPP: 2,
   range: 1,
   targetting: 'unit',
-  damage: [150, 250, 400],
-  defenseStat: 'defense',
+  defenseStat,
   get description() {
-    return `{{user}} spins with both arms, hitting all adjacent enemies for ${this.damage.join(
+    return `{{user}} spins with both arms, hitting all adjacent enemies for ${damage.join(
       '/'
-    )} physical damage, plus ${this.damage
+    )} physical damage, plus ${damage
       .map((d) => d * 0.5)
-      .join('/')} damage that ignores defense. Heals for ${this.damage
+      .join('/')} damage that ignores defense. Heals for ${damage
       .map((d) => d * 0.5)
       .join('/')}`;
   },
@@ -51,7 +53,7 @@ const move = {
         user.playAnimation(directions[index]);
       },
       onComplete: () => {
-        user.heal(this.damage[user.basePokemon.stage - 1] * 0.5);
+        user.heal(damage[user.basePokemon.stage - 1] * 0.5);
         onComplete();
       },
     });
@@ -62,8 +64,8 @@ const move = {
       user,
       possibleTargets,
       {
-        damage: this.damage[user.basePokemon.stage - 1],
-        defenseStat: this.defenseStat,
+        damage: damage[user.basePokemon.stage - 1],
+        defenseStat,
       },
       config
     );
@@ -72,11 +74,9 @@ const move = {
       user,
       possibleTargets,
       {
-        trueDamage: this.damage[user.basePokemon.stage - 1] * 0.5,
+        trueDamage: damage[user.basePokemon.stage - 1] * 0.5,
       },
       config
     );
   },
-} as const;
-
-export const darkestLariat: Move = move;
+} as const satisfies Move;

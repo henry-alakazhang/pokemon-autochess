@@ -2,29 +2,31 @@ import { getNearestTarget } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'specDefense' as const;
+const damage = [140, 240, 380];
+
 /**
  * Egg Barrage - Exeggcute line's move
  *
  * Fires a barrage of 5 egg bombs at the nearest Pokemon,
  * dealing damage to it and surrounding enemies.
  */
-const move = {
+export const eggBarrage = {
   displayName: 'Egg Barrage',
   type: 'active',
   cost: 10,
   startingPP: 4,
-  damage: [140, 240, 380],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} rapidly fires 5 eggs at the nearest enemy, each dealing ${this.damage.join(
+    return `{{user}} rapidly fires 5 eggs at the nearest enemy, each dealing ${damage.join(
       '/'
     )} damage to the target and half to adjacent enemies.`;
   },
   range: 99,
   async use({ scene, user, userCoords, onComplete }: MoveConfig<'unit'>) {
     user.addStatus('moveIsActive', 1000);
-    const baseDamage = this.damage[user.basePokemon.stage - 1];
+    const baseDamage = damage[user.basePokemon.stage - 1];
     const shootEgg = () => {
       // fetch latest board to include pokemon that died during attack
       const { board } = scene;
@@ -56,7 +58,7 @@ const move = {
             targetPokemon,
             {
               damage: baseDamage,
-              defenseStat: this.defenseStat,
+              defenseStat,
             },
             { isAOE: true }
           );
@@ -69,7 +71,7 @@ const move = {
           ];
           scene.causeAOEDamage(user, possibleTargets, {
             damage: baseDamage / 2,
-            defenseStat: this.defenseStat,
+            defenseStat,
           });
         }
       );
@@ -92,6 +94,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const eggBarrage: Move = move;
+} as const satisfies Move;

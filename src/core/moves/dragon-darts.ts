@@ -8,21 +8,23 @@ import { shuffle } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'defense' as const;
+const damage = [200, 275, 400];
+
 /**
  * Dragon Darts - Dreepy line's move
  *
  * Throws some Dreepys at random targets. Fires more with each use.
  */
-const move = {
+export const dragonDarts = {
   displayName: 'Dragon Darts',
   type: 'active',
   cost: 5,
   startingPP: 2,
-  damage: [200, 275, 400],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} launches a Dreepy dart at a single random enemy, dealing ${this.damage.join(
+    return `{{user}} launches a Dreepy dart at a single random enemy, dealing ${damage.join(
       '/'
     )} damage. Fires an extra Dreepy with each use.`;
   },
@@ -61,14 +63,12 @@ const move = {
         },
         () => {
           scene.causeDamage(user, target, {
-            damage: this.damage[user.basePokemon.stage - 1],
-            defenseStat: this.defenseStat,
+            damage: damage[user.basePokemon.stage - 1],
+            defenseStat,
           });
         }
       );
     });
     onComplete();
   },
-} as const;
-
-export const dragonDarts: Move = move;
+} as const satisfies Move;

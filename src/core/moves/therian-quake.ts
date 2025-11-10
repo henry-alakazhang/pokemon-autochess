@@ -12,20 +12,44 @@ import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
 /**
+ * A 2-radius "circle" AOE
+ * ordered inside -> out because `use` splices them
+ */
+const getAOE = ({ x, y }: Coords) => {
+  return [
+    { x: x + 1, y },
+    { x: x - 1, y },
+    { x, y: y + 1 },
+    { x, y: y - 1 },
+    { x: x - 2, y },
+    { x: x + 2, y },
+    { x, y: y + 2 },
+    { x, y: y - 2 },
+    { x: x + 1, y: y + 1 },
+    { x: x + 1, y: y - 1 },
+    { x: x - 1, y: y + 1 },
+    { x: x - 1, y: y - 1 },
+  ];
+};
+
+const defenseStat = 'defense' as const;
+const damage = [300, 500, 6450];
+
+/**
  * Therian Quake - Landorus's move
  *
  * Transforms into Therian Forme and leaps to the enemy backline to damage an area, lowering attack.
  */
-const move = {
+
+export const therianQuake = {
   displayName: 'Therian Quake',
   type: 'active',
   cost: 32,
   startingPP: 24,
-  damage: [300, 500, 6450],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'ground',
   get description() {
-    return `{{user}} leaps into the air and transforms into its Therian Forme. Then it slams down, dealing ${this.damage.join(
+    return `{{user}} leaps into the air and transforms into its Therian Forme. Then it slams down, dealing ${damage.join(
       '/'
     )} damage to a large area and Intimidating them, lowering their Attack for 8 seconds. Does more damage when used in Therian Forme.`;
   },
@@ -35,31 +59,12 @@ const move = {
       board,
       user,
       range: 99,
-      getAOE: this.getAOE,
+      getAOE,
       targetting: 'ground',
       needsEmpty: true,
     });
   },
-  /**
-   * A 2-radius "circle" AOE
-   * ordered inside -> out because `use` splices them
-   */
-  getAOE({ x, y }: Coords) {
-    return [
-      { x: x + 1, y },
-      { x: x - 1, y },
-      { x, y: y + 1 },
-      { x, y: y - 1 },
-      { x: x - 2, y },
-      { x: x + 2, y },
-      { x, y: y + 2 },
-      { x, y: y - 2 },
-      { x: x + 1, y: y + 1 },
-      { x: x + 1, y: y - 1 },
-      { x: x - 1, y: y + 1 },
-      { x: x - 1, y: y - 1 },
-    ];
-  },
+  getAOE,
   use({
     scene,
     board,
@@ -74,7 +79,7 @@ const move = {
         board,
         user,
         range: 99,
-        getAOE: this.getAOE,
+        getAOE,
         targetting: 'ground',
         needsEmpty: true,
       });
@@ -97,7 +102,7 @@ const move = {
       {
         duration: getGridDistance(userCoords, realTarget) * 200,
         onComplete: () => {
-          let baseDamage = this.damage[user.basePokemon.stage - 1];
+          let baseDamage = damage[user.basePokemon.stage - 1];
           if (user.texture.key === 'landorus') {
             // if not transformed yet, transform into Landorus Therian
             user.setTexture('landorustherian');
@@ -141,7 +146,7 @@ const move = {
                     possibleTarget,
                     {
                       damage: baseDamage,
-                      defenseStat: this.defenseStat,
+                      defenseStat,
                     },
                     { isAOE: true }
                   );
@@ -150,7 +155,7 @@ const move = {
               };
 
               // damage is dealt in two waves.
-              const allTargets = this.getAOE(targetCoords);
+              const allTargets = getAOE(targetCoords);
               // first adjacent tiles...
               allTargets.splice(0, 4).forEach(applyToCoords);
               // then, after those finish playing, tiles one further out
@@ -166,6 +171,4 @@ const move = {
       }
     );
   },
-} as const;
-
-export const therianQuake: Move = move;
+} as const satisfies Move;

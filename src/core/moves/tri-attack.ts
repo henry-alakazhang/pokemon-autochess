@@ -8,6 +8,37 @@ import { getCoordinatesForMainboard } from '../../scenes/game/game.helpers';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'specDefense' as const;
+const damage = [240, 360, 640];
+const range = 5;
+
+/**
+ * 3x3 area centered on a location
+ */
+const getAOE = ({ x, y }: Coords) => {
+  return [
+    { x, y },
+    { x: x + 1, y },
+    { x: x - 1, y },
+    { x, y: y + 1 },
+    { x, y: y - 1 },
+    { x: x + 1, y: y + 1 },
+    { x: x + 1, y: y - 1 },
+    { x: x - 1, y: y + 1 },
+    { x: x - 1, y: y - 1 },
+  ];
+};
+
+const getTarget = (board: CombatBoard, user: Coords) => {
+  return optimiseAOE({
+    board,
+    user,
+    range,
+    getAOE,
+    targetting: 'unit',
+  });
+};
+
 /**
  * Tri-Attack, Porygon line's move
  *
@@ -16,45 +47,21 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: make the projectile animated
  */
-const move = {
+export const triAttack = {
   displayName: 'Tri-Attack',
   type: 'active',
   cost: 24,
   startingPP: 20,
-  damage: [240, 360, 640],
-  defenseStat: 'specDefense',
+  defenseStat,
   targetting: 'ground',
   get description() {
-    return `{{user}} flings a bomb at a single enemy that deals ${this.damage.join(
+    return `{{user}} flings a bomb at a single enemy that deals ${damage.join(
       '/'
     )} damage three times. The repeat explosions hit more enemies.`;
   },
-  range: 5,
-  getTarget(board: CombatBoard, user: Coords) {
-    return optimiseAOE({
-      board,
-      user,
-      range: this.range,
-      getAOE: this.getAOE,
-      targetting: 'unit',
-    });
-  },
-  /**
-   * 3x3 area centered on a location
-   */
-  getAOE({ x, y }: Coords) {
-    return [
-      { x, y },
-      { x: x + 1, y },
-      { x: x - 1, y },
-      { x, y: y + 1 },
-      { x, y: y - 1 },
-      { x: x + 1, y: y + 1 },
-      { x: x + 1, y: y - 1 },
-      { x: x - 1, y: y + 1 },
-      { x: x - 1, y: y - 1 },
-    ];
-  },
+  range,
+  getTarget,
+  getAOE,
   use({ scene, user, targetCoords, onComplete }: MoveConfig<'ground'>) {
     scene.add.tween({
       targets: [user],
@@ -84,8 +91,8 @@ const move = {
 
             // explosion 1: single target
             scene.causeAOEDamage(user, [targetCoords], {
-              damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: this.defenseStat,
+              damage: damage[user.basePokemon.stage - 1],
+              defenseStat,
             });
 
             // explosion 2: 9 squares
@@ -99,9 +106,9 @@ const move = {
                   duration: 150,
                   ease: Phaser.Math.Easing.Quadratic.In,
                   onComplete: () => {
-                    scene.causeAOEDamage(user, this.getAOE(targetCoords), {
-                      damage: this.damage[user.basePokemon.stage - 1],
-                      defenseStat: this.defenseStat,
+                    scene.causeAOEDamage(user, getAOE(targetCoords), {
+                      damage: damage[user.basePokemon.stage - 1],
+                      defenseStat,
                     });
                   },
                 });
@@ -120,9 +127,9 @@ const move = {
                   duration: 150,
                   ease: Phaser.Math.Easing.Quadratic.In,
                   onComplete: () => {
-                    scene.causeAOEDamage(user, this.getAOE(targetCoords), {
-                      damage: this.damage[user.basePokemon.stage - 1],
-                      defenseStat: this.defenseStat,
+                    scene.causeAOEDamage(user, getAOE(targetCoords), {
+                      damage: damage[user.basePokemon.stage - 1],
+                      defenseStat,
                     });
                   },
                 });
@@ -145,6 +152,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const triAttack: Move = move;
+} as const satisfies Move;

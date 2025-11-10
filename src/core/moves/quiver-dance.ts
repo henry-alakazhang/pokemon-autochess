@@ -8,7 +8,7 @@ import * as Tweens from '../tweens';
  *
  * Boots special attack, special defense and speed for the rest of the battle
  */
-const move = {
+export const quiverDance = {
   displayName: 'Quiver Dance',
   type: 'active',
   cost: 99,
@@ -55,6 +55,4 @@ const move = {
       });
     });
   },
-} as const;
-
-export const quiverDance: Move = move;
+} as const satisfies Move;

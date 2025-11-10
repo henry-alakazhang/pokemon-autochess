@@ -6,6 +6,9 @@ import {
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const bonusDamage = [400, 550, 1400];
+
 /**
  * Ice Shard - Weavile line's move
  *
@@ -13,16 +16,15 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: make this just an auto-crit when that exists
  */
-const move = {
+export const iceShard = {
   displayName: 'Ice Shard',
   type: 'active',
   cost: 4,
   startingPP: 2,
-  damage: [400, 550, 1400],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'ground',
   get description() {
-    return `{{user}} dashes to the lowest-health enemy and attacks immediately for a guaranteed critical, plus ${this.damage.join(
+    return `{{user}} dashes to the lowest-health enemy and attacks immediately for a guaranteed critical, plus ${bonusDamage.join(
       '/'
     )} damage.`;
   },
@@ -93,8 +95,8 @@ const move = {
         scene.basicAttack(user, weakestPokemon, {
           onHit: () => {
             const action = {
-              damage: this.damage[user.basePokemon.stage - 1],
-              defenseStat: this.defenseStat,
+              damage: bonusDamage[user.basePokemon.stage - 1],
+              defenseStat,
             };
             scene.causeDamage(user, target, action);
           },
@@ -110,6 +112,4 @@ const move = {
       }
     });
   },
-} as const;
-
-export const iceShard: Move = move;
+} as const satisfies Move;

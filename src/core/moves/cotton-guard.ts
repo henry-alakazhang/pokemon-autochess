@@ -3,22 +3,22 @@ import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const damageReduction = [40, 50, 60];
+
 /**
  * Cotton Guard - Dubwool line's move
  *
  * Temporarily reduces all incoming damage and ignores status effects
  */
-const move = {
+export const cottonGuard = {
   displayName: 'Cotton Guard',
   type: 'active',
   cost: 16,
   startingPP: 8,
   range: 1,
   targetting: 'ground',
-  // actually effectiveness haha
-  damage: [40, 50, 60],
   get description() {
-    return `{{user}} reduces all incoming damage by ${this.damage.join(
+    return `{{user}} reduces all incoming damage by ${damageReduction.join(
       '/'
     )}% and ignores status effects for 6 seconds.`;
   },
@@ -42,7 +42,7 @@ const move = {
         .addStatus(
           'percentDamageReduction',
           DURATION,
-          this.damage[user.basePokemon.stage - 1]
+          damageReduction[user.basePokemon.stage - 1]
         )
         .addStatus('statusImmunity', DURATION);
       cotton.play('cotton-guard-spin');
@@ -62,6 +62,4 @@ const move = {
       });
     });
   },
-} as const;
-
-export const cottonGuard: Move = move;
+} as const satisfies Move;

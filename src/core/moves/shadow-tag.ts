@@ -5,12 +5,10 @@ import { Move } from '../move.model';
  *
  * Makes attacks undodgable.
  */
-const move = {
+export const shadowTag = {
   displayName: 'Shadow Tag',
   type: 'passive',
   description:
     "{{user}} attacks a Pokemon's shadow, so its attacks cannot be dodged.",
   // Actually does nothing
-} as const;
-
-export const shadowTag: Move = move;
+} as const satisfies Move;

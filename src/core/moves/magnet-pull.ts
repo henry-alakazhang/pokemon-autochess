@@ -6,22 +6,24 @@ import {
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'specDefense' as const;
+const damage = [300, 450, 700];
+
 /**
  * Magnet Pull - Magnezone line's signature move
  *
  * Deals damage to and pulls the furthest enemy to the user.
  */
-const move = {
+export const magnetPull = {
   displayName: 'Magnet Pull',
   type: 'active',
   cost: 20,
   startingPP: 20,
   targetting: 'unit',
   range: 100,
-  defenseStat: 'specDefense',
-  damage: [300, 450, 700],
+  defenseStat,
   get description() {
-    return `{{user}} magnetizes the furthest enemy, dealing ${this.damage.join(
+    return `{{user}} magnetizes the furthest enemy, dealing ${damage.join(
       '/'
     )} damage. It is pulled next to {{user}} and paralysed for 2 seconds.`;
   },
@@ -54,8 +56,8 @@ const move = {
     )[0];
 
     scene.causeDamage(user, target, {
-      damage: this.damage[user.basePokemon.stage - 1],
-      defenseStat: this.defenseStat,
+      damage: damage[user.basePokemon.stage - 1],
+      defenseStat,
     });
     // paralyse
     target.addStatus('paralyse', 2000);
@@ -70,6 +72,4 @@ const move = {
       });
     }
   },
-} as const;
-
-export const magnetPull: Move = move;
+} as const satisfies Move;

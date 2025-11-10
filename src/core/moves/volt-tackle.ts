@@ -6,6 +6,9 @@ import {
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const damage = [400, 650, 900];
+
 /**
  * Volt Tackle - Pikachu line's move
  *
@@ -14,16 +17,15 @@ import { Move, MoveConfig } from '../move.model';
  *
  * TODO: differentiate this from Brave Bird
  */
-const move = {
+export const voltTackle = {
   displayName: 'Volt Tackle',
   type: 'active',
   cost: 10,
   startingPP: 4,
-  damage: [400, 650, 900],
-  defenseStat: 'defense',
+  defenseStat,
   targetting: 'unit',
   get description() {
-    return `{{user}} tackles a single target, dealing ${this.damage.join(
+    return `{{user}} tackles a single target, dealing ${damage.join(
       '/'
     )} damage. {{user}} can hurt itself.`;
   },
@@ -45,17 +47,17 @@ const move = {
         ease: 'Power1',
         onYoyo: () => {
           const action = {
-            damage: this.damage[user.basePokemon.stage - 1],
-            defenseStat: this.defenseStat,
+            damage: damage[user.basePokemon.stage - 1],
+            defenseStat,
           };
-          const damage = calculateDamage(user, target, action);
+          const calculatedDamage = calculateDamage(user, target, action);
           scene.causeDamage(user, target, action);
-          user.takeDamage(Math.floor(damage / 3), { triggerEvents: false });
+          user.takeDamage(Math.floor(calculatedDamage / 3), {
+            triggerEvents: false,
+          });
           onComplete();
         },
       });
     });
   },
-} as const;
-
-export const voltTackle: Move = move;
+} as const satisfies Move;

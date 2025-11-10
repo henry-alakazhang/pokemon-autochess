@@ -1,21 +1,22 @@
 import { Move, MoveConfig } from '../move.model';
 
+const secondHitDamagePercent = [66, 100, 150];
+
 /**
  * Twineedle - Beedrill line's passive move
  *
  * Every Nth attack hits twice
  */
-const move = {
+export const twineedle = {
   displayName: 'Twineedle',
   type: 'active',
   // slight hack: this move is a move that "casts" every attack instead of triggering
   cost: 0,
   startingPP: 0,
   range: 3,
-  damage: [66, 100, 150],
   targetting: 'unit',
   get description() {
-    return `{{user}} strikes twice every second attack. The second hit deals ${this.damage.join(
+    return `{{user}} strikes twice every second attack. The second hit deals ${secondHitDamagePercent.join(
       '/'
     )}% damage.`;
   },
@@ -45,6 +46,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const twineedle: Move = move;
+} as const satisfies Move;

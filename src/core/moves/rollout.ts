@@ -2,23 +2,25 @@ import { isDefined } from '../../helpers';
 import { inBounds } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
 
+const defenseStat = 'defense' as const;
+const totalDamage = [500, 750, 1250];
+
 /**
  * Rollout - Geodude line's move
  *
  * Spins, reducing damage taken and damaging adjacent enemies over time.
  * aka. Garen / Juggernaut
  */
-const move = {
+export const rollout = {
   displayName: 'Rollout',
   type: 'active',
   cost: 18,
   startingPP: 16,
   range: 1,
   targetting: 'unit',
-  damage: [500, 750, 1250],
-  defenseStat: 'defense',
+  defenseStat,
   get description() {
-    return `{{user}} curls up and spins for 5 seconds, dealing ${this.damage.join(
+    return `{{user}} curls up and spins for 5 seconds, dealing ${totalDamage.join(
       '/'
     )} damage to adjacent enemies over time, and reducing incoming damage by 30%.`;
   },
@@ -59,8 +61,8 @@ const move = {
               user,
               target,
               {
-                damage: this.damage[user.basePokemon.stage - 1] / 10,
-                defenseStat: this.defenseStat,
+                damage: totalDamage[user.basePokemon.stage - 1] / 10,
+                defenseStat,
               },
               { isAOE: true }
             );
@@ -84,6 +86,4 @@ const move = {
       },
     });
   },
-} as const;
-
-export const rollout: Move = move;
+} as const satisfies Move;

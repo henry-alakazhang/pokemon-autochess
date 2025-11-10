@@ -7,31 +7,36 @@ import {
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
 
+const getAOE = (targetCoords: Coords, myCoords: Coords): Coords[] => {
+  const dx = targetCoords.x - myCoords.x;
+  const dy = targetCoords.y - myCoords.y;
+  // target and one behind it
+  return [targetCoords, { x: targetCoords.x + dx, y: targetCoords.y + dy }];
+};
+
+const defenseStat = 'defense' as const;
+const damage = [400, 700, 1400];
+
 /**
  * Stone Edge - Larvitar line's move
  *
  * 2-tile piercing rock attack that deals more damage to a single target
  */
-const move = {
+
+export const stoneEdge = {
   displayName: 'Stone Edge',
   type: 'active',
   cost: 10,
   startingPP: 2,
   range: 1,
   targetting: 'unit',
-  damage: [400, 700, 1400],
-  defenseStat: 'defense',
+  defenseStat,
   get description() {
-    return `{{user}} pierces a single enemy with shards of stone, dealing ${this.damage.join(
+    return `{{user}} pierces a single enemy with shards of stone, dealing ${damage.join(
       '/'
     )} damage and hitting any enemy directly behind. Deals 50% more damage if it only hits one enemy.`;
   },
-  getAOE(targetCoords: Coords, myCoords: Coords): Coords[] {
-    const dx = targetCoords.x - myCoords.x;
-    const dy = targetCoords.y - myCoords.y;
-    // target and one behind it
-    return [targetCoords, { x: targetCoords.x + dx, y: targetCoords.y + dy }];
-  },
+  getAOE,
   use({
     scene,
     board,
@@ -63,12 +68,12 @@ const move = {
         // when the rocks pass through the targets
         scene.time.addEvent({
           callback: () => {
-            const targets = this.getAOE(targetCoords, userCoords)
+            const targets = getAOE(targetCoords, userCoords)
               .map((coords) => board[coords.x]?.[coords.y])
               .filter(isDefined)
               .filter((pokemon) => pokemon.side === getOppositeSide(user.side));
 
-            const rawBaseDamage = this.damage[user.basePokemon.stage - 1];
+            const rawBaseDamage = damage[user.basePokemon.stage - 1];
             // deal more damage if there's only one target
             const realBaseDamage =
               targets.length === 1 ? rawBaseDamage * 1.5 : rawBaseDamage;
@@ -77,7 +82,7 @@ const move = {
               targets,
               {
                 damage: realBaseDamage,
-                defenseStat: this.defenseStat,
+                defenseStat,
               },
               { canCrit: true }
             );
@@ -86,6 +91,4 @@ const move = {
         });
       });
   },
-} as const;
-
-export const stoneEdge: Move = move;
+} as const satisfies Move;

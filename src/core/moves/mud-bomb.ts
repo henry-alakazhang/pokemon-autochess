@@ -1,22 +1,24 @@
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
+const defenseStat = 'specDefense' as const;
+const damage = [200, 350, 650];
+
 /**
  * Mud Bomb - Mudkip line's move
  *
  * Damages a target and reduces its Speed temporarily. Damage splashes to nearby targets.
  */
-const move = {
+export const mudBomb = {
   displayName: 'Mud Bomb',
   type: 'active',
   cost: 24,
   startingPP: 12,
   range: 1,
   targetting: 'unit',
-  damage: [200, 350, 650],
-  defenseStat: 'specDefense',
+  defenseStat,
   get description() {
-    return `{{user}} launches a hard-packed mud ball at single enemy, dealing ${this.damage.join(
+    return `{{user}} launches a hard-packed mud ball at single enemy, dealing ${damage.join(
       '/'
     )} damage and slowing its Speed for 5 seconds. Adjacent enemies take half damage and aren't slowed.`;
   },
@@ -28,7 +30,7 @@ const move = {
     onComplete,
   }: MoveConfig<'unit'>) {
     await Tweens.hop(scene, { targets: [user] });
-    const baseDamage = this.damage[user.basePokemon.stage - 1];
+    const baseDamage = damage[user.basePokemon.stage - 1];
     // animation is a mud bomb dropping
     const bomb = scene.add.sprite(target.x, target.y - 70, 'mud-bomb');
     scene.add.tween({
@@ -52,7 +54,7 @@ const move = {
           target,
           {
             damage: baseDamage,
-            defenseStat: this.defenseStat,
+            defenseStat,
           },
           { isAOE: true }
         );
@@ -74,13 +76,11 @@ const move = {
         ];
         scene.causeAOEDamage(user, extraTargets, {
           damage: baseDamage / 2,
-          defenseStat: this.defenseStat,
+          defenseStat,
         });
 
         onComplete();
       },
     });
   },
-} as const;
-
-export const mudBomb: Move = move;
+} as const satisfies Move;
