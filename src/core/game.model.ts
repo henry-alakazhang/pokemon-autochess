@@ -14,34 +14,7 @@ import {
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { getCoordinatesForMainboard } from '../scenes/game/game.helpers';
 import { GameScene } from '../scenes/game/game.scene';
-
-export type Status =
-  | 'paralyse'
-  | 'sleep'
-  | 'blind'
-  | 'poison'
-  | 'percentDamageReduction'
-  | 'statusImmunity'
-  | 'immobile'
-  | 'movePowerBoost'
-  | 'ppReduction'
-  | 'healReduction'
-  | 'curse'
-  /** the user can't gain PP because their move is active right now */
-  | 'moveIsActive';
-
-// TODO: Don't hardcode negative statuses
-// Maybe create a model of statuses similar to synergies?
-export const NEGATIVE_STATUS: Status[] = [
-  'paralyse',
-  'sleep',
-  'blind',
-  'poison',
-  'immobile',
-  'ppReduction',
-  'healReduction',
-  'curse',
-];
+import { NEGATIVE_STATUS, Status } from './status.model';
 
 export type Type =
   | 'normal'
@@ -187,16 +160,6 @@ export type Synergy = {
   /** Amount of synergy required to trigger different levels */
   readonly thresholds: number[];
 } & Effect<{ count: number }>;
-
-/**
- * Model representing any effect that can be applied to a Pokemon.
- * This is a broad definition and includes any kind of buff
- * or debuff aside from stat alterations
- */
-export type StatusEffect = {
-  readonly name: string;
-  readonly isNegative: boolean;
-} & Effect;
 
 export function getSynergyTier(thresholds: number[], count: number) {
   let tier = thresholds.findIndex((threshold) => count < threshold);
@@ -1112,8 +1075,11 @@ opponents with reduced stats or status effects.
 
       const hasDebuff =
         Object.values(defender.statChanges).some((change) => change < 0) ||
-        Object.entries(defender.status).some(
-          ([name, status]) => status && NEGATIVE_STATUS.includes(name as Status)
+        Object.entries(defender.effects).some(
+          ([, effect]) => effect && effect.effect.isNegative
+        ) ||
+        Object.keys(defender.status).some((status) =>
+          NEGATIVE_STATUS.includes(status as Status)
         );
       if (hasDebuff) {
         const ppGain = tier === 1 ? 1 : tier === 2 ? 2 : 3;

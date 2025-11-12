@@ -1,5 +1,6 @@
-import { Effect, NEGATIVE_STATUS, Status } from '../core/game.model';
+import { Effect } from '../core/game.model';
 import { Pokemon, pokemonData, PokemonName } from '../core/pokemon.model';
+import { NEGATIVE_STATUS, Status, StatusEffect } from '../core/status.model';
 import { generateId, getBaseTexture } from '../helpers';
 import { boundRange } from '../math.helpers';
 import { Coords, getTurnDelay } from '../scenes/game/combat/combat.helpers';
@@ -119,10 +120,24 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   moveState: string | number;
   currentTarget?: PokemonObject;
 
+  /** Basic (negative) status effects */
   status: {
     [k in Status]?: {
       value?: number;
       duration: number;
+    };
+  } = {};
+
+  /**
+   * More complex effects applied similarly to statuses
+   *
+   * TODO: Migrate non-special statuses to this form.
+   */
+  private effects: {
+    [k: string]: {
+      effect: StatusEffect;
+      duration: number;
+      stacks: number;
     };
   } = {};
 
@@ -670,12 +685,31 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   /**
-   * Add a status with a given duration
-   *
-   * @param status Name of the status
-   * @param duration Duration (overrides existing ones)
-   * @param value Some associated value. Either a number, or a modifier function
-   * @returns
+   * Add a temporary passive effect to a Pokemon
+   */
+  public addEffect(
+    // TODO: figure out a way to type this?
+    key: string,
+    effect: StatusEffect,
+    duration: number
+  ): this {
+    if (effect.isNegative && this.status.statusImmunity) {
+      return this;
+    }
+
+    // Merge and override existing effect, and update its duration
+    this.effects[key] = {
+      ...(this.effects[key]?.effect ?? {}),
+      effect,
+      duration,
+      stacks: (this.effects[key]?.stacks ?? 0) + 1,
+    };
+    this.redrawBars();
+    return this;
+  }
+
+  /**
+   * Add a status effect
    */
   public addStatus(
     status: Status,
@@ -715,16 +749,27 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       );
     }
 
-    // reduce the duration of each status
+    // reduce the duration of each status and effect
     (Object.keys(this.status) as Status[]).forEach((s: Status) => {
       const statusValue = this.status[s];
       if (statusValue) {
         statusValue.duration -= timeElapsed;
         if (statusValue.duration <= 0) {
-          this.status[s] = undefined;
+          delete this.status[s];
         }
       }
     });
+
+    Object.keys(this.effects).forEach((e: string) => {
+      const effect = this.effects[e];
+      if (effect) {
+        effect.duration -= timeElapsed;
+        if (effect.duration <= 0) {
+          delete this.effects[e];
+        }
+      }
+    });
+
     this.redrawBars();
   }
 
