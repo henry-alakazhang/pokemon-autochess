@@ -1542,6 +1542,8 @@ const defenseTargetting = {
   specDefense: 0,
 };
 
+console.log(allPokemonNames);
+
 Object.values(basePokemonData).forEach((pokemon) => {
   if (
     'move' in pokemon &&

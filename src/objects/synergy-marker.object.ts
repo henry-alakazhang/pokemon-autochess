@@ -80,10 +80,11 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
         ...pokemonPerSynergy[category].map((name, index) =>
           this.scene.add
             .image(
-              index * 40 - 10,
+              index * 44 - 10,
               tooltipTitleText.height + tooltipText.height + 2,
               `${name}-mini`
             )
+            .setScale(0.75)
             .setOrigin(0)
             // the icons sit about the text background
             .setDepth(1)
