@@ -76,7 +76,7 @@ export const kingsShield = {
 
     // aegislash only: changes Forme visually
     if (user.texture.key === 'aegislash') {
-      user.setTexture('aegislashshield');
+      user.setTexture('aegislash_shield');
       user.playAnimation(getFacing(userCoords, targetCoords));
     }
 
@@ -116,7 +116,7 @@ export const kingsShield = {
         });
 
         // aegislash only: changes Forme back
-        if (user.texture.key === 'aegislashshield') {
+        if (user.texture.key === 'aegislash_shield') {
           user.setTexture('aegislash');
           user.playAnimation(getFacing(userCoords, targetCoords));
         }

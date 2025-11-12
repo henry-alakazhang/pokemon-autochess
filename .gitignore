@@ -5,3 +5,6 @@ build/
 # generated
 assets/sprite-pack.json
 assets/fx-pack.json
+
+# put your assets in here for copy-assets.ts
+asset_source

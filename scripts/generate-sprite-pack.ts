@@ -25,16 +25,18 @@ glob('assets/pokemon/**/*.png').then((matches) => {
           };
         }
 
-        const size = (key && sizeOverrides[key]) ?? 64;
-        return {
-          type: 'spritesheet',
-          key,
-          url,
-          frameConfig: {
-            frameWidth: size,
-            frameHeight: size,
-          },
-        };
+        if (url.includes('sprite/')) {
+          const size = (key && sizeOverrides[key]) ?? 64;
+          return {
+            type: 'spritesheet',
+            key,
+            url,
+            frameConfig: {
+              frameWidth: size,
+              frameHeight: size,
+            },
+          };
+        }
       }),
     },
   };

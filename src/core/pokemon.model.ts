@@ -128,7 +128,7 @@ const basePokemonData = {
     },
     move: braveBird,
   },
-  rotomw: {
+  rotom_wash: {
     categories: ['water', 'electric', 'utility'],
     tier: 4,
     maxHP: 50,
@@ -957,21 +957,21 @@ const rawPokemonData = {
     name: 'talonflame',
     displayName: 'Talonflame',
   },
-  rotomw: {
-    ...getEvolution('rotomw', 1),
-    name: 'rotomw',
+  rotom_wash: {
+    ...getEvolution('rotom_wash', 1),
+    name: 'rotom_wash',
     displayName: 'Rotom Wash',
-    evolution: 'rotomw-2',
+    evolution: 'rotom_wash-2',
   },
-  'rotomw-2': {
-    ...getEvolution('rotomw', 2),
-    name: 'rotomw-2',
+  'rotom_wash-2': {
+    ...getEvolution('rotom_wash', 2),
+    name: 'rotom_wash-2',
     displayName: 'Rotom Wash',
-    evolution: 'rotomw-3',
+    evolution: 'rotom_wash-3',
   },
-  'rotomw-3': {
-    ...getEvolution('rotomw', 3),
-    name: 'rotomw-3',
+  'rotom_wash-3': {
+    ...getEvolution('rotom_wash', 3),
+    name: 'rotom_wash-3',
     displayName: 'Rotom Wash',
   },
   magnemite: {
@@ -1372,11 +1372,11 @@ const rawPokemonData = {
     name: 'landorus-3',
     displayName: 'Landorus',
   },
-  // not actually used - just here so the landorustherian texture gets loaded properly.
-  landorustherian: {
+  // not actually used - just here so the landorus_therian texture gets loaded properly.
+  landorus_therian: {
     ...getEvolution('landorus', 3),
-    name: 'landorustherian',
-    displayName: 'Landorus-Therian',
+    name: 'landorus_therian',
+    displayName: 'landorus_therian',
   },
   nihilego: {
     ...getEvolution('nihilego', 1),
@@ -1446,11 +1446,11 @@ const rawPokemonData = {
     name: 'aegislash',
     displayName: 'Aegislash',
   },
-  // not actually used - just here so the aegislashshield texture gets loaded properly.
-  aegislashshield: {
+  // not actually used - just here so the 'aegislash_shield' texture gets loaded properly.
+  aegislash_shield: {
     ...getEvolution('honedge', 3),
-    name: 'aegislashshield',
-    displayName: 'Aegislash-Shield',
+    name: 'aegislash_shield',
+    displayName: 'aegislash_shield',
   },
   neutral_only_rattata: {
     ...getEvolution('neutral_only_rattata', 1),
