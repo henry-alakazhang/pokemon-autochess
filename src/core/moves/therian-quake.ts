@@ -105,8 +105,8 @@ export const therianQuake = {
           let baseDamage = damage[user.basePokemon.stage - 1];
           if (user.texture.key === 'landorus') {
             // if not transformed yet, transform into Landorus Therian
-            user.setTexture('landorustherian');
-            user.play('landorustherian--down');
+            user.setTexture('landorus_therian');
+            user.play('landorus_therian--down');
             user.changeStats({
               attack: +1,
               speed: -1,

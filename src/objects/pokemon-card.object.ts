@@ -92,15 +92,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
         
         .PokemonSprite {
           grid-area: sprite;
-          /* center */
           margin:auto;
-          /*
-            Crop the spritesheet to just the first sprite
-            FIXME: get specialised art for this
-          */
-          width: 64px;
-          height: 64px;
-          overflow: hidden;
         }
         
         .PokemonTypes {
@@ -188,11 +180,9 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           }.png">
           </div>
           <div class="PokemonStage">${this.pokemon.stage}*</div>
-          <div class="PokemonSprite">
-            <img src="assets/pokemon/${getBaseTexture(
-              this.pokemon.name
-            )}.png" />
-          </div>
+          <img class="PokemonSprite" src="assets/pokemon/front/${getBaseTexture(
+            this.pokemon.name
+          )}.png" width=96 height=96 />
           <div class="PokemonTypes">
             ${this.pokemon.categories
               .map(

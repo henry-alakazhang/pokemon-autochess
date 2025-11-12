@@ -40,7 +40,9 @@ export class DamageChart extends Phaser.GameObjects.Container {
               0,
               -10,
               `${pokemon.split('-')[0]}-mini`
-            ).setOrigin(0, 0.5),
+            )
+              .setOrigin(0, 0.5)
+              .setScale(0.75),
             new Phaser.GameObjects.Rectangle(
               this.scene,
               50,
