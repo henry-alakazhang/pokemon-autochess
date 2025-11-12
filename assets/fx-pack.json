@@ -3,98 +3,8 @@
     "files": [
       {
         "type": "image",
-        "key": "angry",
-        "url": "assets/fx/angry.png"
-      },
-      {
-        "type": "image",
-        "key": "blackhole",
-        "url": "assets/fx/blackhole.png"
-      },
-      {
-        "type": "image",
-        "key": "blind",
-        "url": "assets/fx/blind.png"
-      },
-      {
-        "type": "image",
-        "key": "brave-bird",
-        "url": "assets/fx/brave-bird.png"
-      },
-      {
-        "type": "image",
-        "key": "damage-other",
-        "url": "assets/fx/damage-other.png"
-      },
-      {
-        "type": "image",
-        "key": "damage-physical",
-        "url": "assets/fx/damage-physical.png"
-      },
-      {
-        "type": "image",
-        "key": "damage-special",
-        "url": "assets/fx/damage-special.png"
-      },
-      {
-        "type": "image",
-        "key": "egg",
-        "url": "assets/fx/egg.png"
-      },
-      {
-        "type": "image",
-        "key": "electricdart",
-        "url": "assets/fx/electricdart.png"
-      },
-      {
-        "type": "image",
-        "key": "firedart",
-        "url": "assets/fx/firedart.png"
-      },
-      {
-        "type": "image",
-        "key": "pokeball-1",
-        "url": "assets/fx/pokeball-1.png"
-      },
-      {
-        "type": "image",
-        "key": "pokeball-2",
-        "url": "assets/fx/pokeball-2.png"
-      },
-      {
-        "type": "image",
-        "key": "pokeball-3",
-        "url": "assets/fx/pokeball-3.png"
-      },
-      {
-        "type": "image",
-        "key": "pokeball-4",
-        "url": "assets/fx/pokeball-4.png"
-      },
-      {
-        "type": "image",
-        "key": "pokeball-5",
-        "url": "assets/fx/pokeball-5.png"
-      },
-      {
-        "type": "image",
-        "key": "seed",
-        "url": "assets/fx/seed.png"
-      },
-      {
-        "type": "image",
-        "key": "spoon",
-        "url": "assets/fx/spoon.png"
-      },
-      {
-        "type": "image",
-        "key": "stinger",
-        "url": "assets/fx/stinger.png"
-      },
-      {
-        "type": "image",
-        "key": "sword",
-        "url": "assets/fx/sword.png"
+        "key": "tri-attack-projectile",
+        "url": "assets/fx/tri-attack-projectile.png"
       },
       {
         "type": "image",
@@ -103,138 +13,103 @@
       },
       {
         "type": "image",
-        "key": "tri-attack-projectile",
-        "url": "assets/fx/tri-attack-projectile.png"
+        "key": "sword",
+        "url": "assets/fx/sword.png"
       },
       {
         "type": "image",
-        "key": "bug",
-        "url": "assets/fx/types/bug.png"
+        "key": "stinger",
+        "url": "assets/fx/stinger.png"
       },
       {
         "type": "image",
-        "key": "bulky attacker",
-        "url": "assets/fx/types/bulky attacker.png"
+        "key": "spoon",
+        "url": "assets/fx/spoon.png"
       },
       {
         "type": "image",
-        "key": "dark",
-        "url": "assets/fx/types/dark.png"
+        "key": "seed",
+        "url": "assets/fx/seed.png"
       },
       {
         "type": "image",
-        "key": "disruptor",
-        "url": "assets/fx/types/disruptor.png"
+        "key": "pokeball-5",
+        "url": "assets/fx/pokeball-5.png"
       },
       {
         "type": "image",
-        "key": "dragon",
-        "url": "assets/fx/types/dragon.png"
+        "key": "pokeball-4",
+        "url": "assets/fx/pokeball-4.png"
       },
       {
         "type": "image",
-        "key": "electric",
-        "url": "assets/fx/types/electric.png"
+        "key": "pokeball-3",
+        "url": "assets/fx/pokeball-3.png"
       },
       {
         "type": "image",
-        "key": "fairy",
-        "url": "assets/fx/types/fairy.png"
+        "key": "pokeball-2",
+        "url": "assets/fx/pokeball-2.png"
       },
       {
         "type": "image",
-        "key": "fighting",
-        "url": "assets/fx/types/fighting.png"
+        "key": "pokeball-1",
+        "url": "assets/fx/pokeball-1.png"
       },
       {
         "type": "image",
-        "key": "fire",
-        "url": "assets/fx/types/fire.png"
+        "key": "firedart",
+        "url": "assets/fx/firedart.png"
       },
       {
         "type": "image",
-        "key": "flying",
-        "url": "assets/fx/types/flying.png"
+        "key": "electricdart",
+        "url": "assets/fx/electricdart.png"
       },
       {
         "type": "image",
-        "key": "ghost",
-        "url": "assets/fx/types/ghost.png"
+        "key": "egg",
+        "url": "assets/fx/egg.png"
       },
       {
         "type": "image",
-        "key": "grass",
-        "url": "assets/fx/types/grass.png"
+        "key": "damage-special",
+        "url": "assets/fx/damage-special.png"
       },
       {
         "type": "image",
-        "key": "ground",
-        "url": "assets/fx/types/ground.png"
+        "key": "damage-physical",
+        "url": "assets/fx/damage-physical.png"
       },
       {
         "type": "image",
-        "key": "hazard setter",
-        "url": "assets/fx/types/hazard setter.png"
+        "key": "damage-other",
+        "url": "assets/fx/damage-other.png"
       },
       {
         "type": "image",
-        "key": "ice",
-        "url": "assets/fx/types/ice.png"
+        "key": "brave-bird",
+        "url": "assets/fx/brave-bird.png"
       },
       {
         "type": "image",
-        "key": "normal",
-        "url": "assets/fx/types/normal.png"
+        "key": "blind",
+        "url": "assets/fx/blind.png"
       },
       {
         "type": "image",
-        "key": "pivot",
-        "url": "assets/fx/types/pivot.png"
+        "key": "blackhole",
+        "url": "assets/fx/blackhole.png"
       },
       {
         "type": "image",
-        "key": "poison",
-        "url": "assets/fx/types/poison.png"
+        "key": "angry",
+        "url": "assets/fx/angry.png"
       },
       {
         "type": "image",
-        "key": "psychic",
-        "url": "assets/fx/types/psychic.png"
-      },
-      {
-        "type": "image",
-        "key": "revenge killer",
-        "url": "assets/fx/types/revenge killer.png"
-      },
-      {
-        "type": "image",
-        "key": "rock",
-        "url": "assets/fx/types/rock.png"
-      },
-      {
-        "type": "image",
-        "key": "steel",
-        "url": "assets/fx/types/steel.png"
-      },
-      {
-        "type": "image",
-        "key": "support",
-        "url": "assets/fx/types/support.png"
-      },
-      {
-        "type": "image",
-        "key": "sweeper",
-        "url": "assets/fx/types/sweeper.png"
-      },
-      {
-        "type": "image",
-        "key": "utility",
-        "url": "assets/fx/types/utility.png"
-      },
-      {
-        "type": "image",
-        "key": "wall",
-        "url": "assets/fx/types/wall.png"
+        "key": "water",
+        "url": "assets/fx/types/water.png"
       },
       {
         "type": "image",
@@ -243,8 +118,133 @@
       },
       {
         "type": "image",
-        "key": "water",
-        "url": "assets/fx/types/water.png"
+        "key": "wall",
+        "url": "assets/fx/types/wall.png"
+      },
+      {
+        "type": "image",
+        "key": "utility",
+        "url": "assets/fx/types/utility.png"
+      },
+      {
+        "type": "image",
+        "key": "sweeper",
+        "url": "assets/fx/types/sweeper.png"
+      },
+      {
+        "type": "image",
+        "key": "support",
+        "url": "assets/fx/types/support.png"
+      },
+      {
+        "type": "image",
+        "key": "steel",
+        "url": "assets/fx/types/steel.png"
+      },
+      {
+        "type": "image",
+        "key": "rock",
+        "url": "assets/fx/types/rock.png"
+      },
+      {
+        "type": "image",
+        "key": "revenge killer",
+        "url": "assets/fx/types/revenge killer.png"
+      },
+      {
+        "type": "image",
+        "key": "psychic",
+        "url": "assets/fx/types/psychic.png"
+      },
+      {
+        "type": "image",
+        "key": "poison",
+        "url": "assets/fx/types/poison.png"
+      },
+      {
+        "type": "image",
+        "key": "pivot",
+        "url": "assets/fx/types/pivot.png"
+      },
+      {
+        "type": "image",
+        "key": "normal",
+        "url": "assets/fx/types/normal.png"
+      },
+      {
+        "type": "image",
+        "key": "ice",
+        "url": "assets/fx/types/ice.png"
+      },
+      {
+        "type": "image",
+        "key": "hazard setter",
+        "url": "assets/fx/types/hazard setter.png"
+      },
+      {
+        "type": "image",
+        "key": "ground",
+        "url": "assets/fx/types/ground.png"
+      },
+      {
+        "type": "image",
+        "key": "grass",
+        "url": "assets/fx/types/grass.png"
+      },
+      {
+        "type": "image",
+        "key": "ghost",
+        "url": "assets/fx/types/ghost.png"
+      },
+      {
+        "type": "image",
+        "key": "flying",
+        "url": "assets/fx/types/flying.png"
+      },
+      {
+        "type": "image",
+        "key": "fire",
+        "url": "assets/fx/types/fire.png"
+      },
+      {
+        "type": "image",
+        "key": "fighting",
+        "url": "assets/fx/types/fighting.png"
+      },
+      {
+        "type": "image",
+        "key": "fairy",
+        "url": "assets/fx/types/fairy.png"
+      },
+      {
+        "type": "image",
+        "key": "electric",
+        "url": "assets/fx/types/electric.png"
+      },
+      {
+        "type": "image",
+        "key": "dragon",
+        "url": "assets/fx/types/dragon.png"
+      },
+      {
+        "type": "image",
+        "key": "disruptor",
+        "url": "assets/fx/types/disruptor.png"
+      },
+      {
+        "type": "image",
+        "key": "dark",
+        "url": "assets/fx/types/dark.png"
+      },
+      {
+        "type": "image",
+        "key": "bulky attacker",
+        "url": "assets/fx/types/bulky attacker.png"
+      },
+      {
+        "type": "image",
+        "key": "bug",
+        "url": "assets/fx/types/bug.png"
       }
     ]
   }
