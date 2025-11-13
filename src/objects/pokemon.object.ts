@@ -101,6 +101,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   blindIcon: Phaser.GameObjects.Image;
   sleepIcon: Phaser.GameObjects.Sprite;
   pokemonTooltip: Phaser.GameObjects.DOMElement;
+  longPress: boolean;
   currentHP: number;
   maxHP: number;
   currentPP: number;
@@ -234,15 +235,32 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       this.setOrigin(0.5, 0.75);
     }
 
-    this.setInteractive().on(
-      Phaser.Input.Events.POINTER_DOWN,
-      (event: Phaser.Input.Pointer) => {
+    this.setInteractive()
+      .on(Phaser.Input.Events.POINTER_DOWN, (event: Phaser.Input.Pointer) => {
         if (event.rightButtonDown()) {
           this.pokemonTooltip.setPosition(event.x, event.y);
           this.pokemonTooltip.setVisible(true);
+        } else {
+          // Hacky mobile support to make handle right-click via longpress instead.
+          this.longPress = true;
+          this.scene.time.addEvent({
+            delay: 500,
+            callback: () => {
+              if (this.longPress) {
+                this.longPress = false;
+                this.pokemonTooltip.setPosition(event.x, event.y);
+                this.pokemonTooltip.setVisible(true);
+              }
+            },
+          });
         }
-      }
-    );
+      })
+      .on(Phaser.Input.Events.POINTER_UP, () => {
+        this.longPress = false;
+      })
+      .on(Phaser.Input.Events.DRAG_START, () => {
+        this.longPress = false;
+      });
     this.scene.input.on(
       Phaser.Input.Events.POINTER_DOWN,
       (event: Phaser.Input.Pointer) => {
