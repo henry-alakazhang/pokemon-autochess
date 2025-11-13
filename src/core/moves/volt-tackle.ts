@@ -52,9 +52,7 @@ export const voltTackle = {
           };
           const calculatedDamage = calculateDamage(user, target, action);
           scene.causeDamage(user, target, action);
-          user.takeDamage(Math.floor(calculatedDamage / 3), {
-            triggerEvents: false,
-          });
+          user.takeDamage(Math.floor(calculatedDamage / 3));
           onComplete();
         },
       });

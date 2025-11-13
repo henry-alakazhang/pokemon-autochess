@@ -70,7 +70,6 @@ type EffectParams = Effect<{ selfCoords: Coords }>;
 export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   public static readonly Events = {
     Dead: 'dead',
-    Damage: 'damage',
   } as const;
 
   /**
@@ -133,7 +132,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    *
    * TODO: Migrate non-special statuses to this form.
    */
-  private effects: {
+  effects: {
     [k: string]: {
       effect: StatusEffect;
       duration: number;
@@ -470,28 +469,20 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   /**
-   * Cause this pokemon to take damage
+   * Cause this pokemon to take damage. Adjusts health and displays visual markers.
    */
   public takeDamage(
     amount: number,
     {
-      triggerEvents = true,
       crit = false,
       tint = 0xdddddd, // slight darken
     }: {
-      triggerEvents?: boolean;
       crit?: boolean;
       /** Color change on hit. Defaults to slightly dark */ tint?: number;
     } = {}
   ) {
     if (amount < 0 || this.currentHP <= 0) {
       return;
-    }
-
-    // trigger on-hit events like mana
-    if (triggerEvents) {
-      this.emit(PokemonObject.Events.Damage, amount);
-      this.addPP(Math.min(5, amount * 0.015));
     }
 
     const actualDamage = Math.min(this.currentHP, amount);
@@ -738,7 +729,6 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       this.takeDamage(
         Math.floor((this.maxHP * (this.status.poison?.value ?? 0)) / 100),
         {
-          triggerEvents: false,
           // purple flash for poison damage
           tint: 0xc060c0,
         }
@@ -797,6 +787,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         selfCoords,
       });
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      effect.onHit?.({
+        scene,
+        board,
+        attacker,
+        defender,
+        flags,
+        damage,
+        self: this,
+        selfCoords,
+        stacks: this.effects[effect.name]?.stacks ?? 0,
+      });
+    });
   };
 
   onBeingHit: NonNullable<EffectParams['onBeingHit']> = ({
@@ -808,6 +811,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     damage,
     selfCoords,
   }) => {
+    this.addPP(Math.min(5, damage * 0.015));
+
     if (this.basePokemon.move?.type === 'passive') {
       this.basePokemon.move.onBeingHit?.({
         scene,
@@ -820,6 +825,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         selfCoords,
       });
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      effect.onBeingHit?.({
+        scene,
+        board,
+        attacker,
+        defender,
+        flags,
+        damage,
+        self: this,
+        selfCoords,
+        stacks: this.effects[effect.name]?.stacks ?? 0,
+      });
+    });
   };
 
   onDeath: NonNullable<EffectParams['onDeath']> = ({
@@ -839,6 +857,17 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         selfCoords,
       });
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      effect.onDeath?.({
+        scene,
+        board,
+        pokemon,
+        side,
+        self: this,
+        selfCoords,
+        stacks: this.effects[effect.name]?.stacks ?? 0,
+      });
+    });
   };
   onTurnStart: NonNullable<EffectParams['onTurnStart']> = ({
     scene,
@@ -855,6 +884,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         selfCoords,
       });
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      effect.onTurnStart?.({
+        scene,
+        board,
+        pokemon,
+        self: this,
+        selfCoords,
+        stacks: this.effects[effect.name]?.stacks ?? 0,
+      });
+    });
   };
 
   onTimer: NonNullable<EffectParams['onTimer']> = ({
@@ -874,6 +913,17 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         selfCoords,
       });
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      effect.onTimer?.({
+        scene,
+        board,
+        side,
+        time,
+        self: this,
+        selfCoords,
+        stacks: this.effects[effect.name]?.stacks ?? 0,
+      });
+    });
   };
 
   onRoundStart: NonNullable<EffectParams['onRoundStart']> = ({
@@ -891,6 +941,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         selfCoords,
       });
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      effect.onRoundStart?.({
+        scene,
+        board,
+        side,
+        self: this,
+        selfCoords,
+        stacks: this.effects[effect.name]?.stacks ?? 0,
+      });
+    });
   };
 
   // Doesn't exist
@@ -917,6 +977,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
           selfCoords,
         }) ?? newTotal;
     }
+    Object.values(this.effects).forEach(({ effect }) => {
+      newTotal =
+        effect.calculateDamage?.({
+          attacker,
+          defender,
+          baseAmount: newTotal,
+          flags,
+          side,
+          self: this,
+          selfCoords,
+          stacks: this.effects[effect.name]?.stacks ?? 0,
+        }) ?? newTotal;
+    });
     return newTotal;
   };
 }

@@ -354,7 +354,6 @@ recovered, split among all enemies.
           if (pokemon.side !== side) {
             // TODO: do this damage via combat scene so the damage gets tracked in graphs
             pokemon.takeDamage(damage, {
-              triggerEvents: false,
               tint: 0x00ff00, // Slight green tint
             });
           }
@@ -495,7 +494,7 @@ it raises the Speed of other nearby allies.
         .filter(isDefined)
         .forEach((adjacentPokemon) => {
           if (adjacentPokemon?.side === getOppositeSide(attacker.side)) {
-            // apply damage directly; no defense calcs, no synergy modifiers.
+            // apply damage directly; no defense calcs, no synergy modifiers, no damage triggers
             adjacentPokemon.takeDamage(Math.round(damage * splashPerc));
           }
         });
@@ -1234,9 +1233,7 @@ has all of their types combined together.`,
             return;
           }
           const graphicalSpot = getCoordinatesForMainboard(spotToJump);
-          slot.pokemon.takeDamage(slot.pokemon.maxHP / 2, {
-            triggerEvents: false,
-          });
+          slot.pokemon.takeDamage(slot.pokemon.maxHP / 2);
           slot.pokemon.setVisible(true).setActive(true).move(graphicalSpot);
           scene.board[spotToJump.x][spotToJump.y] = slot.pokemon;
           scene.setTurn(slot.pokemon);
