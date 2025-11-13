@@ -687,17 +687,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   /**
    * Add a temporary passive effect to a Pokemon
    */
-  public addEffect(
-    // TODO: figure out a way to type this?
-    key: string,
-    effect: StatusEffect,
-    duration: number
-  ): this {
+  public addEffect(effect: StatusEffect, duration: number): this {
     if (effect.isNegative && this.status.statusImmunity) {
       return this;
     }
 
     // Merge and override existing effect, and update its duration
+    const key = effect.name;
     this.effects[key] = {
       ...(this.effects[key]?.effect ?? {}),
       effect,

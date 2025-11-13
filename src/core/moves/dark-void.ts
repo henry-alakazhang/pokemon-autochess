@@ -50,25 +50,27 @@ export const darkVoid = {
           // and pick the highest X targets
           .slice(0, numberOfTargets[user.basePokemon.stage - 1]);
         // todo: add attack graphics
-        targets.forEach((target) => target.addStatus('sleep', 4000));
-        // apply damage every second for 4 seconds
-        scene.time.addEvent({
-          callback: () => {
-            targets.forEach((target) => {
-              const action = {
-                damage: target.maxHP * 0.08,
-                defenseStat,
-              };
-              scene.causeDamage(user, target, action, {
-                isAOE: true,
-                triggerEvents: false,
-              });
-              // FIXME: heal based on damage dealt
-              user.heal(calculateDamage(user, target, action) / 2);
-            });
-          },
-          delay: 1000,
-          repeat: 4,
+        targets.forEach((target) => {
+          target.addStatus('sleep', 4000).addEffect(
+            {
+              name: 'dark-void',
+              // the damage cannot be blocked or purged
+              isNegative: false,
+              onTimer: ({ self }) => {
+                const action = {
+                  damage: self.maxHP * 0.08,
+                  defenseStat,
+                };
+                scene.causeDamage(user, self, action, {
+                  isAOE: true,
+                  triggerEvents: false,
+                });
+                // FIXME: heal based on damage dealt
+                user.heal(calculateDamage(user, self, action) / 2);
+              },
+            },
+            4000
+          );
         });
       },
     });
