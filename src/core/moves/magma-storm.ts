@@ -44,29 +44,35 @@ export const magmaStorm = {
           defenseStat,
         });
 
-        const burnTimer = scene.time.addEvent({
-          delay: 1000,
-          loop: true,
-          callback: () => {
-            if (!target.active) {
-              scene.time.removeEvent(burnTimer);
-              user.addPP(cost / 2);
-              return;
-            }
-            // burn for max HP damage that can't be modified or reduced
-            scene.causeDamage(
-              user,
-              target,
-              {
-                trueDamage: Math.round(target.maxHP / 6),
-              },
-              {
-                // TODO: make target glow red
-                triggerEvents: false,
+        // Apply permanent burn effect
+        target.addEffect(
+          {
+            name: 'magma-storm',
+            isNegative: true,
+            onTimer: ({ self }) => {
+              if (!self.active) {
+                return;
               }
-            );
+              // burn for max HP damage that can't be modified or reduced
+              scene.causeDamage(
+                user,
+                self,
+                {
+                  trueDamage: Math.round(self.maxHP / 6),
+                },
+                {
+                  // TODO: make target glow red
+                  triggerEvents: false,
+                }
+              );
+            },
+            onDeath: () => {
+              // When the burned target dies, recover PP
+              user.addPP(cost / 2);
+            },
           },
-        });
+          Infinity // Permanent burn
+        );
       });
     onComplete();
   },

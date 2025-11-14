@@ -724,7 +724,7 @@ export class CombatScene extends Scene {
     attacker: PokemonObject,
     defender: PokemonObject,
     action: OffenseAction,
-    { isAttack, isAOE, triggerEvents, canCrit }: DamageConfig = {}
+    { isAttack, isAOE, triggerEvents = true, canCrit }: DamageConfig = {}
   ) {
     if (isAttack) {
       // calculate miss chance
@@ -807,7 +807,7 @@ export class CombatScene extends Scene {
 
     totalDamage = Math.round(totalDamage);
     attacker.dealDamage(totalDamage, { isAttack });
-    defender.takeDamage(totalDamage, { triggerEvents, crit: doesCrit });
+    defender.takeDamage(totalDamage, { crit: doesCrit });
 
     if (triggerEvents) {
       this.players[attacker.side].synergies.forEach((synergy) => {
