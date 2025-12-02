@@ -1,4 +1,3 @@
-import { PokemonObject } from '../../objects/pokemon.object';
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
@@ -58,49 +57,48 @@ export const shellTrap = {
           // adding moveIsActive here will refresh the duration
           // so it lasts the same as everything else
           .addStatus('moveIsActive', DURATION)
-          .addStatus('percentDamageReduction', DURATION, 40);
-
-        const damageProc = (amountTaken: number) => {
-          const userCoords = scene.getBoardLocationForPokemon(user);
-          if (!userCoords) {
-            return;
-          }
-
-          // play explosion animation
-          const trapAnimation = scene.add
-            .sprite(user.x, user.y, 'shell-trap')
-            .play('shell-trap')
-            .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-              trapAnimation.destroy();
-            });
-
-          const possibleTargets = [
-            { x: userCoords.x - 1, y: userCoords.y }, // left
-            { x: userCoords.x, y: userCoords.y - 1 }, // up
-            { x: userCoords.x + 1, y: userCoords.y }, // right
-            { x: userCoords.x, y: userCoords.y + 1 }, // down
-          ];
-
-          scene.causeAOEDamage(
-            user,
-            possibleTargets,
+          .addStatus('percentDamageReduction', DURATION, 40)
+          .addEffect(
             {
-              damage:
-                damage[user.basePokemon.stage - 1] +
-                amountTaken *
-                  (percentReflect[user.basePokemon.stage - 1] / 100),
-              defenseStat,
+              name: 'shell-trap',
+              isNegative: false,
+              onBeingHit: ({ self, damage: amountTaken, selfCoords }) => {
+                // play explosion animation
+                const trapAnimation = scene.add
+                  .sprite(self.x, self.y, 'shell-trap')
+                  .play('shell-trap')
+                  .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+                    trapAnimation.destroy();
+                  });
+
+                const possibleTargets = [
+                  { x: selfCoords.x - 1, y: selfCoords.y }, // left
+                  { x: selfCoords.x, y: selfCoords.y - 1 }, // up
+                  { x: selfCoords.x + 1, y: selfCoords.y }, // right
+                  { x: selfCoords.x, y: selfCoords.y + 1 }, // down
+                ];
+
+                scene.causeAOEDamage(
+                  self,
+                  possibleTargets,
+                  {
+                    damage:
+                      damage[self.basePokemon.stage - 1] +
+                      amountTaken *
+                        (percentReflect[self.basePokemon.stage - 1] / 100),
+                    defenseStat,
+                  },
+                  { triggerEvents: false }
+                );
+              },
             },
-            { triggerEvents: false }
+            DURATION
           );
-        };
 
-        user.on(PokemonObject.Events.Damage, damageProc);
-
+        // Clean up tint when effect expires
         scene.time.addEvent({
           callback: () => {
             user.setTint();
-            user.removeListener(PokemonObject.Events.Damage, damageProc);
           },
           delay: DURATION,
         });
