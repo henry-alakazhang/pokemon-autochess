@@ -790,10 +790,6 @@ export class CombatScene extends Scene {
       selfCoords: defenderCoords,
     });
 
-    if (!isAttack) {
-      totalDamage *= attacker.status.movePowerBoost?.value ?? 1;
-    }
-
     // if `canCrit` is passed in, use the value
     // otherwise, all attacks can crit by default
     const actuallyCanCrit = canCrit ?? isAttack ?? false;

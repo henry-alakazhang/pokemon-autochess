@@ -22,7 +22,6 @@ export type Status =
   | 'percentDamageReduction'
   | 'statusImmunity'
   | 'immobile'
-  | 'movePowerBoost'
   | 'ppReduction'
   | 'healReduction'
   | 'curse'

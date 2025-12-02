@@ -72,10 +72,26 @@ export const powerSpot = {
           .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
             buffEffect.destroy();
           });
-        target.addStatus(
-          'movePowerBoost',
-          6000,
-          1 + movePowerBoost[user.basePokemon.stage - 1] / 100
+        target.addEffect(
+          {
+            name: 'powerSpotBoost',
+            isNegative: false,
+            calculateDamage: ({
+              self,
+              attacker,
+              baseAmount,
+              flags: { isAttack },
+            }) => {
+              if (isAttack || self == attacker) {
+                return baseAmount;
+              }
+              return (
+                baseAmount *
+                (1 + movePowerBoost[user.basePokemon.stage - 1] / 100)
+              );
+            },
+          },
+          6000
         );
       } else {
         // hit enemies
