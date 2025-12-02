@@ -63,7 +63,6 @@ export const shellTrap = {
               name: 'shell-trap',
               isNegative: false,
               onBeingHit: ({ self, damage: amountTaken, selfCoords }) => {
-                console.log('On being hit!');
                 // play explosion animation
                 const trapAnimation = scene.add
                   .sprite(self.x, self.y, 'shell-trap')

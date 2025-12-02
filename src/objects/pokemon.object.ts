@@ -676,7 +676,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }
 
   /**
-   * Add a temporary passive effect to a Pokemon
+   * Add a temporary passive effect to a Pokemon.
+   *
+   * By default, the same status will always overwrite its previous state,
+   * increase stacks, and reset the duration.
+   *
+   * If you want stacks to fall off independently, set unique names.
    */
   public addEffect(effect: StatusEffect, duration: number): this {
     if (effect.isNegative && this.status.statusImmunity) {
@@ -956,6 +961,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   // Doesn't exist
   // onRoundEnd: NonNullable<EffectParams['onRoundEnd']>
 
+  /**
+   * Apply damage modifiers from Pokemon and statuses
+   * TODO: If this causes perf issues or scaling issues (with multiplicative damage),
+   * change to a simple system with flat bonuses and multipliers that scale additively.
+   */
   calculateDamage: NonNullable<EffectParams['calculateDamage']> = ({
     attacker,
     defender,
