@@ -536,11 +536,7 @@ export function calculateDamage(
   const defenseValue = defender.basePokemon[defenseStatName];
 
   const defenseReduction = getDamageReduction(defenseValue);
-  // bonus percentage reduction from a buff
-  const statusReduction =
-    (defender.status.percentDamageReduction?.value ?? 0) / 100;
 
-  return Math.round(
-    baseDamage * (1 - defenseReduction) * (1 - statusReduction) + 2
-  );
+  // Minimum damage is 2. Apparently.
+  return Math.round(baseDamage * (1 - defenseReduction) + 2);
 }

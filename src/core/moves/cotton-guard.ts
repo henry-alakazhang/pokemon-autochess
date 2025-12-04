@@ -1,6 +1,7 @@
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
+import { createDamageReductionEffect } from '../status.model';
 import * as Tweens from '../tweens';
 
 const damageReduction = [40, 50, 60];
@@ -39,12 +40,14 @@ export const cottonGuard = {
         // adding moveIsActive here will refresh the duration
         // so it lasts the same as everything else
         .addStatus('moveIsActive', DURATION)
-        .addStatus(
-          'percentDamageReduction',
-          DURATION,
-          damageReduction[user.basePokemon.stage - 1]
-        )
-        .addStatus('statusImmunity', DURATION);
+        .addStatus('statusImmunity', DURATION)
+        .addEffect(
+          createDamageReductionEffect(
+            'cotton-guard',
+            damageReduction[user.basePokemon.stage - 1]
+          ),
+          DURATION
+        );
       cotton.play('cotton-guard-spin');
       onComplete();
 

@@ -1,6 +1,7 @@
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
+import { createDamageReductionEffect } from '../status.model';
 import * as Tweens from '../tweens';
 
 const defenseStat = 'specDefense' as const;
@@ -57,11 +58,9 @@ export const shellTrap = {
           // adding moveIsActive here will refresh the duration
           // so it lasts the same as everything else
           .addStatus('moveIsActive', DURATION)
-          .addStatus('percentDamageReduction', DURATION, 40)
           .addEffect(
             {
-              name: 'shell-trap',
-              isNegative: false,
+              ...createDamageReductionEffect('shell-trap', 40),
               onBeingHit: ({ self, damage: amountTaken, selfCoords }) => {
                 // play explosion animation
                 const trapAnimation = scene.add

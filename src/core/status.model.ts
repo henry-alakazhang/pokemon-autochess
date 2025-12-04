@@ -19,7 +19,6 @@ export type Status =
   | 'sleep'
   | 'blind'
   | 'poison'
-  | 'percentDamageReduction'
   | 'statusImmunity'
   | 'immobile'
   | 'ppReduction'
@@ -37,3 +36,19 @@ export type StatusEffect = {
   readonly name: string;
   readonly isNegative: boolean;
 } & Effect<{ self: PokemonObject; selfCoords: Coords; stacks: number }>;
+
+/** Create an effect that reduces damage by a certain DECIMAL percentage */
+export function createDamageReductionEffect(
+  source: string,
+  percentage: number
+): StatusEffect {
+  return {
+    name: `damageReduction-${source}`,
+    isNegative: false,
+    calculateDamage: ({ self, defender, baseAmount }) => {
+      return self === defender
+        ? baseAmount * (1 - percentage / 100)
+        : baseAmount;
+    },
+  };
+}

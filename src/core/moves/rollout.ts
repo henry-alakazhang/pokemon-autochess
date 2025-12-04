@@ -1,6 +1,7 @@
 import { isDefined } from '../../helpers';
 import { inBounds } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
+import { createDamageReductionEffect } from '../status.model';
 
 const defenseStat = 'defense' as const;
 const totalDamage = [500, 750, 1250];
@@ -25,10 +26,11 @@ export const rollout = {
     )} damage to adjacent enemies over time, and reducing incoming damage by 30%.`;
   },
   use({ scene, board, user, userCoords, onComplete }: MoveConfig<'unit'>) {
-    // bit hacky: any duration on moveIsActive will last until the next status check
+    // bit hacky: any duration on statuses/effects will last until the next status check
     // which will run after the turn is completed
-    user.addStatus('moveIsActive', 1);
-    user.addStatus('percentDamageReduction', 1, 30);
+    user
+      .addStatus('moveIsActive', 1)
+      .addEffect(createDamageReductionEffect('rollout', 30), 1);
     // 5 RPS
     user.setAngularVelocity(1800);
 

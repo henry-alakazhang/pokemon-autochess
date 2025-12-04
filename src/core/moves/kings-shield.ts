@@ -5,6 +5,7 @@ import {
   inBounds,
 } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
+import { createDamageReductionEffect } from '../status.model';
 import * as Tweens from '../tweens';
 
 const getAOE = ({ x, y }: Coords) => {
@@ -49,13 +50,15 @@ export const kingsShield = {
     targetCoords,
     onComplete,
   }: MoveConfig<'unit'>) {
-    user.addStatus('moveIsActive', 2000);
-    user.addStatus(
-      'percentDamageReduction',
-      2000,
-      damageReduction[user.basePokemon.stage - 1]
-    );
-
+    user
+      .addStatus('moveIsActive', 2000)
+      .addEffect(
+        createDamageReductionEffect(
+          'kings-shield',
+          damageReduction[user.basePokemon.stage - 1]
+        ),
+        2000
+      );
     // graphics: two crossed swords
     const leftSword = scene.add
       .image(user.x, user.y, 'sword')
