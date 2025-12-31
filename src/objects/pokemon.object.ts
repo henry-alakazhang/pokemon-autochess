@@ -105,7 +105,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   currentHP: number;
   maxHP: number;
   currentPP: number;
-  maxPP?: number;
+  private baseMaxPP: number;
+  get maxPP(): number {
+    return this.status.ppReduction
+      ? Math.floor(this.baseMaxPP * 1.4)
+      : this.baseMaxPP;
+  }
   evasion = 0;
   critRate = 0;
   critDamage = 1.5;
@@ -203,8 +208,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.maxHP = this.basePokemon.maxHP;
     this.currentHP = this.maxHP;
     if (this.basePokemon.move?.type === 'active') {
-      this.maxPP = this.basePokemon.move.cost;
+      this.baseMaxPP = this.basePokemon.move.cost;
       this.currentPP = this.basePokemon.move.startingPP;
+    } else {
+      this.baseMaxPP = 0;
+      this.currentPP = 0;
     }
 
     this.side = params.side;
@@ -396,7 +404,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     }
 
     // pp bar
-    this.bars.fillStyle(0x67aacb, 1); // sky blue
+    const ppBarColor = this.status.ppReduction
+      ? 0x666666 // pp reduced: gray
+      : 0x67aacb; // normal: sky blue
+    this.bars.fillStyle(ppBarColor, 1);
     this.bars.fillRect(
       -this.width / 2 + 1,
       -this.height / 2 + 7, // offset by 6 to put below the HP bar
@@ -565,9 +576,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       return this;
     }
 
-    if (this.maxPP && this.currentPP < this.maxPP) {
-      const mult = 1 - (this.status.ppReduction?.value ?? 0);
-      this.currentPP = Math.min(this.maxPP, this.currentPP + amount * mult);
+    if (this.currentPP < this.maxPP) {
+      this.currentPP = Math.min(this.maxPP, this.currentPP + amount);
     }
     return this;
   }
@@ -780,6 +790,14 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     });
 
     this.redrawBars();
+  }
+
+  public canUseMove(): boolean {
+    if (this.basePokemon.move?.type !== 'active') {
+      return false;
+    }
+
+    return this.currentPP >= this.maxPP;
   }
 
   // Effect methods
