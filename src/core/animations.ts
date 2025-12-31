@@ -188,4 +188,9 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 21,
     duration: 700,
   },
+  'icicle-crash': {
+    texture: 'icicle-crash',
+    frames: 18,
+    duration: (1000 * 18) / 15,
+  },
 };

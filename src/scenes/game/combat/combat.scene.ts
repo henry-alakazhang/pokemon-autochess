@@ -494,8 +494,7 @@ export class CombatScene extends Scene {
      * The attack the Pokeon is trying to use
      * If the Pokemon has an active move and enough PP, use it.
      */
-    let selectedAttack =
-      pokemon.currentPP === pokemon.maxPP && move ? move : basicAttack;
+    let selectedAttack = move && pokemon.canUseMove() ? move : basicAttack;
     /** The target being picked for the attack */
     let selectedCoords: Coords | undefined;
     /** The route to path through to reach the selected target */
@@ -630,6 +629,12 @@ export class CombatScene extends Scene {
               user: pokemon,
               count: synergy.count,
             });
+          });
+          pokemon.onMoveUse({
+            scene: this,
+            board: this.board,
+            user: pokemon,
+            selfCoords: myCoords,
           });
           if (pokemon.currentHP > 0) {
             this.setTurn(pokemon);
