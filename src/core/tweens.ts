@@ -94,3 +94,35 @@ export async function hop(
     });
   });
 }
+
+/**
+ * Grows and shrinks the target(s) with a yoyo effect
+ */
+export async function growShrink(
+  scene: Phaser.Scene,
+  {
+    targets,
+    duration = 250,
+    scale = 1.2,
+    onComplete,
+  }: {
+    targets: Phaser.GameObjects.GameObject[];
+    duration?: number;
+    scale?: number;
+    onComplete?: () => void;
+  }
+) {
+  return new Promise<void>((resolve) => {
+    scene.add.tween({
+      targets,
+      duration,
+      scaleX: scale,
+      scaleY: scale,
+      yoyo: true,
+      onComplete: () => {
+        onComplete?.();
+        resolve();
+      },
+    });
+  });
+}

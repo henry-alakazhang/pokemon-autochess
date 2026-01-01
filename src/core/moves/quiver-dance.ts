@@ -38,12 +38,8 @@ export const quiverDance = {
     dance.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
       dance.destroy();
       // at the end, grow and shrink
-      scene.add.tween({
+      Tweens.growShrink(scene, {
         targets: [user],
-        duration: 250,
-        scaleX: 1.2,
-        scaleY: 1.2,
-        yoyo: true,
         onComplete: () => {
           user.changeStats({
             specAttack: +2,
