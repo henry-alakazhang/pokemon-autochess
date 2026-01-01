@@ -1,3 +1,4 @@
+import { PokemonName } from '../../core/pokemon.model';
 import { Button } from '../../objects/button.object';
 import { Player } from '../../objects/player.object';
 import { PokemonForSaleObject } from '../../objects/pokemon-for-sale.object';
@@ -179,10 +180,17 @@ export class ShopScene extends Phaser.Scene {
       pokemon.destroy();
     });
 
-    const newShop = this.pool.reroll(
+    let newShop = this.pool.reroll(
       this.player,
       this.pokemonForSale.map((pokemon) => pokemon.pokemonName)
     );
+
+    // If in the DEBUG game mode, allow manual overrides from the console.
+    const debugShop = (window as unknown as { DEBUG_FORCE_SHOP: PokemonName[] })
+      .DEBUG_FORCE_SHOP;
+    if (this.gameMode.name === 'debug' && debugShop) {
+      newShop = debugShop;
+    }
 
     this.pokemonForSale = newShop.map((pokemon, i) => {
       const currCoords = this.getCoordinatesForShopIndex(i);

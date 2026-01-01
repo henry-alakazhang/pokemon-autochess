@@ -28,6 +28,8 @@ export function getCoordinatesForMainboard({ x, y }: Coords): Coords {
  * A representation of a game mode, with all its options
  */
 export interface GameMode {
+  /** Debug name. */
+  readonly name: string;
   /** The set of stages (which are made up of rounds) */
   readonly stages: Stage[];
   /** Rates of each tier of Pokemon in the shop at each player level */
@@ -83,6 +85,7 @@ export function getHyperRollGameMode(): GameMode {
   };
 
   return {
+    name: 'hyper',
     stages: [
       {
         rounds: 1,
@@ -118,6 +121,7 @@ export function getHyperRollGameMode(): GameMode {
 
 export function getDebugGameMode(): GameMode {
   return {
+    name: 'debug',
     stages: [{ rounds: 99, damage: () => 1, gold: () => 50, autolevel: 6 }],
     shopRates: {
       1: [0, 1, 1, 1, 1, 1],
