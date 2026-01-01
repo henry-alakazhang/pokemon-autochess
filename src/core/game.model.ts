@@ -159,15 +159,49 @@ export type Synergy = {
   readonly description: string;
   /** Amount of synergy required to trigger different levels */
   readonly thresholds: number[];
+  /** If true, thresholds are exact matches (==) instead of minimum thresholds (>=) */
+  readonly isExactThreshold?: boolean;
 } & Effect<{ count: number }>;
 
-export function getSynergyTier(thresholds: number[], count: number) {
+export function getSynergyTier(synergy: Synergy, count: number) {
+  const { thresholds, isExactThreshold } = synergy;
+
+  if (isExactThreshold) {
+    // For exact matching, find the index of count in thresholds
+    const index = thresholds.indexOf(count);
+    // Return tier (index + 1) if found, or 0 if not found
+    return index !== -1 ? index + 1 : 0;
+  }
+
+  // Standard threshold behavior (>= matching)
   let tier = thresholds.findIndex((threshold) => count < threshold);
   // if tier is -1, it means it's beyond the max
   if (tier === -1) {
     tier = thresholds.length;
   }
   return tier;
+}
+
+export function getNextThreshold(synergy: Synergy, count: number) {
+  const { thresholds, isExactThreshold } = synergy;
+
+  if (isExactThreshold) {
+    // For exact thresholds, find nearest value below (this is the easiest criteria to meet)
+    let nextThreshold = thresholds[0];
+    for (const threshold of thresholds) {
+      if (threshold <= count && threshold > nextThreshold) {
+        nextThreshold = threshold;
+      }
+    }
+    return nextThreshold;
+  } else {
+    // Standard threshold behaviour: tier starts at 1, so next threshold is just that entry.
+    return (
+      thresholds[getSynergyTier(synergy, count)] ??
+      // tier can be `thresholds.length`, in which case it should be max.
+      thresholds[thresholds.length - 1]
+    );
+  }
 }
 
 export const synergyData: { [k in Category]: Synergy } = {
@@ -181,7 +215,7 @@ to Pick Up a Pokeball at end of round.
  (6) - After all rounds.`,
     thresholds: [3, 6],
     onRoundEnd({ scene, board, player, won, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -216,7 +250,7 @@ when low on health.
  (6) - Activates below 66% health.`,
     thresholds: [2, 4, 6],
     calculateDamage({ attacker, baseAmount, side, count }): number {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
@@ -250,7 +284,7 @@ when low on health.
  (6) - 3 extra PP`,
     thresholds: [2, 4, 6],
     onHit({ attacker, flags: { isAttack }, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -279,7 +313,7 @@ moves and attacks which hit an area.
       count,
       flags: { isAOE },
     }): number {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
@@ -310,7 +344,7 @@ recovered, split among all enemies.
     thresholds: [2, 3, 4],
     onHit({ scene, attacker, damage, count }) {
       // TODO add animation for healing?
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -336,7 +370,7 @@ recovered, split among all enemies.
         return;
       }
 
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -374,7 +408,7 @@ at the end of each of their turns.
  (5) - 2 stacks on hit, max 12 stacks`,
     thresholds: [3, 5],
     onHit({ attacker, defender, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -407,7 +441,7 @@ it raises the Speed of other nearby allies.
  (4) - within 2 tiles`,
     thresholds: [2, 4],
     onMoveUse({ scene, board, user, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -459,7 +493,7 @@ it raises the Speed of other nearby allies.
       count,
       flags: { isAOE },
     }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -511,7 +545,7 @@ when starting combat isolated.
  (4) - And +1 to Speed`,
     thresholds: [2, 3, 4],
     onRoundStart({ scene, board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -569,7 +603,7 @@ and take less damage from each hit.
  (6) - +50 / -50 damage`,
     thresholds: [2, 4, 6],
     calculateDamage({ attacker, defender, baseAmount, side, count }): number {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
@@ -602,7 +636,7 @@ take damage.
  (3) - and become slowed for 4 seconds`,
     thresholds: [2, 3],
     onRoundStart({ board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -630,7 +664,7 @@ Pokemon at the start of the round.
  (3) - One copy`,
     thresholds: [3],
     onRoundStart({ scene, board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -666,7 +700,7 @@ Pokemon at the start of the round.
  (3) - 50% more damage.`,
     thresholds: [3],
     calculateDamage({ attacker, baseAmount, side, count, flags }): number {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
@@ -696,7 +730,7 @@ damage and Blind the target for 1 second.
  (4) - 244 + 24% max HP special damage`,
     thresholds: [2, 4, 6],
     onHit({ scene, attacker, defender, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -743,7 +777,7 @@ to both their attacks and their moves.
  (6) - 45% chance to deal 300% damage.`,
     thresholds: [2, 4, 6],
     onRoundStart({ scene, board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       // note: we don't skip tier 0 here because Dark-types
       // have an innate ability which is always active.
 
@@ -790,7 +824,7 @@ effects at the start of the round.
  (4) - lasts 10 seconds`,
     thresholds: [2, 4],
     onRoundStart({ board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -817,7 +851,7 @@ damage they can take from one hit.
  (4) - 10% of their max HP`,
     thresholds: [2, 4],
     calculateDamage({ defender, baseAmount, side, count }): number {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
@@ -840,7 +874,7 @@ time they hit an opponent.
  (6) - up to 4 times`,
     thresholds: [2, 4, 6],
     onHit({ attacker, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -870,7 +904,7 @@ boost their Attack, Special Attack and Speed.
  (4) - Stacks up to three times`,
     thresholds: [2, 4],
     onDeath({ scene, board, pokemon, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -932,7 +966,7 @@ when they deal damage.
       count,
       flags: { isAttack },
     }): number {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
@@ -972,9 +1006,76 @@ when they deal damage.
   },
   'hazard setter': {
     category: 'hazard setter',
-    displayName: 'Hazard Setter',
-    description: 'Does nothing.',
-    thresholds: [2, 4],
+    displayName: 'Hazard Setter: Trap Setup',
+    description: `Each Hazard Setter has a special
+entry hazard:
+
+ (1) OR (4) - Each Hazard Setter applies
+their hazards at the start of the fight.
+If you have all 4, the effects are
+enhanced significantly.`,
+    thresholds: [1, 4],
+    isExactThreshold: true,
+    onRoundStart({ scene, board, side, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const targets = flatten(board)
+        .filter(isDefined)
+        .filter((pokemon) => pokemon.side !== side);
+
+      // get all the hazard setters and apply their hazards
+      flatten(board)
+        .filter(isDefined)
+        .filter(
+          (pokemon) =>
+            pokemon.side === side &&
+            pokemon.basePokemon.categories.includes('hazard setter')
+        )
+        .forEach((pokemon) => {
+          // TODO: could this be part of using their move instead?
+          switch (pokemon.basePokemon.base) {
+            case 'nacli':
+              // Stealth Rock: flat damage to all targets
+              targets.forEach((target) => {
+                scene.causeDamage(
+                  pokemon,
+                  target,
+                  // This is affected by Rock synergies and defense
+                  // This kinda mimics the way that Stealth Rock is "super effective"... I guess...
+                  { damage: tier === 1 ? 250 : 750, defenseStat: 'defense' },
+                  { triggerEvents: false, canCrit: false }
+                );
+              });
+              break;
+            case 'sewaddle':
+              // Sticky Web: Slows all targets (for 5 seconds / the entire round)
+              targets.forEach((target) => {
+                target.changeStats({ speed: -1 }, tier === 1 ? 5000 : 99_999);
+              });
+              break;
+            case 'mareanie':
+              // Toxic Spikes: Poisons all targets
+              targets.forEach((target) => {
+                target.addStatus('poison', 99999, tier === 1 ? 1 : 3);
+              });
+              break;
+            case 'skarmory':
+              // Spikes: % HP damage to all targets
+              targets.forEach((target) => {
+                // not using scene.causeDamage so this ignores all damage modifiers.
+                target.takeDamage(
+                  Math.floor(
+                    tier === 1 ? target.maxHP * 0.125 : target.maxHP * 0.375
+                  )
+                );
+              });
+              break;
+          }
+        });
+    },
   },
   'bulky attacker': {
     category: 'bulky attacker',
@@ -986,7 +1087,7 @@ when they deal damage.
  (6) - 1500 bonus HP`,
     thresholds: [2, 4, 6],
     onRoundStart({ board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -1016,7 +1117,7 @@ at round start.
  (6) - 80 to self`,
     thresholds: [2, 4, 6],
     onRoundStart({ board, side, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -1063,7 +1164,7 @@ opponents with reduced stats or status effects.
 `,
     thresholds: [2, 3],
     onHit({ attacker, defender, flags: { isAttack }, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -1100,7 +1201,7 @@ it and adjacent allies recover HP.
  (4) - 25% of max HP.`,
     thresholds: [2, 3],
     onMoveUse({ board, user, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
@@ -1252,7 +1353,7 @@ whichever one is lower.
  (4) - 9% of HP/PP`,
     thresholds: [2, 3, 4],
     onTurnStart({ pokemon, count }) {
-      const tier = getSynergyTier(this.thresholds, count);
+      const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }

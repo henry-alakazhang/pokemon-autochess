@@ -111,7 +111,7 @@ function genericPrioritiseBoard(
     .pop() as [Category, number];
 
   const biggestSynergyHighestTier = getSynergyTier(
-    synergyData[biggestSynergy].thresholds,
+    synergyData[biggestSynergy],
     biggestSynergyCount
   );
 
@@ -132,7 +132,7 @@ function genericPrioritiseBoard(
     // then try to add the key synergy until we are.
     if (
       getSynergyTier(
-        synergyData[biggestSynergy].thresholds,
+        synergyData[biggestSynergy],
         currentSynergyCounts[biggestSynergy] ?? 0
       ) < biggestSynergyHighestTier
     ) {
@@ -151,11 +151,11 @@ function genericPrioritiseBoard(
       pokemon.basePokemon.categories.some(
         (category) =>
           getSynergyTier(
-            synergyData[category].thresholds,
+            synergyData[category],
             (currentSynergyCounts[category] ?? 0) + 1
           ) >
           getSynergyTier(
-            synergyData[category].thresholds,
+            synergyData[category],
             currentSynergyCounts[category] ?? 0
           )
       )
@@ -233,13 +233,10 @@ function decideWant(
     pokemon.categories.some(
       (category) =>
         getSynergyTier(
-          synergyData[category].thresholds,
+          synergyData[category],
           (player.synergyMap[category] ?? 0) + 1
         ) >
-        getSynergyTier(
-          synergyData[category].thresholds,
-          player.synergyMap[category] ?? 0
-        )
+        getSynergyTier(synergyData[category], player.synergyMap[category] ?? 0)
     );
 
   // list all the bench units that will improve synergies
@@ -311,11 +308,11 @@ function decideWant(
       pokemon.categories.some(
         (category) =>
           getSynergyTier(
-            synergyData[category].thresholds,
+            synergyData[category],
             (player.synergyMap[category] ?? 0) + 1
           ) >
           getSynergyTier(
-            synergyData[category].thresholds,
+            synergyData[category],
             player.synergyMap[category] ?? 0
           )
       )
@@ -338,11 +335,11 @@ function decideWant(
       pokemon.categories.some(
         (category) =>
           getSynergyTier(
-            synergyData[category].thresholds,
+            synergyData[category],
             (player.synergyMap[category] ?? 0) + 1
           ) >
           getSynergyTier(
-            synergyData[category].thresholds,
+            synergyData[category],
             player.synergyMap[category] ?? 0
           )
       )
