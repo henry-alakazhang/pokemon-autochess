@@ -440,10 +440,7 @@ export class Player extends Phaser.GameObjects.GameObject {
               category: category as Category,
               count,
               // pre-compute this for sorting purposes as well
-              tier: getSynergyTier(
-                synergyData[category as Category].thresholds,
-                count
-              ),
+              tier: getSynergyTier(synergyData[category as Category], count),
             }
           : undefined
       )

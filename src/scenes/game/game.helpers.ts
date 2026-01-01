@@ -196,7 +196,7 @@ export function calculateBoardStrength(player: Player): number {
     .reduce((a, b) => a + b, 0);
   const totalSynergyTiers = player.synergies
     .map((synergy) =>
-      getSynergyTier(synergyData[synergy.category].thresholds, synergy.count)
+      getSynergyTier(synergyData[synergy.category], synergy.count)
     )
     .reduce((a, b) => a + 2 ** (b - 1), 0);
 

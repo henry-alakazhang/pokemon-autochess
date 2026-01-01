@@ -1,4 +1,9 @@
-import { Category, getSynergyTier, synergyData } from '../core/game.model';
+import {
+  Category,
+  getNextThreshold,
+  getSynergyTier,
+  synergyData,
+} from '../core/game.model';
 import { pokemonPerSynergy } from '../core/pokemon.model';
 import { defaultStyle, titleStyle } from './text.helpers';
 
@@ -137,11 +142,9 @@ export class SynergyMarker extends Phaser.GameObjects.Sprite {
   }
 
   setCount(count: number) {
-    const { thresholds } = synergyData[this.category];
-    const tier = getSynergyTier(thresholds, count);
-    // tier starts at 1, so next threshold is just the entry after
-    // tier can be `thresholds.length`, in which case it would be undefined and should default to max
-    const nextThreshold = thresholds[tier] ?? thresholds[thresholds.length - 1];
+    const synergy = synergyData[this.category];
+    const tier = getSynergyTier(synergy, count);
+    const nextThreshold = getNextThreshold(synergy, count);
 
     this.thresholdText
       .setPosition(this.x + this.displayWidth + 4, this.y + 4)
