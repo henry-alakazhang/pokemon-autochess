@@ -1031,7 +1031,7 @@ enchanced significantly.`,
         .filter(isDefined)
         .filter(
           (pokemon) =>
-            pokemon?.side === side &&
+            pokemon.side === side &&
             pokemon.basePokemon.categories.includes('hazard setter')
         )
         .forEach((pokemon) => {

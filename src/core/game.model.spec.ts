@@ -18,7 +18,7 @@ const createSynergy = (
 });
 
 describe('getSynergyTier', () => {
-  describe('standard threshold behavior (>= matching)', () => {
+  describe('with standard thresholds', () => {
     test('should return tier 0 when count is below all thresholds', () => {
       expect(getSynergyTier(createSynergy([2, 4, 6]), 0)).toBe(0);
       expect(getSynergyTier(createSynergy([2, 4, 6]), 1)).toBe(0);
@@ -46,7 +46,7 @@ describe('getSynergyTier', () => {
     });
   });
 
-  describe('exact threshold behavior (== matching)', () => {
+  describe('with exact thresholds', () => {
     test('should return tier 0 when count does not match any threshold', () => {
       expect(getSynergyTier(createSynergy([1, 4], true), 0)).toBe(0);
       expect(getSynergyTier(createSynergy([1, 4], true), 2)).toBe(0);
@@ -81,23 +81,31 @@ describe('getSynergyTier', () => {
 });
 
 describe('getNextThreshold', () => {
-  test('should return the next threshold for standard thresholds', () => {
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 0)).toBe(2);
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 1)).toBe(2);
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 2)).toBe(4);
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 3)).toBe(4);
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 4)).toBe(6);
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 5)).toBe(6);
-    expect(getNextThreshold(createSynergy([2, 4, 6]), 6)).toBe(6);
+  describe('with standard thresholds', () => {
+    test('should always return the next threshold for standard thresholds', () => {
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 0)).toBe(2);
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 1)).toBe(2);
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 2)).toBe(4);
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 3)).toBe(4);
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 4)).toBe(6);
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 5)).toBe(6);
+      expect(getNextThreshold(createSynergy([2, 4, 6]), 6)).toBe(6);
+    });
   });
 
-  test('should return the previous threshold for exact thresholds', () => {
-    expect(getNextThreshold(createSynergy([1, 4], true), 0)).toBe(1);
-    expect(getNextThreshold(createSynergy([1, 4], true), 1)).toBe(1);
-    expect(getNextThreshold(createSynergy([1, 4], true), 2)).toBe(1);
-    expect(getNextThreshold(createSynergy([1, 4], true), 3)).toBe(1);
-    expect(getNextThreshold(createSynergy([1, 4], true), 4)).toBe(4);
-    expect(getNextThreshold(createSynergy([1, 4], true), 5)).toBe(4);
-    expect(getNextThreshold(createSynergy([1, 4], true), 6)).toBe(4);
+  describe('with exact thresholds', () => {
+    test('should return the first exact threshold if below or at it', () => {
+      expect(getNextThreshold(createSynergy([2, 4], true), 0)).toBe(2);
+      expect(getNextThreshold(createSynergy([2, 4], true), 1)).toBe(2);
+      expect(getNextThreshold(createSynergy([2, 4], true), 2)).toBe(2);
+    });
+
+    test('should return the previous threshold if between thresholds', () => {
+      expect(getNextThreshold(createSynergy([1, 4], true), 2)).toBe(1);
+      expect(getNextThreshold(createSynergy([1, 4], true), 3)).toBe(1);
+      expect(getNextThreshold(createSynergy([1, 4], true), 4)).toBe(4);
+      expect(getNextThreshold(createSynergy([1, 4], true), 5)).toBe(4);
+      expect(getNextThreshold(createSynergy([1, 4], true), 6)).toBe(4);
+    });
   });
 });
