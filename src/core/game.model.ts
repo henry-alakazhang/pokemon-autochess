@@ -1013,7 +1013,7 @@ entry hazard:
  (1) OR (4) - Each Hazard Setter applies
 their hazards at the start of the fight.
 If you have all 4, the effects are
-enchanced significantly.`,
+enhanced significantly.`,
     thresholds: [1, 4],
     isExactThreshold: true,
     onRoundStart({ scene, board, side, count }) {
