@@ -1037,7 +1037,7 @@ enchanced significantly.`,
         .forEach((pokemon) => {
           // TODO: could this be part of using their move instead?
           switch (pokemon.basePokemon.base) {
-            case 'roggenrola':
+            case 'nacli':
               // Stealth Rock: flat damage to all targets
               targets.forEach((target) => {
                 scene.causeDamage(

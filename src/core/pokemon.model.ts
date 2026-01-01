@@ -731,7 +731,7 @@ const basePokemonData = {
     },
     move: icicleCrash,
   },
-  roggenrola: {
+  nacli: {
     categories: ['rock', 'wall', 'hazard setter'],
     tier: 1,
     maxHP: 85,
@@ -1565,22 +1565,22 @@ const rawPokemonData = {
     name: 'mamoswine',
     displayName: 'Mamoswine',
   },
-  roggenrola: {
-    ...getEvolution('roggenrola', 1),
-    name: 'roggenrola',
-    displayName: 'Roggenrola',
-    evolution: 'boldore',
+  nacli: {
+    ...getEvolution('nacli', 1),
+    name: 'nacli',
+    displayName: 'Nacli',
+    evolution: 'naclstack',
   },
-  boldore: {
-    ...getEvolution('roggenrola', 2),
-    name: 'boldore',
-    displayName: 'Boldore',
-    evolution: 'gigalith',
+  naclstack: {
+    ...getEvolution('nacli', 2),
+    name: 'naclstack',
+    displayName: 'Naclstack',
+    evolution: 'garganacl',
   },
-  gigalith: {
-    ...getEvolution('roggenrola', 3),
-    name: 'gigalith',
-    displayName: 'Gigalith',
+  garganacl: {
+    ...getEvolution('nacli', 3),
+    name: 'garganacl',
+    displayName: 'Garganacl',
   },
   sewaddle: {
     ...getEvolution('sewaddle', 1),
