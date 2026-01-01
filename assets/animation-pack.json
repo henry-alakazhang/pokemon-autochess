@@ -3,6 +3,15 @@
     "files": [
       {
         "type": "spritesheet",
+        "key": "baleful-bunker",
+        "url": "assets/animations/baleful-bunker.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "blue-buff",
         "url": "assets/animations/blue-buff.png",
         "frameConfig": {
@@ -242,6 +251,15 @@
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "whirlwind",
+        "url": "assets/animations/whirlwind.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 80
         }
       }
     ]
