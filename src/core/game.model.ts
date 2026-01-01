@@ -1006,10 +1006,76 @@ when they deal damage.
   },
   'hazard setter': {
     category: 'hazard setter',
-    displayName: 'Hazard Setter',
-    description: 'Does nothing.',
+    displayName: 'Hazard Setter: Trap Setup',
+    description: `Each Hazard Setter has a special
+entry hazard:
+
+ (1) OR (4) - Each Hazard Setter applies
+their hazards at the start of the fight.
+If you have all 4, the effects are
+enchanced significantly.`,
     thresholds: [1, 4],
     isExactThreshold: true,
+    onRoundStart({ scene, board, side, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const targets = flatten(board)
+        .filter(isDefined)
+        .filter((pokemon) => pokemon.side !== side);
+
+      // get all the hazard setters and apply their hazards
+      flatten(board)
+        .filter(isDefined)
+        .filter(
+          (pokemon) =>
+            pokemon?.side === side &&
+            pokemon.basePokemon.categories.includes('hazard setter')
+        )
+        .forEach((pokemon) => {
+          // TODO: could this be part of using their move instead?
+          switch (pokemon.basePokemon.base) {
+            case 'roggenrola':
+              // Stealth Rock: flat damage to all targets
+              targets.forEach((target) => {
+                scene.causeDamage(
+                  pokemon,
+                  target,
+                  // This is affected by Rock synergies and defense
+                  // This kinda mimics the way that Stealth Rock is "super effective"... I guess...
+                  { damage: tier === 1 ? 250 : 750, defenseStat: 'defense' },
+                  { triggerEvents: false, canCrit: false }
+                );
+              });
+              break;
+            case 'sewaddle':
+              // Sticky Web: Slows all targets (for 5 seconds / the entire round)
+              targets.forEach((target) => {
+                target.changeStats({ speed: -1 }, tier === 1 ? 5000 : 99_999);
+              });
+              break;
+            case 'mareanie':
+              // Toxic Spikes: Poisons all targets
+              targets.forEach((target) => {
+                target.addStatus('poison', 99999, tier === 1 ? 1 : 3);
+              });
+              break;
+            case 'skarmory':
+              // Spikes: % HP damage to all targets
+              targets.forEach((target) => {
+                // not using scene.causeDamage so this ignores all damage modifiers.
+                target.takeDamage(
+                  Math.floor(
+                    tier === 1 ? target.maxHP * 0.125 : target.maxHP * 0.375
+                  )
+                );
+              });
+              break;
+          }
+        });
+    },
   },
   'bulky attacker': {
     category: 'bulky attacker',
