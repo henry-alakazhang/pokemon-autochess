@@ -2,6 +2,8 @@ import { writeFileSync } from 'fs';
 import { glob } from 'glob';
 
 const sizeOverrides: { [k: string]: number } = {
+  // FIXME: Weezing Galar looks a bit weird due to this.
+  weezing_galar: 80,
   regigigas: 128,
 };
 
