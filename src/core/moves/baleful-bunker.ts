@@ -3,7 +3,6 @@ import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
-const defenseStat = 'defense' as const;
 const defenseMultiplier = 25 as const;
 
 /**
@@ -16,7 +15,6 @@ export const balefulBunker = {
   type: 'active',
   cost: 10,
   startingPP: 6,
-  defenseStat,
   targetting: 'ground',
   get description() {
     return `For 8 seconds, {{user}} boosts its Defense and Special Defense. When attacking, it deals additional damage equal to ${defenseMultiplier}% of its Defense per poison stack on the target.

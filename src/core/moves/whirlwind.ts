@@ -9,7 +9,7 @@ import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 
 const defenseStat = 'specDefense' as const;
-const damage = [400, 700, 1100];
+const damage = [150, 250, 400];
 
 /**
  * Whirlwind - Skarmory line's move
