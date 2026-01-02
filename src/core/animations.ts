@@ -195,8 +195,8 @@ export const animations: { [key: string]: AnimationData } = {
   },
   'baleful-bunker': {
     texture: 'baleful-bunker',
-    frames: 32,
-    duration: (1000 * 32) / 30,
+    frames: 31,
+    duration: (1000 * 31) / 30,
   },
   whirlwind: {
     texture: 'whirlwind',

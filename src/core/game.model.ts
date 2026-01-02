@@ -1016,6 +1016,20 @@ If you have all 4, the effects are
 enhanced significantly.`,
     thresholds: [1, 4],
     isExactThreshold: true,
+    onMoveUse({ user, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      // Skarmory whirlwind retriggers hazards. This is implemented here
+      // because the logic for triggering hazards is implemented here.
+      // FIXME: Enable this when we add target to onMoveUse, as otherwise
+      // this triggers on the entire enemy team.
+      if (user.basePokemon.base === 'skarmory') {
+        // this.onRoundStart?.({ scene, board, side: user.side, count });
+      }
+    },
     onRoundStart({ scene, board, side, count }) {
       const tier = getSynergyTier(this, count);
       if (tier === 0) {

@@ -2,6 +2,7 @@ import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
 import { animations } from '../animations';
 import { Move, MoveConfig } from '../move.model';
+import * as Tweens from '../tweens';
 
 /**
  * Dragon Dance - Gyarados line's move
@@ -45,12 +46,8 @@ export const dragonDance = {
       onComplete: () => {
         dance.destroy();
         // at the end, grow and shrink
-        scene.add.tween({
+        Tweens.growShrink(scene, {
           targets: [user],
-          duration: 250,
-          scaleX: 1.2,
-          scaleY: 1.2,
-          yoyo: true,
           onComplete: () => {
             user.changeStats({
               attack: +3,

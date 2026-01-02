@@ -2,6 +2,7 @@ import { getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { Category } from './game.model';
 import { Move } from './move.model';
 import {
+  balefulBunker,
   braveBird,
   clone,
   cottonGuard,
@@ -22,7 +23,9 @@ import {
   mudBomb,
   nightDaze,
   powerSpot,
+  purifyingSalt,
   quiverDance,
+  razorLeaf,
   razorWind,
   rollout,
   shadowBall,
@@ -38,6 +41,7 @@ import {
   twineedle,
   venomDrench,
   voltTackle,
+  whirlwind,
   zapCannon,
 } from './moves';
 import { icicleCrash } from './moves/icicle-crash';
@@ -744,11 +748,7 @@ const basePokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: {
-      displayName: 'Stealth Rock',
-      type: 'passive',
-      description: `Hazard: Stealth Rock. Deals 250/750 physical damage to all enemies`,
-    },
+    move: purifyingSalt,
   },
   sewaddle: {
     categories: ['grass', 'bug', 'hazard setter'],
@@ -763,11 +763,7 @@ const basePokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: {
-      displayName: 'Sticky Web',
-      type: 'passive',
-      description: `Hazard: Sticky Web. Slows all enemies for 5 seconds / the entire round.`,
-    },
+    move: razorLeaf,
   },
   mareanie: {
     categories: ['water', 'poison', 'hazard setter'],
@@ -782,11 +778,7 @@ const basePokemonData = {
       range: 1,
       stat: 'specAttack',
     },
-    move: {
-      displayName: 'Toxic Spikes',
-      type: 'passive',
-      description: `Hazard: Toxic Spikes. Applies 1/3 stacks of Poison to all enemies.`,
-    },
+    move: balefulBunker,
   },
   skarmory: {
     categories: ['steel', 'flying', 'hazard setter'],
@@ -805,11 +797,7 @@ const basePokemonData = {
         speed: 500,
       },
     },
-    move: {
-      displayName: 'Spikes',
-      type: 'passive',
-      description: `Hazard: Spikes. Deals 12.5%/37.5% max HP damage to all enemies. Ignores defenses and synergies.`,
-    },
+    move: whirlwind,
   },
   // NOT A REAL POKEMON
   // ONLY USED FOR NEUTRAL ROUNDS
