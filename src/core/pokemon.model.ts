@@ -15,14 +15,17 @@ import {
   eggBarrage,
   frenzyPlant,
   furyCutter,
+  gigatonHammer,
   iceShard,
   kingsShield,
   magmaStorm,
   magnetPull,
   meteorMash,
+  moonblast,
   mudBomb,
   nightDaze,
   powerSpot,
+  psychicNoise,
   purifyingSalt,
   quiverDance,
   razorLeaf,
@@ -33,6 +36,7 @@ import {
   shellTrap,
   softboiled,
   stoneEdge,
+  strangeSteam,
   surf,
   teleport,
   therianQuake,
@@ -812,11 +816,7 @@ const basePokemonData = {
       range: 1,
       stat: 'specAttack',
     },
-    move: {
-      displayName: 'Filler Move',
-      type: 'passive',
-      description: `{{user}} uses a filler move.`,
-    },
+    move: psychicNoise,
   },
   tinkatink: {
     categories: ['steel', 'fairy', 'bulky attacker'],
@@ -831,11 +831,7 @@ const basePokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: {
-      displayName: 'Filler Move',
-      type: 'passive',
-      description: `{{user}} uses a filler move.`,
-    },
+    move: gigatonHammer,
   },
   koffing: {
     categories: ['poison', 'fairy', 'support'],
@@ -854,11 +850,7 @@ const basePokemonData = {
         speed: 500,
       },
     },
-    move: {
-      displayName: 'Filler Move',
-      type: 'passive',
-      description: `{{user}} uses a filler move.`,
-    },
+    move: strangeSteam,
   },
   fluttermane: {
     categories: ['ghost', 'fairy', 'wallbreaker'],
@@ -877,11 +869,7 @@ const basePokemonData = {
         speed: 500,
       },
     },
-    move: {
-      displayName: 'Filler Move',
-      type: 'passive',
-      description: `{{user}} uses a filler move.`,
-    },
+    move: moonblast,
   },
   // NOT A REAL POKEMON
   // ONLY USED FOR NEUTRAL ROUNDS

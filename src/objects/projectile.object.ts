@@ -9,9 +9,10 @@ export interface ProjectileConfig {
    * How the projectile travels.
    *
    * * `straight` flies directly towards the target
+   * * `wobble` flies mostly directly to target with some wobbles.
    * * `randomArc` bounces outwards in a random direction, and arcs towards the target
    */
-  trajectory?: 'straight' | 'randomArc';
+  trajectory?: 'straight' | 'wobble' | 'randomArc';
 }
 
 /**
@@ -24,7 +25,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   };
 
   body: Phaser.Physics.Arcade.Body;
-  trajectory: 'straight' | 'randomArc';
+  trajectory: 'straight' | 'wobble' | 'randomArc';
 
   /** How long the projectile has been alive */
   lifetime: number;
@@ -91,6 +92,14 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this,
         this.target.x,
         this.target.y,
+        this.body.maxSpeed
+      );
+    } else if (this.trajectory === 'wobble') {
+      // set speed towards target with some variation
+      this.scene.physics.moveTo(
+        this,
+        this.target.x + (Math.random() - 0.5) * 120,
+        this.target.y + (Math.random() - 0.5) * 120,
         this.body.maxSpeed
       );
     } else {
