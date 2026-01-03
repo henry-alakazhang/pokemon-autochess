@@ -27,26 +27,31 @@ export const psychicNoise = {
     onComplete,
   }: MoveConfig<'unit'>) {
     await Tweens.hop(scene, { targets: [user] });
-    // TODO: graphics
-    // Deal damage to the one target.
-    scene.causeDamage(user, target, {
-      damage: damage[user.basePokemon.stage - 1],
-      defenseStat,
-    });
-    // TODO: give the target a shudder animation?
+    const dance = scene.add
+      .sprite(target.x, target.y, 'psychic-noise')
+      .play('psychic-noise')
+      .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        dance.destroy();
 
-    // Add heal reduction to target and adjacent enemies.
-    [
-      targetCoords,
-      { x: targetCoords.x + 1, y: targetCoords.y },
-      { x: targetCoords.x - 1, y: targetCoords.y },
-      { x: targetCoords.x, y: targetCoords.y + 1 },
-      { x: targetCoords.x, y: targetCoords.y - 1 },
-    ]
-      .filter((coords) => inBounds(scene.board, coords))
-      .map((coords) => scene.board[coords.x][coords.y])
-      .filter((pokemon) => pokemon?.side !== user.side)
-      .forEach((adjacent) => adjacent?.addStatus('healReduction', 6000));
-    onComplete();
+        scene.causeDamage(user, target, {
+          damage: damage[user.basePokemon.stage - 1],
+          defenseStat,
+        });
+
+        // Add heal reduction to target and adjacent enemies.
+        [
+          targetCoords,
+          { x: targetCoords.x + 1, y: targetCoords.y },
+          { x: targetCoords.x - 1, y: targetCoords.y },
+          { x: targetCoords.x, y: targetCoords.y + 1 },
+          { x: targetCoords.x, y: targetCoords.y - 1 },
+        ]
+          .filter((coords) => inBounds(scene.board, coords))
+          .map((coords) => scene.board[coords.x][coords.y])
+          .filter((pokemon) => pokemon?.side !== user.side)
+          .forEach((adjacent) => adjacent?.addStatus('healReduction', 6000));
+
+        onComplete();
+      });
   },
 } as const satisfies Move;

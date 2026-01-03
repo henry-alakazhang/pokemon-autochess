@@ -203,4 +203,25 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 52,
     duration: (1000 * 52) / 30,
   },
+  'psychic-noise': {
+    texture: 'psychic-noise',
+    frames: 34,
+    duration: (1000 * 34) / 30,
+  },
+  hammer: {
+    texture: 'hammer',
+    frames: 8,
+    duration: (1000 * 8) / 30,
+  },
+  'heavy-hit': {
+    texture: 'heavy-hit',
+    frames: 6,
+    duration: (1000 * 6) / 15,
+  },
+  'strange-steam': {
+    texture: 'strange-steam',
+    frames: 4,
+    duration: (1000 * 4) / 15,
+    repeat: -1,
+  },
 };
