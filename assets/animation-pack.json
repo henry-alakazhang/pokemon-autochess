@@ -120,8 +120,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "leech-life",
-        "url": "assets/animations/leech-life.png",
+        "key": "drain-punch",
+        "url": "assets/animations/drain-punch.png",
         "frameConfig": {
           "frameWidth": 80,
           "frameHeight": 64

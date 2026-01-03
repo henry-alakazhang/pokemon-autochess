@@ -104,8 +104,8 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 5,
     duration: 1000 / 6, // 30 fps
   },
-  'leech-life': {
-    texture: 'leech-life',
+  'drain-punch': {
+    texture: 'drain-punch',
     frames: 36,
     duration: 900,
   },

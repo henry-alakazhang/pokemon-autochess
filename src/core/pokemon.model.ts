@@ -50,7 +50,7 @@ import {
   zapCannon,
 } from './moves';
 import { icicleCrash } from './moves/icicle-crash';
-import { leechLife } from './moves/leech-life';
+import { drainPunch } from './moves/drain-punch';
 
 export interface Attack {
   /** number of squares away the move can reach */
@@ -821,7 +821,7 @@ const basePokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: leechLife,
+    move: drainPunch,
   },
   pawmi: {
     categories: ['electric', 'fighting', 'revenge killer'],
