@@ -819,7 +819,7 @@ const basePokemonData = {
     move: psychicNoise,
   },
   tinkatink: {
-    categories: ['steel', 'fairy', 'bulky attacker'],
+    categories: ['steel', 'fairy', 'wallbreaker'],
     tier: 2,
     maxHP: 75,
     attack: 75,
@@ -853,7 +853,7 @@ const basePokemonData = {
     move: strangeSteam,
   },
   fluttermane: {
-    categories: ['ghost', 'fairy', 'wallbreaker'],
+    categories: ['ghost', 'fairy', 'disruptor'],
     tier: 4,
     maxHP: 55,
     attack: 55,
