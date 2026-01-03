@@ -1,0 +1,119 @@
+import {
+  getAttackAnimation,
+  getFacing,
+  inBounds,
+} from '../../scenes/game/combat/combat.helpers';
+import { Move, MoveConfig } from '../move.model';
+
+const defenseStat = 'defense' as const;
+const damage = [400, 750, 1400];
+
+/**
+ * Mega Punch - Stufful line's unique move
+ *
+ * Damages a target knocks it back, stunning it and anyone behind it.
+ */
+export const megaPunch = {
+  displayName: 'Mega Punch',
+  type: 'active',
+  cost: 22,
+  startingPP: 14,
+  range: 1,
+  targetting: 'unit',
+  defenseStat,
+  get description() {
+    return `{{user}} winds up for a huge punch to a single enemy. It deals ${damage.join(
+      '/'
+    )} damage and knocks the target back. The target and any enemy behind it are stunned for 2 seconds, doubled if hit into a wall.`;
+  },
+  use({
+    scene,
+    board,
+    user,
+    userCoords,
+    target,
+    targetCoords,
+    onComplete,
+  }: MoveConfig<'unit'>) {
+    const forwardMovement = getAttackAnimation(user, getFacing(user, target));
+    const backwardMovement = getAttackAnimation(user, getFacing(target, user));
+    const originalCoords = { x: user.x, y: user.y };
+
+    scene.add.tween({
+      targets: [user],
+      duration: 500,
+      ...backwardMovement,
+      onComplete: () => {
+        scene.add.tween({
+          targets: [user],
+          duration: 100,
+          ...forwardMovement,
+          onComplete: () => {
+            const punch = scene.add
+              .sprite(target.x, target.y, 'mega-punch')
+              .play('mega-punch')
+              .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () =>
+                punch.destroy()
+              );
+
+            const dx = targetCoords.x - userCoords.x;
+            const dy = targetCoords.y - userCoords.y;
+            const endCoords = {
+              x: targetCoords.x + dx,
+              y: targetCoords.y + dy,
+            };
+            // find the first blocked / out-of-bounds square
+            while (
+              inBounds(board, endCoords) &&
+              !board[endCoords.x][endCoords.y]
+            ) {
+              endCoords.x += dx;
+              endCoords.y += dy;
+            }
+            // move to the square before
+            // TODO: move faster than default speed/easing
+            scene.movePokemon(targetCoords, {
+              x: endCoords.x - dx,
+              y: endCoords.y - dy,
+            });
+
+            const damageConfig = {
+              damage: damage[user.basePokemon.stage - 1],
+              defenseStat,
+            };
+            scene.causeDamage(user, target, damageConfig);
+
+            if (
+              inBounds(board, endCoords) &&
+              board[endCoords.x][endCoords.y]?.side === target.side
+            ) {
+              // if the blockage is another enemy, stun both and deal damage to the other target
+              target.addStatus('paralyse', 2000);
+
+              const otherTarget = board[endCoords.x][endCoords.y];
+              if (otherTarget) {
+                scene.causeDamage(user, otherTarget, damageConfig, {
+                  isAOE: true,
+                });
+                otherTarget.addStatus('paralyse', 2000);
+              }
+            } else {
+              // if the blockage is a wall or ally, stun the single target for longer
+              target.addStatus('paralyse', 4000);
+            }
+
+            scene.add.tween({
+              targets: [user],
+              duration: 500,
+              delay: 250,
+              ...originalCoords,
+              onComplete: () => {
+                onComplete();
+              },
+            });
+          },
+        });
+      },
+    });
+  },
+} as const satisfies Move;
