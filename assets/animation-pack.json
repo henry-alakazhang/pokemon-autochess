@@ -138,8 +138,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "meteor-mash",
-        "url": "assets/animations/meteor-mash.png",
+        "key": "mega-punch",
+        "url": "assets/animations/mega-punch.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 72
@@ -282,8 +282,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "volt-tackle",
-        "url": "assets/animations/volt-tackle.png",
+        "key": "double-shock",
+        "url": "assets/animations/double-shock.png",
         "frameConfig": {
           "frameWidth": 72,
           "frameHeight": 80

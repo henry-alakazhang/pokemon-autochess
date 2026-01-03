@@ -853,18 +853,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     damage,
     selfCoords,
   }) => {
-    if (this.basePokemon.move?.type === 'passive') {
-      this.basePokemon.move.onHit?.({
-        scene,
-        board,
-        attacker,
-        defender,
-        flags,
-        damage,
-        self: this,
-        selfCoords,
-      });
-    }
+    this.basePokemon.move?.onHit?.({
+      scene,
+      board,
+      attacker,
+      defender,
+      flags,
+      damage,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onHit?.({
         scene,
@@ -891,18 +889,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   }) => {
     this.addPP(Math.min(5, damage * 0.015));
 
-    if (this.basePokemon.move?.type === 'passive') {
-      this.basePokemon.move.onBeingHit?.({
-        scene,
-        board,
-        attacker,
-        defender,
-        flags,
-        damage,
-        self: this,
-        selfCoords,
-      });
-    }
+    this.basePokemon.move?.onBeingHit?.({
+      scene,
+      board,
+      attacker,
+      defender,
+      flags,
+      damage,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onBeingHit?.({
         scene,
@@ -925,16 +921,14 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     side,
     selfCoords,
   }) => {
-    if (this.basePokemon.move?.type === 'passive') {
-      this.basePokemon.move.onDeath?.({
-        scene,
-        board,
-        pokemon,
-        side,
-        self: this,
-        selfCoords,
-      });
-    }
+    this.basePokemon.move?.onDeath?.({
+      scene,
+      board,
+      pokemon,
+      side,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onDeath?.({
         scene,
@@ -953,15 +947,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     pokemon,
     selfCoords,
   }) => {
-    if (this.basePokemon.move?.type === 'passive') {
-      this.basePokemon.move.onTurnStart?.({
-        scene,
-        board,
-        pokemon,
-        self: this,
-        selfCoords,
-      });
-    }
+    this.basePokemon.move?.onTurnStart?.({
+      scene,
+      board,
+      pokemon,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onTurnStart?.({
         scene,
@@ -981,16 +973,14 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     selfCoords,
     time,
   }) => {
-    if (this.basePokemon.move?.type === 'passive') {
-      this.basePokemon.move.onTimer?.({
-        scene,
-        board,
-        side,
-        time,
-        self: this,
-        selfCoords,
-      });
-    }
+    this.basePokemon.move?.onTimer?.({
+      scene,
+      board,
+      side,
+      time,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onTimer?.({
         scene,
@@ -1010,15 +1000,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     side,
     selfCoords,
   }) => {
-    if (this.basePokemon.move?.type === 'passive') {
-      this.basePokemon.move.onRoundStart?.({
-        scene,
-        board,
-        side,
-        self: this,
-        selfCoords,
-      });
-    }
+    this.basePokemon.move?.onRoundStart?.({
+      scene,
+      board,
+      side,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onRoundStart?.({
         scene,
@@ -1048,18 +1036,15 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     selfCoords,
   }) => {
     let newTotal = baseAmount;
-    if (this.basePokemon.move?.type === 'passive') {
-      newTotal =
-        this.basePokemon.move.calculateDamage?.({
-          attacker,
-          defender,
-          baseAmount: newTotal,
-          flags,
-          side,
-          self: this,
-          selfCoords,
-        }) ?? newTotal;
-    }
+    this.basePokemon.move?.calculateDamage?.({
+      attacker,
+      defender,
+      baseAmount: newTotal,
+      flags,
+      side,
+      self: this,
+      selfCoords,
+    });
     Object.values(this.effects).forEach(({ effect }) => {
       newTotal =
         effect.calculateDamage?.({

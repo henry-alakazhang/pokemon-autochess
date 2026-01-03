@@ -20,7 +20,7 @@ export interface MoveConfig<T extends Targetting> {
 /**
  * Moves which (typically) require PP and have to be used to have an effect
  */
-export interface ActiveMove<T extends Targetting> {
+export type ActiveMove<T extends Targetting> = {
   readonly displayName: string;
   readonly type: 'active';
   readonly description: string;
@@ -68,7 +68,9 @@ export interface ActiveMove<T extends Targetting> {
   /* here follow a bunch of optional fields for damage and effect calculation */
 
   readonly defenseStat?: 'defense' | 'specDefense';
-}
+} &
+  // All active moves can also have passive effects attached.
+  Omit<PokemonEffect, 'onMoveUse' | 'onRoundEnd'>;
 
 /**
  * Passive moves can have any Effects attached,

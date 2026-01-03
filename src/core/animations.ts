@@ -12,8 +12,8 @@ interface AnimationData {
 }
 
 export const animations: { [key: string]: AnimationData } = {
-  'volt-tackle': {
-    texture: 'volt-tackle',
+  'double-shock': {
+    texture: 'double-shock',
     frames: 13,
     duration: 500,
   },
@@ -99,8 +99,8 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 10,
     duration: 320,
   },
-  'meteor-mash': {
-    texture: 'meteor-mash',
+  'mega-punch': {
+    texture: 'mega-punch',
     frames: 5,
     duration: 1000 / 6, // 30 fps
   },
