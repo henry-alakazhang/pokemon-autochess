@@ -37,23 +37,58 @@ export const moonblast = {
     targetCoords,
     onComplete,
   }: MoveConfig<'unit'>) {
+    // Add moon that grows as user does a spin
+    const moon = scene.add
+      .sprite(user.x + 8, user.y - 32, 'moon')
+      .setAlpha(0.25)
+      .setScale(0.5);
+    scene.tweens.add({
+      targets: [moon],
+      alpha: 1,
+      scale: 1.5,
+      duration: 600,
+    });
     await Tweens.spin(scene, {
       targets: [user],
       height: 20,
       width: 20,
-      duration: 250,
+      duration: 500,
     });
-    // TODO: graphics
-    // Moon over flutter mane
-    // Beam
+    await Tweens.hop(scene, {
+      targets: [user],
+    });
 
-    const action = { damage: damage[user.basePokemon.stage - 1], defenseStat };
-    if (target.statChanges.specAttack < 0) {
-      scene.causeAOEDamage(user, getAOE(targetCoords), action);
-    } else {
-      scene.causeDamage(user, target, action);
-      target.changeStats({ specAttack: -1 }, 8000);
-    }
-    onComplete();
+    scene.fireProjectile(
+      user,
+      target,
+      {
+        key: 'moon-projectile',
+        speed: 600,
+        trajectory: 'straight',
+        rotation: 'rotate',
+      },
+      () => {
+        const action = {
+          damage: damage[user.basePokemon.stage - 1],
+          defenseStat,
+        };
+        if (target.statChanges.specAttack < 0) {
+          // Already debuffed: deal AOE damage
+          // Also play effect to make this more obvious.
+          const hitEffect = scene.add
+            .sprite(target.x, target.y, 'fairy-hit')
+            .play('fairy-hit')
+            .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+              hitEffect.destroy();
+            });
+          scene.causeAOEDamage(user, getAOE(targetCoords), action);
+        } else {
+          scene.causeDamage(user, target, action);
+          target.changeStats({ specAttack: -1 }, 8000);
+        }
+        moon.destroy();
+        onComplete();
+      }
+    );
   },
 } as const satisfies Move;

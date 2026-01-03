@@ -224,4 +224,9 @@ export const animations: { [key: string]: AnimationData } = {
     duration: (1000 * 4) / 15,
     repeat: -1,
   },
+  'fairy-hit': {
+    texture: 'fairy-hit',
+    frames: 13,
+    duration: (1000 * 13) / 60,
+  },
 };

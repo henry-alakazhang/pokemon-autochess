@@ -75,6 +75,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "fairy-hit",
+        "url": "assets/animations/fairy-hit.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "fury-cutter",
         "url": "assets/animations/fury-cutter.png",
         "frameConfig": {

@@ -6,6 +6,14 @@ export interface ProjectileConfig {
   /** Optional: name of animation to play if sprite is animated */
   animation?: string;
   /**
+   * How the projectile is rotated.
+   * Defaults to `directed`.
+   *
+   * * `directed` faces the projectile towards its target
+   * * `rotate` makes the projectile spin as it flies
+   */
+  rotation?: 'directed' | 'rotate';
+  /**
    * How the projectile travels.
    * Defaults to `'straight'`.
    *
@@ -32,6 +40,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
   body: Phaser.Physics.Arcade.Body;
   private trajectory: 'straight' | 'straightPulse' | 'randomArc';
+  private rotationMode: 'directed' | 'rotate';
   private destroyOnHit: boolean;
   /**
    * Whether the projectile has hit its target already.
@@ -56,6 +65,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     this.lifetime = 0;
     this.trajectory = config.trajectory ?? 'straight';
+    this.rotationMode = config.rotation ?? 'directed';
     this.destroyOnHit = config.destroyOnHit ?? true;
     this.body.setMaxSpeed(config.speed);
 
@@ -81,6 +91,11 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     if (config.animation) {
       this.play(config.animation);
+    }
+
+    if (this.rotationMode === 'rotate') {
+      // about 3 rotations per second by default
+      this.setAngularVelocity(1080);
     }
   }
 
@@ -133,8 +148,10 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
       );
     }
 
-    // rotate to face current direction
-    this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
+    if (this.rotationMode === 'directed') {
+      // rotate to face current direction
+      this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
+    }
   }
 
   setTarget(newTarget: Phaser.GameObjects.Sprite) {
