@@ -110,9 +110,9 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     // mark as hit if the target is hit
     if (this.scene.physics.overlap(this, this.target) && !this.hasHitTarget) {
+      this.hasHitTarget = true;
       this.emit(Projectile.Events.HIT, this);
       if (this.destroyOnHit) {
-        this.hasHitTarget = true;
         this.destroy();
       }
       return;
