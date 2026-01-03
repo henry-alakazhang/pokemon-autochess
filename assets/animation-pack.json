@@ -75,11 +75,38 @@
       },
       {
         "type": "spritesheet",
+        "key": "fairy-hit",
+        "url": "assets/animations/fairy-hit.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "fury-cutter",
         "url": "assets/animations/fury-cutter.png",
         "frameConfig": {
           "frameWidth": 48,
           "frameHeight": 48
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hammer",
+        "url": "assets/animations/hammer.png",
+        "frameConfig": {
+          "frameWidth": 48,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "heavy-hit",
+        "url": "assets/animations/heavy-hit.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
         }
       },
       {
@@ -133,6 +160,15 @@
         "url": "assets/animations/poison-hit.png",
         "frameConfig": {
           "frameWidth": 72,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "psychic-noise",
+        "url": "assets/animations/psychic-noise.png",
+        "frameConfig": {
+          "frameWidth": 64,
           "frameHeight": 64
         }
       },
@@ -215,6 +251,15 @@
         "frameConfig": {
           "frameWidth": 128,
           "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "strange-steam",
+        "url": "assets/animations/strange-steam.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
         }
       },
       {

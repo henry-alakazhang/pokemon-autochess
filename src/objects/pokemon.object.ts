@@ -301,7 +301,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   initPhysics() {
     // set collision to be a small block in the center
-    this.body?.setSize(32, 32, true);
+    this.body?.setSize(this.width / 4, this.height / 4, true);
   }
 
   setPosition(x: number, y: number) {

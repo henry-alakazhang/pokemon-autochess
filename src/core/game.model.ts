@@ -846,16 +846,15 @@ effects at the start of the round.
     description: `All Pokemon have a maximum amount of
 damage they can take from one hit.
 
- (2) - 30% of their max HP
- (3) - 20% of their max HP
- (4) - 10% of their max HP`,
-    thresholds: [2, 4],
+ (2) - 1/4 of their max HP
+ (3) - 1/6 of their max HP`,
+    thresholds: [2, 3],
     calculateDamage({ defender, baseAmount, side, count }): number {
       const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return baseAmount;
       }
-      const maxHit = tier === 1 ? 0.3 : tier === 2 ? 0.2 : 0.1;
+      const maxHit = tier === 1 ? 1 / 4 : 1 / 6;
 
       if (defender.side === side) {
         return Math.min(baseAmount, maxHit * defender.maxHP);

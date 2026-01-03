@@ -915,7 +915,7 @@ export class CombatScene extends Scene {
     from: PokemonObject,
     to: PokemonObject,
     config: ProjectileConfig,
-    onHit: () => void
+    onHit: (projectile: Projectile) => void
   ) {
     const projectileObj = this.add.existing(
       new Projectile(this, from.x, from.y, to, config)
@@ -923,8 +923,8 @@ export class CombatScene extends Scene {
     // store this in the `projectiles` map under a random key
     const projectileKey = generateId();
     this.projectiles[projectileKey] = projectileObj;
-    projectileObj.on(Projectile.Events.HIT, () => {
-      onHit();
+    projectileObj.on(Projectile.Events.HIT, (projectile: Projectile) => {
+      onHit(projectile);
     });
     projectileObj.on(Phaser.GameObjects.Events.DESTROY, () => {
       delete this.projectiles[projectileKey];

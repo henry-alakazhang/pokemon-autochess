@@ -6,17 +6,32 @@ export interface ProjectileConfig {
   /** Optional: name of animation to play if sprite is animated */
   animation?: string;
   /**
+   * How the projectile is rotated.
+   * Defaults to `directed`.
+   *
+   * * `directed` faces the projectile towards its target
+   * * `rotate` makes the projectile spin as it flies
+   */
+  rotation?: 'directed' | 'rotate';
+  /**
    * How the projectile travels.
+   * Defaults to `'straight'`.
    *
    * * `straight` flies directly towards the target
+   * * `straightPulse` flies directly to target but pulses speed
    * * `randomArc` bounces outwards in a random direction, and arcs towards the target
    */
-  trajectory?: 'straight' | 'randomArc';
+  trajectory?: 'straight' | 'straightPulse' | 'randomArc';
+  /**
+   * Whether the projectile should be destroyed on impact.
+   * Defaults to `true`.
+   */
+  destroyOnHit?: boolean;
 }
 
 /**
  * Projectiles fired as part of an attack.
- * Flies towards a target and destroys itself on hit
+ * Flies towards a target and optionally destroys itself on impact.
  */
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
   static Events = {
@@ -24,10 +39,17 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   };
 
   body: Phaser.Physics.Arcade.Body;
-  trajectory: 'straight' | 'randomArc';
+  private trajectory: 'straight' | 'straightPulse' | 'randomArc';
+  private rotationMode: 'directed' | 'rotate';
+  private destroyOnHit: boolean;
+  /**
+   * Whether the projectile has hit its target already.
+   * Used when destroyOnHit is false so the Hit event only triggers once.
+   */
+  private hasHitTarget = false;
 
   /** How long the projectile has been alive */
-  lifetime: number;
+  private lifetime: number;
 
   constructor(
     scene: Phaser.Scene,
@@ -38,9 +60,13 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
   ) {
     super(scene, x, y, config.key);
     scene.physics.add.existing(this);
+    // Set collision to be the central square of the sprite
+    this.body.setSize(this.width / 2, this.height / 2, true);
 
     this.lifetime = 0;
     this.trajectory = config.trajectory ?? 'straight';
+    this.rotationMode = config.rotation ?? 'directed';
+    this.destroyOnHit = config.destroyOnHit ?? true;
     this.body.setMaxSpeed(config.speed);
 
     // set initial direction
@@ -66,6 +92,11 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     if (config.animation) {
       this.play(config.animation);
     }
+
+    if (this.rotationMode === 'rotate') {
+      // about 3 rotations per second by default
+      this.setAngularVelocity(1080);
+    }
   }
 
   update(time: number, delta: number) {
@@ -78,9 +109,12 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     }
 
     // mark as hit if the target is hit
-    if (this.scene.physics.overlap(this, this.target)) {
-      this.emit(Projectile.Events.HIT);
-      this.destroy();
+    if (this.scene.physics.overlap(this, this.target) && !this.hasHitTarget) {
+      this.hasHitTarget = true;
+      this.emit(Projectile.Events.HIT, this);
+      if (this.destroyOnHit) {
+        this.destroy();
+      }
       return;
     }
 
@@ -92,6 +126,15 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.target.x,
         this.target.y,
         this.body.maxSpeed
+      );
+    } else if (this.trajectory === 'straightPulse') {
+      this.scene.physics.moveTo(
+        this,
+        this.target.x,
+        this.target.y,
+        // pulse speed over time (between 40% and 100%)
+        this.body.maxSpeed *
+          (0.7 + 0.3 * Math.sin((this.lifetime / 1000) * Math.PI * 2))
       );
     } else {
       // accelerate towards target (to create an arc effect)
@@ -105,7 +148,13 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
       );
     }
 
-    // rotate to face current direction
-    this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
+    if (this.rotationMode === 'directed') {
+      // rotate to face current direction
+      this.setRotation(Math.atan2(this.body.velocity.y, this.body.velocity.x));
+    }
+  }
+
+  setTarget(newTarget: Phaser.GameObjects.Sprite) {
+    this.target = newTarget;
   }
 }
