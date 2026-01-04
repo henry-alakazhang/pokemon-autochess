@@ -140,6 +140,15 @@ export interface Effect<ExtraConfig = unknown> {
       side: 'player' | 'enemy';
     } & ExtraConfig
   ) => number;
+  /** Possible effect that occurs when a shield breaks */
+  readonly onShieldBreak?: (
+    config: {
+      scene: CombatScene;
+      board: CombatScene['board'];
+      pokemon: PokemonObject;
+      damage: number;
+    } & ExtraConfig
+  ) => void;
 }
 
 /**

@@ -14,8 +14,8 @@ import {
   dragonRush,
   eggBarrage,
   flyingPress,
-  frenzyPlant,
   furyCutter,
+  spikyShield,
   gigatonHammer,
   iceShard,
   kingsShield,
@@ -851,7 +851,7 @@ const basePokemonData = {
       range: 1,
       stat: 'attack',
     },
-    move: frenzyPlant,
+    move: spikyShield,
   },
   stufful: {
     categories: ['normal', 'fighting', 'bulky attacker'],
@@ -1396,23 +1396,6 @@ const rawPokemonData = {
     ...getEvolution('chespin', 3),
     name: 'chesnaught',
     displayName: 'Chesnaught',
-  },
-  // the plant from chespin line's move uses chespin base stats
-  frenzyplant: {
-    ...getEvolution('chespin', 1),
-    name: 'frenzyplant',
-    displayName: 'Frenzy Plant',
-    move: undefined,
-    basicAttack: {
-      range: 2,
-      stat: 'specAttack',
-      projectile: {
-        key: 'seed',
-        speed: 500,
-      },
-    },
-    // override stage so it doesn't appear in the shop
-    stage: 2,
   },
   darkrai: {
     ...getEvolution('darkrai', 1),
