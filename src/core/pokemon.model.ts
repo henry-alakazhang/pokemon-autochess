@@ -9,18 +9,19 @@ import {
   crushGrip,
   darkestLariat,
   darkVoid,
+  doubleShock,
   dragonDance,
   dragonDarts,
   dragonRush,
   eggBarrage,
-  frenzyPlant,
+  flyingPress,
   furyCutter,
   gigatonHammer,
   iceShard,
   kingsShield,
   magmaStorm,
   magnetPull,
-  meteorMash,
+  megaPunch,
   moonblast,
   mudBomb,
   nightDaze,
@@ -35,6 +36,7 @@ import {
   shadowTag,
   shellTrap,
   softboiled,
+  spikyShield,
   stoneEdge,
   strangeSteam,
   surf,
@@ -44,12 +46,11 @@ import {
   triAttack,
   twineedle,
   venomDrench,
-  voltTackle,
   whirlwind,
   zapCannon,
 } from './moves';
+import { drainPunch } from './moves/drain-punch';
 import { icicleCrash } from './moves/icicle-crash';
-import { leechLife } from './moves/leech-life';
 
 export interface Attack {
   /** number of squares away the move can reach */
@@ -155,21 +156,6 @@ const basePokemonData = {
       },
     },
     move: thunderWave,
-  },
-  pichu: {
-    categories: ['electric', 'revenge killer'],
-    tier: 1,
-    maxHP: 60,
-    attack: 90,
-    defense: 55,
-    specAttack: 90,
-    specDefense: 80,
-    speed: 110,
-    basicAttack: {
-      range: 1,
-      stat: 'attack',
-    },
-    move: voltTackle,
   },
   seedot: {
     categories: ['grass', 'dark', 'disruptor'],
@@ -456,40 +442,6 @@ const basePokemonData = {
     },
     move: shellTrap,
   },
-  beldum: {
-    categories: ['steel', 'psychic', 'bulky attacker'],
-    tier: 3,
-    maxHP: 80,
-    attack: 135,
-    defense: 130,
-    specAttack: 95,
-    specDefense: 90,
-    speed: 70,
-    basicAttack: {
-      range: 1,
-      stat: 'attack',
-    },
-    move: meteorMash,
-  },
-  zubat: {
-    categories: ['poison', 'flying', 'disruptor'],
-    tier: 1,
-    maxHP: 85,
-    attack: 90,
-    defense: 80,
-    specAttack: 70,
-    specDefense: 80,
-    speed: 130,
-    basicAttack: {
-      range: 2,
-      stat: 'attack',
-      projectile: {
-        key: 'stinger',
-        speed: 700,
-      },
-    },
-    move: leechLife,
-  },
   larvitar: {
     categories: ['rock', 'dark', 'revenge killer'],
     tier: 3,
@@ -519,21 +471,6 @@ const basePokemonData = {
       stat: 'specAttack',
     },
     move: shadowBall,
-  },
-  bulbasaur: {
-    categories: ['grass', 'poison', 'wall'],
-    tier: 2,
-    maxHP: 80,
-    attack: 82,
-    defense: 83,
-    specAttack: 100,
-    specDefense: 100,
-    speed: 80,
-    basicAttack: {
-      range: 1,
-      stat: 'attack',
-    },
-    move: frenzyPlant,
   },
   darkrai: {
     categories: ['dark', 'disruptor'],
@@ -871,6 +808,81 @@ const basePokemonData = {
     },
     move: moonblast,
   },
+  timburr: {
+    categories: ['fighting', 'bulky attacker'],
+    tier: 1,
+    maxHP: 105,
+    attack: 140,
+    defense: 95,
+    specAttack: 55,
+    specDefense: 65,
+    speed: 45,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: drainPunch,
+  },
+  pawmi: {
+    categories: ['electric', 'fighting', 'revenge killer'],
+    tier: 1,
+    maxHP: 70,
+    attack: 115,
+    defense: 70,
+    specAttack: 70,
+    specDefense: 60,
+    speed: 105,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: doubleShock,
+  },
+  chespin: {
+    categories: ['grass', 'fighting', 'wall'],
+    tier: 2,
+    maxHP: 88,
+    attack: 107,
+    defense: 122,
+    specAttack: 74,
+    specDefense: 75,
+    speed: 64,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: spikyShield,
+  },
+  stufful: {
+    categories: ['normal', 'fighting', 'bulky attacker'],
+    tier: 3,
+    maxHP: 120,
+    attack: 125,
+    defense: 80,
+    specAttack: 55,
+    specDefense: 60,
+    speed: 60,
+    basicAttack: {
+      range: 1,
+      stat: 'attack',
+    },
+    move: megaPunch,
+  },
+  hawlucha: {
+    categories: ['fighting', 'flying', 'sweeper'],
+    tier: 4,
+    maxHP: 78,
+    attack: 92,
+    defense: 75,
+    specAttack: 74,
+    specDefense: 63,
+    speed: 118,
+    basicAttack: {
+      range: 3,
+      stat: 'attack',
+    },
+    move: flyingPress,
+  },
   // NOT A REAL POKEMON
   // ONLY USED FOR NEUTRAL ROUNDS
   neutral_only_rattata: {
@@ -962,22 +974,22 @@ const rawPokemonData = {
     name: 'blissey',
     displayName: 'Blissey',
   },
-  pichu: {
-    ...getEvolution('pichu', 1),
-    name: 'pichu',
-    displayName: 'Pichu',
-    evolution: 'pikachu',
+  pawmi: {
+    ...getEvolution('pawmi', 1),
+    name: 'pawmi',
+    displayName: 'Pawmi',
+    evolution: 'pawmo',
   },
-  pikachu: {
-    ...getEvolution('pichu', 2),
-    name: 'pikachu',
-    displayName: 'Pikachu',
-    evolution: 'raichu',
+  pawmo: {
+    ...getEvolution('pawmi', 2),
+    name: 'pawmo',
+    displayName: 'Pawmo',
+    evolution: 'pawmot',
   },
-  raichu: {
-    ...getEvolution('pichu', 3),
-    name: 'raichu',
-    displayName: 'Raichu',
+  pawmot: {
+    ...getEvolution('pawmi', 3),
+    name: 'pawmot',
+    displayName: 'Pawmot',
   },
   scyther: {
     ...getEvolution('scyther', 1),
@@ -1300,39 +1312,39 @@ const rawPokemonData = {
     name: 'turtonator-3',
     displayName: 'Turtonator',
   },
-  beldum: {
-    ...getEvolution('beldum', 1),
-    name: 'beldum',
-    displayName: 'Beldum',
-    evolution: 'metang',
+  stufful: {
+    ...getEvolution('stufful', 1),
+    name: 'stufful',
+    displayName: 'Stufful',
+    evolution: 'bewear',
   },
-  metang: {
-    ...getEvolution('beldum', 2),
-    name: 'metang',
-    displayName: 'Beldum',
-    evolution: 'metagross',
+  bewear: {
+    ...getEvolution('stufful', 2),
+    name: 'bewear',
+    displayName: 'Bewear',
+    evolution: 'bewear-2',
   },
-  metagross: {
-    ...getEvolution('beldum', 3),
-    name: 'metagross',
-    displayName: 'Metagross',
+  'bewear-2': {
+    ...getEvolution('stufful', 3),
+    name: 'bewear-2',
+    displayName: 'Bewear',
   },
-  zubat: {
-    ...getEvolution('zubat', 1),
-    name: 'zubat',
-    displayName: 'Zubat',
-    evolution: 'golbat',
+  timburr: {
+    ...getEvolution('timburr', 1),
+    name: 'timburr',
+    displayName: 'Timburr',
+    evolution: 'gurdurr',
   },
-  golbat: {
-    ...getEvolution('zubat', 2),
-    name: 'golbat',
-    displayName: 'Golbat',
-    evolution: 'crobat',
+  gurdurr: {
+    ...getEvolution('timburr', 2),
+    name: 'gurdurr',
+    displayName: 'Gurdurr',
+    evolution: 'conkeldurr',
   },
-  crobat: {
-    ...getEvolution('zubat', 3),
-    name: 'crobat',
-    displayName: 'Crobat',
+  conkeldurr: {
+    ...getEvolution('timburr', 3),
+    name: 'conkeldurr',
+    displayName: 'Conkeldurr',
   },
   larvitar: {
     ...getEvolution('larvitar', 1),
@@ -1368,39 +1380,22 @@ const rawPokemonData = {
     name: 'gengar',
     displayName: 'Gengar',
   },
-  bulbasaur: {
-    ...getEvolution('bulbasaur', 1),
-    name: 'bulbasaur',
-    displayName: 'Bulbasaur',
-    evolution: 'ivysaur',
+  chespin: {
+    ...getEvolution('chespin', 1),
+    name: 'chespin',
+    displayName: 'Chespin',
+    evolution: 'quilladin',
   },
-  ivysaur: {
-    ...getEvolution('bulbasaur', 2),
-    name: 'ivysaur',
-    displayName: 'Ivysaur',
-    evolution: 'venusaur',
+  quilladin: {
+    ...getEvolution('chespin', 2),
+    name: 'quilladin',
+    displayName: 'Quilladin',
+    evolution: 'chesnaught',
   },
-  venusaur: {
-    ...getEvolution('bulbasaur', 3),
-    name: 'venusaur',
-    displayName: 'Venusaur',
-  },
-  // the plant from bulbasaur line's move uses bulbasaur base stats
-  frenzyplant: {
-    ...getEvolution('bulbasaur', 1),
-    name: 'frenzyplant',
-    displayName: 'Frenzy Plant',
-    move: undefined,
-    basicAttack: {
-      range: 2,
-      stat: 'specAttack',
-      projectile: {
-        key: 'seed',
-        speed: 500,
-      },
-    },
-    // override stage so it doesn't appear in the shop
-    stage: 2,
+  chesnaught: {
+    ...getEvolution('chespin', 3),
+    name: 'chesnaught',
+    displayName: 'Chesnaught',
   },
   darkrai: {
     ...getEvolution('darkrai', 1),
@@ -1760,6 +1755,23 @@ const rawPokemonData = {
     ...getEvolution('fluttermane', 3),
     name: 'fluttermane-3',
     displayName: 'Flutter Mane',
+  },
+  hawlucha: {
+    ...getEvolution('hawlucha', 1),
+    name: 'hawlucha',
+    displayName: 'Hawlucha',
+    evolution: 'hawlucha-2',
+  },
+  'hawlucha-2': {
+    ...getEvolution('hawlucha', 2),
+    name: 'hawlucha-2',
+    displayName: 'Hawlucha',
+    evolution: 'hawlucha-3',
+  },
+  'hawlucha-3': {
+    ...getEvolution('hawlucha', 3),
+    name: 'hawlucha-3',
+    displayName: 'Hawlucha',
   },
   neutral_only_rattata: {
     ...getEvolution('neutral_only_rattata', 1),

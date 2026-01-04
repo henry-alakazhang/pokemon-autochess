@@ -102,6 +102,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "heal",
+        "url": "assets/animations/heal.png",
+        "frameConfig": {
+          "frameWidth": 40,
+          "frameHeight": 40
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "heavy-hit",
         "url": "assets/animations/heavy-hit.png",
         "frameConfig": {
@@ -120,15 +129,6 @@
       },
       {
         "type": "spritesheet",
-        "key": "leech-life",
-        "url": "assets/animations/leech-life.png",
-        "frameConfig": {
-          "frameWidth": 80,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "magma-storm",
         "url": "assets/animations/magma-storm.png",
         "frameConfig": {
@@ -138,8 +138,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "meteor-mash",
-        "url": "assets/animations/meteor-mash.png",
+        "key": "mega-punch",
+        "url": "assets/animations/mega-punch.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 72
@@ -170,6 +170,15 @@
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "punch",
+        "url": "assets/animations/punch.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
         }
       },
       {
@@ -245,6 +254,15 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "spiky-shield",
+        "url": "assets/animations/spiky-shield.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 56
+        }
+      },
+      {
         "type":"spritesheet",
         "key": "stone-edge",
         "url": "assets/animations/stone-edge.png",
@@ -282,8 +300,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "volt-tackle",
-        "url": "assets/animations/volt-tackle.png",
+        "key": "double-shock",
+        "url": "assets/animations/double-shock.png",
         "frameConfig": {
           "frameWidth": 72,
           "frameHeight": 80

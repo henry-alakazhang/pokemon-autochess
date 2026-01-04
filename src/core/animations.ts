@@ -12,8 +12,8 @@ interface AnimationData {
 }
 
 export const animations: { [key: string]: AnimationData } = {
-  'volt-tackle': {
-    texture: 'volt-tackle',
+  'double-shock': {
+    texture: 'double-shock',
     frames: 13,
     duration: 500,
   },
@@ -99,15 +99,10 @@ export const animations: { [key: string]: AnimationData } = {
     frames: 10,
     duration: 320,
   },
-  'meteor-mash': {
-    texture: 'meteor-mash',
+  'mega-punch': {
+    texture: 'mega-punch',
     frames: 5,
     duration: 1000 / 6, // 30 fps
-  },
-  'leech-life': {
-    texture: 'leech-life',
-    frames: 36,
-    duration: 900,
   },
   'stone-edge-gather': {
     texture: 'stone-edge',
@@ -228,5 +223,26 @@ export const animations: { [key: string]: AnimationData } = {
     texture: 'fairy-hit',
     frames: 13,
     duration: (1000 * 13) / 60,
+  },
+  punch: {
+    texture: 'punch',
+    frames: 5,
+    duration: (1000 * 5) / 15,
+  },
+  heal: {
+    texture: 'heal',
+    frames: 10,
+    duration: (1000 * 10) / 15,
+  },
+  'spiky-shield-start': {
+    texture: 'spiky-shield',
+    frames: 17,
+    duration: (1000 * 17) / 30,
+  },
+  'spiky-shield-break': {
+    texture: 'spiky-shield',
+    start: 16,
+    frames: 4,
+    duration: (1000 * 4) / 30,
   },
 };
