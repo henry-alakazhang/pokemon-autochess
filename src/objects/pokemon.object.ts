@@ -1040,16 +1040,16 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     side,
     selfCoords,
   }) => {
-    let newTotal = baseAmount;
-    this.basePokemon.move?.calculateDamage?.({
-      attacker,
-      defender,
-      baseAmount: newTotal,
-      flags,
-      side,
-      self: this,
-      selfCoords,
-    });
+    let newTotal =
+      this.basePokemon.move?.calculateDamage?.({
+        attacker,
+        defender,
+        baseAmount,
+        flags,
+        side,
+        self: this,
+        selfCoords,
+      }) ?? baseAmount;
     Object.values(this.effects).forEach(({ effect }) => {
       newTotal =
         effect.calculateDamage?.({

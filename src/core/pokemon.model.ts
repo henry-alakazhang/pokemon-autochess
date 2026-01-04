@@ -9,13 +9,13 @@ import {
   crushGrip,
   darkestLariat,
   darkVoid,
+  doubleShock,
   dragonDance,
   dragonDarts,
   dragonRush,
   eggBarrage,
   flyingPress,
   furyCutter,
-  spikyShield,
   gigatonHammer,
   iceShard,
   kingsShield,
@@ -36,6 +36,7 @@ import {
   shadowTag,
   shellTrap,
   softboiled,
+  spikyShield,
   stoneEdge,
   strangeSteam,
   surf,
@@ -45,12 +46,11 @@ import {
   triAttack,
   twineedle,
   venomDrench,
-  doubleShock,
   whirlwind,
   zapCannon,
 } from './moves';
-import { icicleCrash } from './moves/icicle-crash';
 import { drainPunch } from './moves/drain-punch';
+import { icicleCrash } from './moves/icicle-crash';
 
 export interface Attack {
   /** number of squares away the move can reach */
@@ -647,13 +647,13 @@ const basePokemonData = {
     move: rollout,
   },
   honedge: {
-    categories: ['steel', 'ghost', 'sweeper'],
+    categories: ['steel', 'ghost', 'wall'],
     tier: 3,
     maxHP: 60,
     attack: 50,
     defense: 140,
     specAttack: 50,
-    specDefense: 140,
+    specDefense: 150, // technically wrong, but this lets Honedge gain/give SpDef as a Wall.
     speed: 60,
     basicAttack: {
       range: 1,
