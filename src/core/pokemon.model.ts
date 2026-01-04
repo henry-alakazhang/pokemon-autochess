@@ -196,7 +196,7 @@ const basePokemonData = {
     move: twineedle,
   },
   happiny: {
-    categories: ['normal', 'support'],
+    categories: ['normal', 'support', 'wall'],
     tier: 2,
     maxHP: 255,
     attack: 10,
@@ -647,13 +647,15 @@ const basePokemonData = {
     move: rollout,
   },
   honedge: {
-    categories: ['steel', 'ghost', 'sweeper'],
+    categories: ['steel', 'ghost', 'wall'],
     tier: 3,
     maxHP: 60,
     attack: 50,
     defense: 140,
     specAttack: 50,
-    specDefense: 140,
+    // This is technically wrong but it's needed to make Honedge a SpDef-based Wall.
+    // But also this is Aegislash's original Spec Def so it's kind like averaging it.
+    specDefense: 150,
     speed: 60,
     basicAttack: {
       range: 1,
@@ -677,7 +679,7 @@ const basePokemonData = {
     move: icicleCrash,
   },
   nacli: {
-    categories: ['rock', 'wall', 'hazard setter'],
+    categories: ['rock', 'hazard setter'],
     tier: 1,
     maxHP: 85,
     attack: 135,
@@ -1597,11 +1599,11 @@ const rawPokemonData = {
     name: 'aegislash',
     displayName: 'Aegislash',
   },
-  // not actually used - just here so the 'aegislash_shield' texture gets loaded properly.
-  aegislash_shield: {
+  // not actually used - just here so the 'aegislash_sword' texture gets loaded properly.
+  aegislash_sword: {
     ...getEvolution('honedge', 3),
-    name: 'aegislash_shield',
-    displayName: 'aegislash_shield',
+    name: 'aegislash_sword',
+    displayName: 'aegislash_sword',
   },
   swinub: {
     ...getEvolution('swinub', 1),

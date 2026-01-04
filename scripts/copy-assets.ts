@@ -6,9 +6,6 @@ import * as fs from 'fs';
 const allPokemonNames: string[] = [];
 
 const overrides: { [k: string]: string } = {
-  // Default form of aegislash in-game is sword
-  aegislash: 'AEGISLASH_1',
-  aegislash_shield: 'AEGISLASH',
   rotom_wash: 'ROTOM_2',
 };
 
