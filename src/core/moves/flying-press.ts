@@ -30,7 +30,7 @@ export const flyingPress = {
   },
   range: 99,
   /**
-   * Finds the lowest health enemy and returns coordinates for an adjacent empty square
+   * Finds the lowest health enemy within basic-attack range
    */
   getTarget(board: CombatBoard, myCoords: Coords): Coords | undefined {
     const self = board[myCoords.x][myCoords.y];
