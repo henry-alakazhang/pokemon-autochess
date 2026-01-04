@@ -479,11 +479,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   /**
    * Applies a temp HP shield to this Pokemon.
-   * Shields do not have an expiry or duration, but they do not stack,
+   * Shields do not have an expiry or duration,
+   * but they do not stack (refreshes if higher),
    * and cannot exceed Pokemon max HP.
    */
   public applyShield(amount: number) {
-    console.log('applyShield', amount, this.shieldHP, this.maxHP);
     this.shieldHP = boundRange(amount, this.shieldHP, this.maxHP);
     this.redrawBars();
   }
@@ -541,12 +541,11 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       return;
     }
 
-    const actualDamage = Math.min(this.currentHP, amount);
     // Deal damage to shield first (regardless of whether it exists)
-    this.shieldHP = this.shieldHP - actualDamage;
+    this.shieldHP = this.shieldHP - amount;
     if (this.shieldHP <= 0) {
       // Excess damage is dealt to HP
-      this.currentHP += this.shieldHP;
+      this.currentHP = Math.max(0, this.currentHP + this.shieldHP);
       this.shieldHP = 0;
     }
     this.redrawBars();
