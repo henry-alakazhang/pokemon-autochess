@@ -61,7 +61,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, config.key);
     scene.physics.add.existing(this);
     // Set collision to be the central square of the sprite
-    this.body.setSize(this.width / 2, this.height / 2, true);
+    this.body.setSize(this.width / 4, this.height / 4, true);
 
     this.lifetime = 0;
     this.trajectory = config.trajectory ?? 'straight';
@@ -156,5 +156,6 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
 
   setTarget(newTarget: Phaser.GameObjects.Sprite) {
     this.target = newTarget;
+    this.hasHitTarget = false;
   }
 }

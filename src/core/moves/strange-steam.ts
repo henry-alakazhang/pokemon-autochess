@@ -57,10 +57,10 @@ export const strangeSteam = {
             // Bounces from enemy to ally and back again
             .filter(({ pokemon }) => pokemon.side !== currTarget.side);
           if (validTargets.length > 0) {
-            const nextTarget =
+            currTarget =
               validTargets[Math.floor(Math.random() * validTargets.length)]
                 .pokemon;
-            projectile.setTarget(nextTarget);
+            projectile.setTarget(currTarget);
             return;
           }
         }

@@ -1,3 +1,4 @@
+import { ProjectileConfig } from '../objects/projectile.object';
 import { getTurnDelay } from '../scenes/game/combat/combat.helpers';
 import { Category } from './game.model';
 import { Move } from './move.model';
@@ -61,11 +62,7 @@ export interface Attack {
    * defaults to the opposite of the attack stat */
   readonly defenseStat?: 'defense' | 'specDefense';
   /** details for the particle/fx for the projectile */
-  readonly projectile?: {
-    readonly key: string;
-    /** 300 is slow, 500 is medium, 700 is fast */
-    readonly speed: 300 | 500 | 700;
-  };
+  readonly projectile?: ProjectileConfig;
   /**
    * If this attack can't be used.
    * hacky way to implement Pokemon without basic attacks :)
@@ -882,6 +879,11 @@ const basePokemonData = {
     basicAttack: {
       range: 3,
       stat: 'attack',
+      projectile: {
+        key: 'feather',
+        speed: 500,
+        rotation: 'rotate',
+      },
     },
     move: flyingPress,
   },
@@ -1243,7 +1245,7 @@ const rawPokemonData = {
   },
   'zoroark-2': {
     ...getEvolution('zorua', 3),
-    name: 'zorua-2',
+    name: 'zoroark-2',
     displayName: 'Zoroark',
   },
   abra: {
