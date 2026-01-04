@@ -54,37 +54,49 @@ export const spikyShield = {
     // to prevent shields from going infinite.
     user.addStatus('moveIsActive', 99_999);
 
-    user.applyShield(shield[user.basePokemon.stage - 1]);
+    const shieldSprite = scene.add
+      .sprite(user.x, user.y, 'spiky-shield')
+      .play('spiky-shield-start');
+    user.attach(shieldSprite);
+    shieldSprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+      user.applyShield(shield[user.basePokemon.stage - 1]);
 
-    // Add effect that triggers on shield break
-    user.addEffect(
-      {
-        name: 'spiky-shield',
-        isNegative: false,
-        onBeingHit({ defender, selfCoords }) {
-          // First time shield HP falls below 0:
-          if (defender.shieldHP <= 0) {
-            // Deal AOE damage to nearby enemies
-            const aoeCoords = getAOE(selfCoords);
-            scene.causeAOEDamage(
-              defender,
-              aoeCoords,
-              { damage: damage[defender.basePokemon.stage - 1], defenseStat },
-              {
-                isAttack: false,
-                triggerEvents: true,
-              }
-            );
+      user.addEffect(
+        {
+          name: 'spiky-shield',
+          isNegative: false,
+          onBeingHit({ defender, selfCoords }) {
+            // First time shield HP falls below 0:
+            if (defender.shieldHP <= 0) {
+              shieldSprite
+                .setScale(1.5)
+                .play('spiky-shield-break')
+                .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+                  shieldSprite.destroy();
+                });
 
-            // Remove the effect after it triggers
-            delete defender.effects['spiky-shield'];
-            delete defender.status['moveIsActive'];
-          }
+              // Deal AOE damage to nearby enemies
+              const aoeCoords = getAOE(selfCoords);
+              scene.causeAOEDamage(
+                defender,
+                aoeCoords,
+                { damage: damage[defender.basePokemon.stage - 1], defenseStat },
+                {
+                  isAttack: false,
+                  triggerEvents: true,
+                }
+              );
+
+              // Remove the effect after it triggers
+              delete defender.effects['spiky-shield'];
+              delete defender.status['moveIsActive'];
+            }
+          },
         },
-      },
-      99_999 // Effect lasts until shield breaks (effectively permanent)
-    );
+        99_999 // Effect lasts until shield breaks (effectively permanent)
+      );
 
-    onComplete();
+      onComplete();
+    });
   },
 } as const satisfies Move;

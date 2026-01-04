@@ -25,19 +25,24 @@ export const drainPunch = {
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     scene.basicAttack(user, target, {
       onHit: () => {
+        const punch = scene.add
+          .sprite(target.x, target.y, 'punch')
+          .play('punch')
+          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            punch.destroy();
+          });
+        const heal = scene.add
+          .sprite(user.x, user.y, 'heal')
+          .play('heal')
+          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+            heal.destroy();
+          });
+
         const action = {
           damage: bonusDamage[user.basePokemon.stage - 1],
           defenseStat,
         };
         scene.causeDamage(user, target, action);
-
-        // play bee animation on the target
-        const bees = scene.add
-          .sprite(target.x, target.y, 'drain-punch')
-          .play('drain-punch')
-          .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-            bees.destroy();
-          });
         user.heal(calculateDamage(user, target, action) / 2);
       },
       onComplete,
