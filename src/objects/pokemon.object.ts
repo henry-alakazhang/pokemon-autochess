@@ -98,10 +98,12 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   /** HP and PP bars above the Pokemon */
   bars: Phaser.GameObjects.Graphics;
+  colorMatrix: Phaser.Display.ColorMatrix;
   blindIcon: Phaser.GameObjects.Image;
   sleepIcon: Phaser.GameObjects.Sprite;
   pokemonTooltip: Phaser.GameObjects.DOMElement;
   longPress: boolean;
+
   currentHP: number;
   maxHP: number;
   currentPP: number;
@@ -111,6 +113,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       ? Math.floor(this.baseMaxPP * 1.4)
       : this.baseMaxPP;
   }
+  shieldHP: number = 0;
+
   evasion = 0;
   critRate = 0;
   critDamage = 1.5;
@@ -236,6 +240,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       .play('sleep')
       .setVisible(false);
     this.attach(this.sleepIcon);
+    this.colorMatrix = this.postFX.addColorMatrix();
     // FIXME: Should probably just create one and reuse it between Pokemon
     this.pokemonTooltip = this.scene.add
       .existing(new PokemonCard(this.scene, this.x, this.y, this.basePokemon))
@@ -356,6 +361,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
   redrawBars() {
     this.bars.clear();
 
+    const left = -this.width / 2;
+    const top = -this.height / 2;
+
     // The stat bars section is 10px tall
     // 1px of top border
     // 5px of hp bar
@@ -363,23 +371,29 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // 2px of pp bar
     // 1 px of bottom border
 
-    // bar background
-    const backgroundColor = this.status.paralyse ? 0x666600 : 0x000000;
-    this.bars.fillStyle(backgroundColor, 1);
-    this.bars.fillRect(-this.width / 2, -this.height / 2, this.width, 10);
+    // Bar background: black
+    this.bars.fillStyle(0x000000, 1);
+    this.bars.fillRect(left, top, this.width, 10);
 
-    // hp bar
+    // hp bar, inset by 1 pixel
     const hpBarColor =
       this.side === 'player'
         ? 0x32cd32 // player: green
         : 0xdc143c; // enemy: red
     this.bars.fillStyle(hpBarColor, 1);
     this.bars.fillRect(
-      -this.width / 2 + 1,
-      -this.height / 2 + 1,
-      this.width * (this.currentHP / this.maxHP) - 2,
+      left + 1,
+      top + 1,
+      (this.width - 2) * (this.currentHP / this.maxHP),
       5
     );
+    // and on top, a slightly transparent shield bar
+    if (this.shieldHP > 0) {
+      const shieldBarWidth = (this.width - 2) * (this.shieldHP / this.maxHP);
+      this.bars.fillStyle(0xffffff, 0.75);
+      this.bars.fillRect(left + 1, top + 1, shieldBarWidth, 5);
+    }
+
     // add little pips in the HP bar every 250 HP
     this.bars.lineStyle(1, 0x000000, 1);
     const width = Math.round((250 / this.maxHP) * (this.width - 2));
@@ -394,12 +408,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       // full height bars for 1000 increments
       const y = (x / width) % 4 === 0 ? 6 : 4;
       this.bars.strokeLineShape(
-        new Phaser.Geom.Line(
-          -this.width / 2 + x,
-          -this.height / 2,
-          -this.width / 2 + x,
-          -this.height / 2 + y
-        )
+        new Phaser.Geom.Line(left + x, top, left + x, top + y)
       );
     }
 
@@ -409,8 +418,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
       : 0x67aacb; // normal: sky blue
     this.bars.fillStyle(ppBarColor, 1);
     this.bars.fillRect(
-      -this.width / 2 + 1,
-      -this.height / 2 + 7, // offset by 6 to put below the HP bar
+      left + 1,
+      top + 7, // offset by 6 to put below the HP bar
       this.maxPP
         ? Math.max(0, this.width * (this.currentPP / this.maxPP) - 2) // use current PP if available
         : 0, // empty if no PP
@@ -419,6 +428,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
     this.blindIcon.setVisible(!!this.status.blind);
     this.sleepIcon.setVisible(!!this.status.sleep);
+
+    // Display stun via grayscaling the unit.
+    if (this.status.paralyse) {
+      this.colorMatrix.grayscale(1);
+    } else {
+      this.colorMatrix.grayscale(0);
+    }
   }
 
   /**
@@ -459,6 +475,17 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
         }
       },
     });
+  }
+
+  /**
+   * Applies a temp HP shield to this Pokemon.
+   * Shields do not have an expiry or duration, but they do not stack,
+   * and cannot exceed Pokemon max HP.
+   */
+  public applyShield(amount: number) {
+    console.log('applyShield', amount, this.shieldHP, this.maxHP);
+    this.shieldHP = boundRange(amount, this.shieldHP, this.maxHP);
+    this.redrawBars();
   }
 
   /**
@@ -515,7 +542,13 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     }
 
     const actualDamage = Math.min(this.currentHP, amount);
-    this.currentHP -= actualDamage;
+    // Deal damage to shield first (regardless of whether it exists)
+    this.shieldHP = this.shieldHP - actualDamage;
+    if (this.shieldHP <= 0) {
+      // Excess damage is dealt to HP
+      this.currentHP += this.shieldHP;
+      this.shieldHP = 0;
+    }
     this.redrawBars();
 
     // display damage text

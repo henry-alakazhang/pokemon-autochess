@@ -1207,37 +1207,39 @@ opponents with reduced stats or status effects.
     // TODO: would be best if this affected the targets.
     // Needs support for returning affected targets from a move onComplete
     description: `Whenever a Support uses its move,
-it and adjacent allies recover HP.
+it and adjacent allies gain a shield.
 
  (2) - 10% of max HP.
  (3) - 15% of max HP.
  (4) - 25% of max HP.`,
     thresholds: [2, 3],
-    onMoveUse({ board, user, count }) {
+    onMoveUse({ scene, board, user, count }) {
       const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
 
       if (user.basePokemon.categories.includes('support')) {
-        const healPercent = tier === 1 ? 0.1 : tier === 2 ? 0.15 : 0.25;
+        const shieldPercent = tier === 1 ? 0.1 : tier === 2 ? 0.15 : 0.25;
+        const userCoords = scene.getBoardLocationForPokemon(user);
+        if (userCoords) {
+          const adjacentSquares = [
+            userCoords,
+            { x: userCoords.x + 1, y: userCoords.y },
+            { x: userCoords.x - 1, y: userCoords.y },
+            { x: userCoords.x, y: userCoords.y + 1 },
+            { x: userCoords.x, y: userCoords.y - 1 },
+          ];
 
-        const adjacentSquares = [
-          { x: user.x + 1, y: user.y },
-          { x: user.x - 1, y: user.y },
-          { x: user.x, y: user.y + 1 },
-          { x: user.x, y: user.y - 1 },
-        ];
-
-        adjacentSquares
-          .filter((coords) => inBounds(board, coords))
-          .map((coords) => board[coords.x][coords.y])
-          .filter((pokemon) => pokemon?.side === user.side)
-          .filter(isDefined)
-          .forEach((pokemon) => {
-            const healAmount = Math.floor(pokemon.maxHP * healPercent);
-            pokemon.heal(healAmount);
-          });
+          adjacentSquares
+            .filter((coords) => inBounds(board, coords))
+            .map((coords) => board[coords.x][coords.y])
+            .filter((pokemon) => pokemon?.side === user.side)
+            .filter(isDefined)
+            .forEach((pokemon) => {
+              pokemon.applyShield(Math.floor(pokemon.maxHP * shieldPercent));
+            });
+        }
       }
     },
   },
