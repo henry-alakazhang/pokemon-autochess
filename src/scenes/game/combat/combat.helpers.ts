@@ -24,6 +24,13 @@ export function coordsEqual(first: Coords, second: Coords) {
 }
 
 export function inBounds(board: unknown[][], coords: Coords) {
+  if (coords.x >= 100 || coords.y >= 100) {
+    // TODO: would be better if we could detect this more easily via type system
+    throw new Error(
+      'Coords significantly out ofbounds - did you pass graphical coords instead of board coords?'
+    );
+  }
+
   return (
     coords.x >= 0 &&
     coords.x < board.length &&
