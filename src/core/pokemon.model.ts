@@ -364,7 +364,7 @@ const basePokemonData = {
     move: dragonRush,
   },
   zorua: {
-    categories: ['dark', 'revenge killer', 'pivot'],
+    categories: ['dark', 'disruptor', 'pivot'],
     tier: 3,
     maxHP: 60,
     attack: 105,
@@ -1233,17 +1233,17 @@ const rawPokemonData = {
     ...getEvolution('zorua', 1),
     name: 'zorua',
     displayName: 'Zorua',
-    evolution: 'zorua-2',
-  },
-  'zorua-2': {
-    ...getEvolution('zorua', 2),
-    name: 'zorua-2',
-    displayName: 'Zorua',
     evolution: 'zoroark',
   },
   zoroark: {
-    ...getEvolution('zorua', 3),
+    ...getEvolution('zorua', 2),
     name: 'zoroark',
+    displayName: 'Zoroark',
+    evolution: 'zoroark-2',
+  },
+  'zoroark-2': {
+    ...getEvolution('zorua', 3),
+    name: 'zorua-2',
     displayName: 'Zoroark',
   },
   abra: {
