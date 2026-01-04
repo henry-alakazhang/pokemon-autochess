@@ -21,7 +21,7 @@ export const drainPunch = {
       '/'
     )} bonus physical damage and recovers {{user}}'s HP by half the bonus damage dealt.`;
   },
-  range: 2,
+  range: 1,
   use({ scene, user, target, onComplete }: MoveConfig<'unit'>) {
     scene.basicAttack(user, target, {
       onHit: () => {

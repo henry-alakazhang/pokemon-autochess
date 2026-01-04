@@ -270,9 +270,77 @@ when low on health.
   },
   fighting: {
     category: 'fighting',
-    displayName: 'Fighting',
-    description: 'Does nothing.',
-    thresholds: [2, 4, 6],
+    displayName: 'Fighting: Rapid Strike Style',
+    description: `Your team deals 5% more damage with attacks.
+
+After Fighting-type Pokemon use their move,
+their next two attacks are faster, deal
+more damage, and heal them on hit.
+
+ (2) - 25% more damage, heal for 150 HP.
+ (4) - 45% more damage, heal for 300 HP.`,
+    thresholds: [2, 4],
+    onMoveUse({ user, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      if (user.basePokemon.categories.includes('fighting')) {
+        // Track attack buffs in synergy state
+        user.synergyState.fighting = 2;
+        // significantly increase speed for next 2 attacks.
+        user.changeStats({ speed: +4 });
+      }
+    },
+    onHit({ attacker, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      // Heal on hit if user still has boosted stacks
+      if (
+        attacker.synergyState.fighting > 0 &&
+        attacker.basePokemon.categories.includes('fighting')
+      ) {
+        attacker.synergyState.fighting--;
+        attacker.heal(tier === 1 ? 150 : 300);
+
+        // When we use up the last stack, reduce speed added from move use
+        if (attacker.synergyState.fighting === 0) {
+          attacker.changeStats({ speed: -4 });
+        }
+      }
+    },
+    calculateDamage({
+      attacker,
+      baseAmount,
+      count,
+      flags: { isAttack },
+      side,
+    }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return baseAmount;
+      }
+
+      // The synergy only affects basic attacks on the synergy's side
+      if (side !== attacker.side || !isAttack) {
+        return baseAmount;
+      }
+
+      if (
+        attacker.synergyState.fighting > 0 &&
+        attacker.basePokemon.categories.includes('fighting')
+      ) {
+        // Fighting type with stacks left: deal more damage
+        // Include the base 5% increase (ie. 25 + 5, 45 + 5)
+        return baseAmount * (tier === 1 ? 1.3 : 1.5);
+      }
+
+      return baseAmount * 1.05;
+    },
   },
   water: {
     category: 'water',

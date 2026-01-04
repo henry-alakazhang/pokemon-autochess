@@ -152,8 +152,10 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
 
   /**
    * Stat changes, calculated as stages like Pokemon (see: StatChanges type def)
+   * Note: these are stored as numbers because they can go above/below the cap
+   * but they are bounded when used to calculate stats.
    */
-  statChanges: { [k in ModifiableStat]: StatChange } = {
+  statChanges: { [k in ModifiableStat]: number } = {
     attack: 0,
     defense: 0,
     specAttack: 0,
@@ -182,7 +184,9 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     revengeKiller: number;
     /** Total stage value of Mech */
     pivot: number;
-  } = { sweeper: 0, revengeKiller: 0, pivot: 0 };
+    /** Number of buffed attacks */
+    fighting: number;
+  } = { sweeper: 0, revengeKiller: 0, pivot: 0, fighting: 0 };
 
   attachments: Phaser.GameObjects.Components.Visible[] = [];
 
@@ -632,11 +636,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     // apply any changes that are provided
     (Object.entries(changes) as [ModifiableStat, StatChange][]).forEach(
       ([stat, change]) => {
-        this.statChanges[stat] = boundRange(
-          this.statChanges[stat] + change,
-          -8,
-          8
-        ) as StatChange;
+        this.statChanges[stat] += change;
       }
     );
 
@@ -704,14 +704,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
      *
      * stage + 4 / 4 for positive (ie. each boost gives a flat 25% increase)
      * 4 / stage - 4 for negative (ie. each drop gives a 1/1.25 decrease)
+     *
+     * Capped at +8 and -8 on either side.
      */
-    const getChange = (stage: StatChange) => {
+    const getChange = (stage: number) => {
       // unaffected by stat reductions if immune to negative statuses
       if (this.status.statusImmunity && stage < 0) {
         return 1;
       }
 
-      return stage > 0 ? (stage + 4) / 4 : 4 / Math.abs(stage - 4);
+      const boundedStage = boundRange(stage, -8, 8);
+      return boundedStage > 0
+        ? (boundedStage + 4) / 4
+        : 4 / Math.abs(boundedStage - 4);
     };
 
     this.basePokemon = {

@@ -37,7 +37,7 @@ export const flyingPress = {
     let weakestHP = Infinity;
     let weakestCoords: Coords | undefined;
 
-    // Find the lowest health enemy within range
+    // Find the lowest health enemy within basic attack range
     mapPokemonCoords(board)
       .filter(
         ({ x, y, pokemon }) =>
