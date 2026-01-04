@@ -49,6 +49,18 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
 
     const moveType = getMoveType(pokemon.move);
 
+    const emphasiseStat = {
+      attack: false,
+      defense:
+        pokemon.categories.includes('wall') &&
+        pokemon.defense > pokemon.specDefense,
+      specAttack: false,
+      specDefense:
+        pokemon.categories.includes('wall') &&
+        pokemon.specDefense > pokemon.defense,
+      speed: false,
+    };
+
     this.createFromHTML(
       `
       <style>
@@ -65,7 +77,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             "pokemon . stats" 120px
             "moveTitle . stats" 20px
             "move move move" 55px 
-            / 198px 2px 100px;
+            / 195px 2px 103px;
         }
         
         .PokemonDetails {
@@ -127,6 +139,10 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           grid-area: stats;
           font-size: 14px;
           border-collapse: collapse;
+        }
+
+        .EmphasisStat {
+          font-weight: 700;
         }
         
         .MoveTitle {
@@ -223,7 +239,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
           </tr>
           <tr>
             <td></td>
-            <td>Attack</td>
+            <td class="${emphasiseStat.attack ? 'EmphasisStat' : ''}">Attack</td>
             <td>${this.pokemon.attack}</td>
             <td></td>
           </tr>
@@ -231,13 +247,13 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             getDamageReduction(this.pokemon.defense) * 100
           )}% damage reduction">
             <td></td>
-            <td>Defense</td>
+            <td class="${emphasiseStat.defense ? 'EmphasisStat' : ''}">Defense</td>
             <td>${this.pokemon.defense}</td>
             <td></td>
           </tr>
           <tr>
             <td></td>
-            <td>Sp. Atk</td>
+            <td class="${emphasiseStat.specAttack ? 'EmphasisStat' : ''}">Sp. Atk</td>
             <td>${this.pokemon.specAttack}</td>
             <td></td>
           </tr>
@@ -245,7 +261,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             getDamageReduction(this.pokemon.specDefense) * 100
           )}% damage reduction">
             <td></td>
-            <td>Sp. Def</td>
+            <td class="${emphasiseStat.specDefense ? 'EmphasisStat' : ''}">Sp. Def</td>
             <td>${this.pokemon.specDefense}</td>
             <td></td>
           </tr>
@@ -253,7 +269,7 @@ export class PokemonCard extends Phaser.GameObjects.DOMElement {
             2
           )} attacks per second">
             <td></td>
-            <td>Speed</td>
+            <td class="${emphasiseStat.speed ? 'EmphasisStat' : ''}">Speed</td>
             <td>${this.pokemon.speed}</td>
             <td></td>
           </tr>
