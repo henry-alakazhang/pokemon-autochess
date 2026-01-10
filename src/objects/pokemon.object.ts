@@ -826,6 +826,20 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.redrawBars();
   }
 
+  public purgeNegativeStatuses() {
+    NEGATIVE_STATUS.forEach((status) => {
+      if (this.status[status]) {
+        delete this.status[status];
+      }
+    });
+    Object.entries(this.effects).forEach(([key, value]) => {
+      if (value.effect.isNegative) {
+        delete this.effects[key];
+      }
+    });
+    this.redrawBars();
+  }
+
   public canUseMove(): boolean {
     if (this.basePokemon.move?.type !== 'active') {
       return false;
