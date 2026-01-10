@@ -5,7 +5,7 @@ import { defaultStyle, titleStyle } from './text.helpers';
 
 /**
  * Sidebar component that displays the next combat information in Adventure Mode.
- * Shows opponent name, stage/round info, and preview of opponent's Pokemon team.
+ * Shows opponent name and a preview of opponent's Pokemon team.
  */
 export class NextCombatSidebar extends Phaser.GameObjects.Container {
   private title: Phaser.GameObjects.Text;
@@ -40,7 +40,7 @@ export class NextCombatSidebar extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Update the combat indicator with current stage/round and opponent info
+   * Update the combat indicator with a new round
    */
   setNextRound(neutralRound: NeutralRound | undefined): void {
     // Update opponent name

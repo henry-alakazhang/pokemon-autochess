@@ -254,7 +254,7 @@ export class GameScene extends Phaser.Scene {
             // Space evenly after the player
             new Player(this, name, 720, 130 + 30 * index, {
               pool: this.pool,
-              isHumanPlayer: index === 0,
+              isHumanPlayer: false,
               initialLevel: this.gameMode.stages[this.currentStage].autolevel,
               startingGold: this.gameMode.startingGold,
             })
@@ -595,10 +595,10 @@ export class GameScene extends Phaser.Scene {
 
     if (this.nextCombatSidebar) {
       const neutralRound =
-        this.gameMode.stages[this.currentStage].neutralRounds?.[
+        this.gameMode.stages[this.currentStage]?.neutralRounds?.[
           this.currentRound
         ];
-      this.nextCombatSidebar.update(neutralRound);
+      this.nextCombatSidebar.setNextRound(neutralRound);
     }
 
     if (this.humanPlayer.hp <= 0) {
