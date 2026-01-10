@@ -40,3 +40,19 @@ export function assertNever(x: never): never {
 export function getBaseTexture(pokemon: PokemonName) {
   return pokemon.split('-')[0];
 }
+
+/**
+ * Shuffles the first `amount` elements of a given array.
+ * Modifies the array in-place and returns it.
+ */
+export function shuffle<T>(array: T[], amount = array.length - 1): T[] {
+  // shuffle the list with a bastardised Fisher-Yates:
+  // for each item (up to the limit we care about)
+  for (let i = 0; i < amount; i++) {
+    // pick a random other element (that we haven't already swapped)
+    const swapIndex = Math.floor(Math.random() * (array.length - i)) + i;
+    // and swap the two (fancy ES6 syntax)
+    [array[i], array[swapIndex]] = [array[swapIndex], array[i]];
+  }
+  return array;
+}

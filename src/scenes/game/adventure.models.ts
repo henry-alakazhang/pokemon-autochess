@@ -113,8 +113,7 @@ export const GYM_LEADER_ROUNDS: { [k: number]: NeutralRound[] } = {
         { name: 'golem', location: { x: 3, y: 2 } },
         { name: 'stonjourner', location: { x: 4, y: 1 } },
         { name: 'marshtomp', location: { x: 2, y: 1 } },
-        // TODO:
-        // { name: 'mamoswine', location: { x: 1, y: 0 } }
+        { name: 'mamoswine', location: { x: 1, y: 0 } },
       ],
     },
     // { name: 'Clemont', /*electric*/ },
@@ -123,7 +122,15 @@ export const GYM_LEADER_ROUNDS: { [k: number]: NeutralRound[] } = {
     // { name: 'Larry', /*normal*/ },
   ],
   6: [
-    // { name: 'Sabrina', /*psychic*/ },
+    {
+      name: 'Sabrina' /*psychic*/,
+      board: [
+        { name: 'alakazam', location: { x: 0, y: 0 } },
+        { name: 'hatterene', location: { x: 0, y: 2 } },
+        { name: 'lampent', location: { x: 2, y: 0 } },
+        { name: 'koffing', location: { x: 2, y: 2 } },
+      ],
+    },
     // { name: 'Jasmine', /*steel*/ },
     // { name: 'Winona', /*flying*/ },
     // { name: 'Byron', /*steel*/ },

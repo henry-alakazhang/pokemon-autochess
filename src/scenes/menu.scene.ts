@@ -3,7 +3,11 @@ import { allPokemonNames } from '../core/pokemon.model';
 import { getRandomInArray } from '../math.helpers';
 import { Button } from '../objects/button.object';
 import { PokemonObject } from '../objects/pokemon.object';
-import { getDebugGameMode, getHyperRollGameMode } from './game/game.helpers';
+import {
+  getAdventureGameMode,
+  getDebugGameMode,
+  getHyperRollGameMode,
+} from './game/game.helpers';
 import { GameScene } from './game/game.scene';
 
 /**
@@ -32,7 +36,7 @@ export class MenuScene extends Scene {
     this.add
       .existing(new Button(this, center, 475, 'Play Adventure Mode (1P)'))
       .on(Button.Events.CLICK, () =>
-        this.scene.start(GameScene.KEY, getHyperRollGameMode())
+        this.scene.start(GameScene.KEY, getAdventureGameMode())
       );
 
     this.add

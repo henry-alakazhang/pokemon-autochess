@@ -1,7 +1,7 @@
 import { getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
 import { PokemonName } from '../../core/pokemon.model';
-import { flatten, isDefined } from '../../helpers';
+import { flatten, isDefined, shuffle } from '../../helpers';
 import { getRandomInArray } from '../../math.helpers';
 import { Player } from '../../objects/player.object';
 import {
@@ -48,6 +48,8 @@ export interface GameMode {
   readonly startingGold: number;
   /** Whether players can spend gold on exp to level up */
   readonly levelCosts?: number[];
+  /** Whether this mode has extra 'players' (PVP) or is PVE */
+  readonly isPVP?: boolean;
 }
 
 export type NeutralRound = {
@@ -85,7 +87,12 @@ export function getAdventureGameMode(): GameMode {
     return {
       1: getRandomInArray(WILD_POKEMON_ROUNDS[stage]),
       2: getRandomInArray(TRAINER_ROUNDS[stage]),
-      3: getRandomInArray(GYM_LEADER_ROUNDS[stage]),
+      3: getRandomInArray(
+        GYM_LEADER_ROUNDS[stage].map((round) => ({
+          ...round,
+          name: `Gym Leader ${round.name}`,
+        }))
+      ),
     };
   };
 
@@ -96,6 +103,8 @@ export function getAdventureGameMode(): GameMode {
   );
 
   return {
+    name: 'adventure',
+    isPVP: false,
     startingGold: 10,
     // TODO: make this scale with stage instead of player level.
     shopRates: {
@@ -112,12 +121,6 @@ export function getAdventureGameMode(): GameMode {
         rounds: 3,
         damage: () => 5,
         gold: goldGainFunc(3),
-        neutralRounds: randomStageRounds(0),
-      },
-      {
-        rounds: 3,
-        damage: () => 5,
-        gold: goldGainFunc(3),
         neutralRounds: randomStageRounds(1),
       },
       {
@@ -125,6 +128,12 @@ export function getAdventureGameMode(): GameMode {
         damage: () => 5,
         gold: goldGainFunc(3),
         neutralRounds: randomStageRounds(2),
+      },
+      {
+        rounds: 3,
+        damage: () => 5,
+        gold: goldGainFunc(3),
+        neutralRounds: randomStageRounds(3),
       },
       {
         rounds: 3,
@@ -136,12 +145,6 @@ export function getAdventureGameMode(): GameMode {
         rounds: 3,
         damage: () => 10,
         gold: goldGainFunc(4),
-        neutralRounds: randomStageRounds(4),
-      },
-      {
-        rounds: 3,
-        damage: () => 20,
-        gold: goldGainFunc(5),
         neutralRounds: randomStageRounds(5),
       },
       {
@@ -153,8 +156,14 @@ export function getAdventureGameMode(): GameMode {
       {
         rounds: 3,
         damage: () => 20,
-        gold: goldGainFunc(6),
+        gold: goldGainFunc(5),
         neutralRounds: randomStageRounds(7),
+      },
+      {
+        rounds: 3,
+        damage: () => 20,
+        gold: goldGainFunc(6),
+        neutralRounds: randomStageRounds(8),
       },
       // Victory Road
       {
@@ -260,22 +269,6 @@ export function getDebugGameMode(): GameMode {
 }
 
 /**
- * Shuffles the first `amount` elements of a given array.
- * Modifies the array in-place and returns it.
- */
-export function shuffle<T>(array: T[], amount = array.length - 1): T[] {
-  // shuffle the list with a bastardised Fisher-Yates:
-  // for each item (up to the limit we care about)
-  for (let i = 0; i < amount; i++) {
-    // pick a random other element (that we haven't already swapped)
-    const swapIndex = Math.floor(Math.random() * (array.length - i)) + i;
-    // and swap the two (fancy ES6 syntax)
-    [array[i], array[swapIndex]] = [array[swapIndex], array[i]];
-  }
-  return array;
-}
-
-/**
  * Returns `amount` random names from a name list, with no repeats.
  */
 export function getRandomNames(amount: number): string[] {
@@ -305,12 +298,22 @@ export function getRandomNames(amount: number): string[] {
     'Elio',
     'Selene',
     'Hau',
+    'Lillie',
     'Gladion',
     'Victor',
     'Gloria',
     'Hop',
     'Bede',
     'Marnie',
+    'Julian',
+    'Julianna',
+    'Nemona',
+    'Penny',
+    'Arven',
+    'Urbain',
+    'Taunie',
+    'Lida',
+    'Naveen',
   ];
 
   return shuffle(names, amount).slice(0, amount);
