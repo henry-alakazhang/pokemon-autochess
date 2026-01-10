@@ -363,6 +363,13 @@ export class GameScene extends Phaser.Scene {
       `Level: ${this.currentVisiblePlayer.level}\nGold: ${this.currentVisiblePlayer.gold}`
     );
 
+    [...this.players]
+      .sort((a, b) => b.hp - a.hp)
+      .forEach((player, index) => {
+        player.update();
+        player.updatePosition(720, 100 + 30 * index);
+      });
+
     // show the "valid range" highlight if a Pokemon is selected
     this.prepGridHighlight.setVisible(!!this.selectedPokemon);
     this.sellArea.setVisible(!!this.selectedPokemon);
