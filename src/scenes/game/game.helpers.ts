@@ -40,12 +40,17 @@ export interface GameMode {
   readonly startingGold: number;
   /** Whether players can spend gold on exp to level up */
   readonly levelCosts?: number[];
+  /** Whether the game mode has opposing players */
+  readonly isPVE?: boolean;
 }
 
-export type NeutralRound = ReadonlyArray<{
-  readonly name: PokemonName;
-  readonly location: Coords;
-}>;
+export type NeutralRound = {
+  readonly name: string;
+  readonly board: ReadonlyArray<{
+    readonly name: PokemonName;
+    readonly location: Coords;
+  }>;
+};
 
 export interface Stage {
   /** Number of rounds to play through (1-1, 1-2, etc) */
@@ -92,10 +97,13 @@ export function getHyperRollGameMode(): GameMode {
         damage: () => 5,
         gold: goldGainFunc(5),
         neutralRounds: {
-          1: [
-            { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
-            { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
-          ],
+          1: {
+            name: 'Wild Rattata',
+            board: [
+              { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
+            ],
+          },
         },
       },
       { rounds: 2, damage: () => 10, autolevel: 2, gold: goldGainFunc(6) },
