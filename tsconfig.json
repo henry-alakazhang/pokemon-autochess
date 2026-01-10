@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "esnext",
     "moduleResolution": "node",
-    "module": "CommonJS",
+    "module": "esnext",
     "strict": true,
     "sourceMap": true,
     "typeRoots": ["node_modules/@types", "node_modules/phaser/types"],

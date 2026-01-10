@@ -38,7 +38,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
     HIT: 'projectileHit',
   };
 
-  body: Phaser.Physics.Arcade.Body;
+  declare body: Phaser.Physics.Arcade.Body;
   private trajectory: 'straight' | 'straightPulse' | 'randomArc';
   private rotationMode: 'directed' | 'rotate';
   private destroyOnHit: boolean;
