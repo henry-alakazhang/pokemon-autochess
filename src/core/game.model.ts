@@ -955,14 +955,14 @@ the number of Gimmighoul Coins it has.
         if (tier === 2) {
           // TODO: make this more exciting than just random money
           const rand = Math.random();
-          if (rand > 0.6) {
-            player.gold++;
-          } else if (rand > 0.9) {
+          if (rand > 0.9) {
             player.gold += 2;
+          } else if (rand > 0.6) {
+            player.gold++;
           }
         }
       } else {
-        player.synergyState.steel += tier == 1 ? 5 : 10;
+        player.synergyState.steel += tier === 1 ? 5 : 10;
       }
     },
     onTimer({ scene, board, player, side, count, time }) {
@@ -1024,7 +1024,7 @@ the number of Gimmighoul Coins it has.
           });
         }
 
-        // Grant +1 Def/SpDef to all allies (750+ coins)
+        // Grant +1 Atk/SpAtk to all allies (750+ coins)
         if (coins >= 750) {
           allies.forEach((ally) => {
             ally.changeStats({ attack: +1, specAttack: +1 });
@@ -1094,7 +1094,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Reflect',
-              description: `Gimmighoul gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
+              description: `Gimmighoul gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
             },
           };
         } else if (coins >= 75 && coins < 150) {
@@ -1103,7 +1103,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Astonish',
-              description: `Gimmighoul strikes a random enemy, dealing 200 physical damage and causing them to flinch.\nIt also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
+              description: `Gimmighoul strikes a random enemy, dealing 200 physical damage and causing them to flinch.\nIt also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
             },
           };
         } else if (coins >= 150 && coins < 250) {
@@ -1112,7 +1112,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Pay Day',
-              description: `Gimmighoul sprays a random enemy with money, dealing ${200 + 0.5 * coins} (200 + 50% of coins) physical damage and causing them to flinch. If this KOs the enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
+              description: `Gimmighoul sprays a random enemy with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs the enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
             },
           };
         } else if (coins >= 250 && coins < 500) {
@@ -1121,7 +1121,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Pay Day+',
-              description: `Gimmighoul sprays a random enemy with money, dealing ${200 + 0.5 * coins} (200 + 50% of coins) physical damage and causing them to flinch. If this KOs the enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to all allies and briefly grants them status immunity.`,
+              description: `Gimmighoul sprays a random enemy with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs the enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies and briefly grants them status immunity.`,
             },
           };
         } else if (coins >= 500 && coins < 750) {
@@ -1130,7 +1130,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Pay Day++',
-              description: `Gimmighoul sprays all enemies with money, dealing ${200 + 0.5 * coins} (200 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to all allies and briefly grants them status immunity.`,
+              description: `Gimmighoul sprays all enemies with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies and briefly grants them status immunity.`,
             },
           };
         } else if (coins >= 750 && coins < 999) {
@@ -1139,7 +1139,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Make it Rain!',
-              description: `Gimmighoul sprays all enemies with money, dealing ${200 + 0.5 * coins} (200 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack`,
+              description: `Gimmighoul sprays all enemies with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack.`,
             },
           };
         } else if (coins >= 999) {
@@ -1153,7 +1153,7 @@ the number of Gimmighoul Coins it has.
             move: {
               ...baseMove,
               displayName: 'Pay Day++++',
-              description: `Gholdengo sprays all enemies with money, dealing ${200 + 0.5 * coins} (200 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack. It then joins the fight!`,
+              description: `Gholdengo sprays all enemies with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack. It then joins the fight!`,
             },
           };
           // Restore visibility (it disappears when Gholdengo goes on the board)
