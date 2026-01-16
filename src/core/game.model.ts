@@ -1138,7 +1138,7 @@ the number of Gimmighoul Coins it has.
             ...gimmighoul.basePokemon,
             move: {
               ...baseMove,
-              displayName: 'Pay Day+++',
+              displayName: 'Make it Rain!',
               description: `Gimmighoul sprays all enemies with money, dealing ${200 + 0.5 * coins} (200 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.25 * coins} (200 + 25% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack`,
             },
           };

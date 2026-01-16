@@ -18,6 +18,7 @@ import {
   flyingPress,
   furyCutter,
   gigatonHammer,
+  goodAsGold,
   iceShard,
   kingsShield,
   magmaStorm,
@@ -1818,11 +1819,8 @@ const rawPokemonData = {
     ...getEvolution('gimmighoul', 2),
     name: 'gholdengo',
     displayName: 'Gholdengo',
-    move: {
-      type: 'passive',
-      displayName: 'Make it Rain',
-      description: 'Passive: Gholdengo is immune to all statuses.',
-    },
+    // Only Gholdengo gets this version of the move.
+    move: goodAsGold,
   },
 } as const;
 
