@@ -849,176 +849,86 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     }
   };
 
-  onHit: NonNullable<EffectParams['onHit']> = ({
-    scene,
-    board,
-    attacker,
-    defender,
-    flags,
-    damage,
-    selfCoords,
-  }) => {
+  onHit: NonNullable<EffectParams['onHit']> = ({ ...params }) => {
     this.basePokemon.move?.onHit?.({
-      scene,
-      board,
-      attacker,
-      defender,
-      flags,
-      damage,
+      ...params,
       self: this,
-      selfCoords,
     });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onHit?.({
-        scene,
-        board,
-        attacker,
-        defender,
-        flags,
-        damage,
+        ...params,
         self: this,
-        selfCoords,
         stacks: this.effects[effect.name]?.stacks ?? 0,
       });
     });
   };
 
-  onBeingHit: NonNullable<EffectParams['onBeingHit']> = ({
-    scene,
-    board,
-    attacker,
-    defender,
-    flags,
-    damage,
-    selfCoords,
-  }) => {
-    this.addPP(Math.min(5, damage * 0.015));
+  onBeingHit: NonNullable<EffectParams['onBeingHit']> = ({ ...params }) => {
+    this.addPP(Math.min(5, params.damage * 0.015));
 
     this.basePokemon.move?.onBeingHit?.({
-      scene,
-      board,
-      attacker,
-      defender,
-      flags,
-      damage,
+      ...params,
       self: this,
-      selfCoords,
     });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onBeingHit?.({
-        scene,
-        board,
-        attacker,
-        defender,
-        flags,
-        damage,
+        ...params,
         self: this,
-        selfCoords,
         stacks: this.effects[effect.name]?.stacks ?? 0,
       });
     });
   };
 
-  onDeath: NonNullable<EffectParams['onDeath']> = ({
-    scene,
-    board,
-    pokemon,
-    side,
-    selfCoords,
-  }) => {
+  onDeath: NonNullable<EffectParams['onDeath']> = ({ ...params }) => {
     this.basePokemon.move?.onDeath?.({
-      scene,
-      board,
-      pokemon,
-      side,
+      ...params,
       self: this,
-      selfCoords,
     });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onDeath?.({
-        scene,
-        board,
-        pokemon,
-        side,
+        ...params,
         self: this,
-        selfCoords,
         stacks: this.effects[effect.name]?.stacks ?? 0,
       });
     });
   };
-  onTurnStart: NonNullable<EffectParams['onTurnStart']> = ({
-    scene,
-    board,
-    pokemon,
-    selfCoords,
-  }) => {
+  onTurnStart: NonNullable<EffectParams['onTurnStart']> = ({ ...params }) => {
     this.basePokemon.move?.onTurnStart?.({
-      scene,
-      board,
-      pokemon,
+      ...params,
       self: this,
-      selfCoords,
     });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onTurnStart?.({
-        scene,
-        board,
-        pokemon,
+        ...params,
         self: this,
-        selfCoords,
         stacks: this.effects[effect.name]?.stacks ?? 0,
       });
     });
   };
 
-  onTimer: NonNullable<EffectParams['onTimer']> = ({
-    scene,
-    board,
-    side,
-    selfCoords,
-    time,
-  }) => {
+  onTimer: NonNullable<EffectParams['onTimer']> = ({ ...params }) => {
     this.basePokemon.move?.onTimer?.({
-      scene,
-      board,
-      side,
-      time,
+      ...params,
       self: this,
-      selfCoords,
     });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onTimer?.({
-        scene,
-        board,
-        side,
-        time,
+        ...params,
         self: this,
-        selfCoords,
         stacks: this.effects[effect.name]?.stacks ?? 0,
       });
     });
   };
 
-  onRoundStart: NonNullable<EffectParams['onRoundStart']> = ({
-    scene,
-    board,
-    side,
-    selfCoords,
-  }) => {
+  onRoundStart: NonNullable<EffectParams['onRoundStart']> = ({ ...params }) => {
     this.basePokemon.move?.onRoundStart?.({
-      scene,
-      board,
-      side,
+      ...params,
       self: this,
-      selfCoords,
     });
     Object.values(this.effects).forEach(({ effect }) => {
       effect.onRoundStart?.({
-        scene,
-        board,
-        side,
+        ...params,
         self: this,
-        selfCoords,
         stacks: this.effects[effect.name]?.stacks ?? 0,
       });
     });
@@ -1033,33 +943,19 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
    * change to a simple system with flat bonuses and multipliers that scale additively.
    */
   calculateDamage: NonNullable<EffectParams['calculateDamage']> = ({
-    attacker,
-    defender,
-    baseAmount,
-    flags,
-    side,
-    selfCoords,
+    ...params
   }) => {
     let newTotal =
       this.basePokemon.move?.calculateDamage?.({
-        attacker,
-        defender,
-        baseAmount,
-        flags,
-        side,
+        ...params,
         self: this,
-        selfCoords,
-      }) ?? baseAmount;
+      }) ?? params.baseAmount;
     Object.values(this.effects).forEach(({ effect }) => {
       newTotal =
         effect.calculateDamage?.({
-          attacker,
-          defender,
-          baseAmount: newTotal,
-          flags,
-          side,
+          ...params,
           self: this,
-          selfCoords,
+          baseAmount: newTotal,
           stacks: this.effects[effect.name]?.stacks ?? 0,
         }) ?? newTotal;
     });
