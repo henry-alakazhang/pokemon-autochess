@@ -5,6 +5,7 @@ import { PokemonObject } from '../objects/pokemon.object';
 import {
   getCenter,
   getDamageReduction,
+  getFacing,
   getGridDistance,
   getNearestEmpty,
   getOppositeSide,
@@ -172,12 +173,6 @@ export type Synergy = {
   readonly thresholds: number[];
   /** If true, thresholds are exact matches (==) instead of minimum thresholds (>=) */
   readonly isExactThreshold?: boolean;
-  /** Create a GameObject for rendering additional synergy state inside and outside of combat  */
-  readonly createObject?: (
-    scene: Phaser.Scene,
-    x: number,
-    y: number
-  ) => Phaser.GameObjects.Container;
 } & Effect<{ count: number }>;
 
 export function getSynergyTier(synergy: Synergy, count: number) {
@@ -902,17 +897,16 @@ to both their attacks and their moves.
   steel: {
     category: 'steel',
     displayName: 'Steel: Good As Gold',
-    description: `
-You get a Gimmighoul outside of your board
+    description: `You get a Gimmighoul outside of your board
 which collects Gimmighoul Coins when any
 Pokemon is KO'd (ally or enemy).
 
 Each round, an enemy Gimmighoul appears which
-gives extra Gimmighoul Coins coins.
+gives extra Gimmighoul Coins when KO'd.
 
 After 10 seconds in combat, your Gimmighoul
-will use its move. It gains effects based
-on the number of Gimmighoul Coins it has.
+will use its move. Its effects upgrade with
+the number of Gimmighoul Coins it has.
 
  (3) - +5 per KO, +25 on Gimmighoul.
  (5) - Get double coins and a chance
@@ -968,7 +962,7 @@ on the number of Gimmighoul Coins it has.
           }
         }
       } else {
-        player.synergyState.steel += 5;
+        player.synergyState.steel += tier == 1 ? 5 : 10;
       }
     },
     onTimer({ scene, board, player, side, count, time }) {
@@ -990,7 +984,6 @@ on the number of Gimmighoul Coins it has.
         // 750 coins: Also grants +1 Atk/SpAtk to all allies
         // 999 coins: Evolves into Gholdengo who actively joins the fight.
 
-        // Get all allies and enemies
         const allies = flatten(board)
           .filter(isDefined)
           .filter((pokemon) => pokemon.side === side);
@@ -1038,7 +1031,7 @@ on the number of Gimmighoul Coins it has.
           });
         }
 
-        // Evolve into Gholdengo (999 coins)
+        // Join fight as Gholdengo (999 coins)
         if (coins >= 999) {
           // Find a spot closest to the middle for Gholdengo
           const centerCoords = {
@@ -1055,10 +1048,11 @@ on the number of Gimmighoul Coins it has.
               .setVisible(false);
             const originalPos = { x: sideGimmighoul.x, y: sideGimmighoul.y };
             // Play animation that moves the off-board gimmighoul/gholdengo
+            sideGimmighoul.playAnimation(getFacing(sideGimmighoul, gholdengo));
             scene.tweens.add({
               targets: [sideGimmighoul],
               ...getCoordinatesForMainboard(emptySpot),
-              ease: Phaser.Math.Easing.Bounce.In,
+              ease: Phaser.Math.Easing.Back.Out,
               duration: 500,
               onComplete: () => {
                 // then make the real gholdengo visible
@@ -1077,8 +1071,6 @@ on the number of Gimmighoul Coins it has.
       if (tier === 0) {
         return;
       }
-
-      player.synergyState.steel += 500;
 
       const coins = player.synergyState.steel;
       const gimmighoul = player.extraSynergyObjects.steel?.sprite;
