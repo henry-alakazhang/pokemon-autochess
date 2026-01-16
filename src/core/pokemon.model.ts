@@ -18,6 +18,7 @@ import {
   flyingPress,
   furyCutter,
   gigatonHammer,
+  goodAsGold,
   iceShard,
   kingsShield,
   magmaStorm,
@@ -552,6 +553,29 @@ const basePokemonData = {
       stat: 'attack',
     },
     move: crushGrip,
+  },
+  gimmighoul: {
+    categories: ['ghost', 'steel'],
+    tier: 5,
+    maxHP: 87,
+    attack: 60,
+    defense: 95,
+    specAttack: 133,
+    specDefense: 91,
+    speed: 84,
+    basicAttack: {
+      range: 3,
+      stat: 'specAttack',
+      projectile: {
+        key: 'blackhole',
+        speed: 500,
+      },
+    },
+    move: {
+      type: 'passive',
+      displayName: 'Make it Rain',
+      description: 'Gimmighoul is collecting coins.',
+    },
   },
   dreepy: {
     categories: ['dragon', 'ghost', 'revenge killer'],
@@ -1782,6 +1806,21 @@ const rawPokemonData = {
     name: 'neutral_only_rattata',
     displayName: 'Rattata',
     stage: 2,
+  },
+  // Gimmighoul and Gholdengo for the Steel-type synergy.
+  // These are not buyable.
+  // Gimmighoul is not actually usable in combat, but Gholdengo is.
+  gimmighoul: {
+    ...getEvolution('gimmighoul', 2),
+    name: 'gimmighoul',
+    displayName: 'Gimmighoul',
+  },
+  gholdengo: {
+    ...getEvolution('gimmighoul', 2),
+    name: 'gholdengo',
+    displayName: 'Gholdengo',
+    // Only Gholdengo gets this version of the move.
+    move: goodAsGold,
   },
 } as const;
 

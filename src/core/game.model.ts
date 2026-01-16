@@ -5,6 +5,7 @@ import { PokemonObject } from '../objects/pokemon.object';
 import {
   getCenter,
   getDamageReduction,
+  getFacing,
   getGridDistance,
   getNearestEmpty,
   getOppositeSide,
@@ -12,7 +13,10 @@ import {
   mapPokemonCoords,
 } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
-import { getCoordinatesForMainboard } from '../scenes/game/game.helpers';
+import {
+  BOARD_WIDTH,
+  getCoordinatesForMainboard,
+} from '../scenes/game/game.helpers';
 import { GameScene } from '../scenes/game/game.scene';
 import { NEGATIVE_STATUS, Status } from './status.model';
 
@@ -60,6 +64,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onMoveUse?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       user: PokemonObject;
     } & ExtraConfig
@@ -68,6 +73,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onHit?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       attacker: PokemonObject;
       defender: PokemonObject;
@@ -79,6 +85,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onBeingHit?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       attacker: PokemonObject;
       defender: PokemonObject;
@@ -90,6 +97,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onDeath?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       pokemon: PokemonObject;
       side: 'player' | 'enemy';
@@ -99,6 +107,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onTurnStart?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       pokemon: PokemonObject;
     } & ExtraConfig
@@ -107,6 +116,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onTimer?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       side: 'player' | 'enemy';
       /** Time elapsed in SECONDS */
@@ -117,6 +127,7 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onRoundStart?: (
     config: {
       scene: CombatScene;
+      player: Player;
       board: CombatScene['board'];
       side: 'player' | 'enemy';
     } & ExtraConfig
@@ -125,14 +136,15 @@ export interface Effect<ExtraConfig = unknown> {
   readonly onRoundEnd?: (
     config: {
       scene: GameScene;
-      board: CombatScene['board'];
       player: Player;
+      board: CombatScene['board'];
       won: boolean;
     } & ExtraConfig
   ) => void;
   /** Possible extra damage calculation */
   readonly calculateDamage?: (
     config: {
+      player: Player;
       attacker: PokemonObject;
       defender: PokemonObject;
       baseAmount: number;
@@ -884,28 +896,271 @@ to both their attacks and their moves.
   },
   steel: {
     category: 'steel',
-    displayName: 'Steel: Clear Body',
-    description: `Makes party members immune to status
-effects at the start of the round.
+    displayName: 'Steel: Good As Gold',
+    description: `You get a Gimmighoul outside of your board
+which collects Gimmighoul Coins when any
+Pokemon is KO'd (ally or enemy).
 
- (2) - lasts 5 seconds
- (4) - lasts 10 seconds`,
-    thresholds: [2, 4],
-    onRoundStart({ board, side, count }) {
+Each round, an enemy Gimmighoul appears which
+gives extra Gimmighoul Coins when KO'd.
+
+After 10 seconds in combat, your Gimmighoul
+will use its move. Its effects upgrade with
+the number of Gimmighoul Coins it has.
+
+ (3) - +5 per KO, +25 on Gimmighoul.
+ (5) - Get double coins and a chance
+       to get money from Gimmighouls!`,
+    thresholds: [3, 5],
+    onRoundStart({ scene, board, count, side }) {
       const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
 
-      const duration = tier === 1 ? 5000 : 10000;
-      flatten(board)
-        .filter(isDefined)
-        .forEach((pokemon) => {
-          if (pokemon.side === side) {
-            // TODO: apply some visual for status immunity
-            pokemon.addStatus('statusImmunity', duration);
+      const targetSide = getOppositeSide(side);
+      // range of y coordinates is upper half (0->H/2) for 'enemy'
+      // and lower half (H/2->H) for 'player'
+      const startY = targetSide === 'player' ? BOARD_WIDTH / 2 : 0;
+      const endY = targetSide === 'player' ? BOARD_WIDTH : BOARD_WIDTH / 2;
+
+      const randSquare = {
+        x: Math.floor(Math.random() * BOARD_WIDTH),
+        y: Math.floor(Math.random() * (endY - startY) + startY),
+      };
+
+      // Add the Gimmighoul after a short delay
+      // so it doesn't get given turns.
+      scene.time.addEvent({
+        callback: () => {
+          const target = getNearestEmpty(board, randSquare);
+          if (target) {
+            // Add without calling setTurn()
+            scene.addPokemon(targetSide, target, 'gimmighoul');
           }
+        },
+        delay: 5,
+      });
+    },
+    onDeath({ player, pokemon, side, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      // Gimmighoul gives extra coins when KO'd by the enemy
+      if (pokemon.name === 'gimmighoul' && pokemon.side !== side) {
+        player.synergyState.steel += tier === 1 ? 25 : 50;
+        // and can drop extra loot when synergy is at tier 2
+        if (tier === 2) {
+          // TODO: make this more exciting than just random money
+          const rand = Math.random();
+          if (rand > 0.9) {
+            player.gold += 2;
+          } else if (rand > 0.6) {
+            player.gold++;
+          }
+        }
+      } else {
+        player.synergyState.steel += tier === 1 ? 5 : 10;
+      }
+    },
+    onTimer({ scene, board, player, side, count, time }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const coins = player.synergyState.steel;
+      const sideGimmighoul = player.extraSynergyObjects.steel?.sprite;
+
+      // Triggers at 10 seconds
+      if (time === 10 && coins >= 25 && sideGimmighoul) {
+        // 25 coins: Gives lowest-health ally a small shield and grants brief status immunity
+        // 75 coins: Also deals damage to a random enemy and flinches
+        // 150 coins: Attack deals scaling damage and gives coins if it KOs
+        // 250 coins: Shield applies to all allies
+        // 500 coins: Damage applies to all enemies
+        // 750 coins: Also grants +1 Atk/SpAtk to all allies
+        // 999 coins: Evolves into Gholdengo who actively joins the fight.
+
+        const allies = flatten(board)
+          .filter(isDefined)
+          .filter((pokemon) => pokemon.side === side);
+        const enemies = flatten(board)
+          .filter(isDefined)
+          .filter((pokemon) => pokemon.side !== side);
+
+        const lowestHPAlly = allies.reduce((lowest, current) =>
+          current.currentHP < lowest.currentHP ? current : lowest
+        );
+
+        // Shield and status immunity (0+ coins)
+        const shieldTargets = coins >= 250 ? allies : [lowestHPAlly];
+        shieldTargets.forEach((ally) => {
+          ally.applyShield(Math.floor(200 + 0.5 * coins));
+          ally.addStatus('statusImmunity', 2000 + 4 * coins);
         });
+
+        // Damage to enemies (75+ coins)
+        if (coins >= 75) {
+          const damageTargets =
+            coins >= 500
+              ? enemies
+              : [enemies[Math.floor(Math.random() * enemies.length)]];
+          const damage = coins >= 150 ? 250 + 0.5 * coins : 200;
+          damageTargets.forEach((enemy) => {
+            if (enemy) {
+              scene.causeDamage(
+                sideGimmighoul,
+                enemy,
+                { damage, defenseStat: 'defense' },
+                { isAttack: false, triggerEvents: false }
+              );
+              if (coins >= 150 && enemy.currentHP <= 0) {
+                player.synergyState.steel += tier === 1 ? 25 : 50;
+              }
+            }
+          });
+        }
+
+        // Grant +1 Atk/SpAtk to all allies (750+ coins)
+        if (coins >= 750) {
+          allies.forEach((ally) => {
+            ally.changeStats({ attack: +1, specAttack: +1 });
+          });
+        }
+
+        // Join fight as Gholdengo (999 coins)
+        if (coins >= 999) {
+          // Find a spot closest to the middle for Gholdengo
+          const centerCoords = {
+            x: Math.floor(BOARD_WIDTH / 2),
+            y: Math.floor(BOARD_WIDTH / 2),
+          };
+          const emptySpot = getNearestEmpty(board, centerCoords);
+
+          if (emptySpot) {
+            // Spawn the combat gholdengo now so the spot doesn't get filled up
+            // but hide it until the movement is done.
+            const gholdengo = scene
+              .addPokemon(side, emptySpot, 'gholdengo')
+              .setVisible(false);
+            const originalPos = { x: sideGimmighoul.x, y: sideGimmighoul.y };
+            // Play animation that moves the off-board gimmighoul/gholdengo
+            sideGimmighoul.playAnimation(getFacing(sideGimmighoul, gholdengo));
+            scene.tweens.add({
+              targets: [sideGimmighoul],
+              ...getCoordinatesForMainboard(emptySpot),
+              ease: Phaser.Math.Easing.Back.Out,
+              duration: 500,
+              onComplete: () => {
+                // then make the real gholdengo visible
+                sideGimmighoul.setVisible(false);
+                sideGimmighoul.setPosition(originalPos.x, originalPos.y);
+                gholdengo.setVisible(true);
+                scene.setTurn(gholdengo);
+              },
+            });
+          }
+        }
+      }
+    },
+    onRoundEnd({ player, count }) {
+      const tier = getSynergyTier(this, count);
+      if (tier === 0) {
+        return;
+      }
+
+      const coins = player.synergyState.steel;
+      const gimmighoul = player.extraSynergyObjects.steel?.sprite;
+
+      // These fields are all unused but needed to satisfy the Move types and display correctly.
+      const baseMove = {
+        type: 'active',
+        targetting: 'ground',
+        defenseStat: 'defense',
+        cost: 0,
+        startingPP: 0,
+        range: 0,
+        use: () => {},
+      } as const;
+
+      if (gimmighoul) {
+        // Set the tooltip for gimmighoul's "move" based on our coin count.
+        if (coins >= 25 && coins < 75) {
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            move: {
+              ...baseMove,
+              displayName: 'Reflect',
+              description: `Gimmighoul gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
+            },
+          };
+        } else if (coins >= 75 && coins < 150) {
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            move: {
+              ...baseMove,
+              displayName: 'Astonish',
+              description: `Gimmighoul strikes a random enemy, dealing 200 physical damage and causing them to flinch.\nIt also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
+            },
+          };
+        } else if (coins >= 150 && coins < 250) {
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            move: {
+              ...baseMove,
+              displayName: 'Pay Day',
+              description: `Gimmighoul sprays a random enemy with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs the enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to the lowest-health ally and briefly grants them status immunity.`,
+            },
+          };
+        } else if (coins >= 250 && coins < 500) {
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            move: {
+              ...baseMove,
+              displayName: 'Pay Day+',
+              description: `Gimmighoul sprays a random enemy with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs the enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies and briefly grants them status immunity.`,
+            },
+          };
+        } else if (coins >= 500 && coins < 750) {
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            move: {
+              ...baseMove,
+              displayName: 'Pay Day++',
+              description: `Gimmighoul sprays all enemies with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies and briefly grants them status immunity.`,
+            },
+          };
+        } else if (coins >= 750 && coins < 999) {
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            move: {
+              ...baseMove,
+              displayName: 'Make it Rain!',
+              description: `Gimmighoul sprays all enemies with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack.`,
+            },
+          };
+        } else if (coins >= 999) {
+          // Evolve the benched Gimmighoul to Gholdengo
+          gimmighoul.setTexture('gholdengo');
+          gimmighoul.playAnimation('down');
+          gimmighoul.basePokemon = {
+            ...gimmighoul.basePokemon,
+            name: 'gholdengo',
+            displayName: 'Gholdengo',
+            move: {
+              ...baseMove,
+              displayName: 'Pay Day++++',
+              description: `Gholdengo sprays all enemies with money, dealing ${250 + 0.5 * coins} (250 + 50% of coins) physical damage and causing them to flinch. If this KOs any enemy, you get 25 Gimmighoul Coins. It also gives a ${200 + 0.5 * coins} (200 + 50% of coins) HP shield to all allies, briefly grants them status immunity, and boosts their Attack and Special Attack. It then joins the fight!`,
+            },
+          };
+          // Restore visibility (it disappears when Gholdengo goes on the board)
+          gimmighoul.setVisible(true);
+        }
+        gimmighoul.redrawCard();
+      }
     },
   },
   fairy: {

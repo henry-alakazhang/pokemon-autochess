@@ -4,7 +4,10 @@ import { flatten, isDefined } from '../helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
 import {
   BOARD_WIDTH,
+  CELL_WIDTH,
   getCoordinatesForMainboard,
+  GRID_X,
+  GRID_Y,
   Stage,
 } from '../scenes/game/game.helpers';
 import {
@@ -54,8 +57,24 @@ export class Player extends Phaser.GameObjects.GameObject {
   /** The Pokemon in the player's sideboard (spare Pokemon) */
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
+  /** List of calculated synergies based on current board */
   synergies: { category: Category; count: number }[] = [];
+  /** Map of extra data tracked on the player object per synergy */
+  synergyState: {
+    /** Number of Gimmighoul Coins */
+    steel: number;
+  } = { steel: 0 };
+  /** Map of synergy marker objects used to display current synergy tiers. */
   synergyMarkers: { [k in Category]?: SynergyMarker } = {};
+  /** Map of extra objects used to display extra out-of-combat state for synergies. */
+  extraSynergyObjects: {
+    steel?: {
+      /** An off-board sprite for gimmighoul */
+      sprite: PokemonObject;
+      /** A counter for Gimmighoul Coins */
+      text: Phaser.GameObjects.Text;
+    };
+  } = {};
 
   /** Used mostly for AI to quickly determine if a synergy exists or not */
   synergyMap: { [k in Category]?: number } = {};
@@ -112,6 +131,10 @@ export class Player extends Phaser.GameObjects.GameObject {
       `${this.playerName} - ${this.hp} ${this.visible ? '👁️' : ''} ${
         this.hp <= 0 ? '❌' : ''
       }`
+    );
+
+    this.extraSynergyObjects['steel']?.text.setText(
+      this.synergyState.steel.toString()
     );
   }
 
@@ -480,6 +503,50 @@ export class Player extends Phaser.GameObjects.GameObject {
         .setPosition(40, 150 + index * SynergyMarker.height)
         .setCount(synergy.count);
     });
+
+    // Add any extra objects we need to render for the synergy
+    // TODO: If we have a lot of these, it might be good to define these in the game.model.ts?
+    // But putting all the render logic here makes it easier to position it all etc.
+    this.renderSteelTypeSynergy();
+  }
+
+  private renderSteelTypeSynergy() {
+    if (
+      getSynergyTier(synergyData['steel'], this.synergyMap['steel'] ?? 0) === 0
+    ) {
+      // If synergy is disabled, hide Gimmighoul
+      this.extraSynergyObjects['steel']?.sprite.setVisible(false);
+      this.extraSynergyObjects['steel']?.text.setVisible(false);
+      return;
+    }
+
+    if (this.extraSynergyObjects['steel']) {
+      // If synergy is defined and object already exists, show
+      this.extraSynergyObjects['steel']?.sprite.setVisible(true);
+      this.extraSynergyObjects['steel']?.text.setVisible(true);
+      return;
+    }
+
+    // Render a Gimmighoul just to the left of the grid.
+    const sprite = this.scene.add.existing(
+      new PokemonObject({
+        scene: this.scene,
+        x: GRID_X - CELL_WIDTH * 3 - 32,
+        y: GRID_Y,
+        name: 'gimmighoul',
+        side: 'player',
+      })
+    );
+    const text = this.scene.add.existing(
+      new Phaser.GameObjects.Text(
+        this.scene,
+        GRID_X - CELL_WIDTH * 3 - 32,
+        GRID_Y + 40,
+        this.synergyState.steel.toString(),
+        defaultStyle
+      ).setOrigin(0.5, 0.5)
+    );
+    this.extraSynergyObjects['steel'] = { sprite, text };
   }
 
   canAddPokemonToMainboard() {
