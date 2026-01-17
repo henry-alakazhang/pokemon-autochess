@@ -720,12 +720,14 @@ take damage.
       flatten(board).forEach((pokemon) => {
         if (pokemon && pokemon.side !== side) {
           pokemon.takeDamage(Math.floor(pokemon.maxHP * 0.1));
-          pokemon.changeStats(
-            {
-              speed: -1,
-            },
-            slowDuration
-          );
+          if (tier >= 2) {
+            pokemon.changeStats(
+              {
+                speed: -1,
+              },
+              slowDuration
+            );
+          }
         }
       });
     },
