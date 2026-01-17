@@ -661,11 +661,6 @@ when starting combat isolated.
                 specDefense: tier >= 2 ? +1 : 0,
                 speed: tier >= 3 ? +1 : 0,
               } as const;
-              console.log(
-                pokemon,
-                ' is isolated, applying psychic buff',
-                statChanges
-              );
               pokemon.changeStats(statChanges);
             }
           }

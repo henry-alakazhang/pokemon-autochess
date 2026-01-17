@@ -1,4 +1,3 @@
-import { Scene } from 'phaser';
 import { synergyData } from '../../../core/game.model';
 import { PokemonName } from '../../../core/pokemon.model';
 import { flatten, generateId, isDefined } from '../../../helpers';
@@ -56,7 +55,7 @@ export interface CombatSceneData {
  * It handles all combat-related logic, including taking turns, moving/pathfinding
  * and attacking + dealing damage
  */
-export class CombatScene extends Scene {
+export class CombatScene extends Phaser.Scene {
   static readonly KEY = 'CombatScene';
   static Events = {
     COMBAT_END: 'combatComplete',
@@ -99,10 +98,6 @@ export class CombatScene extends Scene {
       .setFontSize(30)
       .setPadding(4)
       .setBackgroundColor('slategrey');
-
-    console.log(
-      `Combat: ${data.player.playerName} vs ${data.enemy.playerName}`
-    );
 
     this.board = Array(BOARD_WIDTH)
       .fill(undefined)

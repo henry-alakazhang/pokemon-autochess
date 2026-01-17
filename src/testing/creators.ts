@@ -1,17 +1,50 @@
 import { Category } from '../core/game.model';
 import { PokemonName } from '../core/pokemon.model';
-import { Player } from '../objects/player.object';
 import { Coords } from '../scenes/game/combat/combat.helpers';
+import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { GameScene } from '../scenes/game/game.scene';
 import { ShopPool } from '../scenes/game/shop.helpers';
+import { ShopScene } from '../scenes/game/shop.scene';
 
-const shopPoolMock = {
-  rates: { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] },
-  pools: { 1: [], 2: [], 3: [], 4: [], 5: [] },
-  pokemonData: [],
-  reroll: () => {},
-  returnToShop: () => {},
-} as unknown as ShopPool;
+export async function createTestingGame(): Promise<Phaser.Game> {
+  const game = new Phaser.Game({
+    type: Phaser.CANVAS,
+    parent: 'canvas',
+    scene: [
+      // Initial scene is nothing.
+      class {
+        static key = 'InitialScene';
+      },
+      GameScene,
+      ShopScene,
+      CombatScene,
+    ],
+    physics: {
+      default: 'arcade',
+    },
+    dom: {
+      createContainer: true,
+    },
+  });
+
+  return game;
+}
+
+export async function startTestingScene(
+  game: Phaser.Game,
+  scene: string,
+  data: object
+): Promise<Phaser.Scene> {
+  return new Promise((resolve) => {
+    game.scene.start(scene, data);
+    const targetScene = game.scene.getScene(scene);
+    setInterval(() => {
+      if (game.scene.isActive(scene)) {
+        resolve(targetScene);
+      }
+    }, 100);
+  });
+}
 
 export function createPlayer({
   scene,

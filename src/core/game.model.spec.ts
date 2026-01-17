@@ -1,17 +1,14 @@
 import { afterEach, beforeAll, describe, expect, test } from '@jest/globals';
-import {
-  getNextThreshold,
-  getSynergyTier,
-  Synergy,
-  synergyData,
-} from './game.model';
-import { CombatScene } from '../scenes/game/combat/combat.scene';
-import { createPlayer } from '../testing/creators';
 import { mapPokemonCoords } from '../scenes/game/combat/combat.helpers';
+import { CombatScene } from '../scenes/game/combat/combat.scene';
+import { getDebugGameMode } from '../scenes/game/game.helpers';
 import { GameScene } from '../scenes/game/game.scene';
-import { CombatSceneMock, GameSceneMock } from '../testing/phaser.mocks';
-import { PokemonObject } from '../objects/pokemon.object';
-import { pokemonData } from './pokemon.model';
+import {
+  createPlayer,
+  createTestingGame,
+  startTestingScene,
+} from '../testing/creators';
+import { getNextThreshold, getSynergyTier, Synergy } from './game.model';
 
 // Create a mock synergy with given threshold/exactness
 const createSynergy = (
@@ -119,34 +116,42 @@ describe('getNextThreshold', () => {
 });
 
 describe('individual synergy effects', () => {
+  let game: Phaser.Game;
   let gameScene: GameScene;
+  let scene: CombatScene;
 
   beforeAll(async () => {
-    gameScene = GameSceneMock;
+    game = await createTestingGame();
+    gameScene = (await startTestingScene(
+      game,
+      GameScene.KEY,
+      getDebugGameMode()
+    )) as GameScene;
+  });
+
+  afterEach(() => {
+    game.scene.stop(CombatScene.KEY);
   });
 
   describe('psychic', () => {
     test('should trigger on round start', async () => {
-      const scene = CombatSceneMock;
-      const board: CombatScene['board'] = [
-        [
-          {
-            name: 'abra',
-            basePokemon: pokemonData['abra'],
-            side: 'player',
-          } as unknown as PokemonObject,
-        ],
-      ];
+      scene = (await startTestingScene(game, CombatScene.KEY, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'abra', location: { x: 0, y: 3 } }],
+          synergies: [['psychic', 2]],
+        }),
+        enemy: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'neutral_only_rattata', location: { x: 0, y: 3 } }],
+          synergies: [['fighting', 2]],
+        }),
+      })) as CombatScene;
 
-      synergyData['psychic'].onRoundStart?.({
-        scene,
-        player: {} as any,
-        board,
-        side: 'player',
-        count: 2,
-      });
+      scene.time.timeScale = 0;
+      scene.time.update(0, 0);
 
-      const abra = mapPokemonCoords(board).find(
+      const abra = mapPokemonCoords(scene.board).find(
         ({ pokemon }) => pokemon.name === 'abra'
       );
 
