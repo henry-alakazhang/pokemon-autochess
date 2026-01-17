@@ -29,17 +29,17 @@ export async function createTestingGame(): Promise<Phaser.Game> {
   return game;
 }
 
-export async function startTestingScene(
+export async function startTestingScene<T extends Phaser.Scene>(
   game: Phaser.Game,
   scene: string,
   data: object
-): Promise<Phaser.Scene> {
+): Promise<T> {
   return new Promise((resolve) => {
     game.scene.start(scene, data);
     const targetScene = game.scene.getScene(scene);
     setInterval(() => {
       if (game.scene.isActive(scene)) {
-        resolve(targetScene);
+        resolve(targetScene as T);
       }
     }, 100);
   });
@@ -47,15 +47,15 @@ export async function startTestingScene(
 
 export function createPlayer({
   scene,
-  board,
-  synergies,
+  board = [{ name: 'neutral_only_rattata', location: { x: 0, y: 3 } }],
+  synergies = [],
 }: {
   scene: GameScene;
-  board: ReadonlyArray<{
+  board?: ReadonlyArray<{
     readonly name: PokemonName;
     readonly location: Coords;
   }>;
-  synergies: [Category, number][];
+  synergies?: [Category, number][];
 }) {
   const player = scene.generateNeutralPlayer({
     name: 'Test',
