@@ -754,9 +754,14 @@ Pokemon at the start of the round.
             pokemon.side === side &&
             pokemon.basePokemon.categories.includes('bug')
         )
-        // and sort by star level
+        // and sort by star level, then tier
         .sort((pokemonA, pokemonB) => {
-          return pokemonA.basePokemon.stage - pokemonB.basePokemon.stage;
+          const stageDiff =
+            pokemonA.basePokemon.stage - pokemonB.basePokemon.stage;
+          if (stageDiff) {
+            return stageDiff;
+          }
+          return pokemonA.basePokemon.tier - pokemonB.basePokemon.tier;
         })[0];
       const locationToCopy = scene.getBoardLocationForPokemon(pokemonToCopy);
       if (!locationToCopy) {

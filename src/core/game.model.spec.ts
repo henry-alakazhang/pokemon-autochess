@@ -136,15 +136,15 @@ describe('individual synergy effects', () => {
 
   describe.skip('normal', () => {});
 
-  // TOOD: implement calculateDamage tests
+  // TODO: implement calculateDamage tests
   describe.skip('fire', () => {});
 
-  // TOOD: implement calculateDamage tests
+  // TODO: implement calculateDamage tests
   describe.skip('fighting', () => {});
 
   describe.skip('water', () => {});
 
-  // TOOD: implement calculateDamage tests
+  // TODO: implement calculateDamage tests
   describe.skip('flying', () => {});
 
   describe.skip('grass', () => {});
@@ -410,10 +410,10 @@ describe('individual synergy effects', () => {
       expect(boardMons.length).toBe(3);
       expect(
         boardMons.filter(({ pokemon }) => pokemon.name === 'larvesta').length
-      ).toBe(2);
+      ).toBe(1);
       expect(
         boardMons.filter(({ pokemon }) => pokemon.name === 'grubbin').length
-      ).toBe(1);
+      ).toBe(2);
     });
 
     test('should not copy a non-bug type Pokemon', async () => {
