@@ -1,9 +1,17 @@
-import { PhaserMock } from '../testing/phaser.mocks';
-// Mock Phaser before game imports due to deps
-(global as any).Phaser = PhaserMock;
-
-import { describe, expect, test } from '@jest/globals';
-import { getNextThreshold, getSynergyTier, Synergy } from './game.model';
+import { afterEach, beforeAll, describe, expect, test } from '@jest/globals';
+import {
+  getNextThreshold,
+  getSynergyTier,
+  Synergy,
+  synergyData,
+} from './game.model';
+import { CombatScene } from '../scenes/game/combat/combat.scene';
+import { createPlayer } from '../testing/creators';
+import { mapPokemonCoords } from '../scenes/game/combat/combat.helpers';
+import { GameScene } from '../scenes/game/game.scene';
+import { CombatSceneMock, GameSceneMock } from '../testing/phaser.mocks';
+import { PokemonObject } from '../objects/pokemon.object';
+import { pokemonData } from './pokemon.model';
 
 // Create a mock synergy with given threshold/exactness
 const createSynergy = (
@@ -106,6 +114,47 @@ describe('getNextThreshold', () => {
       expect(getNextThreshold(createSynergy([1, 4], true), 4)).toBe(4);
       expect(getNextThreshold(createSynergy([1, 4], true), 5)).toBe(4);
       expect(getNextThreshold(createSynergy([1, 4], true), 6)).toBe(4);
+    });
+  });
+});
+
+describe('individual synergy effects', () => {
+  let gameScene: GameScene;
+
+  beforeAll(async () => {
+    gameScene = GameSceneMock;
+  });
+
+  describe('psychic', () => {
+    test('should trigger on round start', async () => {
+      const scene = CombatSceneMock;
+      const board: CombatScene['board'] = [
+        [
+          {
+            name: 'abra',
+            basePokemon: pokemonData['abra'],
+            side: 'player',
+          } as unknown as PokemonObject,
+        ],
+      ];
+
+      synergyData['psychic'].onRoundStart?.({
+        scene,
+        player: {} as any,
+        board,
+        side: 'player',
+        count: 2,
+      });
+
+      const abra = mapPokemonCoords(board).find(
+        ({ pokemon }) => pokemon.name === 'abra'
+      );
+
+      expect(abra?.pokemon.statChanges.attack).toBe(1);
+      expect(abra?.pokemon.statChanges.specAttack).toBe(1);
+      expect(abra?.pokemon.statChanges.defense).toBe(0);
+      expect(abra?.pokemon.statChanges.specDefense).toBe(0);
+      expect(abra?.pokemon.statChanges.speed).toBe(0);
     });
   });
 });

@@ -1,3 +1,6 @@
+import { CombatScene } from '../scenes/game/combat/combat.scene';
+import { GameScene } from '../scenes/game/game.scene';
+
 export const PhaserMock = {
   GameObjects: {
     GameObject: class {},
@@ -45,3 +48,7 @@ export const PhaserMock = {
     },
   },
 };
+
+export const GameSceneMock = {} as GameScene;
+
+export const CombatSceneMock = {} as CombatScene;
