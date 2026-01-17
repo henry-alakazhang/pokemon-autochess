@@ -43,6 +43,16 @@ Install Yarn -> https://yarnpkg.com/en/docs/install
 `yarn start` to start the local dev server
 Visit `localhost:8080` to access the game
 
+## Tests
+
+Tests live in `spec.ts` files alongside the code they test. Use `yarn test` to run the tests.
+
+There are technically two kinds of tests:
+- Pure unit tests just test pure functions. These can run in node.
+- Phaser functional tests test game logic running real Phaser code (mostly needed because of how badly I coupled game logic and Phaser objects lol). These currently run in jsdom mode with a few things mocked/stubbed to make it work.
+
+These two tests are not currently separated into different files, but probably should be for performance purposes. Ideally the Phaser functional tests should run in a browser and not just jsdom, to minimise the mocks and stubs.
+
 ## Contributing
 There's a trello board here with all the stuff I'm planning: https://trello.com/b/ncSePCMD/pokemon-autochess
 Feel free to create an issue, then a PR if you want to add some code. There's a `standalone` tag for good tasks that aren't dependent on anything else.
