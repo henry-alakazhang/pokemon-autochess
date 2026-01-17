@@ -100,10 +100,6 @@ export class CombatScene extends Scene {
       .setPadding(4)
       .setBackgroundColor('slategrey');
 
-    console.log(
-      `Combat: ${data.player.playerName} vs ${data.enemy.playerName}`
-    );
-
     this.board = Array(BOARD_WIDTH)
       .fill(undefined)
       // fill + map rather than `fill` an array because

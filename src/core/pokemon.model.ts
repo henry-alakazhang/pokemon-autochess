@@ -1906,8 +1906,6 @@ const defenseTargetting = {
   specDefense: 0,
 };
 
-console.log(allPokemonNames);
-
 Object.values(basePokemonData).forEach((pokemon) => {
   if (
     'move' in pokemon &&
@@ -1932,20 +1930,23 @@ Object.values(basePokemonData).forEach((pokemon) => {
   tiers[pokemon.tier]++;
 });
 
-console.log('Synergies:', pokemonPerSynergy);
-console.log('Stages:', tiers);
-console.log('Basic attack ranges:', ranges);
-console.log('Basic attack stats', {
-  attack: stats.attack.length,
-  specAttack: stats.specAttack.length,
-  averageDamage:
-    [...stats.attack, ...stats.specAttack].reduce((acc, n) => acc + n, 0) /
-    (stats.attack.length + stats.specAttack.length),
-  averageDps: stats.dps.reduce((acc, n) => acc + n, 0) / stats.dps.length,
-});
+// Log some informational state when we're running in the browser (ie. not Node).
+if (!globalThis.process) {
+  console.log('Synergies:', pokemonPerSynergy);
+  console.log('Stages:', tiers);
+  console.log('Basic attack ranges:', ranges);
+  console.log('Basic attack stats', {
+    attack: stats.attack.length,
+    specAttack: stats.specAttack.length,
+    averageDamage:
+      [...stats.attack, ...stats.specAttack].reduce((acc, n) => acc + n, 0) /
+      (stats.attack.length + stats.specAttack.length),
+    averageDps: stats.dps.reduce((acc, n) => acc + n, 0) / stats.dps.length,
+  });
 
-console.log('hp', {
-  average: stats.maxHP.reduce((acc, n) => acc + n, 0) / stats.maxHP.length,
-});
+  console.log('hp', {
+    average: stats.maxHP.reduce((acc, n) => acc + n, 0) / stats.maxHP.length,
+  });
 
-console.log('Move damage targetting', defenseTargetting);
+  console.log('Move damage targetting', defenseTargetting);
+}
