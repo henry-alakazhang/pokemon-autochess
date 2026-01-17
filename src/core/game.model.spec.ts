@@ -134,17 +134,20 @@ describe('individual synergy effects', () => {
   });
 
   describe('psychic', () => {
-    test('should trigger on round start', async () => {
+    test('should boost stats of isolated psychic-types and only psychic types', async () => {
       scene = (await startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
-          board: [{ name: 'abra', location: { x: 0, y: 3 } }],
+          board: [
+            { name: 'abra', location: { x: 0, y: 3 } },
+            { name: 'aegislash', location: { x: 1, y: 4 } },
+          ],
           synergies: [['psychic', 2]],
         }),
         enemy: createPlayer({
           scene: gameScene,
           board: [{ name: 'neutral_only_rattata', location: { x: 0, y: 3 } }],
-          synergies: [['fighting', 2]],
+          synergies: [],
         }),
       })) as CombatScene;
 
@@ -160,6 +163,16 @@ describe('individual synergy effects', () => {
       expect(abra?.pokemon.statChanges.defense).toBe(0);
       expect(abra?.pokemon.statChanges.specDefense).toBe(0);
       expect(abra?.pokemon.statChanges.speed).toBe(0);
+
+      const aegislash = mapPokemonCoords(scene.board).find(
+        ({ pokemon }) => pokemon.name === 'aegislash'
+      );
+
+      expect(aegislash?.pokemon.statChanges.attack).toBe(0);
+      expect(aegislash?.pokemon.statChanges.specAttack).toBe(0);
+      expect(aegislash?.pokemon.statChanges.defense).toBe(0);
+      expect(aegislash?.pokemon.statChanges.specDefense).toBe(0);
+      expect(aegislash?.pokemon.statChanges.speed).toBe(0);
     });
   });
 });

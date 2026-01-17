@@ -3,7 +3,6 @@ import { PokemonName } from '../core/pokemon.model';
 import { Coords } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { GameScene } from '../scenes/game/game.scene';
-import { ShopPool } from '../scenes/game/shop.helpers';
 import { ShopScene } from '../scenes/game/shop.scene';
 
 export async function createTestingGame(): Promise<Phaser.Game> {
