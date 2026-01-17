@@ -1,11 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  test,
-} from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, test } from '@jest/globals';
 import { mapPokemonCoords } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { getDebugGameMode } from '../scenes/game/game.helpers';
@@ -13,7 +6,9 @@ import { GameScene } from '../scenes/game/game.scene';
 import {
   createPlayer,
   createTestingGame,
-  startTestingScene,
+  getPokemonInScene,
+  startTestingCombatScene,
+  tick,
 } from '../testing/helpers';
 import { getNextThreshold, getSynergyTier, Synergy } from './game.model';
 
@@ -129,16 +124,12 @@ describe('individual synergy effects', () => {
 
   beforeAll(async () => {
     game = await createTestingGame();
-    game.pause();
-    gameScene = startTestingScene(game, GameScene.KEY, getDebugGameMode());
+    game.scene.start(GameScene.KEY, getDebugGameMode());
+    gameScene = game.scene.getScene(GameScene.KEY) as GameScene;
   });
 
   afterAll(() => {
     game.destroy(true);
-  });
-
-  afterEach(() => {
-    game.scene.stop(CombatScene.KEY);
   });
 
   describe.skip('normal', () => {});
@@ -154,7 +145,45 @@ describe('individual synergy effects', () => {
   // TODO: implement calculateDamage tests
   describe.skip('flying', () => {});
 
-  describe.skip('grass', () => {});
+  describe('grass', () => {
+    test('should heal grass-types when dealing damage and share damage to all enemies', async () => {
+      scene = startTestingCombatScene(game, gameScene, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'chesnaught', location: { x: 0, y: 3 } }],
+          synergies: [['grass', 2]],
+        }),
+      });
+
+      const chesnaught = getPokemonInScene(scene, 'chesnaught');
+      const enemyPokemon = getPokemonInScene(
+        scene,
+        ({ side }) => side === 'enemy'
+      );
+
+      // set Chesnaught to not be full HP
+      chesnaught.currentHP = Math.floor(chesnaught.maxHP / 2);
+      const prevHP = chesnaught.currentHP;
+
+      // make it do some damage
+      scene.causeDamage(
+        chesnaught,
+        enemyPokemon,
+        { trueDamage: 100 },
+        { triggerEvents: true }
+      );
+
+      // Should have healed Chesnaught
+      expect(chesnaught.currentHP).toEqual(
+        prevHP + 15 // 15% of 100
+      );
+
+      // After 4 seconds, should deal damage to enemy.
+      const prevEnemyHP = enemyPokemon.currentHP;
+      tick(scene, 4000);
+      expect(enemyPokemon.currentHP).toBeLessThan(prevEnemyHP);
+    });
+  });
 
   describe.skip('poison', () => {});
 
@@ -164,7 +193,7 @@ describe('individual synergy effects', () => {
 
   describe('psychic', () => {
     test('should boost stats of isolated psychic-types', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -173,22 +202,19 @@ describe('individual synergy effects', () => {
           ],
           synergies: [['psychic', 2]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
-      const abra = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'abra'
-      );
+      const abra = getPokemonInScene(scene, 'abra');
 
-      expect(abra?.pokemon.statChanges.attack).toBe(1);
-      expect(abra?.pokemon.statChanges.specAttack).toBe(1);
-      expect(abra?.pokemon.statChanges.defense).toBe(0);
-      expect(abra?.pokemon.statChanges.specDefense).toBe(0);
-      expect(abra?.pokemon.statChanges.speed).toBe(0);
+      expect(abra.statChanges.attack).toBe(1);
+      expect(abra.statChanges.specAttack).toBe(1);
+      expect(abra.statChanges.defense).toBe(0);
+      expect(abra.statChanges.specDefense).toBe(0);
+      expect(abra.statChanges.speed).toBe(0);
     });
 
     test('should not boost stats of non-isolated Pokemon', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -197,43 +223,37 @@ describe('individual synergy effects', () => {
           ],
           synergies: [['psychic', 2]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
-      const abra = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'abra'
-      );
+      const abra = getPokemonInScene(scene, 'abra');
 
-      expect(abra?.pokemon.statChanges.attack).toBe(0);
-      expect(abra?.pokemon.statChanges.specAttack).toBe(0);
-      expect(abra?.pokemon.statChanges.defense).toBe(0);
-      expect(abra?.pokemon.statChanges.specDefense).toBe(0);
-      expect(abra?.pokemon.statChanges.speed).toBe(0);
+      expect(abra.statChanges.attack).toBe(0);
+      expect(abra.statChanges.specAttack).toBe(0);
+      expect(abra.statChanges.defense).toBe(0);
+      expect(abra.statChanges.specDefense).toBe(0);
+      expect(abra.statChanges.speed).toBe(0);
     });
 
     test('should not boost stats of non-psychic-types', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'aegislash', location: { x: 0, y: 3 } }],
           synergies: [['psychic', 2]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
-      const aegislash = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'aegislash'
-      );
+      const aegislash = getPokemonInScene(scene, 'aegislash');
 
-      expect(aegislash?.pokemon.statChanges.attack).toBe(0);
-      expect(aegislash?.pokemon.statChanges.specAttack).toBe(0);
-      expect(aegislash?.pokemon.statChanges.defense).toBe(0);
-      expect(aegislash?.pokemon.statChanges.specDefense).toBe(0);
-      expect(aegislash?.pokemon.statChanges.speed).toBe(0);
+      expect(aegislash.statChanges.attack).toBe(0);
+      expect(aegislash.statChanges.specAttack).toBe(0);
+      expect(aegislash.statChanges.defense).toBe(0);
+      expect(aegislash.statChanges.specDefense).toBe(0);
+      expect(aegislash.statChanges.speed).toBe(0);
     });
 
     test('should not boost enemy stats', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -245,57 +265,49 @@ describe('individual synergy effects', () => {
         }),
       });
 
-      const aegislash = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'aegislash'
-      );
+      const aegislash = getPokemonInScene(scene, 'aegislash');
 
-      expect(aegislash?.pokemon.statChanges.attack).toBe(0);
-      expect(aegislash?.pokemon.statChanges.specAttack).toBe(0);
-      expect(aegislash?.pokemon.statChanges.defense).toBe(0);
-      expect(aegislash?.pokemon.statChanges.specDefense).toBe(0);
-      expect(aegislash?.pokemon.statChanges.speed).toBe(0);
+      expect(aegislash.statChanges.attack).toBe(0);
+      expect(aegislash.statChanges.specAttack).toBe(0);
+      expect(aegislash.statChanges.defense).toBe(0);
+      expect(aegislash.statChanges.specDefense).toBe(0);
+      expect(aegislash.statChanges.speed).toBe(0);
     });
 
     test('should boost more stats at tier 2', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
           synergies: [['psychic', 3]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
-      const abra = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'abra'
-      );
+      const abra = getPokemonInScene(scene, 'abra');
 
-      expect(abra?.pokemon.statChanges.attack).toBe(1);
-      expect(abra?.pokemon.statChanges.specAttack).toBe(1);
-      expect(abra?.pokemon.statChanges.defense).toBe(1);
-      expect(abra?.pokemon.statChanges.specDefense).toBe(1);
-      expect(abra?.pokemon.statChanges.speed).toBe(0);
+      expect(abra.statChanges.attack).toBe(1);
+      expect(abra.statChanges.specAttack).toBe(1);
+      expect(abra.statChanges.defense).toBe(1);
+      expect(abra.statChanges.specDefense).toBe(1);
+      expect(abra.statChanges.speed).toBe(0);
     });
 
     test('should boost more stats at tier 3', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
           synergies: [['psychic', 4]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
-      const abra = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'abra'
-      );
+      const abra = getPokemonInScene(scene, 'abra');
 
-      expect(abra?.pokemon.statChanges.attack).toBe(1);
-      expect(abra?.pokemon.statChanges.specAttack).toBe(1);
-      expect(abra?.pokemon.statChanges.defense).toBe(1);
-      expect(abra?.pokemon.statChanges.specDefense).toBe(1);
-      expect(abra?.pokemon.statChanges.speed).toBe(1);
+      expect(abra.statChanges.attack).toBe(1);
+      expect(abra.statChanges.specAttack).toBe(1);
+      expect(abra.statChanges.defense).toBe(1);
+      expect(abra.statChanges.specDefense).toBe(1);
+      expect(abra.statChanges.speed).toBe(1);
     });
   });
 
@@ -303,7 +315,7 @@ describe('individual synergy effects', () => {
 
   describe('ice', () => {
     test('should deal damage to enemies and not slow at tier 1', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -315,38 +327,28 @@ describe('individual synergy effects', () => {
         }),
       });
 
-      const aegislash = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'aegislash'
-      );
-
-      expect(aegislash).toBeDefined();
-      expect(aegislash!.pokemon.currentHP).toBeLessThan(
-        aegislash!.pokemon.maxHP
-      );
-      expect(aegislash?.pokemon.statChanges.speed).toBe(0);
+      const aegislash = getPokemonInScene(scene, 'aegislash');
+      expect(aegislash.currentHP).toBeLessThan(aegislash.maxHP);
+      expect(aegislash.statChanges.speed).toBe(0);
     });
 
     test('should not damage allies', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
           synergies: [['ice', 2]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
-      const abra = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'abra'
-      );
+      const abra = getPokemonInScene(scene, 'abra');
 
-      expect(abra).toBeDefined();
-      expect(abra!.pokemon.currentHP).toBe(abra!.pokemon.maxHP);
-      expect(abra?.pokemon.statChanges.speed).toBe(0);
+      expect(abra.currentHP).toBe(abra.maxHP);
+      expect(abra.statChanges.speed).toBe(0);
     });
 
     test('should damage and slow at tier 2 ', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -358,21 +360,16 @@ describe('individual synergy effects', () => {
         }),
       });
 
-      const aegislash = mapPokemonCoords(scene.board).find(
-        ({ pokemon }) => pokemon.name === 'aegislash'
-      );
+      const aegislash = getPokemonInScene(scene, 'aegislash');
 
-      expect(aegislash).toBeDefined();
-      expect(aegislash!.pokemon.currentHP).toBeLessThan(
-        aegislash!.pokemon.maxHP
-      );
-      expect(aegislash?.pokemon.statChanges.speed).toBe(-1);
+      expect(aegislash.currentHP).toBeLessThan(aegislash.maxHP);
+      expect(aegislash.statChanges.speed).toBe(-1);
     });
   });
 
   describe('bug', () => {
     test('should copy the least evolved bug-type Pokemon at tier 1', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -381,7 +378,6 @@ describe('individual synergy effects', () => {
           ],
           synergies: [['bug', 3]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
       const boardMons = mapPokemonCoords(scene.board).filter(
@@ -399,7 +395,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should prioritise lower-cost Pokemon over higher-cost ones', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -408,7 +404,6 @@ describe('individual synergy effects', () => {
           ],
           synergies: [['bug', 3]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
       const boardMons = mapPokemonCoords(scene.board).filter(
@@ -424,7 +419,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not copy a non-bug type Pokemon', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -433,7 +428,6 @@ describe('individual synergy effects', () => {
           ],
           synergies: [['bug', 3]],
         }),
-        enemy: createPlayer({ scene: gameScene }),
       });
 
       const boardMons = mapPokemonCoords(scene.board).filter(
@@ -452,7 +446,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not copy an enemy Pokemon', async () => {
-      scene = startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
           board: [

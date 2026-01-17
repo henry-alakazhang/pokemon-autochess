@@ -47,6 +47,11 @@ export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
   readonly player: Player;
   readonly enemy: Player;
+  /**
+   * Whether to automatically start Pokemon turns.
+   * Only really used to disable this in tests.
+   */
+  readonly autoStart?: boolean;
 }
 
 /**
@@ -190,7 +195,9 @@ export class CombatScene extends Scene {
         side: pokemon.side,
         selfCoords: { x, y },
       });
-      this.setTurn(pokemon);
+      if (data.autoStart ?? true) {
+        this.setTurn(pokemon);
+      }
     });
 
     // Set up recurring timer event for synergy effects every second

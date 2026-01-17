@@ -411,8 +411,6 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
           new Phaser.Geom.Line(left + x, top, left + x, top + y)
         );
       }
-    } else {
-      console.error('PokemonObject.redrawBars: width is negative or 0.', this);
     }
 
     // pp bar
