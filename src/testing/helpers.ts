@@ -29,20 +29,13 @@ export async function createTestingGame(): Promise<Phaser.Game> {
   return game;
 }
 
-export async function startTestingScene<T extends Phaser.Scene>(
+export function startTestingScene<T extends Phaser.Scene>(
   game: Phaser.Game,
   scene: string,
   data: object
-): Promise<T> {
-  return new Promise((resolve) => {
-    game.scene.start(scene, data);
-    const targetScene = game.scene.getScene(scene);
-    setInterval(() => {
-      if (game.scene.isActive(scene)) {
-        resolve(targetScene as T);
-      }
-    }, 100);
-  });
+) {
+  game.scene.start(scene, data);
+  return game.scene.getScene(scene) as T;
 }
 
 export function createPlayer({

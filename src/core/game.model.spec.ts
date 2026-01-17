@@ -1,4 +1,11 @@
-import { afterEach, beforeAll, describe, expect, test } from '@jest/globals';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  test,
+} from '@jest/globals';
 import { mapPokemonCoords } from '../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../scenes/game/combat/combat.scene';
 import { getDebugGameMode } from '../scenes/game/game.helpers';
@@ -123,11 +130,11 @@ describe('individual synergy effects', () => {
   beforeAll(async () => {
     game = await createTestingGame();
     game.pause();
-    gameScene = await startTestingScene(
-      game,
-      GameScene.KEY,
-      getDebugGameMode()
-    );
+    gameScene = startTestingScene(game, GameScene.KEY, getDebugGameMode());
+  });
+
+  afterAll(() => {
+    game.destroy(true);
   });
 
   afterEach(() => {
@@ -157,7 +164,7 @@ describe('individual synergy effects', () => {
 
   describe('psychic', () => {
     test('should boost stats of isolated psychic-types', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -181,7 +188,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not boost stats of non-isolated Pokemon', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -205,7 +212,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not boost stats of non-psychic-types', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'aegislash', location: { x: 0, y: 3 } }],
@@ -226,7 +233,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not boost enemy stats', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -250,7 +257,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should boost more stats at tier 2', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -271,7 +278,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should boost more stats at tier 3', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -296,7 +303,7 @@ describe('individual synergy effects', () => {
 
   describe('ice', () => {
     test('should deal damage to enemies and not slow at tier 1', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -320,7 +327,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not damage allies', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -339,7 +346,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should damage and slow at tier 2 ', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [{ name: 'abra', location: { x: 0, y: 3 } }],
@@ -365,7 +372,7 @@ describe('individual synergy effects', () => {
 
   describe('bug', () => {
     test('should copy the least evolved bug-type Pokemon at tier 1', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -392,7 +399,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should prioritise lower-cost Pokemon over higher-cost ones', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -417,7 +424,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not copy a non-bug type Pokemon', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [
@@ -445,7 +452,7 @@ describe('individual synergy effects', () => {
     });
 
     test('should not copy an enemy Pokemon', async () => {
-      scene = await startTestingScene(game, CombatScene.KEY, {
+      scene = startTestingScene(game, CombatScene.KEY, {
         player: createPlayer({
           scene: gameScene,
           board: [

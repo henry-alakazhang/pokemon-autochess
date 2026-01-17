@@ -402,7 +402,7 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
     this.bars.lineStyle(1, 0x000000, 1);
     const width = Math.round((250 / this.maxHP) * (this.width - 2));
     // if we accidentally end up with a negative HP or a 0 width for each bar,
-    // the for loop below is going to go infinite. just do nothing instead.
+    // this loop to add increment bars will crash. just skip in that case.
     if (width > 0) {
       for (let x = width; x < this.width - 2; x += width) {
         // full height bars for 1000 increments
@@ -411,6 +411,8 @@ export class PokemonObject extends Phaser.Physics.Arcade.Sprite {
           new Phaser.Geom.Line(left + x, top, left + x, top + y)
         );
       }
+    } else {
+      console.error('PokemonObject.redrawBars: width is negative or 0.', this);
     }
 
     // pp bar
