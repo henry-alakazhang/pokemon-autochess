@@ -7,7 +7,7 @@ import {
   createPlayer,
   createTestingGame,
   startTestingScene,
-} from '../testing/creators';
+} from '../testing/helpers';
 import { getNextThreshold, getSynergyTier, Synergy } from './game.model';
 
 // Create a mock synergy with given threshold/exactness
