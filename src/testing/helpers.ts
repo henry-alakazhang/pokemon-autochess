@@ -71,7 +71,7 @@ export function createPlayer({
 
 /**
  * Start a testing combat scene and return it.
- * Fills in default players with one pokemon each if not provied.
+ * Fills in default players with one pokemon each if not provided.
  *
  * Does not need to be manually cleaned up in cleanup hooks.
  * Calling this again in the next test will trigger

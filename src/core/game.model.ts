@@ -715,7 +715,6 @@ take damage.
       if (tier === 0) {
         return;
       }
-      const slowDuration = tier === 0 ? 0 : 4000;
 
       flatten(board).forEach((pokemon) => {
         if (pokemon && pokemon.side !== side) {
@@ -725,7 +724,7 @@ take damage.
               {
                 speed: -1,
               },
-              slowDuration
+              4000
             );
           }
         }
