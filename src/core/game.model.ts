@@ -661,11 +661,6 @@ when starting combat isolated.
                 specDefense: tier >= 2 ? +1 : 0,
                 speed: tier >= 3 ? +1 : 0,
               } as const;
-              console.log(
-                pokemon,
-                ' is isolated, applying psychic buff',
-                statChanges
-              );
               pokemon.changeStats(statChanges);
             }
           }
@@ -720,17 +715,18 @@ take damage.
       if (tier === 0) {
         return;
       }
-      const slowDuration = tier === 0 ? 0 : 4000;
 
       flatten(board).forEach((pokemon) => {
         if (pokemon && pokemon.side !== side) {
           pokemon.takeDamage(Math.floor(pokemon.maxHP * 0.1));
-          pokemon.changeStats(
-            {
-              speed: -1,
-            },
-            slowDuration
-          );
+          if (tier >= 2) {
+            pokemon.changeStats(
+              {
+                speed: -1,
+              },
+              4000
+            );
+          }
         }
       });
     },
@@ -757,9 +753,14 @@ Pokemon at the start of the round.
             pokemon.side === side &&
             pokemon.basePokemon.categories.includes('bug')
         )
-        // and sort by star level
+        // and sort by star level, then tier
         .sort((pokemonA, pokemonB) => {
-          return pokemonA.basePokemon.stage - pokemonB.basePokemon.stage;
+          const stageDiff =
+            pokemonA.basePokemon.stage - pokemonB.basePokemon.stage;
+          if (stageDiff) {
+            return stageDiff;
+          }
+          return pokemonA.basePokemon.tier - pokemonB.basePokemon.tier;
         })[0];
       const locationToCopy = scene.getBoardLocationForPokemon(pokemonToCopy);
       if (!locationToCopy) {
