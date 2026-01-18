@@ -165,6 +165,7 @@ describe('individual synergy effects', () => {
       ];
 
       waterTypes.forEach((mon) => {
+        // HP and PP so we can know the heal/PP up worked
         mon.currentHP = 1;
         mon.currentPP = 0;
       });

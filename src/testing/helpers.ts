@@ -101,7 +101,10 @@ export function startTestingCombatScene(
 /**
  * Advance a scene's clock by a given amount of time.
  *
- * Triggers ALL events that would occur in between.
+ * Triggers all clock events that would occur in between.
+ *
+ * NOTE: This does NOT trigger combat `onTimer` events with all the times in the delta.
+ * If you want to trigger an `onTimer` event, always `tick()` directly to when it would fire.
  */
 export function tick(scene: Phaser.Scene, delta: number = 1000) {
   const initialTime = scene.time.now;
@@ -114,7 +117,9 @@ export function tick(scene: Phaser.Scene, delta: number = 1000) {
   // but the scene "timer" is stored statically, so they're all called
   // with the same "time". This results in onTimers triggering multiple times.
   // To work around this, we need to update up to t-1 second first, then do the rest.
-
+  //
+  // Note that this will still NOT correctly trigger combat onTimer events in between.
+  // It will only trigger them at t-1 and t seconds (and incorrectly trigger a lot at t-1).
   const firstDelta = delta - 1000;
   if (firstDelta > 0) {
     // Update the scene first
