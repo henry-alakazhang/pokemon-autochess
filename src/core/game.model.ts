@@ -356,24 +356,58 @@ more damage, and heal them on hit.
   },
   water: {
     category: 'water',
-    displayName: 'Water: Aqua Ring',
-    description: `All Pokemon gain extra PP on hit.
+    displayName: 'Water: Rain Dance',
+    description: `Rain falls every 12 seconds, granting
+effects to all your Water-type Pokemon
+based on the ones you have fielded.
 
- (2) - 1 extra PP
- (4) - 2 extra PP
- (6) - 3 extra PP`,
-    thresholds: [2, 4, 6],
-    onHit({ attacker, flags: { isAttack }, count }) {
+Rain falls faster for each additional
+Water-type you have.
+
+  Magikarp: +1 to Speed.
+  Mudkip: Restore 10% of HP.
+  Mareanie: +1 to Defense.
+  Rotom-Wash: Gain 2 PP.
+  Lapras: +1 to Special Defense.
+`,
+    thresholds: [1, 2, 3, 4, 5],
+    onTimer({ board, side, count, time }) {
       const tier = getSynergyTier(this, count);
       if (tier === 0) {
         return;
       }
 
-      const ppGain = tier === 1 ? 1 : tier === 2 ? 2 : 3;
-      if (isAttack) {
-        attacker.addPP(ppGain);
-        attacker.redrawBars();
+      const interval = 12 - tier;
+      if (time % interval !== 0) {
+        return;
       }
+
+      const waterTypes = flatten(board)
+        .filter(isDefined)
+        .filter((pokemon) => pokemon.side === side)
+        .filter((pokemon) => pokemon.basePokemon.categories.includes('water'));
+
+      const inTeam = Object.fromEntries(
+        waterTypes.map((p) => [p.basePokemon.base, true])
+      );
+
+      waterTypes.forEach((pokemon) => {
+        if (inTeam['magikarp']) {
+          pokemon.changeStats({ speed: +1 });
+        }
+        if (inTeam['mudkip']) {
+          pokemon.heal(pokemon.maxHP * 0.1);
+        }
+        if (inTeam['mareanie']) {
+          pokemon.changeStats({ defense: +1 });
+        }
+        if (inTeam['rotom_wash']) {
+          pokemon.addPP(2);
+        }
+        if (inTeam['lapras']) {
+          pokemon.changeStats({ specDefense: +1 });
+        }
+      });
     },
   },
   flying: {
@@ -462,16 +496,9 @@ recovered, split among all enemies.
         (pokemon) => pokemon && pokemon?.side !== side
       );
       const damage = Math.floor((healingDone * healPerc) / targets.length);
-      flatten(board)
-        .filter(isDefined)
-        .forEach((pokemon) => {
-          if (pokemon.side !== side) {
-            // TODO: do this damage via combat scene so the damage gets tracked in graphs
-            pokemon.takeDamage(damage, {
-              tint: 0x00ff00, // Slight green tint
-            });
-          }
-        });
+      targets.forEach((target) => {
+        target?.takeDamage(damage);
+      });
       scene.data.set(this.category, 0);
     },
   },
