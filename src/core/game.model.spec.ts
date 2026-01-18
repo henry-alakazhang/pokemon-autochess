@@ -140,13 +140,130 @@ describe('individual synergy effects', () => {
   // TODO: implement calculateDamage tests
   describe.skip('fighting', () => {});
 
-  describe.skip('water', () => {});
+  describe('water', () => {
+    test('should apply effects to water-types', async () => {
+      scene = startTestingCombatScene(game, gameScene, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [
+            { name: 'gyarados', location: { x: 0, y: 3 } },
+            { name: 'mudkip', location: { x: 1, y: 3 } },
+            { name: 'mareanie', location: { x: 2, y: 3 } },
+            { name: 'rotom_wash', location: { x: 3, y: 3 } },
+            { name: 'lapras', location: { x: 4, y: 3 } },
+          ],
+          synergies: [['water', 1]],
+        }),
+      });
+
+      const waterTypes = [
+        getPokemonInScene(scene, 'gyarados'),
+        getPokemonInScene(scene, 'mudkip'),
+        getPokemonInScene(scene, 'mareanie'),
+        getPokemonInScene(scene, 'rotom_wash'),
+        getPokemonInScene(scene, 'lapras'),
+      ];
+
+      waterTypes.forEach((mon) => {
+        mon.currentHP = 1;
+        mon.currentPP = 0;
+      });
+
+      tick(scene, 11000);
+
+      waterTypes.forEach((mon) => {
+        expect(mon.statChanges.speed).toBe(1);
+        expect(mon.currentHP).toBe(mon.maxHP * 0.1 + 1);
+        expect(mon.statChanges.defense).toBe(1);
+        if (mon.maxPP) {
+          expect(mon.currentPP).toBe(2);
+        }
+        expect(mon.statChanges.specDefense).toBe(1);
+      });
+
+      tick(scene, 11000);
+
+      // should apply again
+      waterTypes.forEach((mon) => {
+        // don't really need to check all of them...
+        expect(mon.statChanges.speed).toBe(2);
+      });
+    });
+
+    test('should only apply effects based on existing water-types', async () => {
+      scene = startTestingCombatScene(game, gameScene, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'gyarados', location: { x: 0, y: 3 } }],
+          synergies: [['water', 1]],
+        }),
+      });
+
+      const gyarados = getPokemonInScene(scene, 'gyarados');
+      // lower HP and PP so we can see the heal doesn't work
+      gyarados.currentHP = 1;
+      gyarados.currentPP = 0;
+
+      tick(scene, 11000);
+
+      expect(gyarados.statChanges.speed).toBe(1);
+      expect(gyarados.currentHP).toBe(1);
+      expect(gyarados.statChanges.defense).toBe(0);
+      expect(gyarados.currentPP).toBe(0);
+      expect(gyarados.statChanges.specDefense).toBe(0);
+
+      tick(scene, 11000);
+    });
+
+    test('should apply effects faster at higher tiers', async () => {
+      scene = startTestingCombatScene(game, gameScene, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'magikarp', location: { x: 0, y: 3 } }],
+          synergies: [['water', 5]],
+        }),
+      });
+
+      const magikarp = getPokemonInScene(scene, 'magikarp');
+      magikarp.currentHP = 1;
+      magikarp.currentPP = 0;
+
+      tick(scene, 7000);
+
+      expect(magikarp.statChanges.speed).toBe(1);
+    });
+
+    test('should not apply effects to non-water-types or enemies', async () => {
+      scene = startTestingCombatScene(game, gameScene, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [
+            { name: 'abra', location: { x: 0, y: 3 } },
+            { name: 'magikarp', location: { x: 1, y: 3 } },
+          ],
+          synergies: [['water', 1]],
+        }),
+        enemy: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'mudkip', location: { x: 0, y: 3 } }],
+        }),
+      });
+
+      const allyAbra = getPokemonInScene(scene, 'abra');
+      const enemyMudkip = getPokemonInScene(scene, 'mudkip');
+
+      tick(scene, 12000);
+
+      expect(allyAbra.statChanges.speed).toBe(0);
+      expect(enemyMudkip.statChanges.speed).toBe(0);
+    });
+  });
 
   // TODO: implement calculateDamage tests
   describe.skip('flying', () => {});
 
   describe('grass', () => {
-    test('should heal grass-types when dealing damage and share damage to all enemies', async () => {
+    test('should heal grass-types when dealing damage and deal damage to all enemies', async () => {
       scene = startTestingCombatScene(game, gameScene, {
         player: createPlayer({
           scene: gameScene,
@@ -162,8 +279,7 @@ describe('individual synergy effects', () => {
       );
 
       // set Chesnaught to not be full HP
-      chesnaught.currentHP = Math.floor(chesnaught.maxHP / 2);
-      const prevHP = chesnaught.currentHP;
+      chesnaught.currentHP = 1;
 
       // make it do some damage
       scene.causeDamage(
@@ -174,14 +290,54 @@ describe('individual synergy effects', () => {
       );
 
       // Should have healed Chesnaught
-      expect(chesnaught.currentHP).toEqual(
-        prevHP + 15 // 15% of 100
-      );
+      expect(chesnaught.currentHP).toEqual(1 + 0.15 * 100);
 
       // After 4 seconds, should deal damage to enemy.
       const prevEnemyHP = enemyPokemon.currentHP;
       tick(scene, 4000);
-      expect(enemyPokemon.currentHP).toBeLessThan(prevEnemyHP);
+      // Deals 100% of the healing received to the target
+      expect(enemyPokemon.currentHP).toEqual(prevEnemyHP - 15);
+
+      // should not deal any further damage
+      tick(scene, 4000);
+      expect(enemyPokemon.currentHP).toEqual(prevEnemyHP - 15);
+    });
+
+    test('should deal damage shared among all enemies', async () => {
+      scene = startTestingCombatScene(game, gameScene, {
+        player: createPlayer({
+          scene: gameScene,
+          board: [{ name: 'chesnaught', location: { x: 0, y: 3 } }],
+          synergies: [['grass', 2]],
+        }),
+        enemy: createPlayer({
+          scene: gameScene,
+          board: [
+            { name: 'aegislash', location: { x: 0, y: 3 } },
+            { name: 'beedrill', location: { x: 1, y: 3 } },
+          ],
+        }),
+      });
+
+      const chesnaught = getPokemonInScene(scene, 'chesnaught');
+      chesnaught.currentHP = 1;
+
+      const enemy1 = getPokemonInScene(scene, 'aegislash');
+      const enemy2 = getPokemonInScene(scene, 'beedrill');
+
+      // 200 damage = 30 healing
+      scene.causeDamage(
+        chesnaught,
+        enemy1,
+        { trueDamage: 200 },
+        { triggerEvents: true }
+      );
+
+      tick(scene, 4000);
+
+      // Should have dealt 30 / 2 = 15 damage to each of the enemies
+      expect(enemy1.currentHP).toEqual(enemy1.maxHP - 200 - 15);
+      expect(enemy2.currentHP).toEqual(enemy2.maxHP - 15);
     });
   });
 

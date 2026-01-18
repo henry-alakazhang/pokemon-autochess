@@ -401,7 +401,7 @@ Water-type you have.
         if (inTeam['mareanie']) {
           pokemon.changeStats({ defense: +1 });
         }
-        if (inTeam['rotom-wash']) {
+        if (inTeam['rotom_wash']) {
           pokemon.addPP(2);
         }
         if (inTeam['lapras']) {
@@ -496,16 +496,9 @@ recovered, split among all enemies.
         (pokemon) => pokemon && pokemon?.side !== side
       );
       const damage = Math.floor((healingDone * healPerc) / targets.length);
-      flatten(board)
-        .filter(isDefined)
-        .forEach((pokemon) => {
-          if (pokemon.side !== side) {
-            // TODO: do this damage via combat scene so the damage gets tracked in graphs
-            pokemon.takeDamage(damage, {
-              tint: 0x00ff00, // Slight green tint
-            });
-          }
-        });
+      targets.forEach((target) => {
+        target?.takeDamage(damage);
+      });
       scene.data.set(this.category, 0);
     },
   },

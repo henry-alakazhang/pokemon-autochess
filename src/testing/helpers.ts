@@ -93,7 +93,9 @@ export function startTestingCombatScene(
   }: Partial<CombatSceneData>
 ) {
   game.scene.start(CombatScene.KEY, { player, enemy, autoStart });
-  return game.scene.getScene(CombatScene.KEY) as CombatScene;
+  const scene = game.scene.getScene(CombatScene.KEY) as CombatScene;
+  scene.time.now = 0;
+  return scene;
 }
 
 /**
@@ -101,9 +103,31 @@ export function startTestingCombatScene(
  *
  * Triggers ALL events that would occur in between.
  */
-export function tick(scene: Phaser.Scene, time: number = 1000) {
-  scene.time.preUpdate(time, time);
-  scene.time.update(time, time);
+export function tick(scene: Phaser.Scene, delta: number = 1000) {
+  const initialTime = scene.time.now;
+
+  // FIXME: When used with the CombatScene, onTimer effects interact
+  // weirdly with updates with delta > 1 second
+  //
+  // timerEvents are called multiple times in a row due to the delta,
+  // (and therefore so are onTimer effects),
+  // but the scene "timer" is stored statically, so they're all called
+  // with the same "time". This results in onTimers triggering multiple times.
+  // To work around this, we need to update up to t-1 second first, then do the rest.
+
+  const firstDelta = delta - 1000;
+  if (firstDelta > 0) {
+    // Update the scene first
+    scene.update(initialTime + firstDelta, firstDelta);
+    // Then trigger clock events
+    scene.time.preUpdate(initialTime + firstDelta, firstDelta);
+    scene.time.update(initialTime + firstDelta, firstDelta);
+  }
+
+  // Then trigger one more at the correct time.
+  scene.update(initialTime + delta, 1000);
+  scene.time.preUpdate(initialTime + delta, 1000);
+  scene.time.update(initialTime + delta, 1000);
 }
 
 /**
