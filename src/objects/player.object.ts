@@ -156,9 +156,15 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   setVisible(visible: boolean): this {
     this.visible = visible;
-    [...flatten(this.mainboard), ...this.sideboard].forEach((pokemon) =>
+    // Adjust visibility of all Pokemon
+    [...this.mainboard.flat(), ...this.sideboard].forEach((pokemon) =>
       pokemon?.setVisible(visible)
     );
+    // And all synergy objects
+    Object.values(this.extraSynergyObjects)
+      .map((synergy) => Object.values(synergy))
+      .flat()
+      .forEach((object) => object.setVisible?.(visible));
     this.updateSynergies();
     return this;
   }
