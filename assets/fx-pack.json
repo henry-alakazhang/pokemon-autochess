@@ -3,6 +3,11 @@
     "files": [
       {
         "type": "image",
+        "key": "wind-projectile",
+        "url": "assets/fx/wind-projectile.png"
+      },
+      {
+        "type": "image",
         "key": "tri-attack-projectile",
         "url": "assets/fx/tri-attack-projectile.png"
       },
@@ -58,8 +63,28 @@
       },
       {
         "type": "image",
+        "key": "moon",
+        "url": "assets/fx/moon.png"
+      },
+      {
+        "type": "image",
+        "key": "moon-projectile",
+        "url": "assets/fx/moon-projectile.png"
+      },
+      {
+        "type": "image",
+        "key": "leaf-large",
+        "url": "assets/fx/leaf-large.png"
+      },
+      {
+        "type": "image",
         "key": "firedart",
         "url": "assets/fx/firedart.png"
+      },
+      {
+        "type": "image",
+        "key": "feather",
+        "url": "assets/fx/feather.png"
       },
       {
         "type": "image",

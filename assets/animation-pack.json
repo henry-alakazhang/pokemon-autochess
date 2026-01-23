@@ -3,6 +3,15 @@
     "files": [
       {
         "type": "spritesheet",
+        "key": "baleful-bunker",
+        "url": "assets/animations/baleful-bunker.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "blue-buff",
         "url": "assets/animations/blue-buff.png",
         "frameConfig": {
@@ -66,6 +75,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "fairy-hit",
+        "url": "assets/animations/fairy-hit.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "fury-cutter",
         "url": "assets/animations/fury-cutter.png",
         "frameConfig": {
@@ -75,11 +93,38 @@
       },
       {
         "type": "spritesheet",
-        "key": "leech-life",
-        "url": "assets/animations/leech-life.png",
+        "key": "hammer",
+        "url": "assets/animations/hammer.png",
         "frameConfig": {
-          "frameWidth": 80,
+          "frameWidth": 48,
           "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "heal",
+        "url": "assets/animations/heal.png",
+        "frameConfig": {
+          "frameWidth": 40,
+          "frameHeight": 40
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "heavy-hit",
+        "url": "assets/animations/heavy-hit.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "icicle-crash",
+        "url": "assets/animations/icicle-crash.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 120
         }
       },
       {
@@ -93,8 +138,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "meteor-mash",
-        "url": "assets/animations/meteor-mash.png",
+        "key": "mega-punch",
+        "url": "assets/animations/mega-punch.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 72
@@ -116,6 +161,24 @@
         "frameConfig": {
           "frameWidth": 72,
           "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "psychic-noise",
+        "url": "assets/animations/psychic-noise.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "punch",
+        "url": "assets/animations/punch.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
         }
       },
       {
@@ -191,12 +254,30 @@
         }
       },
       {
+        "type": "spritesheet",
+        "key": "spiky-shield",
+        "url": "assets/animations/spiky-shield.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 56
+        }
+      },
+      {
         "type":"spritesheet",
         "key": "stone-edge",
         "url": "assets/animations/stone-edge.png",
         "frameConfig": {
           "frameWidth": 128,
           "frameHeight": 80
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "strange-steam",
+        "url": "assets/animations/strange-steam.png",
+        "frameConfig": {
+          "frameWidth": 32,
+          "frameHeight": 32
         }
       },
       {
@@ -219,8 +300,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "volt-tackle",
-        "url": "assets/animations/volt-tackle.png",
+        "key": "double-shock",
+        "url": "assets/animations/double-shock.png",
         "frameConfig": {
           "frameWidth": 72,
           "frameHeight": 80
@@ -233,6 +314,15 @@
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 56
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "whirlwind",
+        "url": "assets/animations/whirlwind.png",
+        "frameConfig": {
+          "frameWidth": 56,
+          "frameHeight": 80
         }
       }
     ]

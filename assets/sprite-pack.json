@@ -3,15 +3,6 @@
     "files": [
       {
         "type": "spritesheet",
-        "key": "zubat",
-        "url": "assets/pokemon/sprite/zubat.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "zorua",
         "url": "assets/pokemon/sprite/zorua.png",
         "frameConfig": {
@@ -35,6 +26,15 @@
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "weezing_galar",
+        "url": "assets/pokemon/sprite/weezing_galar.png",
+        "frameConfig": {
+          "frameWidth": 80,
+          "frameHeight": 80
         }
       },
       {
@@ -75,15 +75,6 @@
       },
       {
         "type": "spritesheet",
-        "key": "venusaur",
-        "url": "assets/pokemon/sprite/venusaur.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "tyranitar",
         "url": "assets/pokemon/sprite/tyranitar.png",
         "frameConfig": {
@@ -102,8 +93,53 @@
       },
       {
         "type": "spritesheet",
+        "key": "toxapex",
+        "url": "assets/pokemon/sprite/toxapex.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "torracat",
         "url": "assets/pokemon/sprite/torracat.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tinkatuff",
+        "url": "assets/pokemon/sprite/tinkatuff.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tinkaton",
+        "url": "assets/pokemon/sprite/tinkaton.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tinkatink",
+        "url": "assets/pokemon/sprite/tinkatink.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "timburr",
+        "url": "assets/pokemon/sprite/timburr.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -120,8 +156,35 @@
       },
       {
         "type": "spritesheet",
+        "key": "swinub",
+        "url": "assets/pokemon/sprite/swinub.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "swampert",
         "url": "assets/pokemon/sprite/swampert.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "swadloon",
+        "url": "assets/pokemon/sprite/swadloon.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "stufful",
+        "url": "assets/pokemon/sprite/stufful.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -147,8 +210,26 @@
       },
       {
         "type": "spritesheet",
+        "key": "skarmory",
+        "url": "assets/pokemon/sprite/skarmory.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "shiftry",
         "url": "assets/pokemon/sprite/shiftry.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "sewaddle",
+        "url": "assets/pokemon/sprite/sewaddle.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -201,8 +282,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "raichu",
-        "url": "assets/pokemon/sprite/raichu.png",
+        "key": "quilladin",
+        "url": "assets/pokemon/sprite/quilladin.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -246,8 +327,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "pikachu",
-        "url": "assets/pokemon/sprite/pikachu.png",
+        "key": "piloswine",
+        "url": "assets/pokemon/sprite/piloswine.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -255,8 +336,26 @@
       },
       {
         "type": "spritesheet",
-        "key": "pichu",
-        "url": "assets/pokemon/sprite/pichu.png",
+        "key": "pawmot",
+        "url": "assets/pokemon/sprite/pawmot.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pawmo",
+        "url": "assets/pokemon/sprite/pawmo.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pawmi",
+        "url": "assets/pokemon/sprite/pawmi.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -291,6 +390,24 @@
       },
       {
         "type": "spritesheet",
+        "key": "naclstack",
+        "url": "assets/pokemon/sprite/naclstack.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "nacli",
+        "url": "assets/pokemon/sprite/nacli.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "mudkip",
         "url": "assets/pokemon/sprite/mudkip.png",
         "frameConfig": {
@@ -309,26 +426,26 @@
       },
       {
         "type": "spritesheet",
-        "key": "metang",
-        "url": "assets/pokemon/sprite/metang.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "metagross",
-        "url": "assets/pokemon/sprite/metagross.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "marshtomp",
         "url": "assets/pokemon/sprite/marshtomp.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mareanie",
+        "url": "assets/pokemon/sprite/mareanie.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mamoswine",
+        "url": "assets/pokemon/sprite/mamoswine.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -390,6 +507,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "leavanny",
+        "url": "assets/pokemon/sprite/leavanny.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "larvitar",
         "url": "assets/pokemon/sprite/larvitar.png",
         "frameConfig": {
@@ -444,6 +570,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "koffing",
+        "url": "assets/pokemon/sprite/koffing.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "kakuna",
         "url": "assets/pokemon/sprite/kakuna.png",
         "frameConfig": {
@@ -455,15 +590,6 @@
         "type": "spritesheet",
         "key": "kadabra",
         "url": "assets/pokemon/sprite/kadabra.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "ivysaur",
-        "url": "assets/pokemon/sprite/ivysaur.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -498,8 +624,44 @@
       },
       {
         "type": "spritesheet",
+        "key": "hawlucha",
+        "url": "assets/pokemon/sprite/hawlucha.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "haunter",
         "url": "assets/pokemon/sprite/haunter.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hattrem",
+        "url": "assets/pokemon/sprite/hattrem.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hatterene",
+        "url": "assets/pokemon/sprite/hatterene.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hatenna",
+        "url": "assets/pokemon/sprite/hatenna.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -518,6 +680,15 @@
         "type": "spritesheet",
         "key": "gyarados",
         "url": "assets/pokemon/sprite/gyarados.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gurdurr",
+        "url": "assets/pokemon/sprite/gurdurr.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -545,15 +716,6 @@
         "type": "spritesheet",
         "key": "golem",
         "url": "assets/pokemon/sprite/golem.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "golbat",
-        "url": "assets/pokemon/sprite/golbat.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -597,6 +759,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "garganacl",
+        "url": "assets/pokemon/sprite/garganacl.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "garchomp",
         "url": "assets/pokemon/sprite/garchomp.png",
         "frameConfig": {
@@ -615,8 +786,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "frenzyplant",
-        "url": "assets/pokemon/sprite/frenzyplant.png",
+        "key": "fluttermane",
+        "url": "assets/pokemon/sprite/fluttermane.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -714,8 +885,26 @@
       },
       {
         "type": "spritesheet",
-        "key": "crobat",
-        "url": "assets/pokemon/sprite/crobat.png",
+        "key": "conkeldurr",
+        "url": "assets/pokemon/sprite/conkeldurr.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "chespin",
+        "url": "assets/pokemon/sprite/chespin.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "chesnaught",
+        "url": "assets/pokemon/sprite/chesnaught.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -750,15 +939,6 @@
       },
       {
         "type": "spritesheet",
-        "key": "bulbasaur",
-        "url": "assets/pokemon/sprite/bulbasaur.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "blissey",
         "url": "assets/pokemon/sprite/blissey.png",
         "frameConfig": {
@@ -768,8 +948,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "beldum",
-        "url": "assets/pokemon/sprite/beldum.png",
+        "key": "bewear",
+        "url": "assets/pokemon/sprite/bewear.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -795,8 +975,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "aegislash_shield",
-        "url": "assets/pokemon/sprite/aegislash_shield.png",
+        "key": "aegislash_sword",
+        "url": "assets/pokemon/sprite/aegislash_sword.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -815,15 +995,6 @@
         "type": "spritesheet",
         "key": "abra",
         "url": "assets/pokemon/sprite/abra.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "zubat-mini",
-        "url": "assets/pokemon/mini/zubat.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -851,6 +1022,15 @@
         "type": "spritesheet",
         "key": "wooloo-mini",
         "url": "assets/pokemon/mini/wooloo.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "weezing_galar-mini",
+        "url": "assets/pokemon/mini/weezing_galar.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -894,15 +1074,6 @@
       },
       {
         "type": "spritesheet",
-        "key": "venusaur-mini",
-        "url": "assets/pokemon/mini/venusaur.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "tyranitar-mini",
         "url": "assets/pokemon/mini/tyranitar.png",
         "frameConfig": {
@@ -921,8 +1092,53 @@
       },
       {
         "type": "spritesheet",
+        "key": "toxapex-mini",
+        "url": "assets/pokemon/mini/toxapex.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "torracat-mini",
         "url": "assets/pokemon/mini/torracat.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tinkatuff-mini",
+        "url": "assets/pokemon/mini/tinkatuff.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tinkaton-mini",
+        "url": "assets/pokemon/mini/tinkaton.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "tinkatink-mini",
+        "url": "assets/pokemon/mini/tinkatink.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "timburr-mini",
+        "url": "assets/pokemon/mini/timburr.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -939,8 +1155,35 @@
       },
       {
         "type": "spritesheet",
+        "key": "swinub-mini",
+        "url": "assets/pokemon/mini/swinub.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "swampert-mini",
         "url": "assets/pokemon/mini/swampert.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "swadloon-mini",
+        "url": "assets/pokemon/mini/swadloon.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "stufful-mini",
+        "url": "assets/pokemon/mini/stufful.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -966,8 +1209,26 @@
       },
       {
         "type": "spritesheet",
+        "key": "skarmory-mini",
+        "url": "assets/pokemon/mini/skarmory.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "shiftry-mini",
         "url": "assets/pokemon/mini/shiftry.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "sewaddle-mini",
+        "url": "assets/pokemon/mini/sewaddle.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1020,8 +1281,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "raichu-mini",
-        "url": "assets/pokemon/mini/raichu.png",
+        "key": "quilladin-mini",
+        "url": "assets/pokemon/mini/quilladin.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1065,8 +1326,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "pikachu-mini",
-        "url": "assets/pokemon/mini/pikachu.png",
+        "key": "piloswine-mini",
+        "url": "assets/pokemon/mini/piloswine.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1074,8 +1335,26 @@
       },
       {
         "type": "spritesheet",
-        "key": "pichu-mini",
-        "url": "assets/pokemon/mini/pichu.png",
+        "key": "pawmot-mini",
+        "url": "assets/pokemon/mini/pawmot.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pawmo-mini",
+        "url": "assets/pokemon/mini/pawmo.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "pawmi-mini",
+        "url": "assets/pokemon/mini/pawmi.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1101,6 +1380,24 @@
       },
       {
         "type": "spritesheet",
+        "key": "naclstack-mini",
+        "url": "assets/pokemon/mini/naclstack.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "nacli-mini",
+        "url": "assets/pokemon/mini/nacli.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "mudkip-mini",
         "url": "assets/pokemon/mini/mudkip.png",
         "frameConfig": {
@@ -1119,26 +1416,26 @@
       },
       {
         "type": "spritesheet",
-        "key": "metang-mini",
-        "url": "assets/pokemon/mini/metang.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "metagross-mini",
-        "url": "assets/pokemon/mini/metagross.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "marshtomp-mini",
         "url": "assets/pokemon/mini/marshtomp.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mareanie-mini",
+        "url": "assets/pokemon/mini/mareanie.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "mamoswine-mini",
+        "url": "assets/pokemon/mini/mamoswine.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1200,6 +1497,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "leavanny-mini",
+        "url": "assets/pokemon/mini/leavanny.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "larvitar-mini",
         "url": "assets/pokemon/mini/larvitar.png",
         "frameConfig": {
@@ -1254,6 +1560,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "koffing-mini",
+        "url": "assets/pokemon/mini/koffing.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "kakuna-mini",
         "url": "assets/pokemon/mini/kakuna.png",
         "frameConfig": {
@@ -1265,15 +1580,6 @@
         "type": "spritesheet",
         "key": "kadabra-mini",
         "url": "assets/pokemon/mini/kadabra.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "ivysaur-mini",
-        "url": "assets/pokemon/mini/ivysaur.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1308,8 +1614,44 @@
       },
       {
         "type": "spritesheet",
+        "key": "hawlucha-mini",
+        "url": "assets/pokemon/mini/hawlucha.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "haunter-mini",
         "url": "assets/pokemon/mini/haunter.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hattrem-mini",
+        "url": "assets/pokemon/mini/hattrem.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hatterene-mini",
+        "url": "assets/pokemon/mini/hatterene.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "hatenna-mini",
+        "url": "assets/pokemon/mini/hatenna.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1328,6 +1670,15 @@
         "type": "spritesheet",
         "key": "gyarados-mini",
         "url": "assets/pokemon/mini/gyarados.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gurdurr-mini",
+        "url": "assets/pokemon/mini/gurdurr.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1355,15 +1706,6 @@
         "type": "spritesheet",
         "key": "golem-mini",
         "url": "assets/pokemon/mini/golem.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
-        "key": "golbat-mini",
-        "url": "assets/pokemon/mini/golbat.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1407,6 +1749,15 @@
       },
       {
         "type": "spritesheet",
+        "key": "garganacl-mini",
+        "url": "assets/pokemon/mini/garganacl.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "garchomp-mini",
         "url": "assets/pokemon/mini/garchomp.png",
         "frameConfig": {
@@ -1418,6 +1769,15 @@
         "type": "spritesheet",
         "key": "gabite-mini",
         "url": "assets/pokemon/mini/gabite.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "fluttermane-mini",
+        "url": "assets/pokemon/mini/fluttermane.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1515,8 +1875,26 @@
       },
       {
         "type": "spritesheet",
-        "key": "crobat-mini",
-        "url": "assets/pokemon/mini/crobat.png",
+        "key": "conkeldurr-mini",
+        "url": "assets/pokemon/mini/conkeldurr.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "chespin-mini",
+        "url": "assets/pokemon/mini/chespin.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "chesnaught-mini",
+        "url": "assets/pokemon/mini/chesnaught.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1551,15 +1929,6 @@
       },
       {
         "type": "spritesheet",
-        "key": "bulbasaur-mini",
-        "url": "assets/pokemon/mini/bulbasaur.png",
-        "frameConfig": {
-          "frameWidth": 64,
-          "frameHeight": 64
-        }
-      },
-      {
-        "type": "spritesheet",
         "key": "blissey-mini",
         "url": "assets/pokemon/mini/blissey.png",
         "frameConfig": {
@@ -1569,8 +1938,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "beldum-mini",
-        "url": "assets/pokemon/mini/beldum.png",
+        "key": "bewear-mini",
+        "url": "assets/pokemon/mini/bewear.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1596,8 +1965,8 @@
       },
       {
         "type": "spritesheet",
-        "key": "aegislash_shield-mini",
-        "url": "assets/pokemon/mini/aegislash_shield.png",
+        "key": "aegislash_sword-mini",
+        "url": "assets/pokemon/mini/aegislash_sword.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1623,11 +1992,6 @@
       },
       {
         "type": "image",
-        "key": "zubat-front",
-        "url": "assets/pokemon/front/zubat.png"
-      },
-      {
-        "type": "image",
         "key": "zorua-front",
         "url": "assets/pokemon/front/zorua.png"
       },
@@ -1640,6 +2004,11 @@
         "type": "image",
         "key": "wooloo-front",
         "url": "assets/pokemon/front/wooloo.png"
+      },
+      {
+        "type": "image",
+        "key": "weezing_galar-front",
+        "url": "assets/pokemon/front/weezing_galar.png"
       },
       {
         "type": "image",
@@ -1663,11 +2032,6 @@
       },
       {
         "type": "image",
-        "key": "venusaur-front",
-        "url": "assets/pokemon/front/venusaur.png"
-      },
-      {
-        "type": "image",
         "key": "tyranitar-front",
         "url": "assets/pokemon/front/tyranitar.png"
       },
@@ -1678,8 +2042,33 @@
       },
       {
         "type": "image",
+        "key": "toxapex-front",
+        "url": "assets/pokemon/front/toxapex.png"
+      },
+      {
+        "type": "image",
         "key": "torracat-front",
         "url": "assets/pokemon/front/torracat.png"
+      },
+      {
+        "type": "image",
+        "key": "tinkatuff-front",
+        "url": "assets/pokemon/front/tinkatuff.png"
+      },
+      {
+        "type": "image",
+        "key": "tinkaton-front",
+        "url": "assets/pokemon/front/tinkaton.png"
+      },
+      {
+        "type": "image",
+        "key": "tinkatink-front",
+        "url": "assets/pokemon/front/tinkatink.png"
+      },
+      {
+        "type": "image",
+        "key": "timburr-front",
+        "url": "assets/pokemon/front/timburr.png"
       },
       {
         "type": "image",
@@ -1688,8 +2077,23 @@
       },
       {
         "type": "image",
+        "key": "swinub-front",
+        "url": "assets/pokemon/front/swinub.png"
+      },
+      {
+        "type": "image",
         "key": "swampert-front",
         "url": "assets/pokemon/front/swampert.png"
+      },
+      {
+        "type": "image",
+        "key": "swadloon-front",
+        "url": "assets/pokemon/front/swadloon.png"
+      },
+      {
+        "type": "image",
+        "key": "stufful-front",
+        "url": "assets/pokemon/front/stufful.png"
       },
       {
         "type": "image",
@@ -1703,8 +2107,18 @@
       },
       {
         "type": "image",
+        "key": "skarmory-front",
+        "url": "assets/pokemon/front/skarmory.png"
+      },
+      {
+        "type": "image",
         "key": "shiftry-front",
         "url": "assets/pokemon/front/shiftry.png"
+      },
+      {
+        "type": "image",
+        "key": "sewaddle-front",
+        "url": "assets/pokemon/front/sewaddle.png"
       },
       {
         "type": "image",
@@ -1718,8 +2132,8 @@
       },
       {
         "type": "image",
-        "key": "scizor-1-front",
-        "url": "assets/pokemon/front/scizor-1.png"
+        "key": "scizor-front",
+        "url": "assets/pokemon/front/scizor.png"
       },
       {
         "type": "image",
@@ -1733,8 +2147,8 @@
       },
       {
         "type": "image",
-        "key": "raichu-front",
-        "url": "assets/pokemon/front/raichu.png"
+        "key": "quilladin-front",
+        "url": "assets/pokemon/front/quilladin.png"
       },
       {
         "type": "image",
@@ -1758,13 +2172,23 @@
       },
       {
         "type": "image",
-        "key": "pikachu-front",
-        "url": "assets/pokemon/front/pikachu.png"
+        "key": "piloswine-front",
+        "url": "assets/pokemon/front/piloswine.png"
       },
       {
         "type": "image",
-        "key": "pichu-front",
-        "url": "assets/pokemon/front/pichu.png"
+        "key": "pawmot-front",
+        "url": "assets/pokemon/front/pawmot.png"
+      },
+      {
+        "type": "image",
+        "key": "pawmo-front",
+        "url": "assets/pokemon/front/pawmo.png"
+      },
+      {
+        "type": "image",
+        "key": "pawmi-front",
+        "url": "assets/pokemon/front/pawmi.png"
       },
       {
         "type": "image",
@@ -1778,6 +2202,16 @@
       },
       {
         "type": "image",
+        "key": "naclstack-front",
+        "url": "assets/pokemon/front/naclstack.png"
+      },
+      {
+        "type": "image",
+        "key": "nacli-front",
+        "url": "assets/pokemon/front/nacli.png"
+      },
+      {
+        "type": "image",
         "key": "mudkip-front",
         "url": "assets/pokemon/front/mudkip.png"
       },
@@ -1788,18 +2222,18 @@
       },
       {
         "type": "image",
-        "key": "metang-front",
-        "url": "assets/pokemon/front/metang.png"
-      },
-      {
-        "type": "image",
-        "key": "metagross-front",
-        "url": "assets/pokemon/front/metagross.png"
-      },
-      {
-        "type": "image",
         "key": "marshtomp-front",
         "url": "assets/pokemon/front/marshtomp.png"
+      },
+      {
+        "type": "image",
+        "key": "mareanie-front",
+        "url": "assets/pokemon/front/mareanie.png"
+      },
+      {
+        "type": "image",
+        "key": "mamoswine-front",
+        "url": "assets/pokemon/front/mamoswine.png"
       },
       {
         "type": "image",
@@ -1833,6 +2267,11 @@
       },
       {
         "type": "image",
+        "key": "leavanny-front",
+        "url": "assets/pokemon/front/leavanny.png"
+      },
+      {
+        "type": "image",
         "key": "larvitar-front",
         "url": "assets/pokemon/front/larvitar.png"
       },
@@ -1863,6 +2302,11 @@
       },
       {
         "type": "image",
+        "key": "koffing-front",
+        "url": "assets/pokemon/front/koffing.png"
+      },
+      {
+        "type": "image",
         "key": "kakuna-front",
         "url": "assets/pokemon/front/kakuna.png"
       },
@@ -1870,11 +2314,6 @@
         "type": "image",
         "key": "kadabra-front",
         "url": "assets/pokemon/front/kadabra.png"
-      },
-      {
-        "type": "image",
-        "key": "ivysaur-front",
-        "url": "assets/pokemon/front/ivysaur.png"
       },
       {
         "type": "image",
@@ -1893,8 +2332,28 @@
       },
       {
         "type": "image",
+        "key": "hawlucha-front",
+        "url": "assets/pokemon/front/hawlucha.png"
+      },
+      {
+        "type": "image",
         "key": "haunter-front",
         "url": "assets/pokemon/front/haunter.png"
+      },
+      {
+        "type": "image",
+        "key": "hattrem-front",
+        "url": "assets/pokemon/front/hattrem.png"
+      },
+      {
+        "type": "image",
+        "key": "hatterene-front",
+        "url": "assets/pokemon/front/hatterene.png"
+      },
+      {
+        "type": "image",
+        "key": "hatenna-front",
+        "url": "assets/pokemon/front/hatenna.png"
       },
       {
         "type": "image",
@@ -1905,6 +2364,11 @@
         "type": "image",
         "key": "gyarados-front",
         "url": "assets/pokemon/front/gyarados.png"
+      },
+      {
+        "type": "image",
+        "key": "gurdurr-front",
+        "url": "assets/pokemon/front/gurdurr.png"
       },
       {
         "type": "image",
@@ -1920,11 +2384,6 @@
         "type": "image",
         "key": "golem-front",
         "url": "assets/pokemon/front/golem.png"
-      },
-      {
-        "type": "image",
-        "key": "golbat-front",
-        "url": "assets/pokemon/front/golbat.png"
       },
       {
         "type": "image",
@@ -1948,6 +2407,11 @@
       },
       {
         "type": "image",
+        "key": "garganacl-front",
+        "url": "assets/pokemon/front/garganacl.png"
+      },
+      {
+        "type": "image",
         "key": "garchomp-front",
         "url": "assets/pokemon/front/garchomp.png"
       },
@@ -1955,6 +2419,11 @@
         "type": "image",
         "key": "gabite-front",
         "url": "assets/pokemon/front/gabite.png"
+      },
+      {
+        "type": "image",
+        "key": "fluttermane-front",
+        "url": "assets/pokemon/front/fluttermane.png"
       },
       {
         "type": "image",
@@ -2008,8 +2477,18 @@
       },
       {
         "type": "image",
-        "key": "crobat-front",
-        "url": "assets/pokemon/front/crobat.png"
+        "key": "conkeldurr-front",
+        "url": "assets/pokemon/front/conkeldurr.png"
+      },
+      {
+        "type": "image",
+        "key": "chespin-front",
+        "url": "assets/pokemon/front/chespin.png"
+      },
+      {
+        "type": "image",
+        "key": "chesnaught-front",
+        "url": "assets/pokemon/front/chesnaught.png"
       },
       {
         "type": "image",
@@ -2028,18 +2507,13 @@
       },
       {
         "type": "image",
-        "key": "bulbasaur-front",
-        "url": "assets/pokemon/front/bulbasaur.png"
-      },
-      {
-        "type": "image",
         "key": "blissey-front",
         "url": "assets/pokemon/front/blissey.png"
       },
       {
         "type": "image",
-        "key": "beldum-front",
-        "url": "assets/pokemon/front/beldum.png"
+        "key": "bewear-front",
+        "url": "assets/pokemon/front/bewear.png"
       },
       {
         "type": "image",
@@ -2053,8 +2527,8 @@
       },
       {
         "type": "image",
-        "key": "aegislash_shield-front",
-        "url": "assets/pokemon/front/aegislash_shield.png"
+        "key": "aegislash_sword-front",
+        "url": "assets/pokemon/front/aegislash_sword.png"
       },
       {
         "type": "image",
