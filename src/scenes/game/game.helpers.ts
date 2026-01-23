@@ -170,10 +170,10 @@ export function getHyperRollGameMode(): GameMode {
           1: {
             name: 'Wild Rattata',
             board: [
-              { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 0, y: 4 } },
+              { name: 'neutral_only_rattata', location: { x: 2, y: 3 } },
               { name: 'neutral_only_rattata', location: { x: 3, y: 3 } },
-              { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
-              { name: 'neutral_only_rattata', location: { x: 6, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 5, y: 4 } },
             ],
           },
         },
