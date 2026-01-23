@@ -602,7 +602,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     const spaceInRow = [0, 0, 0, 0, 0, 0];
     boardOrder.forEach((selectedPokemon, index) => {
       if (index < this.teamSize) {
-        // if index < level, we have room on the board
+        // if index < board size, we have room on the board
 
         // pick a spot for them based on their range.
         // ranged units go in back row, melee in front

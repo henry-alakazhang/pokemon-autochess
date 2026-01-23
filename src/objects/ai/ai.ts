@@ -57,8 +57,8 @@ function genericPrioritiseBoard(
     }
 
     pokemon.basePokemon.categories.forEach((category) => {
-      // add 1 to the synergy, capping out at player level
-      // eg. if level 3 and have 4 of a synergy on bench,
+      // add 1 to the synergy, capping out at current max team size
+      // eg. if 3 units on board and have 4 of a synergy on bench,
       // the max possible count for that synergy is still 3
       allSynergies[category] = Math.min(
         (allSynergies[category] ?? 0) + 1,
