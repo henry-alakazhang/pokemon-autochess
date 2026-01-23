@@ -52,8 +52,8 @@ const DEFAULT_LEVELS: Level[] = [
   { teamSize: 4, expToLevel: 14, shopOdds: [0, 45, 35, 20, 0, 0] },
   { teamSize: 4, expToLevel: 14, shopOdds: [0, 32, 40, 24, 3, 0] },
   { teamSize: 5, expToLevel: 26, shopOdds: [0, 27, 34, 28, 11, 0] },
-  { teamSize: 5, expToLevel: 26, shopOdds: [0, 20, 27, 35, 15, 2] },
-  { teamSize: 6, expToLevel: 36, shopOdds: [0, 16, 23, 33, 21, 7] },
+  { teamSize: 5, expToLevel: 26, shopOdds: [0, 21, 27, 35, 15, 1] },
+  { teamSize: 6, expToLevel: 36, shopOdds: [0, 16, 23, 32, 21, 8] },
   { teamSize: 6, expToLevel: 54, shopOdds: [0, 10, 16, 26, 34, 14] },
   {
     teamSize: 6,
