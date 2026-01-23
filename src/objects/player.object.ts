@@ -1,10 +1,15 @@
 import { Category, getSynergyTier, synergyData } from '../core/game.model';
 import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { flatten, isDefined } from '../helpers';
+import { boundRange } from '../math.helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
 import {
   BOARD_WIDTH,
+  CELL_WIDTH,
+  GameMode,
   getCoordinatesForMainboard,
+  GRID_X,
+  GRID_Y,
   Stage,
 } from '../scenes/game/game.helpers';
 import {
@@ -25,16 +30,20 @@ export class Player extends Phaser.GameObjects.GameObject {
     SELECT: 'selectPlayer',
   };
 
+  private gameData: GameMode;
+
   /**
-   * Player level, which corresponds to the max number of Pokemon they can field
-   * In-game, this is represented by "Gym Badges"
+   * Player level, which affects max team size and the odds in the shop.
+   * Effects are defined based on the game mode.
    */
-  level = 1;
-  // EXP progress to the next level
-  // TODO: implement when implementing traditional games
-  // exp = 0;
-  hp = 100;
+  level: number;
+  /**
+   * "Dex EXP"
+   * Used to level up. Thresholds are determined by the game mode.
+   */
+  exp = 0;
   gold: number;
+  hp = 100;
   /** Consecutive win/loss streak */
   streak = 0;
   /** A map storing whether a Pokemon (by id) is currently evolving. */
@@ -54,8 +63,24 @@ export class Player extends Phaser.GameObjects.GameObject {
   /** The Pokemon in the player's sideboard (spare Pokemon) */
   sideboard: (PokemonObject | undefined)[] = Array(8).fill(undefined);
 
+  /** List of calculated synergies based on current board */
   synergies: { category: Category; count: number }[] = [];
+  /** Map of extra data tracked on the player object per synergy */
+  synergyState: {
+    /** Number of Gimmighoul Coins */
+    steel: number;
+  } = { steel: 0 };
+  /** Map of synergy marker objects used to display current synergy tiers. */
   synergyMarkers: { [k in Category]?: SynergyMarker } = {};
+  /** Map of extra objects used to display extra out-of-combat state for synergies. */
+  extraSynergyObjects: {
+    steel?: {
+      /** An off-board sprite for gimmighoul */
+      sprite: PokemonObject;
+      /** A counter for Gimmighoul Coins */
+      text: Phaser.GameObjects.Text;
+    };
+  } = {};
 
   /** Used mostly for AI to quickly determine if a synergy exists or not */
   synergyMap: { [k in Category]?: number } = {};
@@ -66,6 +91,12 @@ export class Player extends Phaser.GameObjects.GameObject {
   private aiStrategy: AIStrategy;
   private visible: boolean;
 
+  get teamSize(): number {
+    return this.gameData.levels[
+      boundRange(this.level, 0, this.gameData.levels.length - 1)
+    ].teamSize;
+  }
+
   constructor(
     scene: GameScene,
     public playerName: string,
@@ -74,21 +105,20 @@ export class Player extends Phaser.GameObjects.GameObject {
     {
       pool,
       isHumanPlayer = false,
-      initialLevel = 1,
-      startingGold = 20,
+      gameData,
     }: {
       pool: ShopPool;
+      gameData: GameMode;
       isHumanPlayer?: boolean;
-      initialLevel?: number;
-      startingGold?: number;
     }
   ) {
     super(scene, 'player');
+    this.gameData = gameData;
     this.pool = pool;
     this.isHumanPlayer = isHumanPlayer;
     this.visible = isHumanPlayer;
-    this.level = initialLevel;
-    this.gold = startingGold;
+    this.level = gameData.stages[0].autolevel ?? 0;
+    this.gold = gameData.startingGold;
     if (!this.isHumanPlayer) {
       this.aiStrategy = getRandomAI();
     }
@@ -113,6 +143,10 @@ export class Player extends Phaser.GameObjects.GameObject {
         this.hp <= 0 ? '❌' : ''
       }`
     );
+
+    this.extraSynergyObjects['steel']?.text.setText(
+      this.synergyState.steel.toString()
+    );
   }
 
   updatePosition(x: number, y: number) {
@@ -122,9 +156,15 @@ export class Player extends Phaser.GameObjects.GameObject {
 
   setVisible(visible: boolean): this {
     this.visible = visible;
-    [...flatten(this.mainboard), ...this.sideboard].forEach((pokemon) =>
+    // Adjust visibility of all Pokemon
+    [...this.mainboard.flat(), ...this.sideboard].forEach((pokemon) =>
       pokemon?.setVisible(visible)
     );
+    // And all synergy objects
+    Object.values(this.extraSynergyObjects)
+      .map((synergy) => Object.values(synergy))
+      .flat()
+      .forEach((object) => object.setVisible?.(visible));
     this.updateSynergies();
     return this;
   }
@@ -480,10 +520,54 @@ export class Player extends Phaser.GameObjects.GameObject {
         .setPosition(40, 150 + index * SynergyMarker.height)
         .setCount(synergy.count);
     });
+
+    // Add any extra objects we need to render for the synergy
+    // TODO: If we have a lot of these, it might be good to define these in the game.model.ts?
+    // But putting all the render logic here makes it easier to position it all etc.
+    this.renderSteelTypeSynergy();
+  }
+
+  private renderSteelTypeSynergy() {
+    if (
+      getSynergyTier(synergyData['steel'], this.synergyMap['steel'] ?? 0) === 0
+    ) {
+      // If synergy is disabled, hide Gimmighoul
+      this.extraSynergyObjects['steel']?.sprite.setVisible(false);
+      this.extraSynergyObjects['steel']?.text.setVisible(false);
+      return;
+    }
+
+    if (this.extraSynergyObjects['steel']) {
+      // If synergy is defined and object already exists, show
+      this.extraSynergyObjects['steel']?.sprite.setVisible(true);
+      this.extraSynergyObjects['steel']?.text.setVisible(true);
+      return;
+    }
+
+    // Render a Gimmighoul just to the left of the grid.
+    const sprite = this.scene.add.existing(
+      new PokemonObject({
+        scene: this.scene,
+        x: GRID_X - CELL_WIDTH * 3 - 32,
+        y: GRID_Y,
+        name: 'gimmighoul',
+        side: 'player',
+      })
+    );
+    const text = this.scene.add.existing(
+      new Phaser.GameObjects.Text(
+        this.scene,
+        GRID_X - CELL_WIDTH * 3 - 32,
+        GRID_Y + 40,
+        this.synergyState.steel.toString(),
+        defaultStyle
+      ).setOrigin(0.5, 0.5)
+    );
+    this.extraSynergyObjects['steel'] = { sprite, text };
   }
 
   canAddPokemonToMainboard() {
-    return flatten(this.mainboard).filter((v) => !!v).length < this.level;
+    return flatten(this.mainboard).filter((v) => !!v).length < this.teamSize;
   }
 
   canAddPokemonToSideboard() {
@@ -526,8 +610,8 @@ export class Player extends Phaser.GameObjects.GameObject {
     // the index of the first free space in a given row
     const spaceInRow = [0, 0, 0, 0, 0, 0];
     boardOrder.forEach((selectedPokemon, index) => {
-      if (index < this.level) {
-        // if index < level, we have room on the board
+      if (index < this.teamSize) {
+        // if index < board size, we have room on the board
 
         // pick a spot for them based on their range.
         // ranged units go in back row, melee in front
@@ -550,11 +634,11 @@ export class Player extends Phaser.GameObjects.GameObject {
 
       // otherwise,  we've already put max pokemon on the board.
       // the rest go into the sideboard in order
-      // (index - this.level starts at 0)
+      // (index - this.teamSize starts at 0)
       this.setPokemonAtLocation(
         {
           location: 'sideboard',
-          index: index - this.level,
+          index: index - this.teamSize,
         },
         selectedPokemon
       );

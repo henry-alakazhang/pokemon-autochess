@@ -1,6 +1,6 @@
 import { getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
-import { PokemonName } from '../../core/pokemon.model';
+import { Pokemon, PokemonName } from '../../core/pokemon.model';
 import { flatten, isDefined, shuffle } from '../../helpers';
 import { getRandomInArray } from '../../math.helpers';
 import { Player } from '../../objects/player.object';
@@ -32,6 +32,59 @@ export function getCoordinatesForMainboard({ x, y }: Coords): Coords {
   };
 }
 
+export interface Level {
+  /** Amount of Pokemon that can be placed on the board at this level */
+  readonly teamSize: number;
+  /** Amount of bonus slots available (Pokemon applies traits but doesn't join combat) */
+  readonly bonusSlots?: number;
+  /** Amount of experienced needed to reach next level. Set this to 0 if there's no next level */
+  readonly expToLevel: number;
+  /**
+   * Odds of each tier of Pokemon in the shop at this level.
+   * 6-element array to allow for direct indexing using Pokemon tier.
+   **/
+  readonly shopOdds: [0, number, number, number, number, number];
+}
+
+/**
+ * Default levelling cadence
+ *
+ * Odd levels = team size increase / slight shop odds change
+ *
+ * Even levels = new tier of Pokemon / significant shop odds change
+ */
+export const DEFAULT_LEVELS: Level[] = [
+  { teamSize: 2, expToLevel: 2, shopOdds: [0, 80, 20, 0, 0, 0] },
+  { teamSize: 3, expToLevel: 2, shopOdds: [0, 75, 25, 0, 0, 0] },
+  { teamSize: 3, expToLevel: 6, shopOdds: [0, 55, 30, 15, 0, 0] },
+  { teamSize: 4, expToLevel: 14, shopOdds: [0, 45, 35, 20, 0, 0] },
+  { teamSize: 4, expToLevel: 14, shopOdds: [0, 33, 40, 24, 3, 0] },
+  { teamSize: 5, expToLevel: 26, shopOdds: [0, 28, 36, 28, 8, 0] },
+  { teamSize: 5, expToLevel: 26, shopOdds: [0, 21, 26, 35, 16, 2] },
+  { teamSize: 6, expToLevel: 36, shopOdds: [0, 17, 23, 33, 21, 6] },
+  { teamSize: 6, expToLevel: 54, shopOdds: [0, 10, 16, 26, 34, 14] },
+  {
+    teamSize: 6,
+    bonusSlots: 1,
+    expToLevel: 44,
+    shopOdds: [0, 8, 14, 25, 33, 20],
+  },
+  {
+    teamSize: 6,
+    bonusSlots: 1,
+    expToLevel: 0,
+    shopOdds: [0, 5, 10, 20, 30, 35],
+  },
+];
+
+export const DEFAULT_SHOP_POOL = {
+  1: 27,
+  2: 24,
+  3: 21,
+  4: 18,
+  5: 15,
+};
+
 /**
  * A representation of a game mode, with all its options
  */
@@ -40,24 +93,29 @@ export interface GameMode {
   readonly name: string;
   /** The set of stages (which are made up of rounds) */
   readonly stages: Stage[];
-  /** Rates of each tier of Pokemon in the shop at each player level */
-  readonly shopRates: {
-    // 6-element array to allow for 1-indexing using Pokemon tiers.
-    [k: string]: [number, number, number, number, number, number];
+  /**
+   * Details of each player level.
+   * Levels start at 0 for index convenience.
+   */
+  readonly levels: Level[];
+  /**
+   * The number of Pokemon in the shop pool for each tier.
+   */
+  readonly shopPool: {
+    [tier in Pokemon['tier']]: number;
   };
+  /** Starting player gold */
   readonly startingGold: number;
-  /** Whether players can spend gold on exp to level up */
-  readonly levelCosts?: number[];
-  /** Whether this mode has extra 'players' (PVP) or is PVE */
-  readonly isPVP?: boolean;
+  /** Whether the game mode has opposing players */
+  readonly isPVE?: boolean;
 }
 
 export type NeutralRound = {
-  name: string;
-  board: readonly {
+  readonly name: string;
+  readonly board: ReadonlyArray<{
     readonly name: PokemonName;
     readonly location: Coords;
-  }[];
+  }>;
 };
 
 export interface Stage {
@@ -104,17 +162,8 @@ export function getAdventureGameMode(): GameMode {
 
   return {
     name: 'adventure',
-    isPVP: false,
+    isPVE: true,
     startingGold: 10,
-    // TODO: make this scale with stage instead of player level.
-    shopRates: {
-      1: [0, 100, 0, 0, 0, 0],
-      2: [0, 70, 30, 0, 0, 0],
-      3: [0, 50, 35, 15, 0, 0],
-      4: [0, 30, 35, 28, 7, 0],
-      5: [0, 19, 30, 35, 15, 1],
-      6: [0, 15, 25, 30, 23, 7],
-    },
     stages: [
       // 8 stages of wild -> trainer -> gym leader
       {
@@ -189,7 +238,9 @@ export function getAdventureGameMode(): GameMode {
         },
       },
     ],
-  } satisfies GameMode;
+    levels: DEFAULT_LEVELS,
+    shopPool: DEFAULT_SHOP_POOL,
+  };
 }
 
 export function getHyperRollGameMode(): GameMode {
@@ -222,49 +273,59 @@ export function getHyperRollGameMode(): GameMode {
         gold: goldGainFunc(5),
         neutralRounds: {
           1: {
-            name: 'Wild Pokemon',
+            name: 'Wild Rattata',
+            board: [{ name: 'neutral_only_rattata', location: { x: 3, y: 3 } }],
+          },
+        },
+      },
+      {
+        rounds: 1,
+        damage: () => 5,
+        gold: goldGainFunc(5),
+        autolevel: 1,
+        neutralRounds: {
+          1: {
+            name: 'Wild Rattata',
             board: [
-              { name: 'neutral_only_rattata', location: { x: 1, y: 3 } },
-              { name: 'neutral_only_rattata', location: { x: 4, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 0, y: 4 } },
+              { name: 'neutral_only_rattata', location: { x: 2, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 3, y: 3 } },
+              { name: 'neutral_only_rattata', location: { x: 5, y: 4 } },
             ],
           },
         },
       },
-      { rounds: 2, damage: () => 10, autolevel: 2, gold: goldGainFunc(6) },
-      { rounds: 3, damage: () => 10, autolevel: 3, gold: goldGainFunc(7) },
-      { rounds: 3, damage: () => 15, autolevel: 4, gold: goldGainFunc(7) },
-      { rounds: 4, damage: () => 15, autolevel: 5, gold: goldGainFunc(8) },
-      { rounds: 10, damage: () => 20, autolevel: 6, gold: goldGainFunc(8) },
+      { rounds: 1, damage: () => 5, autolevel: 2, gold: goldGainFunc(5) },
+      { rounds: 2, damage: () => 10, autolevel: 3, gold: goldGainFunc(6) },
+      { rounds: 2, damage: () => 10, autolevel: 4, gold: goldGainFunc(6) },
+      { rounds: 3, damage: () => 15, autolevel: 5, gold: goldGainFunc(7) },
+      { rounds: 3, damage: () => 15, autolevel: 6, gold: goldGainFunc(8) },
+      { rounds: 4, damage: () => 20, autolevel: 7, gold: goldGainFunc(8) },
+      { rounds: 4, damage: () => 20, autolevel: 8, gold: goldGainFunc(8) },
+      { rounds: 5, damage: () => 25, autolevel: 9, gold: goldGainFunc(9) },
+      { rounds: 5, damage: () => 25, autolevel: 10, gold: goldGainFunc(9) },
       // last section is sudden death. 99 damage, no gold - game must end!
       { rounds: 5, damage: () => 99, gold: () => 0 },
     ],
-    shopRates: {
-      1: [0, 100, 0, 0, 0, 0],
-      2: [0, 70, 30, 0, 0, 0],
-      3: [0, 50, 35, 15, 0, 0],
-      4: [0, 30, 35, 28, 7, 0],
-      5: [0, 19, 30, 35, 15, 1],
-      6: [0, 15, 25, 30, 23, 7],
-    },
+    levels: DEFAULT_LEVELS,
+    shopPool: DEFAULT_SHOP_POOL,
     startingGold: 10,
-    levelCosts: undefined,
   };
 }
 
 export function getDebugGameMode(): GameMode {
   return {
     name: 'debug',
-    stages: [{ rounds: 99, damage: () => 1, gold: () => 50, autolevel: 6 }],
-    shopRates: {
-      1: [0, 1, 1, 1, 1, 1],
-      2: [0, 1, 1, 1, 1, 1],
-      3: [0, 1, 1, 1, 1, 1],
-      4: [0, 1, 1, 1, 1, 1],
-      5: [0, 1, 1, 1, 1, 1],
-      6: [0, 1, 1, 1, 1, 1],
+    stages: [{ rounds: 99, damage: () => 1, gold: () => 50 }],
+    levels: [{ teamSize: 6, expToLevel: 0, shopOdds: [0, 1, 1, 1, 1, 1] }],
+    shopPool: {
+      1: 50,
+      2: 50,
+      3: 50,
+      4: 50,
+      5: 50,
     },
     startingGold: 50,
-    levelCosts: undefined,
   };
 }
 

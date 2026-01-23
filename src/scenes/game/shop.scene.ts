@@ -164,7 +164,7 @@ export class ShopScene extends Phaser.Scene {
     this.playerGoldText.setText(`${this.player.gold}`);
 
     // update this here; it gets called on round start anyway so it should always be up-to-date
-    this.gameMode.shopRates[this.player.level].forEach((rate, i) => {
+    this.gameMode.levels[this.player.level].shopOdds.forEach((rate, i) => {
       if (i > 0) {
         this.oddsTexts[i].setText(`${rate}%`);
       }

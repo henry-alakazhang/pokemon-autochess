@@ -4,6 +4,7 @@ import { flatten, isDefined } from '../../helpers';
 import { getRandomInArray } from '../../math.helpers';
 import { Button } from '../../objects/button.object';
 import { DamageChart } from '../../objects/damage-chart.object';
+import { NextCombatSidebar } from '../../objects/next-combat-sidebar.object';
 import { Player } from '../../objects/player.object';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { defaultStyle, titleStyle } from '../../objects/text.helpers';
@@ -23,10 +24,10 @@ import {
   GRID_X,
   GRID_Y,
   NeutralRound,
-  shuffle,
 } from './game.helpers';
 import { ShopPool } from './shop.helpers';
 import { ShopScene, ShopSceneData } from './shop.scene';
+import { shuffle } from '../../helpers';
 
 // FIXME: scale this off the canvas width
 /** X-coordinate of the center of the sideboard */
@@ -161,6 +162,8 @@ export class GameScene extends Phaser.Scene {
 
   shop: ShopScene;
 
+  private nextCombatSidebar?: NextCombatSidebar;
+
   constructor() {
     super({
       key: GameScene.KEY,
@@ -216,7 +219,12 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false);
 
     this.gameMode = mode;
-    this.pool = new ShopPool(mode.shopRates, buyablePokemon, pokemonData);
+    this.pool = new ShopPool(
+      mode.levels.map((level) => level.shopOdds),
+      buyablePokemon,
+      pokemonData,
+      this.gameMode.shopPool
+    );
     this.currentStage = 0;
     this.currentRound = 1;
     this.currentRoundText = this.add
@@ -231,24 +239,38 @@ export class GameScene extends Phaser.Scene {
       .setFontSize(20)
       .setOrigin(0.5, 0);
 
-    this.players = ['You', ...getRandomNames(7)].map((name, index) =>
-      this.add.existing(
-        new Player(this, name, 720, 100 + 30 * index, {
-          pool: this.pool,
-          isHumanPlayer: index === 0,
-          initialLevel: this.gameMode.stages[this.currentStage].autolevel,
-          startingGold: this.gameMode.startingGold,
-        })
-      )
+    // Create human player first
+    this.humanPlayer = this.add.existing(
+      new Player(this, 'You', 720, 100, {
+        pool: this.pool,
+        isHumanPlayer: true,
+        gameData: this.gameMode,
+      })
     );
-    this.players.forEach((player) => {
-      player.on(Player.Events.SELECT, () => {
-        this.watchPlayer(player);
-      });
-    });
-    // players[0] is always the human player
-    [this.humanPlayer] = this.players;
+    this.players = [this.humanPlayer];
     this.currentVisiblePlayer = this.humanPlayer;
+
+    if (!this.gameMode.isPVE) {
+      // Multiplayer Mode: add other players
+      this.players = [
+        this.humanPlayer,
+        ...getRandomNames(7).map((name, index) =>
+          this.add.existing(
+            // Space evenly after the player
+            new Player(this, name, 720, 130 + 30 * index, {
+              pool: this.pool,
+              isHumanPlayer: false,
+              gameData: this.gameMode,
+            })
+          )
+        ),
+      ];
+      this.players.forEach((player) => {
+        player.on(Player.Events.SELECT, () => {
+          this.watchPlayer(player);
+        });
+      });
+    }
 
     this.playerInfoText = this.add.text(
       50,
@@ -267,6 +289,17 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5, 0.5)
       .setDepth(-1);
     this.updateBoardLimit();
+
+    // Create a detailed "next fight" sidebar for PVE game modes
+    // This takes the space of the sidebar with all the players in it.
+    if (this.gameMode.isPVE) {
+      this.nextCombatSidebar = new NextCombatSidebar(this, 720, 150);
+      const neutralRound =
+        this.gameMode.stages[this.currentStage].neutralRounds?.[
+          this.currentRound
+        ];
+      this.nextCombatSidebar.setNextRound(neutralRound);
+    }
 
     this.scene.launch(ShopScene.KEY, {
       gameMode: this.gameMode,
@@ -334,12 +367,11 @@ export class GameScene extends Phaser.Scene {
       `Level: ${this.currentVisiblePlayer.level}\nGold: ${this.currentVisiblePlayer.gold}`
     );
 
-    // Display players in order without reordering array.
     [...this.players]
       .sort((a, b) => b.hp - a.hp)
-      .forEach((playerObj, index) => {
-        playerObj.update();
-        playerObj.updatePosition(720, 100 + 28 * index);
+      .forEach((player, index) => {
+        player.update();
+        player.updatePosition(720, 100 + 30 * index);
       });
 
     // show the "valid range" highlight if a Pokemon is selected
@@ -354,7 +386,9 @@ export class GameScene extends Phaser.Scene {
   async startCombat() {
     // switch view back to own board
     this.watchPlayer(this.humanPlayer);
+
     // take AI player turns
+    // note: this will do nothing in PVE game modes
     await Promise.all(
       this.players
         .filter((player) => player !== this.humanPlayer)
@@ -418,8 +452,8 @@ export class GameScene extends Phaser.Scene {
             this.lastDamageChart = this.add.existing(
               new DamageChart(this, 690, 340, damageGraph.player.dealt)
             );
+            // Non-human players win 100% during neutral rounds
             this.players.forEach(
-              // all the AIs win 100%
               (player) =>
                 player !== this.humanPlayer &&
                 this.handleCombatResult(player, true)
@@ -437,6 +471,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+    // Set up PVP fights
     const pairings = this.matchmakePairings();
     console.log('PAIRINGS', pairings);
     pairings.forEach((pairing) => {
@@ -530,6 +565,7 @@ export class GameScene extends Phaser.Scene {
   startDowntime() {
     // remove any dead players
     // note: disabling the player is handled by the player object
+    // this will basically do nothing in PVE game modes
     this.players = this.players.filter((player) => player.hp > 0);
 
     this.currentRound += 1;
@@ -557,9 +593,20 @@ export class GameScene extends Phaser.Scene {
 
     this.nextRoundButton.setActive(true).setVisible(true);
 
+    if (this.nextCombatSidebar) {
+      const neutralRound =
+        this.gameMode.stages[this.currentStage]?.neutralRounds?.[
+          this.currentRound
+        ];
+      this.nextCombatSidebar.setNextRound(neutralRound);
+    }
+
     if (this.humanPlayer.hp <= 0) {
+      const lossText = this.gameMode.isPVE
+        ? 'GAME OVER'
+        : `YOU PLACED #${this.players.length}`;
       this.add
-        .text(GRID_X, GRID_Y, `YOU PLACED #${this.players.length}`, {
+        .text(GRID_X, GRID_Y, lossText, {
           ...defaultStyle,
           backgroundColor: '#000',
           fontSize: '40px',
@@ -569,9 +616,13 @@ export class GameScene extends Phaser.Scene {
       this.endGame();
       return;
     }
-    if (this.players.length <= 1) {
+
+    if (
+      (!this.gameMode.isPVE && this.players.length <= 1) ||
+      this.currentStage >= this.gameMode.stages.length
+    ) {
       this.add
-        .text(GRID_X, GRID_Y, `YOU WIN!!`, {
+        .text(GRID_X, GRID_Y, 'YOU WIN!!', {
           ...defaultStyle,
           backgroundColor: '#242',
           fontSize: '40px',
@@ -671,7 +722,7 @@ export class GameScene extends Phaser.Scene {
           flatten(this.currentVisiblePlayer.mainboard).filter((v) =>
             isDefined(v)
           ).length
-        }/${this.currentVisiblePlayer.level}`
+        }/${this.currentVisiblePlayer.teamSize}`
       );
   }
 
@@ -693,7 +744,7 @@ export class GameScene extends Phaser.Scene {
    *
    * If there aren't enough players, some of them will be undefined
    */
-  matchmakePairings(): [Player | undefined, Player | undefined][] {
+  private matchmakePairings(): [Player | undefined, Player | undefined][] {
     // literally just shuffle it and return pairs
     // TODO: prevent the same players playing too often.
     const order = shuffle(this.players.map((_, index) => index)).map(
@@ -712,7 +763,8 @@ export class GameScene extends Phaser.Scene {
     const player = new Player(this, round.name, -100, -100, {
       pool: this.pool,
       isHumanPlayer: false,
-      initialLevel: round.board.length,
+      // FIXME: This limits the maximum size of a team for neutral rounds as well...
+      gameData: this.gameMode,
     });
     round.board.forEach((pokemon) => {
       player.addPokemonToSideboard(pokemon.name);

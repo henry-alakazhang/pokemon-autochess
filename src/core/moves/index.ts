@@ -12,6 +12,7 @@ export * from './egg-barrage';
 export * from './flying-press';
 export * from './fury-cutter';
 export * from './gigaton-hammer';
+export * from './good-as-gold';
 export * from './ice-shard';
 export * from './kings-shield';
 export * from './magma-storm';

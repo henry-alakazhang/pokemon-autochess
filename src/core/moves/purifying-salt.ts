@@ -1,7 +1,6 @@
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
 import { Move, MoveConfig } from '../move.model';
-import { NEGATIVE_STATUS } from '../status.model';
 import * as Tweens from '../tweens';
 
 const healing = [300, 600, 1000];
@@ -32,16 +31,7 @@ export const purifyingSalt = {
       targets: [user],
       onComplete: () => {
         user.heal(healing[user.basePokemon.stage - 1]);
-        NEGATIVE_STATUS.forEach((status) => {
-          if (user.status[status]) {
-            delete user.status[status];
-          }
-        });
-        Object.entries(user.effects).forEach(([key, value]) => {
-          if (value.effect.isNegative) {
-            delete user.effects[key];
-          }
-        });
+        user.purgeNegativeStatuses();
         onComplete();
       },
     });

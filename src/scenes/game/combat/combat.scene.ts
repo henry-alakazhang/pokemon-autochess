@@ -47,6 +47,11 @@ export type CombatBoard = Array<Array<PokemonObject | undefined>>;
 export interface CombatSceneData {
   readonly player: Player;
   readonly enemy: Player;
+  /**
+   * Whether to automatically start Pokemon turns.
+   * Only really used to disable this in tests.
+   */
+  readonly autoStart?: boolean;
 }
 
 /**
@@ -99,10 +104,6 @@ export class CombatScene extends Scene {
       .setFontSize(30)
       .setPadding(4)
       .setBackgroundColor('slategrey');
-
-    console.log(
-      `Combat: ${data.player.playerName} vs ${data.enemy.playerName}`
-    );
 
     this.board = Array(BOARD_WIDTH)
       .fill(undefined)
@@ -171,6 +172,7 @@ export class CombatScene extends Scene {
     this.players.player.synergies.forEach((synergy) => {
       synergyData[synergy.category].onRoundStart?.({
         scene: this,
+        player: this.players.player,
         board: this.board,
         side: 'player',
         count: synergy.count,
@@ -179,6 +181,7 @@ export class CombatScene extends Scene {
     this.players.enemy.synergies.forEach((synergy) => {
       synergyData[synergy.category].onRoundStart?.({
         scene: this,
+        player: this.players.enemy,
         board: this.board,
         side: 'enemy',
         count: synergy.count,
@@ -187,11 +190,14 @@ export class CombatScene extends Scene {
     mapPokemonCoords(this.board).forEach(({ pokemon, x, y }) => {
       pokemon.onRoundStart({
         scene: this,
+        player: this.players[pokemon.side],
         board: this.board,
         side: pokemon.side,
         selfCoords: { x, y },
       });
-      this.setTurn(pokemon);
+      if (data.autoStart ?? true) {
+        this.setTurn(pokemon);
+      }
     });
 
     // Set up recurring timer event for synergy effects every second
@@ -202,6 +208,7 @@ export class CombatScene extends Scene {
         this.players.player.synergies.forEach((synergy) => {
           synergyData[synergy.category].onTimer?.({
             scene: this,
+            player: this.players.player,
             board: this.board,
             side: 'player',
             count: synergy.count,
@@ -211,6 +218,7 @@ export class CombatScene extends Scene {
         this.players.enemy.synergies.forEach((synergy) => {
           synergyData[synergy.category].onTimer?.({
             scene: this,
+            player: this.players.enemy,
             board: this.board,
             side: 'enemy',
             count: synergy.count,
@@ -220,6 +228,7 @@ export class CombatScene extends Scene {
         mapPokemonCoords(this.board).forEach(({ pokemon, x, y }) => {
           pokemon.onTimer({
             scene: this,
+            player: this.players[pokemon.side],
             board: this.board,
             side: pokemon.side,
             time: timePassedSeconds,
@@ -321,6 +330,12 @@ export class CombatScene extends Scene {
     }, 2000);
   }
 
+  /**
+   * Add a Pokemon with the given name to the combat board
+   * and replaces the Pokemon at an existing location.
+   * Does NOT start turns - call `setTurn` when the new Pokemon
+   * is ready to act.
+   */
   addPokemon(
     side: 'player' | 'enemy',
     { x, y }: Coords,
@@ -342,6 +357,7 @@ export class CombatScene extends Scene {
         this.players.player.synergies.forEach((synergy) => {
           synergyData[synergy.category].onDeath?.({
             scene: this,
+            player: this.players.player,
             board: this.board,
             pokemon,
             side: 'player',
@@ -351,6 +367,7 @@ export class CombatScene extends Scene {
         this.players.enemy.synergies.forEach((synergy) => {
           synergyData[synergy.category].onDeath?.({
             scene: this,
+            player: this.players.enemy,
             board: this.board,
             pokemon,
             side: 'enemy',
@@ -361,6 +378,7 @@ export class CombatScene extends Scene {
           ({ pokemon: otherMon, ...selfCoords }) => {
             otherMon.onDeath({
               scene: this,
+              player: this.players[otherMon.side],
               board: this.board,
               pokemon: pokemon,
               side: pokemon.side,
@@ -472,6 +490,7 @@ export class CombatScene extends Scene {
     this.players[pokemon.side].synergies.forEach((synergy) => {
       synergyData[synergy.category].onTurnStart?.({
         scene: this,
+        player: this.players[pokemon.side],
         board: this.board,
         pokemon,
         count: synergy.count,
@@ -479,6 +498,7 @@ export class CombatScene extends Scene {
     });
     pokemon.onTurnStart({
       scene: this,
+      player: this.players[pokemon.side],
       board: this.board,
       pokemon,
       selfCoords: myCoords,
@@ -625,6 +645,7 @@ export class CombatScene extends Scene {
           this.players[pokemon.side].synergies.forEach((synergy) => {
             synergyData[synergy.category].onMoveUse?.({
               scene: this,
+              player: this.players[pokemon.side],
               board: this.board,
               user: pokemon,
               count: synergy.count,
@@ -632,6 +653,7 @@ export class CombatScene extends Scene {
           });
           pokemon.onMoveUse({
             scene: this,
+            player: this.players[pokemon.side],
             board: this.board,
             user: pokemon,
             selfCoords: myCoords,
@@ -750,6 +772,7 @@ export class CombatScene extends Scene {
     this.players[attacker.side].synergies.forEach((synergy) => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
+          player: this.players[attacker.side],
           attacker,
           defender,
           baseAmount: totalDamage,
@@ -761,6 +784,7 @@ export class CombatScene extends Scene {
     this.players[defender.side].synergies.forEach((synergy) => {
       totalDamage =
         synergyData[synergy.category].calculateDamage?.({
+          player: this.players[defender.side],
           attacker,
           defender,
           baseAmount: totalDamage,
@@ -779,6 +803,7 @@ export class CombatScene extends Scene {
       y: -1,
     };
     totalDamage = attacker.calculateDamage({
+      player: this.players[attacker.side],
       attacker,
       defender,
       baseAmount: totalDamage,
@@ -787,6 +812,7 @@ export class CombatScene extends Scene {
       selfCoords: attackerCoords,
     });
     totalDamage = defender.calculateDamage({
+      player: this.players[defender.side],
       attacker,
       defender,
       baseAmount: totalDamage,
@@ -814,6 +840,7 @@ export class CombatScene extends Scene {
       this.players[attacker.side].synergies.forEach((synergy) => {
         synergyData[synergy.category].onHit?.({
           scene: this,
+          player: this.players[attacker.side],
           board: this.board,
           attacker,
           defender,
@@ -825,6 +852,7 @@ export class CombatScene extends Scene {
       this.players[defender.side].synergies.forEach((synergy) => {
         synergyData[synergy.category].onBeingHit?.({
           scene: this,
+          player: this.players[defender.side],
           board: this.board,
           attacker,
           defender,
@@ -835,6 +863,7 @@ export class CombatScene extends Scene {
       });
       attacker.onHit({
         scene: this,
+        player: this.players[attacker.side],
         board: this.board,
         attacker,
         defender,
@@ -844,6 +873,7 @@ export class CombatScene extends Scene {
       });
       defender.onBeingHit({
         scene: this,
+        player: this.players[defender.side],
         board: this.board,
         attacker,
         defender,
