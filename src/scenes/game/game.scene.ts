@@ -221,7 +221,8 @@ export class GameScene extends Phaser.Scene {
     this.pool = new ShopPool(
       mode.levels.map((level) => level.shopOdds),
       buyablePokemon,
-      pokemonData
+      pokemonData,
+      this.gameMode.shopPool
     );
     this.currentStage = 0;
     this.currentRound = 1;

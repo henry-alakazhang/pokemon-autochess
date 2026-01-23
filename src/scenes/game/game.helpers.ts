@@ -1,6 +1,6 @@
 import { getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
-import { PokemonName } from '../../core/pokemon.model';
+import { Pokemon, PokemonName } from '../../core/pokemon.model';
 import { flatten, isDefined } from '../../helpers';
 import { Player } from '../../objects/player.object';
 import { Coords } from './combat/combat.helpers';
@@ -41,33 +41,41 @@ export interface Level {
 /**
  * Default levelling cadence
  *
- * Odd levels = new tier of Pokemon unlocked.
+ * Odd levels = team size increase / slight shop odds change
  *
- * Even levels = team size increase.
+ * Even levels = new tier of Pokemon / significant shop odds change
  */
-const DEFAULT_LEVELS: Level[] = [
+export const DEFAULT_LEVELS: Level[] = [
   { teamSize: 2, expToLevel: 2, shopOdds: [0, 80, 20, 0, 0, 0] },
   { teamSize: 3, expToLevel: 2, shopOdds: [0, 75, 25, 0, 0, 0] },
   { teamSize: 3, expToLevel: 6, shopOdds: [0, 55, 30, 15, 0, 0] },
   { teamSize: 4, expToLevel: 14, shopOdds: [0, 45, 35, 20, 0, 0] },
-  { teamSize: 4, expToLevel: 14, shopOdds: [0, 32, 40, 24, 3, 0] },
-  { teamSize: 5, expToLevel: 26, shopOdds: [0, 27, 34, 28, 11, 0] },
-  { teamSize: 5, expToLevel: 26, shopOdds: [0, 21, 27, 35, 15, 1] },
-  { teamSize: 6, expToLevel: 36, shopOdds: [0, 16, 23, 32, 21, 8] },
+  { teamSize: 4, expToLevel: 14, shopOdds: [0, 33, 40, 24, 3, 0] },
+  { teamSize: 5, expToLevel: 26, shopOdds: [0, 28, 36, 28, 8, 0] },
+  { teamSize: 5, expToLevel: 26, shopOdds: [0, 21, 26, 35, 16, 2] },
+  { teamSize: 6, expToLevel: 36, shopOdds: [0, 17, 23, 33, 21, 6] },
   { teamSize: 6, expToLevel: 54, shopOdds: [0, 10, 16, 26, 34, 14] },
   {
     teamSize: 6,
     bonusSlots: 1,
     expToLevel: 44,
-    shopOdds: [0, 8, 14, 24, 32, 22],
+    shopOdds: [0, 8, 14, 25, 33, 20],
   },
   {
     teamSize: 6,
     bonusSlots: 1,
     expToLevel: 0,
-    shopOdds: [0, 5, 10, 15, 30, 40],
+    shopOdds: [0, 5, 10, 20, 30, 35],
   },
 ];
+
+export const DEFAULT_SHOP_POOL = {
+  1: 27,
+  2: 24,
+  3: 21,
+  4: 18,
+  5: 15,
+};
 
 /**
  * A representation of a game mode, with all its options
@@ -82,6 +90,12 @@ export interface GameMode {
    * Levels start at 0 for index convenience.
    */
   readonly levels: Level[];
+  /**
+   * The number of Pokemon in the shop pool for each tier.
+   */
+  readonly shopPool: {
+    [tier in Pokemon['tier']]: number;
+  };
   /** Starting player gold */
   readonly startingGold: number;
   /** Whether the game mode has opposing players */
@@ -177,6 +191,7 @@ export function getHyperRollGameMode(): GameMode {
       { rounds: 5, damage: () => 99, gold: () => 0 },
     ],
     levels: DEFAULT_LEVELS,
+    shopPool: DEFAULT_SHOP_POOL,
     startingGold: 10,
   };
 }
@@ -186,6 +201,13 @@ export function getDebugGameMode(): GameMode {
     name: 'debug',
     stages: [{ rounds: 99, damage: () => 1, gold: () => 50 }],
     levels: [{ teamSize: 6, expToLevel: 0, shopOdds: [0, 1, 1, 1, 1, 1] }],
+    shopPool: {
+      1: 50,
+      2: 50,
+      3: 50,
+      4: 50,
+      5: 50,
+    },
     startingGold: 50,
   };
 }

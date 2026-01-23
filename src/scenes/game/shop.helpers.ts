@@ -1,13 +1,6 @@
 import { Pokemon, PokemonName } from '../../core/pokemon.model';
 import { Player } from '../../objects/player.object';
-
-const SHOP_POOL_SIZES = {
-  1: 27,
-  2: 24,
-  3: 21,
-  4: 18,
-  5: 15,
-};
+import { DEFAULT_SHOP_POOL } from './game.helpers';
 
 function getRandomIndex(array: unknown[]): number {
   return Math.floor(Math.random() * array.length);
@@ -47,7 +40,7 @@ export class ShopPool {
     // these are only used by tests to replace imports
     pokemonList: PokemonName[],
     private pokemonData: { [k in PokemonName]: Pokemon },
-    poolSizes = SHOP_POOL_SIZES
+    poolSizes = DEFAULT_SHOP_POOL
   ) {
     rates.forEach((shopOdds, /* index, which is */ level) => {
       this.rates[level] = [];

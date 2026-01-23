@@ -1,6 +1,7 @@
 import { Category, getSynergyTier, synergyData } from '../core/game.model';
 import { pokemonData, PokemonName } from '../core/pokemon.model';
 import { flatten, isDefined } from '../helpers';
+import { boundRange } from '../math.helpers';
 import { CombatBoard } from '../scenes/game/combat/combat.scene';
 import {
   BOARD_WIDTH,
@@ -40,7 +41,7 @@ export class Player extends Phaser.GameObjects.GameObject {
    * "Dex EXP"
    * Used to level up. Thresholds are determined by the game mode.
    */
-  exp: number;
+  exp = 0;
   gold: number;
   hp = 100;
   /** Consecutive win/loss streak */
@@ -91,7 +92,9 @@ export class Player extends Phaser.GameObjects.GameObject {
   private visible: boolean;
 
   get teamSize(): number {
-    return this.gameData.levels[this.level].teamSize;
+    return this.gameData.levels[
+      boundRange(this.level, 0, this.gameData.levels.length - 1)
+    ].teamSize;
   }
 
   constructor(
