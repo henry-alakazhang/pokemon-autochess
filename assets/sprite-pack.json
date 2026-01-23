@@ -723,8 +723,26 @@
       },
       {
         "type": "spritesheet",
+        "key": "gimmighoul",
+        "url": "assets/pokemon/sprite/gimmighoul.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "gible",
         "url": "assets/pokemon/sprite/gible.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gholdengo",
+        "url": "assets/pokemon/sprite/gholdengo.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -1713,8 +1731,26 @@
       },
       {
         "type": "spritesheet",
+        "key": "gimmighoul-mini",
+        "url": "assets/pokemon/mini/gimmighoul.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
         "key": "gible-mini",
         "url": "assets/pokemon/mini/gible.png",
+        "frameConfig": {
+          "frameWidth": 64,
+          "frameHeight": 64
+        }
+      },
+      {
+        "type": "spritesheet",
+        "key": "gholdengo-mini",
+        "url": "assets/pokemon/mini/gholdengo.png",
         "frameConfig": {
           "frameWidth": 64,
           "frameHeight": 64
@@ -2387,8 +2423,18 @@
       },
       {
         "type": "image",
+        "key": "gimmighoul-front",
+        "url": "assets/pokemon/front/gimmighoul.png"
+      },
+      {
+        "type": "image",
         "key": "gible-front",
         "url": "assets/pokemon/front/gible.png"
+      },
+      {
+        "type": "image",
+        "key": "gholdengo-front",
+        "url": "assets/pokemon/front/gholdengo.png"
       },
       {
         "type": "image",
