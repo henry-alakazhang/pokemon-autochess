@@ -1,13 +1,6 @@
 import { Pokemon, PokemonName } from '../../core/pokemon.model';
 import { Player } from '../../objects/player.object';
-
-const SHOP_POOL_SIZES = {
-  1: 27,
-  2: 24,
-  3: 21,
-  4: 18,
-  5: 15,
-};
+import { DEFAULT_SHOP_POOL } from './game.helpers';
 
 function getRandomIndex(array: unknown[]): number {
   return Math.floor(Math.random() * array.length);
@@ -28,9 +21,7 @@ export class ShopPool {
    *
    * eg. `[1, 2]` would give 50% chance of tier 1 and 50% of tier 2
    */
-  readonly rates: {
-    [level: string]: Pokemon['tier'][];
-  } = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+  readonly rates: Pokemon['tier'][][] = [];
 
   /**
    * Arrays containing all the Pokemon in a given tier pool.
@@ -45,18 +36,17 @@ export class ShopPool {
   } = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 
   constructor(
-    rates: {
-      [k: string]: [number, number, number, number, number, number];
-    },
+    rates: [0, number, number, number, number, number][],
     // these are only used by tests to replace imports
     pokemonList: PokemonName[],
     private pokemonData: { [k in PokemonName]: Pokemon },
-    poolSizes = SHOP_POOL_SIZES
+    poolSizes = DEFAULT_SHOP_POOL
   ) {
-    Object.keys(rates).forEach((level) => {
-      rates[level].forEach((rate, tier) => {
+    rates.forEach((shopOdds, /* index, which is */ level) => {
+      this.rates[level] = [];
+      shopOdds.forEach((chance, /* index, which is */ tier) => {
         // generate an array with that many elements
-        const arr = Array(rate).fill(tier);
+        const arr = Array(chance).fill(tier);
         // and append it to the existing rates
         this.rates[level].push(...arr);
       });
