@@ -25,14 +25,12 @@ describe('shop rerolling', () => {
   test('should roll and remove stuff from the pool', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
-      {
-        1: [0, 1, 0, 0, 0, 0],
-      },
+      [[0, 1, 0, 0, 0, 0]],
       ['litwick'],
       { litwick: { tier: 1, stage: 1, base: 'litwick' } } as any,
       { 1: 5, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
-    expect(pool.reroll({ level: 1 } as Player)).toEqual([
+    expect(pool.reroll({ level: 0 } as Player)).toEqual([
       'litwick',
       'litwick',
       'litwick',
@@ -45,12 +43,12 @@ describe('shop rerolling', () => {
   test('should roll from the correct level for the player', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
-      {
-        // level 1: only roll tier 1s
-        1: [0, 1, 0, 0, 0, 0],
-        // level 2: only roll tier 2s
-        2: [0, 0, 1, 0, 0, 0],
-      },
+      [
+        // level 0: only roll tier 1s
+        [0, 1, 0, 0, 0, 0],
+        // level 1: only roll tier 2s
+        [0, 0, 1, 0, 0, 0],
+      ],
       ['litwick', 'abra'],
       {
         litwick: { tier: 1, stage: 1, base: 'litwick' },
@@ -58,7 +56,7 @@ describe('shop rerolling', () => {
       } as any,
       { 1: 5, 2: 5, 3: 0, 4: 0, 5: 0 }
     );
-    expect(pool.reroll({ level: 1 } as Player)).toEqual([
+    expect(pool.reroll({ level: 0 } as Player)).toEqual([
       'litwick',
       'litwick',
       'litwick',
@@ -67,7 +65,7 @@ describe('shop rerolling', () => {
     ]);
     expect(pool.pools[1]).toHaveLength(0);
 
-    expect(pool.reroll({ level: 2 } as Player)).toEqual([
+    expect(pool.reroll({ level: 1 } as Player)).toEqual([
       'abra',
       'abra',
       'abra',
@@ -80,9 +78,7 @@ describe('shop rerolling', () => {
   test('should roll through different pokemon', () => {
     Math.random = alwaysLast;
     const pool = new ShopPool(
-      {
-        1: [0, 1, 0, 0, 0, 0],
-      },
+      [[0, 1, 0, 0, 0, 0]],
       ['litwick', 'fletchling'],
       {
         litwick: { tier: 1, stage: 1, base: 'litwick' },
@@ -90,7 +86,7 @@ describe('shop rerolling', () => {
       } as any,
       { 1: 3, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
-    const rolls = pool.reroll({ level: 1 } as Player);
+    const rolls = pool.reroll({ level: 0 } as Player);
     expect(rolls).toEqual([
       // deterministic rng picks from the back
       'fletchling',
@@ -106,25 +102,21 @@ describe('shop rerolling', () => {
   test('should put stuff back in the pool when rerolling', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
-      {
-        1: [0, 1, 0, 0, 0, 0],
-      },
+      [[0, 1, 0, 0, 0, 0]],
       ['litwick'],
       { litwick: { tier: 1, stage: 1, base: 'litwick' } } as any,
       { 1: 10, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
-    const rolls = pool.reroll({ level: 1 } as Player);
+    const rolls = pool.reroll({ level: 0 } as Player);
     expect(pool.pools[1]).toHaveLength(5);
-    pool.reroll({ level: 1 } as Player, rolls);
+    pool.reroll({ level: 0 } as Player, rolls);
     expect(pool.pools[1]).toHaveLength(5);
   });
 
   test('should put more back for higher stage pokemon', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
-      {
-        1: [0, 1, 0, 0, 0, 0],
-      },
+      [[0, 1, 0, 0, 0, 0]],
       ['litwick'],
       {
         litwick: { tier: 1, stage: 1 },
@@ -132,7 +124,7 @@ describe('shop rerolling', () => {
       } as any,
       { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
-    const rolls = pool.reroll({ level: 1 } as Player, [
+    const rolls = pool.reroll({ level: 0 } as Player, [
       'chandelure',
       'chandelure',
       'chandelure',
@@ -155,9 +147,7 @@ describe('shop rerolling', () => {
   test('should fall back to alternative tiers if current is exhausted', () => {
     Math.random = customRng([0, 0.9999]);
     const pool = new ShopPool(
-      {
-        1: [0, 1, 1, 0, 0, 0],
-      },
+      [[0, 1, 1, 0, 0, 0]],
       ['litwick', 'abra'],
       {
         litwick: { tier: 1, stage: 1, base: 'litwick' },
@@ -165,7 +155,7 @@ describe('shop rerolling', () => {
       } as any,
       { 1: 3, 2: 3, 3: 0, 4: 0, 5: 0 }
     );
-    expect(pool.reroll({ level: 1 } as Player)).toEqual([
+    expect(pool.reroll({ level: 0 } as Player)).toEqual([
       // the rng alternates, but is used twice per pull (once for tier, once for pokemon)
       // so tier 1 ends up being all pulled first
       'litwick',
@@ -179,9 +169,7 @@ describe('shop rerolling', () => {
   test('should return empty slots if the entire shop is exhausted', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
-      {
-        1: [0, 1, 0, 0, 0, 0],
-      },
+      [[0, 1, 0, 0, 0, 0]],
       ['litwick'],
       {
         litwick: { tier: 1, stage: 1, base: 'litwick' },
@@ -189,7 +177,7 @@ describe('shop rerolling', () => {
       { 1: 2, 2: 0, 3: 0, 4: 0, 5: 0 }
     );
 
-    expect(pool.reroll({ level: 1 } as Player)).toEqual([
+    expect(pool.reroll({ level: 0 } as Player)).toEqual([
       'litwick',
       'litwick',
       ,
@@ -204,9 +192,7 @@ describe('shop rerolling', () => {
   test('should handle passed shops with deleted elements', () => {
     Math.random = alwaysFirst;
     const pool = new ShopPool(
-      {
-        1: [0, 1, 0, 0, 0, 0],
-      },
+      [[0, 1, 0, 0, 0, 0]],
       ['litwick'],
       {
         litwick: { tier: 1, stage: 1, base: 'litwick' },
@@ -223,7 +209,7 @@ describe('shop rerolling', () => {
     delete shop[1];
     delete shop[2];
 
-    expect(pool.reroll({ level: 1 } as Player, shop)).toEqual([
+    expect(pool.reroll({ level: 0 } as Player, shop)).toEqual([
       'litwick',
       'litwick',
       'litwick',

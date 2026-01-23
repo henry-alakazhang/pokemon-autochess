@@ -5,6 +5,7 @@ import { CombatBoard } from '../scenes/game/combat/combat.scene';
 import {
   BOARD_WIDTH,
   CELL_WIDTH,
+  GameMode,
   getCoordinatesForMainboard,
   GRID_X,
   GRID_Y,
@@ -28,16 +29,20 @@ export class Player extends Phaser.GameObjects.GameObject {
     SELECT: 'selectPlayer',
   };
 
+  private gameData: GameMode;
+
   /**
-   * Player level, which corresponds to the max number of Pokemon they can field
-   * In-game, this is represented by "Gym Badges"
+   * Player level, which affects max team size and the odds in the shop.
+   * Effects are defined based on the game mode.
    */
-  level = 1;
-  // EXP progress to the next level
-  // TODO: implement when implementing traditional games
-  // exp = 0;
-  hp = 100;
+  level: number;
+  /**
+   * "Dex EXP"
+   * Used to level up. Thresholds are determined by the game mode.
+   */
+  exp: number;
   gold: number;
+  hp = 100;
   /** Consecutive win/loss streak */
   streak = 0;
   /** A map storing whether a Pokemon (by id) is currently evolving. */
@@ -85,6 +90,10 @@ export class Player extends Phaser.GameObjects.GameObject {
   private aiStrategy: AIStrategy;
   private visible: boolean;
 
+  get teamSize(): number {
+    return this.gameData.levels[this.level].teamSize;
+  }
+
   constructor(
     scene: GameScene,
     public playerName: string,
@@ -93,21 +102,20 @@ export class Player extends Phaser.GameObjects.GameObject {
     {
       pool,
       isHumanPlayer = false,
-      initialLevel = 1,
-      startingGold = 20,
+      gameData,
     }: {
       pool: ShopPool;
+      gameData: GameMode;
       isHumanPlayer?: boolean;
-      initialLevel?: number;
-      startingGold?: number;
     }
   ) {
     super(scene, 'player');
+    this.gameData = gameData;
     this.pool = pool;
     this.isHumanPlayer = isHumanPlayer;
     this.visible = isHumanPlayer;
-    this.level = initialLevel;
-    this.gold = startingGold;
+    this.level = gameData.stages[0].autolevel ?? 0;
+    this.gold = gameData.startingGold;
     if (!this.isHumanPlayer) {
       this.aiStrategy = getRandomAI();
     }
@@ -550,7 +558,7 @@ export class Player extends Phaser.GameObjects.GameObject {
   }
 
   canAddPokemonToMainboard() {
-    return flatten(this.mainboard).filter((v) => !!v).length < this.level;
+    return flatten(this.mainboard).filter((v) => !!v).length < this.teamSize;
   }
 
   canAddPokemonToSideboard() {
@@ -593,7 +601,7 @@ export class Player extends Phaser.GameObjects.GameObject {
     // the index of the first free space in a given row
     const spaceInRow = [0, 0, 0, 0, 0, 0];
     boardOrder.forEach((selectedPokemon, index) => {
-      if (index < this.level) {
+      if (index < this.teamSize) {
         // if index < level, we have room on the board
 
         // pick a spot for them based on their range.
@@ -617,11 +625,11 @@ export class Player extends Phaser.GameObjects.GameObject {
 
       // otherwise,  we've already put max pokemon on the board.
       // the rest go into the sideboard in order
-      // (index - this.level starts at 0)
+      // (index - this.teamSize starts at 0)
       this.setPokemonAtLocation(
         {
           location: 'sideboard',
-          index: index - this.level,
+          index: index - this.teamSize,
         },
         selectedPokemon
       );

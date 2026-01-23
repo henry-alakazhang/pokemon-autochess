@@ -218,7 +218,11 @@ export class GameScene extends Phaser.Scene {
       .setVisible(false);
 
     this.gameMode = mode;
-    this.pool = new ShopPool(mode.shopRates, buyablePokemon, pokemonData);
+    this.pool = new ShopPool(
+      mode.levels.map((level) => level.shopOdds),
+      buyablePokemon,
+      pokemonData
+    );
     this.currentStage = 0;
     this.currentRound = 1;
     this.currentRoundText = this.add
@@ -238,8 +242,7 @@ export class GameScene extends Phaser.Scene {
       new Player(this, 'You', 720, 100, {
         pool: this.pool,
         isHumanPlayer: true,
-        initialLevel: this.gameMode.stages[this.currentStage].autolevel,
-        startingGold: this.gameMode.startingGold,
+        gameData: this.gameMode,
       })
     );
     this.players = [this.humanPlayer];
@@ -255,8 +258,7 @@ export class GameScene extends Phaser.Scene {
             new Player(this, name, 720, 130 + 30 * index, {
               pool: this.pool,
               isHumanPlayer: false,
-              initialLevel: this.gameMode.stages[this.currentStage].autolevel,
-              startingGold: this.gameMode.startingGold,
+              gameData: this.gameMode,
             })
           )
         ),
@@ -722,7 +724,7 @@ export class GameScene extends Phaser.Scene {
           flatten(this.currentVisiblePlayer.mainboard).filter((v) =>
             isDefined(v)
           ).length
-        }/${this.currentVisiblePlayer.level}`
+        }/${this.currentVisiblePlayer.teamSize}`
       );
   }
 
@@ -763,7 +765,8 @@ export class GameScene extends Phaser.Scene {
     const player = new Player(this, round.name, -100, -100, {
       pool: this.pool,
       isHumanPlayer: false,
-      initialLevel: round.board.length,
+      // FIXME: This limits the maximum size of a team for neutral rounds as well...
+      gameData: this.gameMode,
     });
     round.board.forEach((pokemon) => {
       player.addPokemonToSideboard(pokemon.name);

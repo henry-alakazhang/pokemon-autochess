@@ -26,9 +26,9 @@ function genericPrioritiseBoard(
   sortFn = (a: PokemonObject, b: PokemonObject) =>
     getPokemonStrength(b.basePokemon) - getPokemonStrength(a.basePokemon)
 ): PokemonObject[] {
-  // Shortcut: For level 1-2, just play strongest units.
+  // Shortcut: For board size <= 2 just play strongest units.
   // ignore any specialised ordering logic as well.
-  if (player.level <= 2) {
+  if (player.teamSize <= 2) {
     return [...flatten(player.mainboard), ...player.sideboard]
       .filter(isDefined)
       .sort(
@@ -62,7 +62,7 @@ function genericPrioritiseBoard(
       // the max possible count for that synergy is still 3
       allSynergies[category] = Math.min(
         (allSynergies[category] ?? 0) + 1,
-        player.level
+        player.teamSize
       );
     });
     deduplicatedPokemon.push(pokemon);
@@ -122,7 +122,7 @@ function genericPrioritiseBoard(
   //  2. Any units that boost the tier of a splash trait
   //  3. The strongest unit out of the rest
   // ==========================================================
-  while (currentBoard.length < player.level) {
+  while (currentBoard.length < player.teamSize) {
     if (deduplicatedPokemon.length === 0) {
       console.warn('Not enough deduplicated Pokemon to build a full board!');
       break;
@@ -273,7 +273,7 @@ function decideWant(
     // since we're unlikely to put them on the board or level them up further.
     if (
       strict &&
-      player.level === 6 &&
+      player.teamSize === 6 &&
       (totalCopies[pokemon.base] ?? 0) >= 3 &&
       !allBoardUnits.includes(pokemon.name)
     ) {
@@ -285,7 +285,7 @@ function decideWant(
     // level 3 start ignoring 1* 1-costs, ramping up to selling excess 2/3 costs
     if (
       strict &&
-      getPokemonStrength(pokemon) <= player.level + 1 &&
+      getPokemonStrength(pokemon) <= player.teamSize + 1 &&
       rerollTarget !== pokemon.base
     ) {
       return false;
@@ -302,7 +302,7 @@ function decideWant(
       // only flex for forced comps with no explicit splash
       (!forced || forced.length === 1) &&
       // only hold extra units when can still level up
-      player.level < 6 &&
+      player.teamSize < 6 &&
       // don't pick up if we already have a candidate for next board unit
       !strongNextUnit &&
       pokemon.categories.some(
@@ -328,7 +328,7 @@ function decideWant(
     // YES if can improve our active on-board synergies
     // and we don't have enough units on bench or some of them are weak
     if (
-      (potentialNextUnits.length < 6 - player.level ||
+      (potentialNextUnits.length < 6 - player.teamSize ||
         potentialNextUnits.some(
           (potentialUnit) => potentialUnit.basePokemon.tier < pokemon.tier
         )) &&
