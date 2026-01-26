@@ -1,14 +1,7 @@
 import { Pokemon, PokemonName } from '../../core/pokemon.model';
+import { getRandomInArray, getRandomIndex } from '../../helpers';
 import { Player } from '../../objects/player.object';
 import { DEFAULT_SHOP_POOL } from './game.helpers';
-
-function getRandomIndex(array: unknown[]): number {
-  return Math.floor(Math.random() * array.length);
-}
-
-function getRandomInArray<T>(array: T[]): T {
-  return array[getRandomIndex(array)];
-}
 
 /**
  * A pool of buyable units which forms a shop.
@@ -102,12 +95,7 @@ export class ShopPool {
         pool[pool.length - 1],
         pool[pickIndex],
       ];
-      const pick = pool.pop();
-
-      if (!pick) {
-        // this is literally not possible and is just here to satisfy typescript
-        throw new Error('Tried to pick from an empty pool');
-      }
+      const pick = pool.pop()!;
 
       // take the pokemon out of the pool
       newShop.push(pick);

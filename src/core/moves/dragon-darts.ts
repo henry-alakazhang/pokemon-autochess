@@ -1,10 +1,9 @@
-import { flatten, isDefined } from '../../helpers';
+import { flatten, isDefined, shuffle } from '../../helpers';
 import {
   Coords,
   getRandomTarget,
 } from '../../scenes/game/combat/combat.helpers';
 import { CombatBoard } from '../../scenes/game/combat/combat.scene';
-import { shuffle } from '../../scenes/game/game.helpers';
 import { Move, MoveConfig } from '../move.model';
 import * as Tweens from '../tweens';
 

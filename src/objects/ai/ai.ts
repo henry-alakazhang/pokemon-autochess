@@ -1,7 +1,7 @@
 import { Category, getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
 import { Pokemon, pokemonData, PokemonName } from '../../core/pokemon.model';
-import { flatten, isDefined } from '../../helpers';
+import { flatten, getRandomInArray, isDefined } from '../../helpers';
 import { Player } from '../player.object';
 import { PokemonObject } from '../pokemon.object';
 
@@ -495,7 +495,5 @@ export function getRandomAI(): AIStrategy {
   }
 
   // plus some hard forcers
-  return hardForceStrategies[
-    Math.floor(Math.random() * hardForceStrategies.length)
-  ];
+  return getRandomInArray(hardForceStrategies);
 }

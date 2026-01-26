@@ -1,6 +1,6 @@
 import { synergyData } from '../../core/game.model';
 import { buyablePokemon, pokemonData } from '../../core/pokemon.model';
-import { flatten, isDefined } from '../../helpers';
+import { flatten, getRandomInArray, isDefined, shuffle } from '../../helpers';
 import { Button } from '../../objects/button.object';
 import { DamageChart } from '../../objects/damage-chart.object';
 import { NextCombatSidebar } from '../../objects/next-combat-sidebar.object';
@@ -23,7 +23,6 @@ import {
   GRID_X,
   GRID_Y,
   NeutralRound,
-  shuffle,
 } from './game.helpers';
 import { ShopPool } from './shop.helpers';
 import { ShopScene, ShopSceneData } from './shop.scene';
@@ -494,15 +493,11 @@ export class GameScene extends Phaser.Scene {
       );
       const pair1 = {
         isReal: isDefined(player1),
-        player: isDefined(player1)
-          ? player1
-          : otherPlayers[Math.floor(Math.random() * otherPlayers.length)],
+        player: isDefined(player1) ? player1 : getRandomInArray(otherPlayers),
       };
       const pair2 = {
         isReal: isDefined(player2),
-        player: isDefined(player2)
-          ? player2
-          : otherPlayers[Math.floor(Math.random() * otherPlayers.length)],
+        player: isDefined(player2) ? player2 : getRandomInArray(otherPlayers),
       };
 
       if (pair1.player === this.humanPlayer) {

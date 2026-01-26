@@ -4,6 +4,7 @@ import { Button } from '../objects/button.object';
 import { PokemonObject } from '../objects/pokemon.object';
 import { getDebugGameMode, getHyperRollGameMode } from './game/game.helpers';
 import { GameScene } from './game/game.scene';
+import { getRandomInArray } from '../helpers';
 
 /**
  * The main menu scene
@@ -42,8 +43,7 @@ export class MenuScene extends Scene {
   }
 
   addTitlePokemon() {
-    const randomPokemon =
-      allPokemonNames[Math.floor(Math.random() * allPokemonNames.length)];
+    const randomPokemon = getRandomInArray(allPokemonNames);
     this.titlePokemon = new PokemonObject({
       scene: this,
       x: this.game.canvas.width / 2,

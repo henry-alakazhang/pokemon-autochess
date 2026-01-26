@@ -1,4 +1,4 @@
-import { flatten, isDefined } from '../../helpers';
+import { flatten, getRandomInArray, isDefined } from '../../helpers';
 import {
   Coords,
   getRandomTarget,
@@ -70,7 +70,7 @@ export const venomDrench = {
         .once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
           hitEffect.destroy();
         });
-      const statToLower = stats[Math.floor(Math.random() * stats.length)];
+      const statToLower = getRandomInArray(stats);
       target.changeStats({
         [statToLower]: -1,
       });

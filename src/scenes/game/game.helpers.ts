@@ -1,7 +1,7 @@
 import { getSynergyTier, synergyData } from '../../core/game.model';
 import { getPokemonStrength } from '../../core/pokemon.helpers';
 import { Pokemon, PokemonName } from '../../core/pokemon.model';
-import { flatten, isDefined } from '../../helpers';
+import { flatten, isDefined, shuffle } from '../../helpers';
 import { Player } from '../../objects/player.object';
 import { Coords } from './combat/combat.helpers';
 
@@ -210,22 +210,6 @@ export function getDebugGameMode(): GameMode {
     },
     startingGold: 50,
   };
-}
-
-/**
- * Shuffles the first `amount` elements of a given array.
- * Modifies the array in-place and returns it.
- */
-export function shuffle<T>(array: T[], amount = array.length - 1): T[] {
-  // shuffle the list with a bastardised Fisher-Yates:
-  // for each item (up to the limit we care about)
-  for (let i = 0; i < amount; i++) {
-    // pick a random other element (that we haven't already swapped)
-    const swapIndex = Math.floor(Math.random() * (array.length - i)) + i;
-    // and swap the two (fancy ES6 syntax)
-    [array[i], array[swapIndex]] = [array[swapIndex], array[i]];
-  }
-  return array;
 }
 
 /**

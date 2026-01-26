@@ -1,4 +1,4 @@
-import { flatten, isDefined } from '../helpers';
+import { flatten, getRandomInArray, isDefined } from '../helpers';
 import { FloatingText } from '../objects/floating-text.object';
 import { Player } from '../objects/player.object';
 import { PokemonObject } from '../objects/pokemon.object';
@@ -1033,9 +1033,7 @@ the number of Gimmighoul Coins it has.
         // Damage to enemies (75+ coins)
         if (coins >= 75) {
           const damageTargets =
-            coins >= 500
-              ? enemies
-              : [enemies[Math.floor(Math.random() * enemies.length)]];
+            coins >= 500 ? enemies : [getRandomInArray(enemies)];
           const damage = coins >= 150 ? 250 + 0.5 * coins : 200;
           damageTargets.forEach((enemy) => {
             if (enemy) {

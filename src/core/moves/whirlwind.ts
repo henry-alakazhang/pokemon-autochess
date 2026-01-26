@@ -1,3 +1,4 @@
+import { getRandomInArray } from '../../helpers';
 import {
   Coords,
   getFacing,
@@ -71,10 +72,7 @@ export const whirlwind = {
           .filter((coords) => inBounds(board, coords))
           .filter(({ x, y }) => !board[x][y]);
 
-        const pushCoords =
-          possiblePushCoords[
-            Math.floor(Math.random() * possiblePushCoords.length)
-          ];
+        const pushCoords = getRandomInArray(possiblePushCoords);
         if (pushCoords) {
           scene.movePokemon(targetCoords, pushCoords);
         }

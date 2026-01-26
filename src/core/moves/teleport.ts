@@ -1,4 +1,4 @@
-import { flatten, isDefined } from '../../helpers';
+import { flatten, getRandomInArray, isDefined } from '../../helpers';
 import { PokemonAnimationType } from '../../objects/pokemon.object';
 import { Coords } from '../../scenes/game/combat/combat.helpers';
 import { CombatScene } from '../../scenes/game/combat/combat.scene';
@@ -44,9 +44,9 @@ export const teleport = {
         if (emptySpaces.length === 0) {
           return onComplete();
         }
-        const pick = Math.ceil(Math.random() * emptySpaces.length - 1);
+        const pick = getRandomInArray(emptySpaces);
         user.setVisible(false);
-        scene.movePokemon(userCoords, emptySpaces[pick], () => {
+        scene.movePokemon(userCoords, pick, () => {
           user.heal(
             ((user.maxHP - user.currentHP) *
               healPercent[user.basePokemon.stage - 1]) /

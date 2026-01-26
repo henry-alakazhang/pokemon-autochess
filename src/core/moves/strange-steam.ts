@@ -1,3 +1,4 @@
+import { getRandomInArray } from '../../helpers';
 import { PokemonObject } from '../../objects/pokemon.object';
 import { mapPokemonCoords } from '../../scenes/game/combat/combat.helpers';
 import { Move, MoveConfig } from '../move.model';
@@ -57,9 +58,7 @@ export const strangeSteam = {
             // Bounces from enemy to ally and back again
             .filter(({ pokemon }) => pokemon.side !== currTarget.side);
           if (validTargets.length > 0) {
-            currTarget =
-              validTargets[Math.floor(Math.random() * validTargets.length)]
-                .pokemon;
+            currTarget = getRandomInArray(validTargets).pokemon;
             projectile.setTarget(currTarget);
             return;
           }
